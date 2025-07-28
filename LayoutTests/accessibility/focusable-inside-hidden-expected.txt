@@ -1,9 +1,9 @@
 This tests that a focusable object inside an aria-hidden is in the hieararchy only after it gains focus.
 
-PASS: !button || !button.isValid === true
+PASS: !button === true
 PASS: button.description === 'AXDescription: BUTTON'
 PASS: button.description === 'AXDescription: BUTTON'
-PASS: !button || !button.isValid === true
+PASS: !button === true
 
 PASS successfullyParsed is true
 

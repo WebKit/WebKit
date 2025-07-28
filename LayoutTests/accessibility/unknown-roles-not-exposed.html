@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 <script>
 function findUnknownChild(accessibilityObject) {
     if (accessibilityObject.role == "AXRole: AXUnknown")
@@ -20,20 +21,22 @@ function findUnknownChild(accessibilityObject) {
 function runTest()
 {
   if (window.accessibilityController) {
+    var output = "This tests accessibility objects with role 'unknown' are not being exposed.\n\n";
     document.body.focus();
-    shouldBeTrue("findUnknownChild(accessibilityController.focusedElement) == null");
+    unknownChild = findUnknownChild(accessibilityController.focusedElement);
+    output += expect("unknownChild == null", "true");
+    debug(output);
+    finishJSTest();
   }
 }
 </script>
 </head>
 <body id="body" onload="runTest()">
 <iframe src="data:text/html,<body><button>Click me</button></body>"></iframe>
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-description("This tests accessibility objects with role 'unknown' are not being exposed.");
-
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+}
 </script>
 </body>
 </html>

@@ -1,32 +1,30 @@
-<html>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
 <div id="alert">alert</div>
-
-<p id="description"></p>
-<div id="console"></div>
      
 <script>
+    var output = "This test verifies that the dismiss action generates an escape key event.\n\n";
+
     function handleKeyDown(event) {
-        debug("Keycode received: code: " + event.keyCode + " key name: " + event.key);
+        output += "Keycode received: code: " + event.keyCode + " key name: " + event.key;
         event.preventDefault();
         event.stopPropagation();
+        debug(output);
         finishJSTest();
      }
 
     if (window.accessibilityController) {
-        jsTestIsAsync = true;
-        description("This test verifies that the dismiss action generates an escape key event.");
+        window.jsTestIsAsync = true;
 
         document.getElementById("alert").addEventListener('keydown', handleKeyDown);
         accessibilityController.accessibleElementById("alert").dismiss();
     }
- </script>
-
-<script src="../resources/js-test-post.js"></script>
+</script>
 </body>
 </html>

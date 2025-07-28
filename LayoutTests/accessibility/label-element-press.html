@@ -2,29 +2,28 @@
 <html>
 <head>
 <script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 
 <body id="body">
 
 <label tabindex=0 onclick="finishJSTest()" id="labelElement">label</label>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+var output = "This tests that a label element without a corresponding control will perform a press action on itself instead of nothing.";
 
-    description("This tests that a label element without a corresponding control will perform a press action on itself instead of nothing.");
-    jsTestIsAsync = true;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-    if (window.accessibilityController) {
-        document.getElementById("body").focus();
-        var body = accessibilityController.focusedElement;
-        var label = body.childAtIndex(0).childAtIndex(0);
-    
-        // if successful, performEvent() will be called and we'll successfully parse.        
-        label.press();
-    }
+    document.getElementById("body").focus();
+    var body = accessibilityController.focusedElement;
+    var label = body.childAtIndex(0).childAtIndex(0);
 
+    // if successful, performEvent() will be called and we'll successfully parse.        
+    label.press();
+} else {
+    debug(output);
+}
 </script>
 </body>
 </html>

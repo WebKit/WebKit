@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -13,23 +14,19 @@
 </div>
 
 <script>
+var output = "This tests that deleting a ARIA menu and children do not cause a crash.\n\n";
 
-    description("This tests that deleting a ARIA menu and children do not cause a crash.");
+if (window.accessibilityController) {
+    var content = accessibilityController.accessibleElementById("item");
 
-    if (window.accessibilityController) {
-      
-        var content = accessibilityController.accessibleElementById("item");
+    // Don't crash!
+    document.getElementById("content").innerHTML = "";  
 
-        // Don't crash!
-        document.getElementById("content").innerHTML = "";  
-   
-        debug("PASS - There was no crash when removing the ARIA menu from the DOM.");
-    }
-
-
+    output += "PASS - There was no crash when removing the ARIA menu from the DOM.";
+    
+    debug(output);
+}
 </script>
 
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
-

@@ -35,6 +35,8 @@
 var output = "This test ensures that a rowspan cell does not extend outside its table section.\n\n";
 
 if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    
     var table = accessibilityController.accessibleElementById("table");
     output += dumpAXTable(table);
     output += dumpAXSearchTraversal(table);
@@ -45,4 +47,3 @@ if (window.accessibilityController) {
 </script>
 </body>
 </html>
-

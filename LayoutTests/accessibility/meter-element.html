@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 <body>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 
 <div id="content">
 <meter id="meter1" value=6 max=8>6 blocks used (out of 8 total)</meter>
@@ -23,26 +24,29 @@
 <meter id="meter14" value=0.60><div aria-label="7 of 10"><span style="color:green;">&#9632;&#9632;&#9632;&#9632;&#9632;&#9632;</span><span>&#9633;&#9633;&#9633;&#9633;</span></div></meter>
 </div>
 
-<div id="console"></div>
 <script>
+var output = "This tests that the meter element is accessible.\n\n";
 
-description("This tests that the meter element is accessible.");
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    
+    setTimeout(function() {
+        for (var k = 1; k < 15; k++) {
+            var meter = accessibilityController.accessibleElementById("meter" + k);
+            output += "Meter" + k + "\n";
+            output += meter.role + "\n";
+            output += meter.title + "\n";
+            output += meter.description + "\n";
+            output += meter.valueDescription + "\n";
+            output += "AXValueSettable: " + meter.isAttributeSettable("AXValue") + "\n";
+            output += "\n";
+        }
 
-if (window.testRunner && window.accessibilityController) {
-    for (var k = 1; k < 15; k++) {
-        var meter = accessibilityController.accessibleElementById("meter" + k);
-        debug("Meter" + k);
-        debug(meter.role);
-        debug(meter.title);
-        debug(meter.description);
-        debug(meter.valueDescription);
-        debug("AXValueSettable: " + meter.isAttributeSettable("AXValue"));
-        debug("\n");
-    }
-
-    document.getElementById("content").style.visibility = 'hidden';    
+        document.getElementById("content").style.visibility = 'hidden';
+        debug(output);
+        finishJSTest();
+    }, 0);
 }
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

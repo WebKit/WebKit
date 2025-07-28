@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
 </head>
 
@@ -10,16 +10,18 @@
 <img src="resources/embedded-image-description-example.jpg" id="image" onload="runTest();">
 
 <script>
-    description("This tests that the embedded image description can be retrieved.");
-    jsTestIsAsync = true;
+    var output = "This tests that the embedded image description can be retrieved.\n\n";
+    
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
 
-    var image;
-    function runTest() {
-       image = accessibilityController.accessibleElementById("image");
-       shouldBe("image.embeddedImageDescription", "'AXEmbeddedImageDescription: Birds Eye View'");
-       finishJSTest();
+        function runTest() {
+            image = accessibilityController.accessibleElementById("image");
+            output += expect("image.embeddedImageDescription", "'AXEmbeddedImageDescription: Birds Eye View'");
+            debug(output);
+            finishJSTest();
+        }
     }
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1,8 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/accessibility-helper.js"></script>
 <script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
 
@@ -14,7 +14,7 @@ var output = "This test exercises a combination of selectedTextRange, stringForR
 if (window.accessibilityController) {
     window.jsTestIsAsync = true;
 
-    var newlineRegex = new RegExp('(?:\\r\\n|\\r|\\n)', 'g');
+    var newlineRegex = new RegExp('(?:\\r\\n|\\n)', 'g');
     var contenteditable;
     setTimeout(async function() {
         contenteditable = await waitForFocus("contenteditable");
@@ -42,4 +42,3 @@ if (window.accessibilityController) {
 </script>
 </body>
 </html>
-

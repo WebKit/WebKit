@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 
     <style>
         
@@ -70,23 +71,17 @@
   </div>
 </div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+var output = "This tests that if a view is in a transformed layer, the bounds will not be offset by the origin of the transformed layer.\n\n";
 
-    description("This tests that if a view is in a transformed layer, the bounds will not be offset by the origin of the transformed layer.");
-
-    if (window.accessibilityController) {
-        var tab = accessibilityController.accessibleElementById("tab");
-        shouldBeTrue("tab.width < 40");
-        shouldBeTrue("tab.height < 30");
-    }
-
+if (window.accessibilityController) {
+    var tab = accessibilityController.accessibleElementById("tab");
+    output += expect("tab.width < 40", "true");
+    output += expect("tab.height < 30", "true");
+    
+    debug(output);
+}
 </script>
 
-<script src="../resources/js-test-post.js"></script>
-
-</div>
 </body>
 </html>

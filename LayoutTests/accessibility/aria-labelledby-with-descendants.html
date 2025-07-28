@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
@@ -40,24 +40,19 @@
 
 </div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+var output = "This tests that if aria-labelledby is pointing to nodes with descendants, it returns all text.\n\n";
 
-    description("This tests that if aria-labelledby is pointing to nodes with descendants, it returns all text.");
-
-    if (window.accessibilityController) {
-          for (var k = 1; k < 8; k++) {
-              var test = accessibilityController.accessibleElementById("test" + k);
-              debug("test " + k + ": aria-labelledby description: " + platformValueForW3CName(test));
-              debug("test " + k + ": expected description: " + document.getElementById("test" + k).getAttribute("data-label") + "\n");
-          }
-          document.getElementById("content").style.visibility = "hidden";
+if (window.accessibilityController) {
+    for (var k = 1; k < 8; k++) {
+        var test = accessibilityController.accessibleElementById("test" + k);
+        output += "test " + k + ": aria-labelledby description: " + platformValueForW3CName(test) + "\n";
+        output += "test " + k + ": expected description: " + document.getElementById("test" + k).getAttribute("data-label") + "\n\n";
     }
-
+    document.getElementById("content").style.visibility = "hidden";
+    debug(output);
+}
 </script>
 
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

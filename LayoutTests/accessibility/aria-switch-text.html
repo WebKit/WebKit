@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 <div role="radiobuttongroup">
@@ -10,32 +11,27 @@
         <div role="switch" id="switch3" aria-label="foo">Three</div>
 </div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+var output = "This tests that ARIA switches use accessible name computation and have no child text.\n\n";
 
-    description("This tests that ARIA switches use accessible name computation and have no child text.");
+if (window.accessibilityController) {
+    var widget = accessibilityController.accessibleElementById("switch1");
+    output += "widget.title is " + widget.title + "\n";
+    output += "widget.description is " + widget.description + "\n";
+    output += "widget.childrenCount is " + widget.childrenCount + "\n\n";
 
-    if (window.accessibilityController) {
-        var widget = accessibilityController.accessibleElementById("switch1");
-        debug("widget.title is " + widget.title);
-        debug("widget.description is " + widget.description);
-        debug("widget.childrenCount is " + widget.childrenCount);
+    widget = accessibilityController.accessibleElementById("switch2");
+    output += "widget.title is " + widget.title + "\n";
+    output += "widget.description is " + widget.description + "\n";
+    output += "widget.childrenCount is " + widget.childrenCount + "\n\n";
 
-        widget = accessibilityController.accessibleElementById("switch2");
-        debug("widget.title is " + widget.title);
-        debug("widget.description is " + widget.description);
-        debug("widget.childrenCount is " + widget.childrenCount);
+    widget = accessibilityController.accessibleElementById("switch3");
+    output += "widget.title is " + widget.title + "\n";
+    output += "widget.description is " + widget.description + "\n";
+    output += "widget.childrenCount is " + widget.childrenCount + "\n";
 
-        widget = accessibilityController.accessibleElementById("switch3");
-        debug("widget.title is " + widget.title);
-        debug("widget.description is " + widget.description);
-        debug("widget.childrenCount is " + widget.childrenCount);
-    }
-
+    debug(output);
+}
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

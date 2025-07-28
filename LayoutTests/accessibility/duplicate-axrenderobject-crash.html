@@ -1,7 +1,8 @@
 <!doctype html>
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
 
@@ -13,15 +14,15 @@
     </summary>
 </label>
 
-<p id="description"></p>
-
 <script>
-    description("Ensures that it's not possible to have two AXRenderObjects that point to the same renderer, if the initialization of an AXRenderObject results in another object with the same renderer being created before AXObjectCache has added that mapping to its hash.");
-    if (window.accessibilityController)
-        accessibilityController.accessibleElementById("dummy");
-</script>
+    var output = "Ensures that it's not possible to have two AXRenderObjects that point to the same renderer, if the initialization of an AXRenderObject results in another object with the same renderer being created before AXObjectCache has added that mapping to its hash.";
 
-<script src="../resources/js-test-post.js"></script>
+    if (window.accessibilityController) {
+        accessibilityController.accessibleElementById("dummy");
+    }
+    
+    debug(output);
+</script>
 
 </body>
 </html>

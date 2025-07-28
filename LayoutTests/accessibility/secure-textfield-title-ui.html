@@ -1,8 +1,9 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-<script>
-    if (window.testRunner)
-        testRunner.dumpAsText();
-</script>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
 <body id="body">
  
     <!-- This test makes sure that a secure text field has the correct title ui element -->
@@ -10,24 +11,28 @@
     <label for="accountpassword"><span class="dslabel">Password</span></label><br>
     <input size="30" maxlength="32" id="accountpassword" type="password" name="theAccountPW">
     
-    <div id="result"></div>
-
-     
     <script>
+        var output = "This test makes sure that a secure text field has the correct title ui element\n\n";
+        
         if (window.accessibilityController) {
-            var result = document.getElementById("result");
-
-            var pass = document.getElementById("accountpassword");
-            pass.focus();
-            var titleUIElement = accessibilityController.focusedElement.titleUIElement();
-            // On the Mac, element text is exposed in StaticText children; in ATSPI, in the element itself.
-            var titleText = titleUIElement.childrenCount ? titleUIElement.childAtIndex(0) : titleUIElement;
-            if (titleText.stringValue == "AXValue: Password") {
-                result.innerText += "Test passed\n";
-            }
-            else {
-                 result.innerText += "Test failed\n";
-            }
+            window.jsTestIsAsync = true;
+            
+            setTimeout(function() {
+                var pass = document.getElementById("accountpassword");
+                pass.focus();
+                var titleUIElement = accessibilityController.focusedElement.titleUIElement();
+                // On the Mac, element text is exposed in StaticText children; in ATSPI, in the element itself.
+                var titleText = titleUIElement.childrenCount ? titleUIElement.childAtIndex(0) : titleUIElement;
+                
+                if (titleText.stringValue == "AXValue: Password") {
+                    output += "Test passed\n";
+                } else {
+                    output += "Test failed\n";
+                }
+                
+                debug(output);
+                finishJSTest();
+            }, 0);
         }
     </script>
 </body>

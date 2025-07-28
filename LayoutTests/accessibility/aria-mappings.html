@@ -1,7 +1,9 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 
 <body>
@@ -15,60 +17,58 @@
 <div id="tree" role="tree"><div role="treeitem">tree role</div></div>
 <div role="tree"><div id="treeitem" role="treeitem">treeitem role</div></div>
 <br>
-<p id="description"></p>
-<div id="console"></div>
 
 <script>
-    description("This tests that each of these ARIA roles have appropriate mappings.");
+var output = "This tests that each of these ARIA roles have appropriate mappings.\n\n";
 
+if (window.accessibilityController) {
     if (window.testRunner) {
         testRunner.dumpAsText();
-
-        if (window.accessibilityController) {
-
-            document.body.focus();
-            var body = accessibilityController.focusedElement;
-            debug("Role for 'body' is: " + body.role);
-
-            debug("<br>");
-            debug("role=\"alert\" should give a message with important, and usually time-sensitive, information.");
-            debug("Role for 'alert' div is: " + accessibilityController.accessibleElementById("alert").role);
-
-            debug("<br>");
-            debug("role=\"alertdialog\" is a dialog which contains an alert message.");
-            debug("Role for 'alertdialog' div is: " + accessibilityController.accessibleElementById("alertdialog").role);
-
-            debug("<br>");
-            debug("role=\"article\" is a  section of a page that consists of a composition that forms an independent part of a document, page, or site");
-            debug("Role for 'article' div is: " + accessibilityController.accessibleElementById("article").role);
-
-            debug("<br>");
-            debug("role=\"dialog\" is an application window that is designed to interrupt the current processing of an application in order to prompt the user to enter information or require a response.");
-            debug("Role for 'dialog' div is: " + accessibilityController.accessibleElementById("dialog").role);
-
-            debug("<br>");
-            debug("role=\"document\" is a region containing related information that is declared as document content, as opposed to a web application.");
-            debug("Role for 'document' div is: " + accessibilityController.accessibleElementById("document").role);
-
-            debug("<br>");
-            debug("role=\"status\" is a container whose content is advisory information for the user but is not important enough to justify an alert, often but not necessarily presented as a status bar.");
-            debug("Role for 'status' div is: " + accessibilityController.accessibleElementById("status").role);
-
-            debug("<br>");
-            debug("role=\"tooltip\" is a contextual popup that displays a description for an element.");
-            debug("Role for 'tooltip' div is: " + accessibilityController.accessibleElementById("tooltip").role);
-
-            debug("<br>");
-            debug("role=\"tree\" is a type of list that may contain sub-level nested groups that can be collapsed and expanded.");
-            debug("Role for 'tree' div is: " + accessibilityController.accessibleElementById("tree").role);
-
-            debug("<br>");
-            debug("role=\"treeitem\" is an option item of a tree.");
-            debug("Role for 'treeitem' div is: " + accessibilityController.accessibleElementById("treeitem").role);
     }
+
+    document.body.focus();
+    var body = accessibilityController.focusedElement;
+    output += "Role for 'body' is: " + body.role + "\n";
+
+    output += "\n";
+    output += "role=\"alert\" should give a message with important, and usually time-sensitive, information.\n";
+    output += "Role for 'alert' div is: " + accessibilityController.accessibleElementById("alert").role + "\n";
+
+    output += "\n";
+    output += "role=\"alertdialog\" is a dialog which contains an alert message.\n";
+    output += "Role for 'alertdialog' div is: " + accessibilityController.accessibleElementById("alertdialog").role + "\n";
+
+    output += "\n";
+    output += "role=\"article\" is a  section of a page that consists of a composition that forms an independent part of a document, page, or site\n";
+    output += "Role for 'article' div is: " + accessibilityController.accessibleElementById("article").role + "\n";
+
+    output += "\n";
+    output += "role=\"dialog\" is an application window that is designed to interrupt the current processing of an application in order to prompt the user to enter information or require a response.\n";
+    output += "Role for 'dialog' div is: " + accessibilityController.accessibleElementById("dialog").role + "\n";
+
+    output += "\n";
+    output += "role=\"document\" is a region containing related information that is declared as document content, as opposed to a web application.\n";
+    output += "Role for 'document' div is: " + accessibilityController.accessibleElementById("document").role + "\n";
+
+    output += "\n";
+    output += "role=\"status\" is a container whose content is advisory information for the user but is not important enough to justify an alert, often but not necessarily presented as a status bar.\n";
+    output += "Role for 'status' div is: " + accessibilityController.accessibleElementById("status").role + "\n";
+
+    output += "\n";
+    output += "role=\"tooltip\" is a contextual popup that displays a description for an element.\n";
+    output += "Role for 'tooltip' div is: " + accessibilityController.accessibleElementById("tooltip").role + "\n";
+
+    output += "\n";
+    output += "role=\"tree\" is a type of list that may contain sub-level nested groups that can be collapsed and expanded.\n";
+    output += "Role for 'tree' div is: " + accessibilityController.accessibleElementById("tree").role + "\n";
+
+    output += "\n";
+    output += "role=\"treeitem\" is an option item of a tree.\n";
+    output += "Role for 'treeitem' div is: " + accessibilityController.accessibleElementById("treeitem").role + "\n";
 }
+
+debug(output);
 </script>
 
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

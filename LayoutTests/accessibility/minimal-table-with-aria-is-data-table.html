@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 <div id="content">
@@ -15,19 +16,18 @@
 <table><tr><td id="cell8">x</td></tr></table>
 </div>
 <script>
+var output = "This tests that minimal tables are treated as data tables if they have ARIA table-related properties.\n\n";
 
-    description("This tests that minimal tables are treated as data tables if they have ARIA table-related properties.");
-    if (window.accessibilityController) {
-        for (var i = 1; i <= 8; i++) {
-            var axElement = accessibilityController.accessibleElementById("cell" + i);
-            var result = !axElement ? "(not exposed)" : axElement.role;
-            debug("cell" + i + ": " + result);
-        }
-        document.getElementById("content").style.visibility = "hidden";
+if (window.accessibilityController) {
+    for (var i = 1; i <= 8; i++) {
+        var axElement = accessibilityController.accessibleElementById("cell" + i);
+        var result = !axElement ? "(not exposed)" : axElement.role;
+        output += "cell" + i + ": " + result + "\n";
     }
-
+    document.getElementById("content").style.visibility = "hidden";
+    
+    debug(output);
+}
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

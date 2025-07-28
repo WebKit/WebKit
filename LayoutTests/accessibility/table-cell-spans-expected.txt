@@ -1,47 +1,39 @@
-Cell A
-COLSPAN="2"
-ROWSPAN="2"	Cell B
-COLSPAN="2"
-2,3	2,4
-Cell C
-ROWSPAN="2"	3,2	3,3	3,4
-4,2	4,3	4,4
 ----------------------
 { 0, 0 }
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
-AXChildren: <array of size 3>
-AXChildrenInNavigationOrder: <array of size 3>
+AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
-AXParent: <AXCell>
+AXParent:
 AXSize: NSSize: {239, 78}
 AXTitle:
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXCell>
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXCell>
-AXEndTextMarker: <AXCell>
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: <array of size 0>
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXCell>
+AXTopLevelUIElement:
 AXLanguage:
 AXDOMIdentifier:
-AXDOMClassList: <array of size 1>
-AXFocusableAncestor: <AXCell>
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 30}
 AXElementBusy: 0
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
-AXColumnHeaderUIElements: <array of size 0>
-AXRowHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements:
+AXRowHeaderUIElements:
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXRequired: 0
@@ -53,37 +45,37 @@ AXRequired: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
-AXChildren: <array of size 3>
-AXChildrenInNavigationOrder: <array of size 3>
+AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
-AXParent: <AXCell>
+AXParent:
 AXSize: NSSize: {239, 78}
 AXTitle:
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXCell>
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXCell>
-AXEndTextMarker: <AXCell>
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: <array of size 0>
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXCell>
+AXTopLevelUIElement:
 AXLanguage:
 AXDOMIdentifier:
-AXDOMClassList: <array of size 1>
-AXFocusableAncestor: <AXCell>
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 30}
 AXElementBusy: 0
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
-AXColumnHeaderUIElements: <array of size 0>
-AXRowHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements:
+AXRowHeaderUIElements:
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXRequired: 0
@@ -95,37 +87,37 @@ AXRequired: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
-AXChildren: <array of size 2>
-AXChildrenInNavigationOrder: <array of size 2>
+AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
-AXParent: <AXCell>
+AXParent:
 AXSize: NSSize: {120, 60}
 AXTitle:
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXCell>
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXCell>
-AXEndTextMarker: <AXCell>
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: <array of size 0>
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXCell>
+AXTopLevelUIElement:
 AXLanguage:
 AXDOMIdentifier:
-AXDOMClassList: <array of size 1>
-AXFocusableAncestor: <AXCell>
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 18}
 AXElementBusy: 0
 AXRowIndexRange: NSRange: {2, 2}
 AXColumnIndexRange: NSRange: {0, 1}
-AXColumnHeaderUIElements: <array of size 0>
-AXRowHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements:
+AXRowHeaderUIElements:
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXRequired: 0
@@ -137,37 +129,37 @@ AXRequired: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
-AXChildren: <array of size 2>
-AXChildrenInNavigationOrder: <array of size 2>
+AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
-AXParent: <AXCell>
+AXParent:
 AXSize: NSSize: {120, 60}
 AXTitle:
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXCell>
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXCell>
-AXEndTextMarker: <AXCell>
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: <array of size 0>
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXCell>
+AXTopLevelUIElement:
 AXLanguage:
 AXDOMIdentifier:
-AXDOMClassList: <array of size 1>
-AXFocusableAncestor: <AXCell>
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 18}
 AXElementBusy: 0
 AXRowIndexRange: NSRange: {2, 2}
 AXColumnIndexRange: NSRange: {0, 1}
-AXColumnHeaderUIElements: <array of size 0>
-AXRowHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements:
+AXRowHeaderUIElements:
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXRequired: 0
@@ -179,37 +171,37 @@ AXRequired: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
-AXChildren: <array of size 1>
-AXChildrenInNavigationOrder: <array of size 1>
+AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
-AXParent: <AXCell>
+AXParent:
 AXSize: NSSize: {120, 30}
 AXTitle:
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXCell>
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXCell>
-AXEndTextMarker: <AXCell>
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: <array of size 0>
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXCell>
+AXTopLevelUIElement:
 AXLanguage:
 AXDOMIdentifier:
-AXDOMClassList: <array of size 1>
-AXFocusableAncestor: <AXCell>
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 3}
 AXElementBusy: 0
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {3, 1}
-AXColumnHeaderUIElements: <array of size 0>
-AXRowHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements:
+AXRowHeaderUIElements:
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXRequired: 0
@@ -222,3 +214,14 @@ AXRequired: 0
 {0, 0}, {0, 0}
 
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Cell A
+COLSPAN="2"
+ROWSPAN="2"	Cell B
+COLSPAN="2"
+2,3	2,4
+Cell C
+ROWSPAN="2"	3,2	3,3	3,4
+4,2	4,3	4,4

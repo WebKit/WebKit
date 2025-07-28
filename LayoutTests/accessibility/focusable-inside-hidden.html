@@ -1,8 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/accessibility-helper.js"></script>
 <script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
 
@@ -18,11 +18,11 @@
 var output = "This tests that a focusable object inside an aria-hidden is in the hieararchy only after it gains focus.\n\n";
 
 if (window.accessibilityController) {
-    jsTestIsAsync = true;
+    window.jsTestIsAsync = true;
 
     // By default, if it doesn't have focus it should be hidden because it's inside aria-hidden.
     var button = accessibilityController.accessibleElementById("button");
-    output += expect("!button || !button.isValid", "true");
+    output += expect("!button", "true");
 
     // Gain focus and this element should be visible to AX.
     document.getElementById("button").focus();
@@ -48,7 +48,7 @@ if (window.accessibilityController) {
             button = accessibilityController.accessibleElementById("button");
             return !button || !button.isValid;
         });
-        output += expect("!button || !button.isValid", "true");
+        output += expect("!button", "true");
 
         debug(output);
         finishJSTest();

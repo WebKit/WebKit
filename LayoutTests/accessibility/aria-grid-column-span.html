@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <style>
 div[role=grid] {
@@ -31,30 +32,26 @@ div[role=gridcell], div[role=rowheader] {
 </div>
 </div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+var output = "This tests that cells that span multiple columns within an ARIA grid have correct column index range\n\n";
 
-    description("This tests that cells that span multiple columns within an ARIA grid have correct column index range");
+if (window.accessibilityController) {
+    var cell1 = accessibilityController.accessibleElementById("cell1");
+    output += expect("cell1.role", "'AXRole: AXCell'");
+    output += expect("cell1.columnIndexRange()", "'{1, 2}'");
 
-    if (window.accessibilityController) {
+    var cell2 = accessibilityController.accessibleElementById("cell2");
+    output += expect("cell2.role", "'AXRole: AXCell'");
+    output += expect("cell2.columnIndexRange()", "'{3, 1}'");
 
-          var cell1 = accessibilityController.accessibleElementById("cell1");
-          shouldBe("cell1.role", "'AXRole: AXCell'");
-          shouldBe("cell1.columnIndexRange()", "'{1, 2}'");
+    // also test cell index without column span
+    var cell3 = accessibilityController.accessibleElementById("cell3");
+    output += expect("cell3.role", "'AXRole: AXCell'");
+    output += expect("cell3.columnIndexRange()", "'{2, 1}'");
+}
 
-          var cell2 = accessibilityController.accessibleElementById("cell2");
-          shouldBe("cell2.role", "'AXRole: AXCell'");
-          shouldBe("cell2.columnIndexRange()", "'{3, 1}'");
-
-          // also test cell index without column span
-          var cell3 = accessibilityController.accessibleElementById("cell3");
-          shouldBe("cell3.role", "'AXRole: AXCell'");
-          shouldBe("cell3.columnIndexRange()", "'{2, 1}'");
-    }
+debug(output);
 </script>
 
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

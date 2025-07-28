@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
@@ -18,17 +18,15 @@
     <mtext><span>HTML</span></mtext>
   </math>
 </div>
-<p id="description"></p>
 <pre id="tree"></pre>
-<div id="console"></div>
 <script>
-    description("This verifies the expected roles and values are exposed for foreign content in MathML.");
+    var output = "This verifies the expected roles and values are exposed for foreign content in MathML.\n\n";
 
     if (window.accessibilityController) {
         dumpAccessibilityTree(accessibilityController.accessibleElementById("math"), null, 0, false, false, true);
         document.getElementById("content").style.visibility = "hidden";
+        debug(output);
     }
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

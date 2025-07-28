@@ -1,6 +1,7 @@
 <html>
 <head>
     <script src="../resources/js-test.js"></script>
+    <script src="../resources/accessibility-helper.js"></script>
 </head>
 
 <body id="body">
@@ -13,17 +14,19 @@
 
 <p>This tests that we report the correct selection-related states.</p>
 
-<p id="console"></p>
-
 <script>
-    if (window.testRunner && window.accessibilityController) {
-        shouldBeTrue('accessibilityController.accessibleElementById("selectElement").isMultiSelectable');
-        shouldBeTrue('accessibilityController.accessibleElementById("selectElement").childAtIndex(0).isSelectable');
-        shouldBeTrue('accessibilityController.accessibleElementById("selectElement").childAtIndex(0).isSelected');
-        shouldBeTrue('accessibilityController.accessibleElementById("selectElement").childAtIndex(1).isSelectable');
-        shouldBeFalse('accessibilityController.accessibleElementById("selectElement").childAtIndex(1).isSelected');
-        shouldBeFalse('accessibilityController.accessibleElementById("selectElement").childAtIndex(2).isSelectable');
-        shouldBeFalse('accessibilityController.accessibleElementById("selectElement").childAtIndex(2).isSelected');
+    var output = "This tests that we report the correct selection-related states.\n\n";
+
+    if (window.accessibilityController) {
+        output += expect("accessibilityController.accessibleElementById('selectElement').isMultiSelectable", "true");
+        output += expect("accessibilityController.accessibleElementById('selectElement').childAtIndex(0).isSelectable", "true");
+        output += expect("accessibilityController.accessibleElementById('selectElement').childAtIndex(0).isSelected", "true");
+        output += expect("accessibilityController.accessibleElementById('selectElement').childAtIndex(1).isSelectable", "true");
+        output += expect("accessibilityController.accessibleElementById('selectElement').childAtIndex(1).isSelected", "false");
+        output += expect("accessibilityController.accessibleElementById('selectElement').childAtIndex(2).isSelectable", "false");
+        output += expect("accessibilityController.accessibleElementById('selectElement').childAtIndex(2).isSelected", "false");
+        
+        debug(output);
     }
 </script>
 </body>

@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 <style>
 .layout-table { display:table; }
 .layout-table .second-cell, .layout-table .third-cell, .layout-table .third-cell-no-border { display: table-cell; }
@@ -19,19 +20,16 @@
 </div>
 </div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-description("This tests that an element use display:table will not be exposed as an accessible table.");
+var output = "This tests that an element use display:table will not be exposed as an accessible table.\n\n";
 
 if (window.accessibilityController) {
     var table = accessibilityController.accessibleElementById("table");
-    shouldBeTrue("!table || !table.isValid");
+    output += expect("!table || !table.isValid", "true");
     document.getElementById("content").style.visibility = "hidden";
 }
 
+debug(output);
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
@@ -10,20 +10,19 @@
     <text id="text1">Hello World!</text>
 </svg>
 
-<div id="console"></div>
-
 <script>
-    description("This tests SVGText elements and their content are properly handled as static text.");
+var output = "This tests SVGText elements and their content are properly handled as static text.\n\n";
 
-    if (window.accessibilityController) {
-        text1 = accessibilityController.accessibleElementById("text1");
-        shouldBe("text1.role", "'AXRole: AXGroup'");
-        shouldBe("text1.childrenCount", "1");
-        staticText = text1.childAtIndex(0);
-        shouldBe("staticText.role", "'AXRole: AXStaticText'");
-        shouldBe("staticText.stringValue", "'AXValue: Hello World!'");
-    }
+if (window.accessibilityController) {
+    text1 = accessibilityController.accessibleElementById("text1");
+    output += expect("text1.role", "'AXRole: AXGroup'");
+    output += expect("text1.childrenCount", "1");
+    staticText = text1.childAtIndex(0);
+    output += expect("staticText.role", "'AXRole: AXStaticText'");
+    output += expect("staticText.stringValue", "'AXValue: Hello World!'");
+    
+    debug(output);
+}
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

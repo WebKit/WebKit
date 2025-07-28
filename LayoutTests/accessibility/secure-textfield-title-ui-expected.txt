@@ -1,4 +1,9 @@
-Password
+This test makes sure that a secure text field has the correct title ui element
 
 Test passed
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Password
 

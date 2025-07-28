@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 <body>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 
 <div id="myContainer" tabindex="-1">
   <a href="#">Link</a>
@@ -27,13 +28,10 @@
   <span tabindex="0" role="link">ARIA link</span>
 </canvas>
 
-<div id="console"></div>
 <script>
-description("This test makes sure that AccessibilityNodeObjects are created for elements in a canvas subtree.");
+var output = "This test makes sure that AccessibilityNodeObjects are created for elements in a canvas subtree.\n\n";
 
-if (window.testRunner && window.accessibilityController) {
-    window.testRunner.dumpAsText();
-
+if (window.accessibilityController) {
     function appendFocusableDescendants(axObject, axFocusableList) {
         for (var i = 0; i < axObject.childrenCount; i++) {
             var axChild = axObject.childAtIndex(i);
@@ -57,17 +55,17 @@ if (window.testRunner && window.accessibilityController) {
     appendFocusableDescendants(axContainer, axRenderObjects);
     appendFocusableDescendants(axCanvas, axNodeObjects);
 
-    shouldBe("axRenderObjects.length", "axNodeObjects.length");
+    output += expect("axRenderObjects.length", "axNodeObjects.length");
 
     for (var i = 0; i < axRenderObjects.length; i++) {
         var axRenderObject = axRenderObjects[i];
         var axNodeObject = axNodeObjects[i];
-        shouldBe("i == " + i + "; axRenderObject.role == axNodeObject.role", "true");
+        output += expect("i == " + i + "; axRenderObject.role == axNodeObject.role", "true");
     }
+    
+    debug(output);
 }
 
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1,4 +1,3 @@
-
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
@@ -16,46 +15,54 @@
 <input id="smallRange" max="10" min="0" type="range" value="5">
 
 <script>
-    description("This tests that decrement and increment alter a range type input element by five percent or one (whichever is larger) when no step is specified.");
+var output = "This tests that decrement and increment alter a range type input element by five percent or one (whichever is larger) when no step is specified.\n\n";
 
-    var smallRange, largeRange;
-    if (window.accessibilityController) {
-        window.jsTestIsAsync = true;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-        setTimeout(async function() {
-            largeRange = accessibilityController.accessibleElementById("largeRange");
-            shouldBe("largeRange.intValue", "50");
+    setTimeout(async function() {
+        largeRange = accessibilityController.accessibleElementById("largeRange");
+        output += expect("largeRange.intValue", "50");
 
-            largeRange.increment();
-            await expectAsyncExpression("largeRange.intValue", 55);
+        largeRange.increment();
+        await waitFor(() => largeRange.intValue == 55);
+        output += await expectAsync("largeRange.intValue", 55);
 
-            largeRange.increment();
-            await expectAsyncExpression("largeRange.intValue", 60);
+        largeRange.increment();
+        await waitFor(() => largeRange.intValue == 60);
+        output += await expectAsync("largeRange.intValue", 60);
 
-            largeRange.decrement();
-            await expectAsyncExpression("largeRange.intValue", 55);
+        largeRange.decrement();
+        await waitFor(() => largeRange.intValue == 55);
+        output += await expectAsync("largeRange.intValue", 55);
 
-            largeRange.decrement();
-            await expectAsyncExpression("largeRange.intValue", 50);
+        largeRange.decrement();
+        await waitFor(() => largeRange.intValue == 50);
+        output += await expectAsync("largeRange.intValue", 50);
 
-            smallRange = accessibilityController.accessibleElementById("smallRange");
-            shouldBe("smallRange.intValue", "5");
+        smallRange = accessibilityController.accessibleElementById("smallRange");
+        output += expect("smallRange.intValue", "5");
 
-            smallRange.increment();
-            await expectAsyncExpression("smallRange.intValue", 6);
+        smallRange.increment();
+        await waitFor(() => smallRange.intValue == 6);
+        output += await expectAsync("smallRange.intValue", 6);
 
-            smallRange.increment();
-            await expectAsyncExpression("smallRange.intValue", 7);
+        smallRange.increment();
+        await waitFor(() => smallRange.intValue == 7);
+        output += await expectAsync("smallRange.intValue", 7);
 
-            smallRange.decrement();
-            await expectAsyncExpression("smallRange.intValue", 6);
+        smallRange.decrement();
+        await waitFor(() => smallRange.intValue == 6);
+        output += await expectAsync("smallRange.intValue", 6);
 
-            smallRange.decrement();
-            await expectAsyncExpression("smallRange.intValue", 5);
+        smallRange.decrement();
+        await waitFor(() => smallRange.intValue == 5);
+        output += await expectAsync("smallRange.intValue", 5);
 
-            finishJSTest();
-        }, 0);
-    }
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
 </body>
 </html>

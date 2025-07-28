@@ -1,11 +1,3 @@
-No	Country	Capital
-1.	Poland	Warsaw
-2.	Russia	Moscow
-3.	Ukraine	Kiev
-All	3 countries	3 capitals
-
-
-
 This shows the hierarchy of table roles.
 
 role: AXRole: AXTable
@@ -84,7 +76,16 @@ role: AXRole: AXTable
             role: AXRole: AXStaticText
         role: AXRole: AXCell
             role: AXRole: AXStaticText
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
+No	Country	Capital
+1.	Poland	Warsaw
+2.	Russia	Moscow
+3.	Ukraine	Kiev
+All	3 countries	3 capitals
 
+
+
+This shows the hierarchy of table roles.

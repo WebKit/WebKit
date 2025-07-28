@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <head>
 <title>Image link in the presence of inline continuations</title>
-<script>
-if (window.testRunner)
-    testRunner.dumpAsText();
-</script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
 
@@ -27,6 +25,8 @@ if (window.testRunner)
 <pre id="result"></div>
 
 <script>
+var output = "This test checks that a block inside a link does not unduly disturb the render tree via inline continuations.\n\n";
+
 function axTree(elt)
 {
     var result = elt.allAttributes() + "\n\n";
@@ -38,20 +38,27 @@ function axTree(elt)
 }
 
 if (window.accessibilityController) {
-    var result = document.getElementById("result");
-    document.getElementById("plain").focus();
-    var plainResult = axTree(accessibilityController.focusedElement);
-    plainResult.replace(/AXSize.*\n/g, "");
+    window.jsTestIsAsync = true;
+    
+    setTimeout(function() {
+        document.getElementById("plain").focus();
+        var plainResult = axTree(accessibilityController.focusedElement);
+        plainResult = plainResult.replace(/AXSize.*\n/g, "");
 
-    document.getElementById("with-div").focus();
-    var withDivResult = axTree(accessibilityController.focusedElement);
-    withDivResult.replace(/AXSize.*\n/g, "");
+        document.getElementById("with-div").focus();
+        var withDivResult = axTree(accessibilityController.focusedElement);
+        withDivResult = withDivResult.replace(/AXSize.*\n/g, "");
 
-    if (plainResult == withDivResult) {
-        result.innerHTML = "PASS: accessibility trees were identical other than size."
-    } else {
-        result.innerHTML = "FAIL: accessibility trees differ.\nPlain image link: \n" + plainResult + "\nWith presentation div:\n" + withDivResult;
-    }
+        if (plainResult == withDivResult) {
+            output += "PASS: accessibility trees were identical other than size.";
+        } else {
+            output += "FAIL: accessibility trees differ.\nPlain image link: \n" + plainResult + "\nWith presentation div:\n" + withDivResult;
+        }
+        
+        debug(output);
+        finishJSTest();
+    }, 0);
 }
 </script>
 </body>
+</html>

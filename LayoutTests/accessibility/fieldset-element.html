@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
 <title>Fieldset Element</title>
 </head>
@@ -65,13 +65,14 @@ Name: <input type="text">
 <!-- legend outside fieldset. -->
 <legend id="l0">Other:</legend>
 </div>
-<p id="description"></p>
-<div id="console"></div>
 
 <script>
-    description("This tests that fieldset and legend elements are exposed correctly.");
-    
-    if (window.accessibilityController) {
+var output = "This tests that fieldset and legend elements are exposed correctly.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(function() {
         var fieldsetDescription = 0;
         var fieldsetTestCount = 0;
         var legendValue = 0;
@@ -80,19 +81,21 @@ Name: <input type="text">
         fieldsetTestCount = document.getElementsByClassName("fieldsetTest").length;
         for (var i = 0; i < fieldsetTestCount; ++i) {
             var accName = platformValueForW3CName(accessibilityController.accessibleElementById("f" + i));
-            debug("element id 'f" + i + "': " +  accName);
+            output += "element id 'f" + i + "': " + accName + "\n";
         }
 
         // legend tests.
         var legend = accessibilityController.accessibleElementById("l0");
         if (legend.childrenCount)
             legend = legend.childAtIndex(0);
-        debug("element id 'l0': " + legend.stringValue);
+        output += "element id 'l0': " + legend.stringValue + "\n";
 
         document.getElementById("content").style.visibility = "hidden";
-    }
+        
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

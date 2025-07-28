@@ -1,3 +1,7 @@
-Click
+This test checks that ARIA links support the press action.
 
 SUCCESS! This test passes because the ARIA link above supports the press action.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click

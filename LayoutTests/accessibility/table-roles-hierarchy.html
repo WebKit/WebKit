@@ -1,7 +1,10 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
   <script src="../resources/js-test.js"></script>
+  <script src="../resources/accessibility-helper.js"></script>
   <script>
+    var output = "This shows the hierarchy of table roles.\n\n";
     var tableAXObject;
     var indentLevel = 0;
 
@@ -11,8 +14,9 @@
     }
 
     function dumpObject(axObject) {
-      debug(indent(indentLevel) + "role: " + axObject.role);
-      if (axObject.subrole && axObject.subrole != 'AXSubrole: ') debug(indent(indentLevel) + "subrole: " + axObject.subrole);
+      output += indent(indentLevel) + "role: " + axObject.role + "\n";
+      if (axObject.subrole && axObject.subrole != 'AXSubrole: ')
+        output += indent(indentLevel) + "subrole: " + axObject.subrole + "\n";
     }
 
     function dumpChildren(axObject) {
@@ -32,14 +36,14 @@
       }
       indentLevel -= 4;
     }
-    function dumpTableAX()
-    {
-      if (!window.accessibilityController)
-        return;
-      var table = accessibilityController.accessibleElementById("table1");
-
-      dumpObject(table);
-      dumpChildren(table);
+    
+    function dumpTableAX() {
+      if (window.accessibilityController) {
+        var table = accessibilityController.accessibleElementById("table1");
+        dumpObject(table);
+        dumpChildren(table);
+        debug(output);
+      }
     }
   </script>
 </head>
@@ -84,8 +88,6 @@
 <br>
 
 <p>This shows the hierarchy of table roles.</p>
-
-<div id=console></div>
 
 </body>
 </html>

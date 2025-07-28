@@ -1,11 +1,8 @@
 <!DOCTYPE html>
 <html>
-<script>
-
-    if (window.testRunner)
-        testRunner.dumpAsText();
-</script>
 <head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 <style>
     ol {
         display: -webkit-box;
@@ -36,18 +33,17 @@
     </div>
   </div>
 
-    <BR><BR><BR><hr><BR>
-    <div id="result"></div>    
-
     <script>
+        var output = "";
+        
         if (window.accessibilityController) {
-            var result = document.getElementById("result");
-
             var olListElement = window.accessibilityController.accessibleElementById("test 1");
-            result.innerText += 'il in ol role: ' + olListElement.role + "\n\n";
+            output += 'il in ol role: ' + olListElement.role + "\n\n";
 
             var ulListElement = window.accessibilityController.accessibleElementById("test a");
-            result.innerText += 'il in ul role: ' + ulListElement.role + "\n\n";
+            output += 'il in ul role: ' + ulListElement.role + "\n\n";
+            
+            debug(output);
         }
     </script>
 </body>

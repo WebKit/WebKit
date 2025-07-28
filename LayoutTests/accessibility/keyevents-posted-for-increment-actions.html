@@ -1,6 +1,8 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -12,21 +14,20 @@
            aria-valuemax="255"
            aria-labelledby="idRed"></div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-    description("This test verifies that the increment/decrement actions post keyboard events that are correct for LTR and orientation.");
+    var output = "This test verifies that the increment/decrement actions post keyboard events that are correct for LTR and orientation.\n\n";
 
     var keyCount = 0;
     function handleKeyDown(event) {
-        debug("Keycode received: identifier: " + event.keyIdentifier + " key name: " + event.key + " key code: " + event.keyCode);
+        output += "Keycode received: identifier: " + event.keyIdentifier + " key name: " + event.key + " key code: " + event.keyCode + "\n";
         event.preventDefault();
         event.stopPropagation();
 
         keyCount++;
-        if (keyCount == 8)
+        if (keyCount == 8) {
+            debug(output);
             finishJSTest();
+        }
     }
 
     if (window.accessibilityController) {
@@ -37,26 +38,25 @@
         // Get the parent element.
         var axSlider = accessibilityController.accessibleElementById("slider");
 
-        debug("Increment/Decrement - LTR");
+        output += "Increment/Decrement - LTR\n";
         incrementDecrement();
 
-        debug("Increment/Decrement - RTL");
+        output += "Increment/Decrement - RTL\n";
         window.internals.setUserInterfaceLayoutDirection("RTL");
         incrementDecrement();
 
         function incrementDecrement() {
-            debug("Horizontal orientation");
+            output += "Horizontal orientation\n";
             document.getElementById("slider").setAttribute("aria-orientation", "horizontal");
             axSlider.increment();
             axSlider.decrement();
 
-            debug("Vertical orientation");
+            output += "Vertical orientation\n";
             document.getElementById("slider").setAttribute("aria-orientation", "vertical");
             axSlider.increment();
             axSlider.decrement();
         }
     }
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

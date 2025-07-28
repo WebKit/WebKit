@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body" onload="setTimeout('runTest()', 0);">
 
@@ -11,19 +12,17 @@
     </a>
 </h1>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
 
-jsTestIsAsync = true;
+window.jsTestIsAsync = true;
 
 function runTest() {
-    description("This tests that the title of a heading will include links if available.");
+    var output = "This tests that the title of a heading will include links if available.\n\n";
 
     if (window.accessibilityController)
-        debug("Heading title: " + accessibilityController.accessibleElementById("heading").title);
+        output += "Heading title: " + accessibilityController.accessibleElementById("heading").title;
 
+    debug(output);
     finishJSTest();
 }
 

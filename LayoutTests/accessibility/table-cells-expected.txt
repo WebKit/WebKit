@@ -1,49 +1,39 @@
-Example #1: Nested Stubs
-Ruritanian
-Population
-Survey	All
-Genders	By Gender
-Males	Females
-All Regions	North	3333	1111	2222
-South	3333	1111	2222
-South	3333	1111	2222
-South	3333	1111	2222
 ------------------------
 [0,0]
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
-AXChildren: <array of size 3>
-AXChildrenInNavigationOrder: <array of size 3>
+AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
-AXParent: <AXCell>
+AXParent:
 AXSize: NSSize: {145, 66}
 AXTitle:
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXCell>
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXCell>
-AXEndTextMarker: <AXCell>
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: <array of size 0>
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXCell>
+AXTopLevelUIElement:
 AXLanguage:
 AXDOMIdentifier:
-AXDOMClassList: <array of size 1>
-AXFocusableAncestor: <AXCell>
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 28}
 AXElementBusy: 0
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
-AXColumnHeaderUIElements: <array of size 0>
-AXRowHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements:
+AXRowHeaderUIElements:
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXRequired: 0
@@ -54,37 +44,37 @@ AXSortDirection: AXUnknownSortDirection
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
-AXChildren: <array of size 1>
-AXChildrenInNavigationOrder: <array of size 1>
+AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
-AXParent: <AXCell>
+AXParent:
 AXSize: NSSize: {54, 36}
 AXTitle:
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXCell>
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXCell>
-AXEndTextMarker: <AXCell>
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: <array of size 0>
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXCell>
+AXTopLevelUIElement:
 AXLanguage:
 AXDOMIdentifier:
-AXDOMClassList: <array of size 1>
-AXFocusableAncestor: <AXCell>
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 5}
 AXElementBusy: 0
 AXRowIndexRange: NSRange: {1, 1}
 AXColumnIndexRange: NSRange: {3, 1}
-AXColumnHeaderUIElements: <array of size 1>
-AXRowHeaderUIElements: <array of size 1>
+AXColumnHeaderUIElements:
+AXRowHeaderUIElements:
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXRequired: 0
@@ -94,37 +84,37 @@ AXRequired: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
-AXChildren: <array of size 3>
-AXChildrenInNavigationOrder: <array of size 3>
+AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
-AXParent: <AXCell>
+AXParent:
 AXSize: NSSize: {145, 66}
 AXTitle:
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXCell>
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXCell>
-AXEndTextMarker: <AXCell>
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: <array of size 0>
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXCell>
+AXTopLevelUIElement:
 AXLanguage:
 AXDOMIdentifier:
-AXDOMClassList: <array of size 1>
-AXFocusableAncestor: <AXCell>
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 28}
 AXElementBusy: 0
 AXRowIndexRange: NSRange: {0, 2}
 AXColumnIndexRange: NSRange: {0, 2}
-AXColumnHeaderUIElements: <array of size 0>
-AXRowHeaderUIElements: <array of size 0>
+AXColumnHeaderUIElements:
+AXRowHeaderUIElements:
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXRequired: 0
@@ -135,37 +125,37 @@ AXSortDirection: AXUnknownSortDirection
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
-AXChildren: <array of size 1>
-AXChildrenInNavigationOrder: <array of size 1>
+AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
-AXParent: <AXCell>
+AXParent:
 AXSize: NSSize: {71, 30}
 AXTitle:
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXCell>
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXCell>
-AXEndTextMarker: <AXCell>
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: <array of size 0>
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXCell>
+AXTopLevelUIElement:
 AXLanguage:
 AXDOMIdentifier:
-AXDOMClassList: <array of size 0>
-AXFocusableAncestor: <AXCell>
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 4}
 AXElementBusy: 0
 AXRowIndexRange: NSRange: {2, 1}
 AXColumnIndexRange: NSRange: {2, 1}
-AXColumnHeaderUIElements: <array of size 1>
-AXRowHeaderUIElements: <array of size 1>
+AXColumnHeaderUIElements:
+AXRowHeaderUIElements:
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXRequired: 0
@@ -175,37 +165,37 @@ AXRequired: 0
 AXRole: AXCell
 AXSubrole: (null)
 AXRoleDescription: cell
-AXChildren: <array of size 1>
-AXChildrenInNavigationOrder: <array of size 1>
+AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
-AXParent: <AXCell>
+AXParent:
 AXSize: NSSize: {54, 30}
 AXTitle:
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXCell>
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXCell>
-AXEndTextMarker: <AXCell>
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: <array of size 0>
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXCell>
+AXTopLevelUIElement:
 AXLanguage:
 AXDOMIdentifier:
-AXDOMClassList: <array of size 0>
-AXFocusableAncestor: <AXCell>
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXVisibleCharacterRange: NSRange: {0, 4}
 AXElementBusy: 0
 AXRowIndexRange: NSRange: {5, 1}
 AXColumnIndexRange: NSRange: {3, 1}
-AXColumnHeaderUIElements: <array of size 1>
-AXRowHeaderUIElements: <array of size 1>
+AXColumnHeaderUIElements:
+AXRowHeaderUIElements:
 AXARIAColumnIndex: -1
 AXARIARowIndex: -1
 AXRequired: 0
@@ -217,3 +207,16 @@ AXRequired: 0
 [0,100]
 
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Example #1: Nested Stubs
+Ruritanian
+Population
+Survey	All
+Genders	By Gender
+Males	Females
+All Regions	North	3333	1111	2222
+South	3333	1111	2222
+South	3333	1111	2222
+South	3333	1111	2222

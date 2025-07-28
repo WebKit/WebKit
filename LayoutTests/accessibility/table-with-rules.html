@@ -1,8 +1,9 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-<script>
-    if (window.testRunner)
-        testRunner.dumpAsText();
-</script>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
 <body id="body">
         
     <table id="testTable1" rules="rows"><tr><td>asdf</td><td>asdf</td></tr></table>
@@ -11,22 +12,26 @@
     <table id="testTable4" rules="groups"><tr><td>asdf</td><td>asdf</td></tr></table>
     <table id="testTable5"><tr><td>asdf</td><td>asdf</td></tr></table>
     
-    <BR>------------------------------------<BR>
-    
-    <div id="result"></div>
- 
     <script>
+        var output = "";
+        
         if (window.accessibilityController) {
-            var result = document.getElementById("result");
-            var body = document.getElementById("body");
-            body.focus();
+            window.jsTestIsAsync = true;
             
-            // these should be the tables. in this order
-            // the last two tables should not show up as tables
-            for (var k = 1; k < 6; k++) {
-                var table = accessibilityController.focusedElement.childAtIndex(k);
-                result.innerText += table.allAttributes() + "\n\n"; 
-            }
+            setTimeout(function() {
+                var body = document.getElementById("body");
+                body.focus();
+                
+                // these should be the tables. in this order
+                // the last two tables should not show up as tables
+                for (var k = 1; k < 6; k++) {
+                    var table = accessibilityController.focusedElement.childAtIndex(k);
+                    output += table.allAttributes() + "\n\n"; 
+                }
+                
+                debug(output);
+                finishJSTest();
+            }, 0);
         }
     </script>
 </body>

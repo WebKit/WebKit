@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -9,24 +10,18 @@
 <a href="#">Link</a> and text
 </h3>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+var output = "This tests that the aria 'presentation' role works by successfully removing the element from the AX tree.\n\n";
 
-    description("This tests that the aria 'presentation' role works by successfully removing the element from the AX tree.");
+if (window.accessibilityController) {
+    var body = document.getElementById("body");
+    body.focus();
 
-    if (window.accessibilityController) {
-
-          var body = document.getElementById("body");
-          body.focus();
-
-          var firstChild = accessibilityController.focusedElement.childAtIndex(0);
-          debug("firstChild.role is " + firstChild.role);
-    }
-
+    var firstChild = accessibilityController.focusedElement.childAtIndex(0);
+    output += "firstChild.role is " + firstChild.role;
+    
+    debug(output);
+}
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

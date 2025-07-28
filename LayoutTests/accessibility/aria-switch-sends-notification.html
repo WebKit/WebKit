@@ -1,30 +1,36 @@
 <html>
 <head>
 <script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 <script>
     function runTest() {
-        jsTestIsAsync = true;
+        if (window.accessibilityController) {
+            window.jsTestIsAsync = true;
 
-        description("This tests that toggling an aria switch sends a notification.");
+            var output = "This tests that toggling an aria switch sends a notification.\n\n";
+            var notificationLog = "";
+            
+            var widget = accessibilityController.accessibleElementById("switch");
+            var notificationCount = 0;
 
-        var widget = accessibilityController.accessibleElementById("switch");
-        var notificationCount = 0;
+            function listener(notification) {
+                if (notification == "CheckedStateChanged")
+                    notificationCount++;
 
-        function listener(notification) {
-            if (notification == "CheckedStateChanged")
-                notificationCount++;
+                notificationLog += "Got notification: " + notification + "\n";
 
-            document.getElementById("console").innerText += "Got notification: " + notification + "\n";
-
-            if (notificationCount == 2) {
-                widget.removeNotificationListener(listener);
-                finishJSTest();
+                if (notificationCount == 2) {
+                    widget.removeNotificationListener(listener);
+                    output += notificationLog;
+                    debug(output);
+                    finishJSTest();
+                }
             }
-        }
-        widget.addNotificationListener(listener);
+            widget.addNotificationListener(listener);
 
-        document.getElementById('switch').setAttribute('aria-checked', 'true');
-        document.getElementById('switch').setAttribute('aria-checked', 'false');
+            document.getElementById('switch').setAttribute('aria-checked', 'true');
+            document.getElementById('switch').setAttribute('aria-checked', 'false');
+        }
     };
 </script>
 </head>
@@ -32,7 +38,5 @@
 
 <div id="switch" role="switch" aria-checked="false">Test Switch</div>
 
-<p id="description"></p>
-<div id="console"></div>
 </body>
 </html>

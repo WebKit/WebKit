@@ -1,6 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 <script>
 
 function removeElement() {
@@ -8,7 +10,6 @@ function removeElement() {
 }
 
 </script>
-<script src="../resources/js-test-pre.js"></script>
 </head>
 <body>
 
@@ -18,28 +19,23 @@ function removeElement() {
 asdfasdf
 </a>
 
-
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
 
-    description("When you have elements that are continuations, and one of those elements is removed, the parent chain is not being updated accordingly. This can cause a crash.");
+var output = "When you have elements that are continuations, and one of those elements is removed, the parent chain is not being updated accordingly. This can cause a crash.\n\n";
 
-    if (window.accessibilityController) {
+if (window.accessibilityController) {
+    document.getElementById("link").focus();
+    var link = accessibilityController.focusedElement;
+    link.attributesOfChildren();
 
-        document.getElementById("link").focus();
-        var link = accessibilityController.focusedElement;
-        link.attributesOfChildren();
+    removeElement();
 
-        removeElement();
+    // should not cause a crash...
+    link.attributesOfChildren();
+}
 
-        // should not cause a crash...
-        link.attributesOfChildren();
-    }
+debug(output);
 
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

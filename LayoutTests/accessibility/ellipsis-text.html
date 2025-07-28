@@ -1,7 +1,8 @@
 <html>
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
  
@@ -10,13 +11,10 @@ text
 <div id="text-noellipsis" tabindex="0" style="width:50px; white-space: nowrap;" class="name">My Writing Nook for iPad. More text, more text, more text.</div>
 text
 
-    <p id="description"></p>
-    <div id="console"></div>
-     
     <script>
-        if (window.accessibilityController) {
-            description("This test makes sure that the bounds of text that overflows with ellipsis is correct (shortened to the ellipsis that is).");
+        var output = "This test makes sure that the bounds of text that overflows with ellipsis is correct (shortened to the ellipsis that is).\n\n";
 
+        if (window.accessibilityController) {
             // The width of the ellipsis text should be short.
             var textContainer = accessibilityController.accessibleElementById("text-ellipsis");
             var textNode = textContainer.childrenCount ? textContainer.childAtIndex(0) : textContainer;
@@ -27,10 +25,10 @@ text
             textNode = textContainer.childrenCount ? textContainer.childAtIndex(0) : textContainer;
             var fullWidth = textNode.width;
 
-            shouldBeTrue("clippedWidth < fullWidth");
+            output += expect("clippedWidth < fullWidth", "true");
+            debug(output);
         }
     </script>
 
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

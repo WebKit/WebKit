@@ -1,2 +1,7 @@
+This tests that there is no crash when handling elements with visibility: collapse and accessibility.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
 PASS if no crash.
 

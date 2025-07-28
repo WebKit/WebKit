@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -18,36 +19,34 @@
 </table>
 
 </div>
-<p id="description"></p>
-<div id="console"></div>
 <script>
 
-    description("This tests that if a table cell uses display:block, the table cell will still be accessible");
+var output = "This tests that if a table cell uses display:block, the table cell will still be accessible\n\n";
 
-    if (window.accessibilityController) {
-        var table = accessibilityController.accessibleElementById("table1");
-        var cell1a = table.cellForColumnAndRow(0, 0);
-        var cell1b = table.childAtIndex(0).childAtIndex(0);
+if (window.accessibilityController) {
+    var table = accessibilityController.accessibleElementById("table1");
+    var cell1a = table.cellForColumnAndRow(0, 0);
+    var cell1b = table.childAtIndex(0).childAtIndex(0);
 
-        shouldBeTrue("cell1a.isEqual(cell1b)");
-        shouldBe("cell1a.role", "'AXRole: AXCell'");
-        
-        var domCell1 = document.getElementById("cell1");
-        shouldBe("domCell1.style.display", "'block'");
+    output += expect("cell1a.isEqual(cell1b)", "true");
+    output += expect("cell1a.role", "'AXRole: AXCell'");
+    
+    var domCell1 = document.getElementById("cell1");
+    output += expect("domCell1.style.display", "'block'");
 
-        // Now check a table that uses a different role to make sure we don't have any cell roles.
-        var table2 = accessibilityController.accessibleElementById("table2");
-        shouldBe("table2.role", "'AXRole: AXGroup'");
-        var cell2 = table2.childAtIndex(0);
-        if (accessibilityController.platformName === "atspi")
-            cell2 = table2.childAtIndex(0).childAtIndex(0);
-        shouldBeFalse("cell2.role == 'AXRole: AXCell'");
+    // Now check a table that uses a different role to make sure we don't have any cell roles.
+    var table2 = accessibilityController.accessibleElementById("table2");
+    output += expect("table2.role", "'AXRole: AXGroup'");
+    var cell2 = table2.childAtIndex(0);
+    if (accessibilityController.platformName === "atspi")
+        cell2 = table2.childAtIndex(0).childAtIndex(0);
+    output += expect("cell2.role == 'AXRole: AXCell'", "false");
 
-        document.getElementById("content").style.visibility = "hidden";
-    }
+    document.getElementById("content").style.visibility = "hidden";
+    
+    debug(output);
+}
 
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

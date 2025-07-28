@@ -1,34 +1,31 @@
-Image link in the presence of inline continuations
-
 This test checks that the right accessibility tree is generated for a link inside an image
-
 
 AXRole: AXLink
 AXSubrole: (null)
 AXRoleDescription: link
-AXChildren: <array of size 1>
-AXChildrenInNavigationOrder: <array of size 1>
+AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
-AXParent: <AXLink: 'Delicious cake'>
+AXParent:
 AXSize: NSSize: {280, 215}
 AXTitle: Delicious cake
 AXDescription:
 AXValue:
 AXFocused: 1
 AXEnabled: 1
-AXWindow: <AXLink: 'Delicious cake'>
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXLink: 'Delicious cake'>
-AXEndTextMarker: <AXLink: 'Delicious cake'>
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: <array of size 0>
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXLink: 'Delicious cake'>
+AXTopLevelUIElement:
 AXLanguage:
 AXDOMIdentifier: test
-AXDOMClassList: <array of size 0>
-AXFocusableAncestor: <AXLink: 'Delicious cake'>
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXElementBusy: 0
@@ -41,36 +38,44 @@ Child 0:
 AXRole: AXImage
 AXSubrole: (null)
 AXRoleDescription: image
-AXChildren: <array of size 0>
-AXChildrenInNavigationOrder: <array of size 0>
+AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
-AXParent: <AXImage>
+AXParent:
 AXSize: NSSize: {280, 210}
 AXTitle:
 AXDescription: Delicious cake
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXImage>
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXImage>
-AXEndTextMarker: <AXImage>
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: <array of size 0>
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXImage>
+AXTopLevelUIElement:
 AXLanguage:
 AXDOMIdentifier:
-AXDOMClassList: <array of size 0>
-AXFocusableAncestor: <AXImage>
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXVisibleCharacterRange: NSRange: {0, 0}
+AXVisibleCharacterRange: NSRange: {0, 1}
 AXElementBusy: 0
 AXImageOverlayElements: (null)
 AXEmbeddedImageDescription:
 AXURL: LayoutTests/accessibility/resources/cake.png
 
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Image link in the presence of inline continuations
+
+This test checks that the right accessibility tree is generated for a link inside an image
 
 

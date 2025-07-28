@@ -1,28 +1,28 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"> 
-<html> 
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
 <head>
-<script src="../resources/js-test-pre.js"></script> 
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
-</head> 
-<body> 
- 
-<a><div></div></a>
+</head>
+<body>
 
 <a><div></div></a>
 
-<a href="about:blank"><div></div></a> 
+<a><div></div></a>
+
+<a href="about:blank"><div></div></a>
 
 <div id="stopElement">End of test</div>
 
 <pre id="tree"></pre>
- 
-<p id="description"></p> 
-<div id="console"></div> 
- 
-<script> 
-    description("This can cause a crash.");
- 
-    if (window.accessibilityController) {
+
+<script>
+var output = "This can cause a crash.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    
+    setTimeout(function() {
         // First build up full accessibility tree.
         window.stopElement = accessibilityController.accessibleElementById("stopElement");
 
@@ -37,10 +37,12 @@
         document.getElementById("tree").innerText += "After:\n";
         document.body.focus();
         dumpAccessibilityTree(accessibilityController.focusedElement, stopElement, 0);
-    }
- 
-</script> 
- 
-<script src="../resources/js-test-post.js"></script> 
-</body> 
-</html> 
+        
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+
+</body>
+</html>

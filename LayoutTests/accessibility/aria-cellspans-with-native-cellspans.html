@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 <div id="content">
@@ -30,29 +31,29 @@
 </div>
 
 <script>
-    description("This verifies that ARIA cell spans are ignored when native cell spans are set.");
+var output = "This verifies that ARIA cell spans are ignored when native cell spans are set.\n\n";
 
-    function span(rangeString) {
-        return rangeString.split(/\D/).filter(function(x){ return x != ""; })[1];
-    }
+function span(rangeString) {
+    return rangeString.split(/\D/).filter(function(x){ return x != ""; })[1];
+}
 
-    function outputSpans(id) {
-        var axElement = accessibilityController.accessibleElementById(id);
-        var rowSpan = span(axElement.rowIndexRange());
-        var columnSpan = span(axElement.columnIndexRange());
-        debug(id + " spans " + rowSpan + " row(s) and " + columnSpan + " column(s).");
-    }
+function outputSpans(id) {
+    var axElement = accessibilityController.accessibleElementById(id);
+    var rowSpan = span(axElement.rowIndexRange());
+    var columnSpan = span(axElement.columnIndexRange());
+    output += id + " spans " + rowSpan + " row(s) and " + columnSpan + " column(s).\n";
+}
 
-    if (window.accessibilityController) {
-        ids = ["columnheader1", "columnheader2", "columnheader3", "cell1", "cell2", "cell3"];
-        idCount = ids.length;
-        for (var i = 0; i < idCount; i++)
-            outputSpans(ids[i]);
+if (window.accessibilityController) {
+    ids = ["columnheader1", "columnheader2", "columnheader3", "cell1", "cell2", "cell3"];
+    idCount = ids.length;
+    for (var i = 0; i < idCount; i++)
+        outputSpans(ids[i]);
 
-        document.getElementById("content").style.visibility = "hidden";
-    }
+    document.getElementById("content").style.visibility = "hidden";
+    
+    debug(output);
+}
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1,6 +1,8 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
 <script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 <script>
     jsTestIsAsync = true;
 
@@ -11,11 +13,14 @@
     }
 
     function runTest() {
-        description("This tests that having an anonymous render block in a continuation doesn't cause a crash when walking the accessibility tree.");
+        var output = "This tests that having an anonymous render block in a continuation doesn't cause a crash when walking the accessibility tree.";
 
-        window.root = accessibilityController.rootElement;
-        walkAccessibilityTree(root);
+        if (window.accessibilityController) {
+            window.root = accessibilityController.rootElement;
+            walkAccessibilityTree(root);
+        }
 
+        debug(output);
         finishJSTest();
     }
 
@@ -31,9 +36,6 @@
 <li><span>x<ul><li>y</ul></span>z</li>
 
 End of test.
-
-<p id="description"></p>
-<div id="console"></div>
 
 </body>
 </html>

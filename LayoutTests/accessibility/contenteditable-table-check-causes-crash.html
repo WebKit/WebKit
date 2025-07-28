@@ -1,12 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
 <body>
 
 <script>
-  description("Ensures that this snippet does not lead to a crash in the code that detects if a table is contenteditable. Bug 87409.");
+var output = "Ensures that this snippet does not lead to a crash in the code that detects if a table is contenteditable. Bug 87409.";
 </script>
 
 <style>
@@ -19,11 +19,9 @@ function crash() {
   document.documentElement.appendChild(node);
 }
 window.onload = crash;
+
+debug(output);
 </script>
 
-<p id="description"></p>
-<div id="console"></div>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

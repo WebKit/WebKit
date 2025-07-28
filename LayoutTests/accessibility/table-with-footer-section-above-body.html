@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -36,50 +37,45 @@
 
 </div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+var output = "This tests that the row span information for the cells in the body is not offset by the footer section, even though the footer section is above the body in the DOM. This tests tables that have a role=grid and without.\n\n";
 
-    description("This tests that the row span information for the cells in the body is not offset by the footer section, even though the footer section is above the body in the DOM. This tests tables that have a role=grid and without.");
+if (window.accessibilityController) {
+    var table = accessibilityController.accessibleElementById("table1");
+    var testCell = table.cellForColumnAndRow(0, 1);
+    if (accessibilityController.platformName != "atspi")
+        output += "Table1 cell content at {0, 1}: " + testCell.childAtIndex(0).stringValue + "\n";
+    else
+        output += "Table1 cell content at {0, 1}: " + testCell.stringValue + "\n";
+    output += "Table1 cell range at {0, 1}: " + testCell.rowIndexRange() + "\n\n";
 
-    if (window.accessibilityController) {
-     
-        var table = accessibilityController.accessibleElementById("table1");
-        var testCell = table.cellForColumnAndRow(0, 1);
-        if (accessibilityController.platformName != "atspi")
-            debug("Table1 cell content at {0, 1}: " + testCell.childAtIndex(0).stringValue);
-        else
-            debug("Table1 cell content at {0, 1}: " + testCell.stringValue);
-        debug("Table1 cell range at {0, 1}: " + testCell.rowIndexRange());
+    testCell = table.cellForColumnAndRow(0, 2);
+    if (accessibilityController.platformName != "atspi")
+        output += "Table1 cell content at {0, 2}: " + testCell.childAtIndex(0).stringValue + "\n";
+    else
+        output += "Table1 cell content at {0, 2}: " + testCell.stringValue + "\n";
+    output += "Table1 cell range at {0, 2}: " + testCell.rowIndexRange() + "\n\n";
 
-        testCell = table.cellForColumnAndRow(0, 2);
-        if (accessibilityController.platformName != "atspi")
-            debug("Table1 cell content at {0, 2}: " + testCell.childAtIndex(0).stringValue);
-        else
-            debug("Table1 cell content at {0, 2}: " + testCell.stringValue);
-        debug("Table1 cell range at {0, 2}: " + testCell.rowIndexRange());
+    table = accessibilityController.accessibleElementById("table2");
+    testCell = table.cellForColumnAndRow(0, 1);
+    if (accessibilityController.platformName != "atspi")
+        output += "Table2 cell content at {0, 1}: " + testCell.childAtIndex(0).stringValue + "\n";
+    else
+        output += "Table2 cell content at {0, 1}: " + testCell.stringValue + "\n";
+    output += "Table2 cell range at {0, 1}: " + testCell.rowIndexRange() + "\n\n";
 
-        table = accessibilityController.accessibleElementById("table2");
-        testCell = table.cellForColumnAndRow(0, 1);
-        if (accessibilityController.platformName != "atspi")
-            debug("Table2 cell content at {0, 1}: " + testCell.childAtIndex(0).stringValue);
-        else
-            debug("Table2 cell content at {0, 1}: " + testCell.stringValue);
-        debug("Table2 cell range at {0, 1}: " + testCell.rowIndexRange());
+    testCell = table.cellForColumnAndRow(0, 2);
+    if (accessibilityController.platformName != "atspi")
+        output += "Table2 cell content at {0, 2}: " + testCell.childAtIndex(0).stringValue + "\n";
+    else
+        output += "Table2 cell content at {0, 2}: " + testCell.stringValue + "\n";
+    output += "Table2 cell range at {0, 2}: " + testCell.rowIndexRange() + "\n";
 
-        testCell = table.cellForColumnAndRow(0, 2);
-        if (accessibilityController.platformName != "atspi")
-            debug("Table2 cell content at {0, 2}: " + testCell.childAtIndex(0).stringValue);
-        else
-            debug("Table2 cell content at {0, 2}: " + testCell.stringValue);
-        debug("Table2 cell range at {0, 2}: " + testCell.rowIndexRange());
-
-        document.getElementById("content").style.visibility = "hidden";
-    }
-
+    document.getElementById("content").style.visibility = "hidden";
+    
+    debug(output);
+}
 </script>
 
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
@@ -14,18 +14,18 @@
 <tr><td>cell1</td><td>cell2</td><td>cell3</td></tr>
 </table>
 
-<p id="description"></p>
-<div id="console"></div>
 <script>
-    description("This tests confirms even when a th tag is hidden, it will still be returned as a column header (unless it is hidden).");
-    if (window.accessibilityController) {
-        var table = accessibilityController.accessibleElementById("table");
-        var colHeaders = table.columnHeaders();
-        shouldBe("colHeaders.length", "2");
-        shouldBe("colHeaders[0].childAtIndex(0).stringValue", "'AXValue: header 1'");
-        shouldBe("colHeaders[1].childAtIndex(0).stringValue", "'AXValue: header 3'");
-    }
+var output = "This tests confirms even when a th tag is hidden, it will still be returned as a column header (unless it is hidden).\n\n";
+
+if (window.accessibilityController) {
+    var table = accessibilityController.accessibleElementById("table");
+    var colHeaders = table.columnHeaders();
+    output += expect("colHeaders.length", "2");
+    output += expect("colHeaders[0].childAtIndex(0).stringValue", "'AXValue: header 1'");
+    output += expect("colHeaders[1].childAtIndex(0).stringValue", "'AXValue: header 3'");
+    
+    debug(output);
+}
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

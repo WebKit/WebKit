@@ -1,52 +1,45 @@
-asdf	asdf
-asdf	asdf
-asdf	asdf
-asdf	asdf
-asdf	asdf
-
-------------------------------------
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
-AXChildren: <array of size 4>
-AXChildrenInNavigationOrder: <array of size 4>
+AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
-AXParent: <AXTable>
+AXParent:
 AXSize: NSSize: {58, 20}
 AXTitle:
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXTable>
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXTable>
-AXEndTextMarker: <AXTable>
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: <array of size 0>
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXTable>
+AXTopLevelUIElement:
 AXLanguage:
 AXDOMIdentifier: testTable2
-AXDOMClassList: <array of size 0>
-AXFocusableAncestor: <AXTable>
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXElementBusy: 0
-AXRows: <array of size 1>
-AXVisibleRows: <array of size 1>
-AXColumns: <array of size 2>
-AXVisibleColumns: <array of size 2>
-AXVisibleCells: <array of size 2>
-AXColumnHeaderUIElements: <array of size 0>
-AXRowHeaderUIElements: <array of size 0>
-AXHeader: <AXTable>
+AXRows:
+AXVisibleRows:
+AXColumns:
+AXVisibleColumns:
+AXVisibleCells:
+AXColumnHeaderUIElements:
+AXRowHeaderUIElements:
+AXHeader:
 AXColumnCount: 2
 AXRowCount: 1
 AXARIAColumnCount: 0
 AXARIARowCount: 0
-AXSelectedCells: <array of size 0>
+AXSelectedCells:
 AXSelectedChildren: (null)
 AXTableLevel: 1
 
@@ -54,45 +47,45 @@ AXTableLevel: 1
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
-AXChildren: <array of size 4>
-AXChildrenInNavigationOrder: <array of size 4>
+AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
-AXParent: <AXTable>
+AXParent:
 AXSize: NSSize: {63, 24}
 AXTitle:
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXTable>
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXTable>
-AXEndTextMarker: <AXTable>
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: <array of size 0>
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXTable>
+AXTopLevelUIElement:
 AXLanguage:
 AXDOMIdentifier: testTable3
-AXDOMClassList: <array of size 0>
-AXFocusableAncestor: <AXTable>
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXElementBusy: 0
-AXRows: <array of size 1>
-AXVisibleRows: <array of size 1>
-AXColumns: <array of size 2>
-AXVisibleColumns: <array of size 2>
-AXVisibleCells: <array of size 2>
-AXColumnHeaderUIElements: <array of size 0>
-AXRowHeaderUIElements: <array of size 0>
-AXHeader: <AXTable>
+AXRows:
+AXVisibleRows:
+AXColumns:
+AXVisibleColumns:
+AXVisibleCells:
+AXColumnHeaderUIElements:
+AXRowHeaderUIElements:
+AXHeader:
 AXColumnCount: 2
 AXRowCount: 1
 AXARIAColumnCount: 0
 AXARIARowCount: 0
-AXSelectedCells: <array of size 0>
+AXSelectedCells:
 AXSelectedChildren: (null)
 AXTableLevel: 1
 
@@ -100,45 +93,45 @@ AXTableLevel: 1
 AXRole: AXTable
 AXSubrole: (null)
 AXRoleDescription: table
-AXChildren: <array of size 4>
-AXChildrenInNavigationOrder: <array of size 4>
+AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
-AXParent: <AXTable>
+AXParent:
 AXSize: NSSize: {57, 20}
 AXTitle:
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXTable>
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXTable>
-AXEndTextMarker: <AXTable>
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: <array of size 0>
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXTable>
+AXTopLevelUIElement:
 AXLanguage:
 AXDOMIdentifier: testTable4
-AXDOMClassList: <array of size 0>
-AXFocusableAncestor: <AXTable>
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXElementBusy: 0
-AXRows: <array of size 1>
-AXVisibleRows: <array of size 1>
-AXColumns: <array of size 2>
-AXVisibleColumns: <array of size 2>
-AXVisibleCells: <array of size 2>
-AXColumnHeaderUIElements: <array of size 0>
-AXRowHeaderUIElements: <array of size 0>
-AXHeader: <AXTable>
+AXRows:
+AXVisibleRows:
+AXColumns:
+AXVisibleColumns:
+AXVisibleCells:
+AXColumnHeaderUIElements:
+AXRowHeaderUIElements:
+AXHeader:
 AXColumnCount: 2
 AXRowCount: 1
 AXARIAColumnCount: 0
 AXARIARowCount: 0
-AXSelectedCells: <array of size 0>
+AXSelectedCells:
 AXSelectedChildren: (null)
 AXTableLevel: 1
 
@@ -146,29 +139,29 @@ AXTableLevel: 1
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
-AXChildren: <array of size 1>
-AXChildrenInNavigationOrder: <array of size 1>
+AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
-AXParent: <AXGroup>
+AXParent:
 AXSize: NSSize: {29, 20}
 AXTitle:
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXGroup>
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: <array of size 0>
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
+AXTopLevelUIElement:
 AXLanguage:
 AXDOMIdentifier:
-AXDOMClassList: <array of size 0>
-AXFocusableAncestor: <AXGroup>
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXElementBusy: 0
@@ -178,29 +171,29 @@ AXInlineText: 0
 AXRole: AXGroup
 AXSubrole: (null)
 AXRoleDescription: group
-AXChildren: <array of size 1>
-AXChildrenInNavigationOrder: <array of size 1>
+AXChildren:
+AXChildrenInNavigationOrder:
 AXHelp:
-AXParent: <AXGroup>
+AXParent:
 AXSize: NSSize: {30, 20}
 AXTitle:
 AXDescription:
 AXValue:
 AXFocused: 0
 AXEnabled: 1
-AXWindow: <AXGroup>
+AXWindow:
 AXSelectedTextMarkerRange: (null)
-AXStartTextMarker: <AXGroup>
-AXEndTextMarker: <AXGroup>
+AXStartTextMarker:
+AXEndTextMarker:
 AXVisited: 0
-AXLinkedUIElements: <array of size 0>
+AXLinkedUIElements:
 AXSelected: 0
 AXBlockQuoteLevel: 0
-AXTopLevelUIElement: <AXGroup>
+AXTopLevelUIElement:
 AXLanguage:
 AXDOMIdentifier:
-AXDOMClassList: <array of size 0>
-AXFocusableAncestor: <AXGroup>
+AXDOMClassList:
+AXFocusableAncestor:
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
 AXElementBusy: 0
@@ -208,3 +201,11 @@ AXInlineText: 0
 
 
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+asdf	asdf
+asdf	asdf
+asdf	asdf
+asdf	asdf
+asdf	asdf

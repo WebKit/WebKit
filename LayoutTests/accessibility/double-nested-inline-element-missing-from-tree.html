@@ -1,23 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
-<script>
-    function dumpAccessibilityChildren(element, level) {
-        if (element.stringValue.indexOf('End of test') >= 0)
-            return false;
-
-        var indent = "";
-        for (var k = 0; k < level; k++) { indent += "  "; }
-        debug(indent + element.role + " " + element.stringValue);
-        var childrenCount = element.childrenCount;
-        for (var k = 0; k < childrenCount; k++) {
-            if (!dumpAccessibilityChildren(element.childAtIndex(k), level+1))
-                return false;
-        }
-        return true;
-    }
-</script>
+<script src="../resources/js-test.js"></script>
 </head>
 
 <body id="body">
@@ -32,18 +16,33 @@
 </span>
 
 <div>End of test</div>
-<p id="description"></p>
-<div id="console"></div>
 <script>
-    if (window.accessibilityController) {
-        description("This tests that when you have a two nested inline continuations and the child one has no siblings, that we go back to the parent to check for its continuation.");
+    function dumpAccessibilityChildren(element, level, output) {
+        if (element.stringValue.indexOf('End of test') >= 0)
+            return false;
 
-        var content = accessibilityController.rootElement.childAtIndex(0);
-        dumpAccessibilityChildren(content, 0);
+        var indent = "";
+        for (var k = 0; k < level; k++) { indent += "  "; }
+        output.push(indent + element.role + " " + element.stringValue);
+        var childrenCount = element.childrenCount;
+        for (var k = 0; k < childrenCount; k++) {
+            if (!dumpAccessibilityChildren(element.childAtIndex(k), level+1, output))
+                return false;
+        }
+        return true;
     }
+
+    var output = "This tests that when you have a two nested inline continuations and the child one has no siblings, that we go back to the parent to check for its continuation.\n\n";
+    
+    if (window.accessibilityController) {
+        var outputLines = [];
+        var content = accessibilityController.rootElement.childAtIndex(0);
+        dumpAccessibilityChildren(content, 0, outputLines);
+        output += outputLines.join("\n");
+    }
+    
+    debug(output);
     successfullyParsed = true;
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1,6 +1,8 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body id="body">
 
@@ -12,21 +14,19 @@
            aria-valuemax="255"
            aria-labelledby="idRed"></div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-    description("This test makes sure if a keydown event removes the node, bad things don't happen.");
+    var output = "This test makes sure if a keydown event removes the node, bad things don't happen.\n\n";
 
     function handleKeyUp(event) {
-        debug("Key up should NOT be reached");
+        output += "Key up should NOT be reached\n";
     }
 
     function handleKeyDown(event) {
-        debug("Keycode received: identifier: " + event.keyIdentifier + " key name: " + event.key);
+        output += "Keycode received: identifier: " + event.keyIdentifier + " key name: " + event.key + "\n";
         document.getElementById("body").removeChild(document.getElementById("slider"));
         event.preventDefault();
         event.stopPropagation();
+        debug(output);
         finishJSTest();
     }
 
@@ -41,6 +41,5 @@
         axSlider.increment();
     }
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

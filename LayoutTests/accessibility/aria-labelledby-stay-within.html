@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
@@ -24,19 +24,24 @@
 </ul>
 
 </div>
-<p id="description"></p>
-<div id="console"></div>
 <script>
-        description("This tests that aria-labelledby does not append all sibling to an ARIA name");
+var output = "This tests that aria-labelledby does not append all sibling to an ARIA name\n\n";
 
-        if (window.accessibilityController) {
-            var labeledItem = document.getElementById("rep").focus();
-            var axButton = accessibilityController.focusedElement;
-            shouldBeEqualToString("platformValueForW3CName(axButton)", "Reply Item Five");
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    
+    setTimeout(function() {
+        var labeledItem = document.getElementById("rep").focus();
+        var axButton = accessibilityController.focusedElement;
+        output += "platformValueForW3CName(axButton) = " + platformValueForW3CName(axButton) + "\n";
+        output += "Expected: Reply Item Five\n";
 
-            document.getElementById("content").style.visibility = "hidden";
-        }
+        document.getElementById("content").style.visibility = "hidden";
+        
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

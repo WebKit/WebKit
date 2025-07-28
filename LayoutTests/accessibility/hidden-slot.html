@@ -1,8 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/accessibility-helper.js"></script>
 <script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
 
@@ -26,7 +26,7 @@ if (window.accessibilityController) {
 
     output += expect("accessibilityController.accessibleElementById('outside').role.toLowerCase().includes('button')", "true");
     var insideButton = accessibilityController.accessibleElementById("inside");
-    output += expect("!insideButton || insideButton.isIgnored", "true");
+    output += expect("!insideButton", "true");
 
     document.getElementById("x-button").shadowRoot.getElementById("slot").removeAttribute("aria-hidden");
     setTimeout(async function() {
@@ -43,4 +43,3 @@ if (window.accessibilityController) {
 </script>
 </body>
 </html>
-

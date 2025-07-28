@@ -1,6 +1,9 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
+<head>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
-<script src="../resources/js-test-pre.js"></script>
+</head>
 <body>
     
     <div id="result"></div>
@@ -12,6 +15,8 @@ line 3
     </textarea>
 
 <script>
+    var output = "";
+    
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
         var area1 = document.getElementById("area1");
@@ -27,24 +32,24 @@ line 3
             await waitFor(() => {
                 return textArea.selectedTextRange == "{4, 0}";
             });
-            debug("PASS: textArea.selectedTextRange is {4, 0}");
+            output += "PASS: textArea.selectedTextRange is {4, 0}\n";
 
             textArea.setSelectedTextRange(8, 2);
             await waitFor(() => {
                 return textArea.selectedTextRange == "{8, 2}";
             });
-            debug("PASS: textArea.selectedTextRange is {8, 2}");
+            output += "PASS: textArea.selectedTextRange is {8, 2}\n";
 
             textArea.setSelectedTextRange(100, 0);
             await waitFor(() => {
                 return textArea.selectedTextRange == "{25, 0}";
             });
-            debug("PASS: textArea.selectedTextRange is {25, 0}");
+            output += "PASS: textArea.selectedTextRange is {25, 0}\n";
 
+            debug(output);
             finishJSTest();
         }, 0);
     }
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

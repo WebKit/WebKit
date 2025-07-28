@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <head>
 <title>Image link test</title>
-<script>
-if (window.testRunner)
-    testRunner.dumpAsText();
-</script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
 
@@ -14,9 +12,9 @@ if (window.testRunner)
 
   <a id="test" href="http://www.wowhead.com/?item=33924"><img alt="Delicious cake" src="resources/cake.png"></a>
 
-  <div id="result"></div>
-
 <script>
+var output = "This test checks that the right accessibility tree is generated for a link inside an image\n\n";
+
 function axTree(elt)
 {
     var result = elt.allAttributes() + "\n\n";
@@ -27,12 +25,16 @@ function axTree(elt)
     return result;
 }
 
-window.onload = function () {
-    if (window.accessibilityController) {
-        var result = document.getElementById("result");
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    
+    window.onload = function () {
         document.getElementById("test").focus();
-        result.innerText += axTree(accessibilityController.focusedElement);
+        output += axTree(accessibilityController.focusedElement);
+        debug(output);
+        finishJSTest();
     }
 }
 </script>
 </body>
+</html>

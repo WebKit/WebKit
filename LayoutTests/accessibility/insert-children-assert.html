@@ -18,14 +18,24 @@ body {
 <summary>a<span>b<div>c</div>d</span>e</summary>
 </div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-    description("This tests that we only insert valid children when building ax tree.");
+    var output = "This tests that we only insert valid children when building ax tree.\n\n";
     jsTestIsAsync = true;
 
-    if ("webkitRequestFullScreen" in Element.prototype) {
+    function valueOccuranceInElementTree(element, value) {
+        if (!element) {
+            return 0;
+        }
+        var count = 0;
+        if (element.stringValue == value)
+            count++;
+        var childrenCount = element.childrenCount;
+        for (var k = 0; k < childrenCount; k++)
+            count += valueOccuranceInElementTree(element.childAtIndex(k), value);
+        return count;
+    }
+
+    if (window.accessibilityController && "webkitRequestFullScreen" in Element.prototype) {
         var content = accessibilityController.accessibleElementById("content");
         var value;
         if (accessibilityController.platformName == "atspi")
@@ -40,9 +50,11 @@ body {
                 setTimeout(function () {
                     document.webkitCancelFullScreen();
                 }, 0)
-            } else
+            } else {
+                output += expect("valueOccuranceInElementTree(content, value)", "1");
+                debug(output);
                 finishJSTest();
-            shouldBe("valueOccuranceInElementTree(content, value)", "1");
+            }
         };
 
         document.addEventListener('webkitfullscreenchange', fullscreenChangeEvent);
@@ -51,24 +63,11 @@ body {
             span.webkitRequestFullScreen();
         });
         
-        shouldBe("valueOccuranceInElementTree(content, value)", "1");
+        output += expect("valueOccuranceInElementTree(content, value)", "1");
         if (window.eventSender)
             eventSender.keyDown('a');
     }
     successfullyParsed = true;
-
-    function valueOccuranceInElementTree(element, value) {
-        if (!element) {
-            return 0;
-        }
-        var count = 0;
-        if (element.stringValue == value)
-            count++;
-        var childrenCount = element.childrenCount;
-        for (var k = 0; k < childrenCount; k++)
-            count += valueOccuranceInElementTree(element.childAtIndex(k), value);
-        return count;
-    }
 </script>
 </body>
 </html>

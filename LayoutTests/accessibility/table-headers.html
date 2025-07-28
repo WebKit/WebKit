@@ -1,11 +1,9 @@
-<!-- This test was made after noticing that all th elements in the table were included in the columnHeaders,
-     and the only criterion for including a cell to rowHeaders was only scope attribute (but not th).
--->
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-<script>
-  if (window.testRunner)
-    testRunner.dumpAsText();
-</script>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
 <body>
 
 <table id="table1">
@@ -35,26 +33,25 @@
   </tbody>
 </table>
 
-<br>
-<br>
-<p>This tests that the columnHeaders() and rowHeaders() functions return the correct headers for a table cell.</p>
-<div id="result"></div>
-
 <script>
-  if (window.accessibilityController) {
-      var table = accessibilityController.accessibleElementById("table1");
-      var cell1 = table.cellForColumnAndRow(0, 3);
-      var colHeaders1 = cell1.columnHeaders();
-      var rowHeaders1 = cell1.rowHeaders();
-      var cell2 = table.cellForColumnAndRow(1, 2);
-      var colHeaders2 = cell2.columnHeaders();
-      var rowHeaders2 = cell2.rowHeaders();
+var output = "This tests that the columnHeaders() and rowHeaders() functions return the correct headers for a table cell.\n\n";
 
-      result.innerText += "The table cell at (0,3) should have exactly one column header, currently it has " + colHeaders1.length + " column header(s).\n";
-      result.innerText += "The table cell at (0,3) should have exactly 0 row headers, currently it has " + rowHeaders1.length + " row header(s).\n\n";
-      result.innerText += "The table cell at (1,2) should have exactly one column header, currently it has " + colHeaders2.length + " column header(s).\n";
-      result.innerText += "The table cell at (1,2) should have exactly one row header, currently it has " + rowHeaders2.length + " row header(s).\n\n";
-    }
+if (window.accessibilityController) {
+    var table = accessibilityController.accessibleElementById("table1");
+    var cell1 = table.cellForColumnAndRow(0, 3);
+    var colHeaders1 = cell1.columnHeaders();
+    var rowHeaders1 = cell1.rowHeaders();
+    var cell2 = table.cellForColumnAndRow(1, 2);
+    var colHeaders2 = cell2.columnHeaders();
+    var rowHeaders2 = cell2.rowHeaders();
+
+    output += "The table cell at (0,3) should have exactly one column header, currently it has " + colHeaders1.length + " column header(s).\n";
+    output += "The table cell at (0,3) should have exactly 0 row headers, currently it has " + rowHeaders1.length + " row header(s).\n\n";
+    output += "The table cell at (1,2) should have exactly one column header, currently it has " + colHeaders2.length + " column header(s).\n";
+    output += "The table cell at (1,2) should have exactly one row header, currently it has " + rowHeaders2.length + " row header(s).\n";
+    
+    debug(output);
+}
 </script>
 
 </body>

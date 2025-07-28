@@ -1,18 +1,19 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 <script>
-    function dumpAccessibilityChildren(element, level) {
+    function dumpAccessibilityChildren(element, level, output) {
         if (element.stringValue.indexOf('End of test') >= 0)
             return false;
 
         var indent = "";
         for (var k = 0; k < level; k++) { indent += "  "; }
-        debug(indent + element.role + " " + element.stringValue);
+        output.push(indent + element.role + " " + element.stringValue);
         var childrenCount = element.childrenCount;
         for (var k = 0; k < childrenCount; k++) {
-            if (!dumpAccessibilityChildren(element.childAtIndex(k), level+1))
+            if (!dumpAccessibilityChildren(element.childAtIndex(k), level+1, output))
                 return false;
         }
         return true;
@@ -39,15 +40,22 @@
 <tr><td><p>3</p></td><td><p>4</p></td></tr>
 </table>
 <div>End of test</div>
-<p id="description"></p>
-<div id="console"></div>
 <script>
-    description("This tests the accessible hierarchy for an HTML table.");
-    if (window.accessibilityController) {
-      document.getElementById("body").focus();
-      dumpAccessibilityChildren(accessibilityController.focusedElement, 0);
-    }
+var output = "This tests the accessible hierarchy for an HTML table.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    
+    setTimeout(function() {
+        document.getElementById("body").focus();
+        var outputLines = [];
+        dumpAccessibilityChildren(accessibilityController.focusedElement, 0, outputLines);
+        output += outputLines.join("\n");
+        
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

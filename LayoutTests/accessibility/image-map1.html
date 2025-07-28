@@ -1,6 +1,8 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
 <script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
 
@@ -16,19 +18,18 @@
 </div>
 
 <script>
-    description("This tests that you can reach the links within an image map.");
+var output = "This tests that you can reach the links within an image map.\n\n";
 
-    if (window.accessibilityController) {
-        let content = accessibilityController.accessibleElementById("content");
-        let output = "";
-        for (let k = 0; k < 3; ++k) {
-            let link = content.childAtIndex(k);
-            output += `Link${k + 1} ${link.role}\n`;
-            output += `Link${k + 1} ${link.title}\n`;
-            output += `Link${k + 1} ${link.description}\n\n`;
-        }
-        debug(output);
+if (window.accessibilityController) {
+    var content = accessibilityController.accessibleElementById("content");
+    for (var k = 0; k < 3; ++k) {
+        var link = content.childAtIndex(k);
+        output += `Link${k + 1} ${link.role}\n`;
+        output += `Link${k + 1} ${link.title}\n`;
+        output += `Link${k + 1} ${link.description}\n\n`;
     }
+    debug(output);
+}
 </script>
 </body>
 </html>

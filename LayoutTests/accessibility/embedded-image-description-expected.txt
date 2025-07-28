@@ -1,9 +1,7 @@
 This tests that the embedded image description can be retrieved.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: image.embeddedImageDescription === 'AXEmbeddedImageDescription: Birds Eye View'
 
-
-PASS image.embeddedImageDescription is 'AXEmbeddedImageDescription: Birds Eye View'
 PASS successfullyParsed is true
 
 TEST COMPLETE
