@@ -34,7 +34,10 @@
 
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObject.h"
+#include "Logging.h"
+#include "SWServer.h"
 #include "ScriptExecutionContext.h"
+#include "ServiceWorkerGlobalScope.h"
 #include "SharedTimer.h"
 #include "ThreadGlobalData.h"
 #include "ThreadTimers.h"
@@ -47,6 +50,10 @@
 #include <JavaScriptCore/JSRunLoopTimer.h>
 #include <wtf/AutodrainedPool.h>
 #include <wtf/TZoneMallocInlines.h>
+
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
 
 #if USE(GLIB)
 #include <glib.h>
@@ -162,8 +169,63 @@ void WorkerDedicatedRunLoop::run(WorkerOrWorkletGlobalScope* context)
     RunLoopSetup setup(*this, RunLoopSetup::IsForDebugging::No);
     ModePredicate modePredicate(defaultMode(), false);
     MessageQueueWaitResult result;
+    auto timeStampOfFirstTimeoutResultInARow = MonotonicTime::infinity();
+
     do {
         result = runInMode(context, modePredicate);
+
+        // <rdar://155433911> - ServiceWorkers sometimes end up spinning their worker runloop endlessly,
+        // repeatedly timing out getting a task from the message queue, then firing a CFRunLoopTimer that
+        // does very little (or nothing).
+        // This spinning is wasteful and apparently unproductive.
+        // So - for ServiceWorkers only - we will kill the message queue after a certain amount of time spinning
+        // The requirements are:
+        // 1 - The runloop must spin at least twice
+        // 2 - Each time it spins it must result in a MessageQueueTimeout, meaning no actual service worker task
+        //     handled.
+        // 3 - The monotomic time passed between the first MessageQueueTimeout spin and the last is at least
+        //     "defaultTerminationDelay" seconds
+        //
+        // FIXME: Refactor CFRunLoopTimers to be able to provide logging details on which timers are scheduled
+        // so we can further diagnose this.
+
+        if (!is<ServiceWorkerGlobalScope>(context))
+            continue;
+
+        // The MessageQueue successfully handled a task, so reset our spin tracking.
+        if (result != MessageQueueWaitResult::MessageQueueTimeout) {
+            timeStampOfFirstTimeoutResultInARow = MonotonicTime::infinity();
+            continue;
+        }
+
+        auto now = MonotonicTime::now();
+
+        // If the most recent spin of the runloop did not result in MessageQueueTimeout, then this spin
+        // should only start the clock.
+        if (timeStampOfFirstTimeoutResultInARow.isInfinity()) {
+            timeStampOfFirstTimeoutResultInARow = now;
+            continue;
+        }
+
+        if (now - timeStampOfFirstTimeoutResultInARow < SWServer::defaultTerminationDelay)
+            continue;
+
+        String cfRunLoopTimerLoggingString;
+#if USE(CF)
+        CFAbsoluteTime nextCFRunLoopTimerFireDate = CFRunLoopGetNextTimerFireDate(RetainPtr { CFRunLoopGetCurrent() }.get(), kCFRunLoopDefaultMode);
+        auto cfRunLoopTimerDelay = nextCFRunLoopTimerFireDate - CFAbsoluteTimeGetCurrent();
+        cfRunLoopTimerLoggingString = makeString(" CFRunLoopTimer will fire in "_s, cfRunLoopTimerDelay, " seconds."_s);
+#endif
+
+        auto reason = makeString("Killing ServiceWorker message queue after "_s, (now - timeStampOfFirstTimeoutResultInARow).seconds(), " seconds of multiple timeouts. Shared timer firing in "_s, m_sharedTimer->fireTimeDelay().seconds(), "seconds."_s, cfRunLoopTimerLoggingString);
+        RELEASE_LOG(ServiceWorker, "%s", reason.utf8().data());
+
+#if PLATFORM(COCOA)
+        if (WTF::CocoaApplication::isAppleApplication() && !((rand() * 100) % 100))
+            os_fault_with_payload(OS_REASON_WEBKIT, 0, nullptr, 0, reason.utf8().data(), 0);
+#endif
+
+        m_messageQueue.kill();
     } while (result != MessageQueueTerminated);
     runCleanupTasks(context);
 }
