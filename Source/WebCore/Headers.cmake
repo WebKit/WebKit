@@ -2679,7 +2679,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/FillLayer.h
     rendering/style/GridArea.h
     rendering/style/GridSpan.h
-    rendering/style/LineClampValue.h
     rendering/style/NameScope.h
     rendering/style/NinePieceImage.h
     rendering/style/OutlineValue.h
@@ -2819,6 +2818,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/motion/StyleOffsetRotate.h
     style/values/motion/StyleRayFunction.h
 
+    style/values/non-standard/StyleWebKitLineClamp.h
     style/values/non-standard/StyleWebKitOverflowScrolling.h
     style/values/non-standard/StyleWebKitTextStrokeWidth.h
     style/values/non-standard/StyleWebKitTouchCallout.h

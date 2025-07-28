@@ -28,7 +28,6 @@
 #include "CSSPropertyNames.h"
 #include "CounterDirectives.h"
 #include "LengthPoint.h"
-#include "LineClampValue.h"
 #include "NameScope.h"
 #include "NinePieceImage.h"
 #include "PositionArea.h"
@@ -72,6 +71,7 @@
 #include "StyleViewTimelines.h"
 #include "StyleViewTransitionClass.h"
 #include "StyleViewTransitionName.h"
+#include "StyleWebKitLineClamp.h"
 #include "TouchAction.h"
 #include <memory>
 #include <wtf/DataRef.h>
@@ -143,7 +143,7 @@ public:
     Style::ContainIntrinsicSize containIntrinsicWidth;
     Style::ContainIntrinsicSize containIntrinsicHeight;
 
-    LineClampValue lineClamp; // An Apple extension.
+    Style::WebkitLineClamp lineClamp;
 
     float zoom;
 

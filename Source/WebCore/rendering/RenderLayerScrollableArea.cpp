@@ -61,7 +61,6 @@
 #include "HTMLHtmlElement.h"
 #include "HitTestResult.h"
 #include "InspectorInstrumentation.h"
-#include "LineClampValue.h"
 #include "Logging.h"
 #include "NodeInlines.h"
 #include "RenderBoxInlines.h"

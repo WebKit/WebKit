@@ -10326,7 +10326,7 @@
                 "none"
             ],
             "codegen-properties": {
-                "style-converter": "LineClamp",
+                "style-converter": "StyleType<WebkitLineClamp>",
                 "parser-grammar": "none | <percentage [0,inf]> | <integer [1,inf]>"
             },
             "status": "non-standard"

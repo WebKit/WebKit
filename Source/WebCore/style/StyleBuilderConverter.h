@@ -56,7 +56,6 @@
 #include "FontSelectionValueInlines.h"
 #include "FontSizeAdjust.h"
 #include "FrameDestructionObserverInlines.h"
-#include "LineClampValue.h"
 #include "LocalFrame.h"
 #include "Quirks.h"
 #include "RenderStyleInlines.h"
@@ -211,8 +210,6 @@ public:
     static std::optional<ScopedName> convertPositionAnchor(BuilderState&, const CSSValue&);
     static std::optional<PositionArea> convertPositionArea(BuilderState&, const CSSValue&);
     static OptionSet<PositionVisibility> convertPositionVisibility(BuilderState&, const CSSValue&);
-
-    static LineClampValue convertLineClamp(BuilderState&, const CSSValue&);
 
     static RefPtr<TimingFunction> convertTimingFunction(BuilderState&, const CSSValue&);
 
@@ -1772,22 +1769,6 @@ inline OptionSet<PositionVisibility> BuilderConverter::convertPositionVisibility
         result.add(fromCSSValue<PositionVisibility>(value));
 
     return result;
-}
-
-inline LineClampValue BuilderConverter::convertLineClamp(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    if (primitiveValue->primitiveType() == CSSUnitType::CSS_INTEGER)
-        return LineClampValue(std::max(primitiveValue->resolveAsInteger<int>(builderState.cssToLengthConversionData()), 1), LineClamp::LineCount);
-
-    if (primitiveValue->primitiveType() == CSSUnitType::CSS_PERCENTAGE)
-        return LineClampValue(std::max(primitiveValue->resolveAsPercentage<int>(builderState.cssToLengthConversionData()), 0), LineClamp::Percentage);
-
-    ASSERT(primitiveValue->valueID() == CSSValueNone);
-    return LineClampValue();
 }
 
 inline RefPtr<TimingFunction> BuilderConverter::convertTimingFunction(BuilderState& builderState, const CSSValue& value)

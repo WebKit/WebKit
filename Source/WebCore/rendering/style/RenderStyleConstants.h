@@ -904,11 +904,6 @@ enum class TransformBox : uint8_t {
     ViewBox
 };
 
-enum class LineClamp : bool {
-    LineCount,
-    Percentage
-};
-
 enum class OverflowContinue : bool {
     Auto,
     Discard

@@ -93,7 +93,6 @@ public:
     static void serializeAppleColorFilterOperations(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const FilterOperations&);
     static void serializeWebkitTextCombine(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, TextCombine);
     static void serializeImageOrientation(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, ImageOrientation);
-    static void serializeLineClamp(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const LineClampValue&);
     static void serializeContain(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, OptionSet<Containment>);
     static void serializeSmoothScrolling(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, bool);
     static void serializeInitialLetter(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, IntSize);
@@ -741,19 +740,6 @@ inline void ExtractorSerializer::serializeWebkitTextCombine(ExtractorState& stat
 inline void ExtractorSerializer::serializeImageOrientation(ExtractorState&, StringBuilder& builder, const CSS::SerializationContext&, ImageOrientation imageOrientation)
 {
     builder.append(nameLiteralForSerialization(imageOrientation == ImageOrientation::Orientation::FromImage ? CSSValueFromImage : CSSValueNone));
-}
-
-inline void ExtractorSerializer::serializeLineClamp(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const LineClampValue& lineClamp)
-{
-    if (lineClamp.isNone()) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
-        return;
-    }
-    if (lineClamp.isPercentage()) {
-        CSS::serializationForCSS(builder, context, CSS::PercentageRaw<> { lineClamp.value() });
-        return;
-    }
-    serialize(state, builder, context, lineClamp.value());
 }
 
 inline void ExtractorSerializer::serializeContain(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, OptionSet<Containment> containment)

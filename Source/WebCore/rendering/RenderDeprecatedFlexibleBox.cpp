@@ -27,7 +27,6 @@
 #include "InlineIteratorLineBox.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LayoutRepainter.h"
-#include "LineClampValue.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderDescendantIterator.h"
@@ -1073,23 +1072,31 @@ RenderDeprecatedFlexibleBox::ClampedContent RenderDeprecatedFlexibleBox::applyLi
         layoutState.setLegacyLineClamp(ancestorLineClamp);
     });
 
-    auto lineCountForLineClamp = [&]() -> size_t {
-        auto lineClamp = style().lineClamp();
-        if (!lineClamp.isPercentage())
-            return lineClamp.value();
+    auto lineCountForLineClamp = [&] -> size_t {
+        return WTF::switchOn(style().lineClamp(),
+            [](const CSS::Keyword::None&) -> size_t {
+                ASSERT_NOT_REACHED();
+                return 0;
+            },
+            [](const Style::WebkitLineClamp::Percentage& percentage) -> size_t {
+                return static_cast<size_t>(percentage.value);
+            },
+            [&](const Style::WebkitLineClamp::Integer& integer) -> size_t {
+                size_t numberOfLines = 0;
+                for (auto* child = iterator.first(); child; child = iterator.next()) {
+                    if (childDoesNotAffectWidthOrFlexing(child))
+                        continue;
 
-        size_t numberOfLines = 0;
-        for (auto* child = iterator.first(); child; child = iterator.next()) {
-            if (childDoesNotAffectWidthOrFlexing(child))
-                continue;
+                    child->layoutIfNeeded();
+                    if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*child))
+                        numberOfLines += lineCountFor(*blockFlow);
 
-            child->layoutIfNeeded();
-            if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*child))
-                numberOfLines += lineCountFor(*blockFlow);
-            // FIXME: This should be turned into a partial damange.
-            child->setChildNeedsLayout(MarkOnlyThis);
-        }
-        return std::max<size_t>(1, (numberOfLines + 1) * lineClamp.value() / 100.f);
+                    // FIXME: This should be turned into a partial damage.
+                    child->setChildNeedsLayout(MarkOnlyThis);
+                }
+                return std::max<size_t>(1, (numberOfLines + 1) * integer.value / 100.f);
+            }
+        );
     };
 
     layoutState.setLegacyLineClamp(RenderLayoutState::LegacyLineClamp { lineCountForLineClamp(), { }, { }, { } });

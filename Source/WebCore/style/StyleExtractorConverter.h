@@ -173,7 +173,6 @@ public:
     static Ref<CSSValue> convertAppleColorFilterOperations(ExtractorState&, const FilterOperations&);
     static Ref<CSSValue> convertWebkitTextCombine(ExtractorState&, TextCombine);
     static Ref<CSSValue> convertImageOrientation(ExtractorState&, ImageOrientation);
-    static Ref<CSSValue> convertLineClamp(ExtractorState&, const LineClampValue&);
     static Ref<CSSValue> convertContain(ExtractorState&, OptionSet<Containment>);
     static Ref<CSSValue> convertInitialLetter(ExtractorState&, IntSize);
     static Ref<CSSValue> convertTextSpacingTrim(ExtractorState&, TextSpacingTrim);
@@ -642,15 +641,6 @@ inline Ref<CSSValue> ExtractorConverter::convertImageOrientation(ExtractorState&
     if (imageOrientation == ImageOrientation::Orientation::FromImage)
         return CSSPrimitiveValue::create(CSSValueFromImage);
     return CSSPrimitiveValue::create(CSSValueNone);
-}
-
-inline Ref<CSSValue> ExtractorConverter::convertLineClamp(ExtractorState&, const LineClampValue& lineClamp)
-{
-    if (lineClamp.isNone())
-        return CSSPrimitiveValue::create(CSSValueNone);
-    if (lineClamp.isPercentage())
-        return CSSPrimitiveValue::create(lineClamp.value(), CSSUnitType::CSS_PERCENTAGE);
-    return CSSPrimitiveValue::createInteger(lineClamp.value());
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertContain(ExtractorState&, OptionSet<Containment> containment)
