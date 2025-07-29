@@ -62,7 +62,9 @@ ImageBufferCGBackend::~ImageBufferCGBackend() = default;
 
 unsigned ImageBufferCGBackend::calculateBytesPerRow(const IntSize& backendSize)
 {
-    ASSERT(!backendSize.isEmpty());
+    if (backendSize.isEmpty())
+        return 0;
+
     return CheckedUint32(backendSize.width()) * 4;
 }
 

@@ -57,7 +57,9 @@ IntSize ImageBufferShareableBitmapBackend::calculateSafeBackendSize(const Parame
 
 unsigned ImageBufferShareableBitmapBackend::calculateBytesPerRow(const Parameters& parameters, const IntSize& backendSize)
 {
-    ASSERT(!backendSize.isEmpty());
+    if (backendSize.isEmpty())
+        return 0;
+
     return ShareableBitmapConfiguration::calculateBytesPerRow(backendSize, parameters.colorSpace);
 }
 
@@ -68,7 +70,8 @@ size_t ImageBufferShareableBitmapBackend::calculateMemoryCost(const Parameters& 
 
 std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const Parameters& parameters, const ImageBufferCreationContext& creationContext)
 {
-    ASSERT(parameters.bufferFormat.pixelFormat == ImageBufferPixelFormat::BGRA8 || parameters.bufferFormat.pixelFormat == ImageBufferPixelFormat::BGRX8);
+    if (!(parameters.bufferFormat.pixelFormat == ImageBufferPixelFormat::BGRA8 || parameters.bufferFormat.pixelFormat == ImageBufferPixelFormat::BGRX8))
+        return nullptr;
 
     IntSize backendSize = calculateSafeBackendSize(parameters);
     if (backendSize.isEmpty())

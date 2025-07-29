@@ -56,7 +56,9 @@ IntSize ImageBufferBackend::calculateSafeBackendSize(const Parameters& parameter
 
 size_t ImageBufferBackend::calculateMemoryCost(const IntSize& backendSize, unsigned bytesPerRow)
 {
-    ASSERT(!backendSize.isEmpty());
+    if (backendSize.isEmpty())
+        return 0;
+
     return CheckedUint32(backendSize.height()) * bytesPerRow;
 }
 
