@@ -125,14 +125,63 @@ void OpenXRCoordinator::requestPermissionOnSessionFeatures(WebPageProxy& page, c
     });
 }
 
+bool OpenXRCoordinator::collectSwapchainFormatsIfNeeded()
+{
+    ASSERT(RunLoop::isMain());
+    if (!m_supportedSwapchainFormats.isEmpty())
+        return true;
+
+    uint32_t formatCount;
+    CHECK_XRCMD(xrEnumerateSwapchainFormats(m_session, 0, &formatCount, nullptr));
+    if (!formatCount) {
+        LOG(XR, "xrEnumerateSwapchainFormats(): no formats available");
+        return false;
+    }
+
+    m_supportedSwapchainFormats.resize(formatCount);
+    CHECK_XRCMD(xrEnumerateSwapchainFormats(m_session, formatCount, &formatCount, m_supportedSwapchainFormats.mutableSpan().data()));
+#if !LOG_DISABLED
+    LOG(XR, "OpenXR: %d supported swapchain format%c", formatCount, formatCount > 1 ? 's' : ' ');
+    for (auto& format : m_supportedSwapchainFormats)
+        LOG(XR, "\t%ld", format);
+#endif
+    return true;
+}
+
+std::unique_ptr<OpenXRSwapchain> OpenXRCoordinator::createSwapchain(uint32_t width, uint32_t height, bool alpha)
+{
+    auto preferredFormat = alpha ? GL_RGBA8 : GL_RGB8;
+    auto format = m_supportedSwapchainFormats.contains(preferredFormat) ? preferredFormat : m_supportedSwapchainFormats.first();
+    auto sampleCount = m_viewConfigurationViews.isEmpty() ? 1 : m_viewConfigurationViews.first().recommendedSwapchainSampleCount;
+
+    auto info = createOpenXRStruct<XrSwapchainCreateInfo, XR_TYPE_SWAPCHAIN_CREATE_INFO>();
+    info.arraySize = 1;
+    info.format = format;
+    info.width = width;
+    info.height = height;
+    info.mipCount = 1;
+    info.faceCount = 1;
+    info.sampleCount = sampleCount;
+    info.usageFlags = XR_SWAPCHAIN_USAGE_SAMPLED_BIT | XR_SWAPCHAIN_USAGE_COLOR_ATTACHMENT_BIT;
+
+    return OpenXRSwapchain::create(m_instance, m_session, info);
+}
+
 void OpenXRCoordinator::createLayerProjection(uint32_t width, uint32_t height, bool alpha)
 {
     ASSERT(RunLoop::isMain());
-    LOG(XR, "OpenXRCoordinator::createLayerProjection");
-    auto format = alpha ? GL_RGBA8 : GL_RGB8;
-    auto sampleCount = m_viewConfigurationViews.isEmpty() ? 1 : m_viewConfigurationViews.first().recommendedSwapchainSampleCount;
+    if (!collectSwapchainFormatsIfNeeded()) {
+        RELEASE_LOG(XR, "OpenXRCoordinator: no supported swapchain formats");
+        return;
+    }
 
-    if (auto layer = OpenXRLayerProjection::create(m_instance, m_session, width, height, format, sampleCount))
+    auto swapchain = createSwapchain(width, height, alpha);
+    if (!swapchain) {
+        RELEASE_LOG(XR, "OpenXRCoordinator: failed to create swapchain");
+        return;
+    }
+
+    if (auto layer = OpenXRLayerProjection::create(WTFMove(swapchain)))
         m_layers.add(defaultLayerHandle(), WTFMove(layer));
 }
 
@@ -208,7 +257,6 @@ void OpenXRCoordinator::endSessionIfExists(std::optional<WebCore::PageIdentifier
 
 void OpenXRCoordinator::scheduleAnimationFrame(WebPageProxy& page, std::optional<PlatformXR::RequestData>&&, PlatformXR::Device::RequestFrameCallback&& onFrameUpdateCallback)
 {
-    RELEASE_LOG(XR, "OpenXRCoordinator::scheduleAnimationFrame");
     WTF::switchOn(m_state,
         [&](Idle&) {
             RELEASE_LOG(XR, "OpenXRCoordinator: trying to schedule frame update for an inactive session");
@@ -578,7 +626,7 @@ PlatformXR::FrameData OpenXRCoordinator::populateFrameData(Box<RenderState> acti
     for (auto& layer : m_layers) {
         auto layerData = layer.value->startFrame();
         if (layerData) {
-            auto layerDataRef = makeUniqueRef<PlatformXR::FrameData::LayerData>(*layerData);
+            auto layerDataRef = makeUniqueRef<PlatformXR::FrameData::LayerData>(WTFMove(*layerData));
             frameData.layers.add(layer.key, WTFMove(layerDataRef));
         }
     }

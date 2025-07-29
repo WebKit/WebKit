@@ -38,6 +38,7 @@ class PlatformDisplay;
 namespace WebKit {
 
 class OpenXRLayer;
+class OpenXRSwapchain;
 
 class OpenXRCoordinator final : public PlatformXRCoordinator {
     WTF_MAKE_TZONE_ALLOCATED(OpenXRCoordinator);
@@ -60,12 +61,14 @@ public:
 private:
     void createInstance();
     void createSessionIfNeeded();
+    std::unique_ptr<OpenXRSwapchain> createSwapchain(uint32_t width, uint32_t height, bool alpha);
     void cleanupSessionAndAssociatedResources();
     void initializeDevice();
     void initializeSystem();
     void initializeBlendModes();
     void tryInitializeGraphicsBinding();
     void collectViewConfigurations();
+    bool collectSwapchainFormatsIfNeeded();
 
     struct Idle {
     };
@@ -103,6 +106,7 @@ private:
         m_extensions;
     bool m_isSessionRunning { false };
     HashMap<PlatformXR::LayerHandle, std::unique_ptr<OpenXRLayer>> m_layers;
+    Vector<int64_t> m_supportedSwapchainFormats;
 
     std::unique_ptr<WebCore::PlatformDisplay> m_platformDisplay;
     std::unique_ptr<WebCore::GLContext> m_glContext;

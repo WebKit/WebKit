@@ -33,6 +33,7 @@
 #include "DRMDeviceManager.h"
 #include "GBMVersioning.h"
 #include "GLFence.h"
+#include "Logging.h"
 #include "PlatformDisplay.h"
 #include "TextureMapperFlags.h"
 #include <drm_fourcc.h>
@@ -157,7 +158,7 @@ GraphicsContextGLTextureMapperGBM::DrawingBuffer GraphicsContextGLTextureMapperG
     if (planeCount > 3)
         ADD_PLANE_ATTRIBUTES(3);
 
-#undef ADD_PLANE_ATTRIBS
+#undef ADD_PLANE_ATTRIBUTES
 
     attributes.append(EGL_NONE);
 
@@ -241,6 +242,93 @@ void GraphicsContextGLTextureMapperGBM::prepareForDisplayWithFinishedSignal(Func
         return;
     }
 }
+
+#if ENABLE(WEBXR)
+GCGLExternalImage GraphicsContextGLTextureMapperGBM::createExternalImage(ExternalImageSource&& source, GCGLenum, GCGLint)
+{
+    GraphicsContextGLExternalImageSource imageSource = WTFMove(source);
+    Vector<EGLint> attributes = {
+        EGL_WIDTH, imageSource.size.width(),
+        EGL_HEIGHT, imageSource.size.height(),
+        EGL_LINUX_DRM_FOURCC_EXT, static_cast<EGLint>(imageSource.fourcc)
+    };
+
+#define ADD_PLANE_ATTRIBUTES(planeIndex) { \
+    std::array<EGLAttrib, 6> planeAttributes { \
+        EGL_DMA_BUF_PLANE##planeIndex##_FD_EXT, imageSource.fds[planeIndex].value(), \
+        EGL_DMA_BUF_PLANE##planeIndex##_OFFSET_EXT, static_cast<EGLint>(imageSource.offsets[planeIndex]), \
+        EGL_DMA_BUF_PLANE##planeIndex##_PITCH_EXT, static_cast<EGLint>(imageSource.strides[planeIndex]) \
+    }; \
+    attributes.append(std::span<const EGLAttrib> { planeAttributes }); \
+    if (imageSource.modifier != DRM_FORMAT_MOD_INVALID && PlatformDisplay::sharedDisplay().eglExtensions().EXT_image_dma_buf_import_modifiers) { \
+        std::array<EGLint, 4> modifierAttributes { \
+            EGL_DMA_BUF_PLANE##planeIndex##_MODIFIER_HI_EXT, static_cast<EGLint>(imageSource.modifier >> 32), \
+            EGL_DMA_BUF_PLANE##planeIndex##_MODIFIER_LO_EXT, static_cast<EGLint>(imageSource.modifier & 0xffffffff) \
+        }; \
+        attributes.append(std::span<const EGLint> { modifierAttributes }); \
+    } \
+    };
+    auto planeCount = imageSource.fds.size();
+    if (planeCount > 0)
+        ADD_PLANE_ATTRIBUTES(0);
+    if (planeCount > 1)
+        ADD_PLANE_ATTRIBUTES(1);
+    if (planeCount > 2)
+        ADD_PLANE_ATTRIBUTES(2);
+    if (planeCount > 3)
+        ADD_PLANE_ATTRIBUTES(3);
+
+#undef ADD_PLANE_ATTRIBUTES
+
+    attributes.append(EGL_NONE);
+
+    if (m_displayObj == EGL_NO_DISPLAY) {
+        addError(GCGLErrorCode::InvalidOperation);
+        LOG(XR, "invalid display %d", EGL_GetError());
+        return { };
+    }
+
+    auto eglImage = EGL_CreateImageKHR(m_displayObj, EGL_NO_CONTEXT, EGL_LINUX_DMA_BUF_EXT, nullptr, attributes.span().data());
+    if (!eglImage) {
+        LOG(XR, "invalid operation importing the image %d", EGL_GetError());
+        addError(GCGLErrorCode::InvalidOperation);
+        return { };
+    }
+    auto newName = ++m_nextExternalImageName;
+    m_eglImages.add(newName, eglImage);
+    return newName;
+}
+
+void GraphicsContextGLTextureMapperGBM::bindExternalImage(GCGLenum target, GCGLExternalImage image)
+{
+    if (!makeContextCurrent())
+        return;
+    EGLImage eglImage = EGL_NO_IMAGE_KHR;
+    if (image) {
+        eglImage = m_eglImages.get(image);
+        if (!eglImage) {
+            addError(GCGLErrorCode::InvalidOperation);
+            return;
+        }
+    }
+    if (target == RENDERBUFFER)
+        GL_EGLImageTargetRenderbufferStorageOES(RENDERBUFFER, eglImage);
+    else
+        GL_EGLImageTargetTexture2DOES(target, eglImage);
+}
+
+bool GraphicsContextGLTextureMapperGBM::enableRequiredWebXRExtensions()
+{
+    if (!makeContextCurrent())
+        return false;
+
+    return enableExtension("GL_OES_EGL_image"_s)
+        && enableExtension("GL_OES_EGL_image_external"_s)
+        && enableExtension("EGL_KHR_image_base"_s)
+        && enableExtension("EGL_EXT_image_dma_buf_import"_s)
+        && enableExtension("EGL_KHR_surfaceless_context"_s);
+}
+#endif // ENABLE(WEBXR)
 
 } // namespace WebCore
 

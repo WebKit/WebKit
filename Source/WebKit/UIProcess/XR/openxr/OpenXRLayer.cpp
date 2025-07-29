@@ -19,9 +19,19 @@
 
 #include "config.h"
 #include "OpenXRLayer.h"
+#if USE(LIBEPOXY)
+#define __GBM__ 1
+#include <epoxy/egl.h>
+#else
+#include <EGL/egl.h>
+#endif
 
 #include "XRDeviceLayer.h"
+#include <WebCore/GLContext.h>
+#include <WebCore/PlatformDisplay.h>
+#include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/unix/UnixFileDescriptor.h>
 
 #if ENABLE(WEBXR) && USE(OPENXR)
 
@@ -30,34 +40,88 @@ namespace WebKit {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRLayer);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(OpenXRLayerProjection);
 
+OpenXRLayer::OpenXRLayer(UniqueRef<OpenXRSwapchain>&& swapchain)
+    : m_swapchain(WTFMove(swapchain))
+{
+}
+
+std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRLayer::exportOpenXRTexture(PlatformGLObject openxrTexture)
+{
+    // Texture must be bound to be exported.
+    glBindTexture(GL_TEXTURE_2D, openxrTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_swapchain->width(), m_swapchain->height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    auto* glContext = WebCore::GLContext::current();
+    if (!glContext) {
+        RELEASE_LOG(XR, "No current GL context to export OpenXR texture");
+        return std::nullopt;
+    }
+
+    auto& display = glContext->display();
+    auto image = display.createEGLImage(glContext->platformContext(), EGL_GL_TEXTURE_2D, (EGLClientBuffer)(uint64_t)openxrTexture, { });
+
+    auto releaseTextureOnError = makeScopeExit([&] {
+        if (image)
+            display.destroyEGLImage(image);
+        m_swapchain->releaseImage();
+    });
+
+    if (!image) {
+        RELEASE_LOG(XR, "Failed to create EGL image from OpenXR texture");
+        return std::nullopt;
+    }
+
+    int fourcc, planeCount;
+    uint64_t modifier;
+    if (!eglExportDMABUFImageQueryMESA(display.eglDisplay(), image, &fourcc, &planeCount, &modifier)) {
+        RELEASE_LOG(XR, "eglExportDMABUFImageQueryMESA failed");
+        return std::nullopt;
+    }
+
+    Vector<int> fdsOut(planeCount);
+    Vector<int> stridesOut(planeCount);
+    Vector<int> offsetsOut(planeCount);
+    if (!eglExportDMABUFImageMESA(display.eglDisplay(), image, fdsOut.mutableSpan().data(), stridesOut.mutableSpan().data(), offsetsOut.mutableSpan().data())) {
+        RELEASE_LOG(XR, "eglExportDMABUFImageMESA failed");
+        return std::nullopt;
+    }
+
+    display.destroyEGLImage(image);
+
+    releaseTextureOnError.release();
+
+    Vector<UnixFileDescriptor> fds = fdsOut.map([](int fd) {
+        return UnixFileDescriptor(fd, UnixFileDescriptor::Adopt);
+    });
+    Vector<uint32_t> strides = stridesOut.map([](int stride) {
+        return static_cast<uint32_t>(stride);
+    });
+    Vector<uint32_t> offsets = offsetsOut.map([](int offset) {
+        return static_cast<uint32_t>(offset);
+    });
+
+    return PlatformXR::FrameData::ExternalTexture {
+        .fds = WTFMove(fds),
+        .strides = WTFMove(strides),
+        .offsets = WTFMove(offsets),
+        .fourcc = static_cast<uint32_t>(fourcc),
+        .modifier = modifier,
+    };
+}
+
 // OpenXRLayerProjection
 
-std::unique_ptr<OpenXRLayerProjection> OpenXRLayerProjection::create(XrInstance instance, XrSession session, uint32_t width, uint32_t height, int64_t format, uint32_t sampleCount)
+std::unique_ptr<OpenXRLayerProjection> OpenXRLayerProjection::create(std::unique_ptr<OpenXRSwapchain>&& swapchain)
 {
-    if (!width || !height || !sampleCount)
-        return nullptr;
-
-    auto info = createOpenXRStruct<XrSwapchainCreateInfo, XR_TYPE_SWAPCHAIN_CREATE_INFO>();
-    info.arraySize = 1;
-    info.format = format;
-    info.width = width;
-    info.height = height;
-    info.mipCount = 1;
-    info.faceCount = 1;
-    info.arraySize = 1;
-    info.sampleCount = sampleCount;
-    info.usageFlags = XR_SWAPCHAIN_USAGE_SAMPLED_BIT | XR_SWAPCHAIN_USAGE_COLOR_ATTACHMENT_BIT;
-
-    auto swapchain = OpenXRSwapchain::create(instance, session, info);
-    if (!swapchain)
-        return nullptr;
-    LOG(XR, "created %ux%u swapchain with format %lu and sample count %u", width, height, format, sampleCount);
-
     return std::unique_ptr<OpenXRLayerProjection>(new OpenXRLayerProjection(makeUniqueRefFromNonNullUniquePtr(WTFMove(swapchain))));
 }
 
 OpenXRLayerProjection::OpenXRLayerProjection(UniqueRef<OpenXRSwapchain>&& swapchain)
-    : m_swapchain(WTFMove(swapchain))
+    : OpenXRLayer(WTFMove(swapchain))
     , m_layerProjection(createOpenXRStruct<XrCompositionLayerProjection, XR_TYPE_COMPOSITION_LAYER_PROJECTION>())
 {
 }
@@ -68,11 +132,36 @@ std::optional<PlatformXR::FrameData::LayerData> OpenXRLayerProjection::startFram
     if (!texture)
         return std::nullopt;
 
-    // FIXME: export the texture to the WebProcess using DMABuf, etc...
-    return PlatformXR::FrameData::LayerData {
-        .framebufferSize = m_swapchain->size(),
-        .opaqueTexture = *texture
+    auto addResult = m_exportedTextures.add(*texture, m_nextReusableTextureIndex);
+    bool needsExport = addResult.isNewEntry;
+
+    PlatformXR::FrameData::LayerData layerData;
+    layerData.renderingFrameIndex = m_renderingFrameIndex++;
+    layerData.textureData = {
+        .reusableTextureIndex = addResult.iterator->value,
+        .colorTexture = { },
+        .depthStencilBuffer = { },
     };
+
+    if (!needsExport)
+        return layerData;
+    m_nextReusableTextureIndex++;
+
+    auto externalTexture = exportOpenXRTexture(*texture);
+    if (!externalTexture)
+        return std::nullopt;
+    layerData.textureData->colorTexture = WTFMove(externalTexture.value());
+
+    auto halfWidth = m_swapchain->width() / 2;
+    layerData.layerSetup = {
+        .physicalSize = { static_cast<uint16_t>(m_swapchain->width()), static_cast<uint16_t>(m_swapchain->height()) },
+        .viewports = { },
+        .foveationRateMapDesc = { }
+    };
+    layerData.layerSetup->viewports[0] = { 0, 0, halfWidth, m_swapchain->height() };
+    layerData.layerSetup->viewports[1] = { halfWidth, 0, halfWidth, m_swapchain->height() };
+
+    return layerData;
 }
 
 XrCompositionLayerBaseHeader* OpenXRLayerProjection::endFrame(const XRDeviceLayer& layer, XrSpace space, const Vector<XrView>& frameViews)

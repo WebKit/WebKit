@@ -30,6 +30,10 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 
+namespace WebCore {
+class PlatformDisplay;
+}
+
 namespace WebKit {
 
 struct XRDeviceLayer;
@@ -44,21 +48,28 @@ public:
     virtual XrCompositionLayerBaseHeader* endFrame(const XRDeviceLayer&, XrSpace, const Vector<XrView>&) = 0;
 
 protected:
-    OpenXRLayer() = default;
+    OpenXRLayer(UniqueRef<OpenXRSwapchain>&&);
+    std::optional<PlatformXR::FrameData::ExternalTexture> exportOpenXRTexture(PlatformGLObject);
+
+    UniqueRef<OpenXRSwapchain> m_swapchain;
+
+    uint64_t m_renderingFrameIndex { 0 };
+    using ReusableTextureIndex = uint64_t;
+    HashMap<PlatformGLObject, ReusableTextureIndex> m_exportedTextures;
+    ReusableTextureIndex m_nextReusableTextureIndex { 0 };
 };
 
 class OpenXRLayerProjection final: public OpenXRLayer  {
     WTF_MAKE_TZONE_ALLOCATED(OpenXRLayerProjection);
     WTF_MAKE_NONCOPYABLE(OpenXRLayerProjection);
 public:
-    static std::unique_ptr<OpenXRLayerProjection> create(XrInstance, XrSession, uint32_t width, uint32_t height, int64_t format, uint32_t sampleCount);
+    static std::unique_ptr<OpenXRLayerProjection> create(std::unique_ptr<OpenXRSwapchain>&&);
 private:
     explicit OpenXRLayerProjection(UniqueRef<OpenXRSwapchain>&&);
 
     std::optional<PlatformXR::FrameData::LayerData> startFrame() final;
     XrCompositionLayerBaseHeader* endFrame(const XRDeviceLayer&, XrSpace, const Vector<XrView>&) final;
 
-    UniqueRef<OpenXRSwapchain> m_swapchain;
     XrCompositionLayerProjection m_layerProjection;
     Vector<XrCompositionLayerProjectionView> m_projectionViews;
 };

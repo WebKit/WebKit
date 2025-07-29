@@ -67,7 +67,6 @@ std::optional<SharedPreferencesForWebProcess> PlatformXRSystem::sharedPreference
 void PlatformXRSystem::invalidate()
 {
     ASSERT(RunLoop::isMain());
-
     RefPtr page = m_page.get();
     if (!page)
         return;

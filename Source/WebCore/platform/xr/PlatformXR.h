@@ -33,6 +33,9 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
+#if USE(UNIX_DOMAIN_SOCKETS)
+#include <wtf/unix/UnixFileDescriptor.h>
+#endif
 
 #if PLATFORM(COCOA)
 #include "IOSurface.h"
@@ -267,7 +270,6 @@ struct FrameData {
         Vector<WebCore::FloatPoint> bounds;
     };
 
-#if PLATFORM(COCOA)
     struct RateMapDescription {
         WebCore::IntSize screenSize = { 0, 0 };
         Vector<float> horizontalSamplesLeft;
@@ -281,12 +283,22 @@ struct FrameData {
         std::array<std::array<uint16_t, 2>, 2> physicalSize;
         std::array<WebCore::IntRect, 2> viewports;
         RateMapDescription foveationRateMapDesc;
+#if PLATFORM(COCOA)
         MachSendRight completionSyncEvent;
+#endif
     };
 
     struct ExternalTexture {
+#if PLATFORM(COCOA)
         MachSendRight handle;
         bool isSharedTexture { false };
+#else
+        Vector<WTF::UnixFileDescriptor> fds;
+        Vector<uint32_t> strides;
+        Vector<uint32_t> offsets;
+        uint32_t fourcc;
+        uint64_t modifier;
+#endif
     };
 
     struct ExternalTextureData {
@@ -294,20 +306,14 @@ struct FrameData {
         ExternalTexture colorTexture;
         ExternalTexture depthStencilBuffer;
     };
-#endif
 
     struct LayerData {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(LayerData);
-#if PLATFORM(COCOA)
         std::optional<LayerSetupData> layerSetup = { std::nullopt };
         uint64_t renderingFrameIndex { 0 };
         std::optional<ExternalTextureData> textureData;
         // FIXME: <rdar://134998122> Remove when new CC lands.
         bool requestDepth { false };
-#else
-        WebCore::IntSize framebufferSize;
-        PlatformGLObject opaqueTexture { 0 };
-#endif
     };
 
     struct InputSourceButton {

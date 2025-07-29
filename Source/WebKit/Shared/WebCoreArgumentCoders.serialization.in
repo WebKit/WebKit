@@ -8790,7 +8790,20 @@ using WebCore::GraphicsContextGL::ExternalImageSource = Variant<WebCore::Graphic
 using WebCore::GraphicsContextGL::ExternalSyncSource = std::tuple<MachSendRight, uint64_t>
 #endif
 #if !PLATFORM(COCOA) && ENABLE(WEBGL)
+#if (PLATFORM(GTK) || PLATFORM(WPE))
+header: <WebCore/GraphicsContextGL.h>
+[CustomHeader] struct WebCore::GraphicsContextGLExternalImageSource {
+    Vector<WTF::UnixFileDescriptor> fds;
+    Vector<uint32_t> strides;
+    Vector<uint32_t> offsets;
+    uint32_t fourcc;
+    uint64_t modifier;
+    WebCore::IntSize size;
+};
+using WebCore::GraphicsContextGL::ExternalImageSource = WebCore::GraphicsContextGLExternalImageSource;
+#else
 using WebCore::GraphicsContextGL::ExternalImageSource = int
+#endif
 using WebCore::GraphicsContextGL::ExternalSyncSource = int
 #endif
 
