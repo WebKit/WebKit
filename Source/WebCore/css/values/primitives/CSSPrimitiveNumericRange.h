@@ -114,12 +114,94 @@ template<Range range, std::floating_point T> constexpr T clampToRange(T value, T
     );
 }
 
+// Clamps a signed integral value to within `range`.
+template<Range range, std::signed_integral T> constexpr T clampToRange(T value)
+{
+    if constexpr (range.min == -Range::infinity && range.max == Range::infinity) {
+        return clampTo<T>(
+            value,
+            std::numeric_limits<T>::min(),
+            std::numeric_limits<T>::max()
+        );
+    } else if constexpr (range.min == -Range::infinity) {
+        return clampTo<T>(
+            value,
+            std::numeric_limits<T>::min(),
+            std::min<T>(range.max, std::numeric_limits<T>::max())
+        );
+    } else if constexpr (range.max == Range::infinity) {
+        return clampTo<T>(
+            value,
+            std::max<T>(range.min, std::numeric_limits<T>::min()),
+            std::numeric_limits<T>::max()
+        );
+    } else {
+        return clampTo<T>(
+            value,
+            std::max<T>(range.min, std::numeric_limits<T>::min()),
+            std::min<T>(range.max, std::numeric_limits<T>::max())
+        );
+    }
+}
+
+// Clamps an unsigned integral value to within `range`.
+template<Range range, std::unsigned_integral T> constexpr T clampToRange(T value)
+{
+    static_assert(range.min >= 0);
+
+    if constexpr (range.max == Range::infinity) {
+        return clampTo<T>(
+            value,
+            std::max<T>(range.min, std::numeric_limits<T>::min()),
+            std::numeric_limits<T>::max()
+        );
+    } else {
+        return clampTo<T>(
+            value,
+            std::max<T>(range.min, std::numeric_limits<T>::min()),
+            std::min<T>(range.max, std::numeric_limits<T>::max())
+        );
+    }
+}
+
 // Checks if a floating point value is within `range`.
 template<Range range, std::floating_point T> constexpr bool isWithinRange(T value)
 {
     return !std::isnan(value)
         && value >= std::max<T>(range.min, -std::numeric_limits<T>::max())
         && value <= std::min<T>(range.max,  std::numeric_limits<T>::max());
+}
+
+// Checks if a signed integral value is within `range`.
+template<Range range, std::signed_integral T> constexpr bool isWithinRange(T value)
+{
+    if constexpr (range.min == -Range::infinity && range.max == Range::infinity) {
+        return value >= std::numeric_limits<T>::min()
+            && value <= std::numeric_limits<T>::max();
+    } else if constexpr (range.min == -Range::infinity) {
+        return value >= std::numeric_limits<T>::min()
+            && value <= std::min<T>(range.max, std::numeric_limits<T>::max());
+    } else if constexpr (range.max == Range::infinity) {
+        return value >= std::max<T>(range.min, std::numeric_limits<T>::min())
+            && value <= std::numeric_limits<T>::max();
+    } else {
+        return value >= std::max<T>(range.min, std::numeric_limits<T>::min())
+            && value <= std::min<T>(range.max, std::numeric_limits<T>::max());
+    }
+}
+
+// Checks if an unsigned integral value is within `range`.
+template<Range range, std::unsigned_integral T> constexpr bool isWithinRange(T value)
+{
+    static_assert(range.min >= 0);
+
+    if constexpr (range.max == Range::infinity) {
+        return value >= std::max<T>(range.min, std::numeric_limits<T>::min())
+            && value <= std::numeric_limits<T>::max();
+    } else {
+        return value >= std::max<T>(range.min, std::numeric_limits<T>::min())
+            && value <= std::min<T>(range.max, std::numeric_limits<T>::max());
+    }
 }
 
 } // namespace CSS

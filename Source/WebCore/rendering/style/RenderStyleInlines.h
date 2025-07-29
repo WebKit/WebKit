@@ -174,7 +174,7 @@ inline const Style::Clip& RenderStyle::clip() const { return m_nonInheritedData-
 inline const Style::ClipPath& RenderStyle::clipPath() const { return m_nonInheritedData->rareData->clipPath; }
 inline bool RenderStyle::collapseWhiteSpace() const { return collapseWhiteSpace(whiteSpaceCollapse()); }
 inline ColumnAxis RenderStyle::columnAxis() const { return static_cast<ColumnAxis>(m_nonInheritedData->miscData->multiCol->axis); }
-inline unsigned short RenderStyle::columnCount() const { return m_nonInheritedData->miscData->multiCol->count; }
+inline Style::ColumnCount RenderStyle::columnCount() const { return m_nonInheritedData->miscData->multiCol->count; }
 inline ColumnFill RenderStyle::columnFill() const { return static_cast<ColumnFill>(m_nonInheritedData->miscData->multiCol->fill); }
 inline const Style::GapGutter& RenderStyle::columnGap() const { return m_nonInheritedData->rareData->columnGap; }
 inline ColumnProgression RenderStyle::columnProgression() const { return static_cast<ColumnProgression>(m_nonInheritedData->miscData->multiCol->progression); }
@@ -183,7 +183,7 @@ inline bool RenderStyle::columnRuleIsTransparent() const { return m_nonInherited
 inline BorderStyle RenderStyle::columnRuleStyle() const { return m_nonInheritedData->miscData->multiCol->rule.style(); }
 inline Style::LineWidth RenderStyle::columnRuleWidth() const { return m_nonInheritedData->miscData->multiCol->ruleWidth(); }
 inline ColumnSpan RenderStyle::columnSpan() const { return static_cast<ColumnSpan>(m_nonInheritedData->miscData->multiCol->columnSpan); }
-inline float RenderStyle::columnWidth() const { return m_nonInheritedData->miscData->multiCol->width; }
+inline Style::ColumnWidth RenderStyle::columnWidth() const { return m_nonInheritedData->miscData->multiCol->width; }
 inline const AtomString& RenderStyle::computedLocale() const { return fontDescription().computedLocale(); }
 inline OptionSet<Containment> RenderStyle::contain() const { return m_nonInheritedData->rareData->contain; }
 inline const Style::ContainIntrinsicSize& RenderStyle::containIntrinsicLogicalHeight() const { return writingMode().isHorizontal() ? containIntrinsicHeight() : containIntrinsicWidth(); }
@@ -262,8 +262,6 @@ inline bool RenderStyle::hasAspectRatio() const { return aspectRatio().hasRatio(
 inline bool RenderStyle::hasAttrContent() const { return m_nonInheritedData->miscData->hasAttrContent; }
 inline bool RenderStyle::hasAutoAccentColor() const { return m_rareInheritedData->hasAutoAccentColor; }
 inline bool RenderStyle::hasAutoCaretColor() const { return m_rareInheritedData->hasAutoCaretColor; }
-inline bool RenderStyle::hasAutoColumnCount() const { return m_nonInheritedData->miscData->multiCol->autoCount; }
-inline bool RenderStyle::hasAutoColumnWidth() const { return m_nonInheritedData->miscData->multiCol->autoWidth; }
 inline bool RenderStyle::hasAutoLeftAndRight() const { return left().isAuto() && right().isAuto(); }
 inline bool RenderStyle::hasAutoLengthContainIntrinsicSize() const { return containIntrinsicWidth().hasAuto() || containIntrinsicHeight().hasAuto(); }
 inline bool RenderStyle::hasAutoOrphans() const { return m_rareInheritedData->hasAutoOrphans; }
@@ -372,11 +370,13 @@ inline Style::Clip RenderStyle::initialClip() { return CSS::Keyword::Auto { }; }
 inline Style::ClipPath RenderStyle::initialClipPath() { return CSS::Keyword::None { }; }
 inline Color RenderStyle::initialColor() { return Color::black; }
 constexpr ColumnAxis RenderStyle::initialColumnAxis() { return ColumnAxis::Auto; }
+constexpr Style::ColumnCount RenderStyle::initialColumnCount() { return CSS::Keyword::Auto { }; }
 constexpr ColumnFill RenderStyle::initialColumnFill() { return ColumnFill::Balance; }
 inline Style::GapGutter RenderStyle::initialColumnGap() { return CSS::Keyword::Normal { }; }
 constexpr ColumnProgression RenderStyle::initialColumnProgression() { return ColumnProgression::Normal; }
 constexpr Style::LineWidth RenderStyle::initialColumnRuleWidth() { return CSS::Keyword::Medium { }; }
 constexpr ColumnSpan RenderStyle::initialColumnSpan() { return ColumnSpan::None; }
+constexpr Style::ColumnWidth RenderStyle::initialColumnWidth() { return CSS::Keyword::Auto { }; }
 inline Style::ContainIntrinsicSize RenderStyle::initialContainIntrinsicHeight() { return CSS::Keyword::None { }; }
 inline Style::ContainIntrinsicSize RenderStyle::initialContainIntrinsicWidth() { return CSS::Keyword::None { }; }
 inline Style::ContainerNames RenderStyle::initialContainerNames() { return CSS::Keyword::None { }; }
@@ -732,7 +732,7 @@ inline bool RenderStyle::isSkippedRootOrSkippedContent() const { return usedCont
 inline OptionSet<SpeakAs> RenderStyle::speakAs() const { return OptionSet<SpeakAs>::fromRaw(m_rareInheritedData->speakAs); }
 inline const AtomString& RenderStyle::specifiedLocale() const { return fontDescription().specifiedLocale(); }
 inline int RenderStyle::specifiedZIndex() const { return m_nonInheritedData->boxData->specifiedZIndex(); }
-inline bool RenderStyle::specifiesColumns() const { return !hasAutoColumnCount() || !hasAutoColumnWidth() || !hasInlineColumnAxis(); }
+inline bool RenderStyle::specifiesColumns() const { return !columnCount().isAuto() || !columnWidth().isAuto() || !hasInlineColumnAxis(); }
 constexpr OptionSet<Containment> RenderStyle::strictContainment() { return { Containment::Size, Containment::Layout, Containment::Paint, Containment::Style }; }
 inline const Style::Color& RenderStyle::strokeColor() const { return m_rareInheritedData->strokeColor; }
 inline float RenderStyle::strokeMiterLimit() const { return m_rareInheritedData->miterLimit; }

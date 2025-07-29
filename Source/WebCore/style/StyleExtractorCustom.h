@@ -2343,32 +2343,23 @@ inline void ExtractorCustom::extractBorderRadiusShorthandSerialization(Extractor
 
 inline RefPtr<CSSValue> ExtractorCustom::extractColumnsShorthand(ExtractorState& state)
 {
-    if (state.style.hasAutoColumnCount())
-        return state.style.hasAutoColumnWidth() ? CSSPrimitiveValue::create(CSSValueAuto) : ExtractorConverter::convertNumberAsPixels(state, state.style.columnWidth());
-    if (state.style.hasAutoColumnWidth())
-        return state.style.hasAutoColumnCount() ? CSSPrimitiveValue::create(CSSValueAuto) : CSSPrimitiveValue::create(state.style.columnCount());
+    if (state.style.columnCount() == RenderStyle::initialColumnCount())
+        return createCSSValue(state.pool, state.style, state.style.columnWidth());
+    if (state.style.columnWidth() == RenderStyle::initialColumnWidth())
+        return createCSSValue(state.pool, state.style, state.style.columnCount());
     return extractStandardSpaceSeparatedShorthand(state, columnsShorthand());
 }
 
 inline void ExtractorCustom::extractColumnsShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
-    if (state.style.hasAutoColumnCount()) {
-        if (state.style.hasAutoColumnWidth()) {
-            CSS::serializationForCSS(builder, context, CSS::Keyword::Auto { });
-            return;
-        }
-        ExtractorSerializer::serializeNumberAsPixels(state, builder, context, state.style.columnWidth());
+    if (state.style.columnCount() == RenderStyle::initialColumnCount()) {
+        serializationForCSS(builder, context, state.style, state.style.columnWidth());
         return;
     }
-    if (state.style.hasAutoColumnWidth()) {
-        if (state.style.hasAutoColumnCount()) {
-            CSS::serializationForCSS(builder, context, CSS::Keyword::Auto { });
-            return;
-        }
-        ExtractorSerializer::serializeNumber(state, builder, context, state.style.columnCount());
+    if (state.style.columnWidth() == RenderStyle::initialColumnWidth()) {
+        serializationForCSS(builder, context, state.style, state.style.columnCount());
         return;
     }
-
     extractStandardSpaceSeparatedShorthandSerialization(state, builder, context, columnsShorthand());
 }
 

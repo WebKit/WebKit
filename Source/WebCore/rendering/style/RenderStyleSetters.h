@@ -133,6 +133,7 @@ inline void RenderStyle::setCapStyle(LineCap style) { SET(m_rareInheritedData, c
 inline void RenderStyle::setCaretColor(Style::Color&& color) { SET_PAIR(m_rareInheritedData, caretColor, WTFMove(color), hasAutoCaretColor, false); }
 inline void RenderStyle::setClip(Style::Clip&& clip) { SET_NESTED(m_nonInheritedData, rareData, clip, WTFMove(clip)); }
 inline void RenderStyle::setColumnAxis(ColumnAxis axis) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, multiCol, axis, static_cast<unsigned>(axis)); }
+inline void RenderStyle::setColumnCount(Style::ColumnCount count) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, multiCol, count, count); }
 inline void RenderStyle::setColumnFill(ColumnFill fill) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, multiCol, fill, static_cast<unsigned>(fill)); }
 inline void RenderStyle::setColumnGap(Style::GapGutter&& gap) { SET_NESTED(m_nonInheritedData, rareData, columnGap, WTFMove(gap)); }
 inline void RenderStyle::setColumnProgression(ColumnProgression progression) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, multiCol, progression, static_cast<unsigned>(progression)); }
@@ -140,7 +141,7 @@ inline void RenderStyle::setColumnRuleColor(Style::Color&& c) { SET_DOUBLY_NESTE
 inline void RenderStyle::setColumnRuleStyle(BorderStyle b) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, multiCol, rule.m_style, static_cast<unsigned>(b)); }
 inline void RenderStyle::setColumnRuleWidth(Style::LineWidth width) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, multiCol, rule.m_width, width); }
 inline void RenderStyle::setColumnSpan(ColumnSpan span) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, multiCol, columnSpan, static_cast<unsigned>(span)); }
-inline void RenderStyle::setColumnWidth(float width) { SET_DOUBLY_NESTED_PAIR(m_nonInheritedData, miscData, multiCol, width, width, autoWidth, false); }
+inline void RenderStyle::setColumnWidth(Style::ColumnWidth width) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, multiCol, width, width); }
 inline void RenderStyle::setContain(OptionSet<Containment> containment) { SET_NESTED(m_nonInheritedData, rareData, contain, containment); }
 inline void RenderStyle::setContainIntrinsicHeight(Style::ContainIntrinsicSize&& height) { SET_NESTED(m_nonInheritedData, rareData, containIntrinsicHeight, WTFMove(height)); }
 inline void RenderStyle::setContainIntrinsicWidth(Style::ContainIntrinsicSize&& width) { SET_NESTED(m_nonInheritedData, rareData, containIntrinsicWidth, WTFMove(width)); }
@@ -169,8 +170,6 @@ inline void RenderStyle::setHangingPunctuation(OptionSet<HangingPunctuation> pun
 inline void RenderStyle::setHasAttrContent() { SET_NESTED(m_nonInheritedData, miscData, hasAttrContent, true); }
 inline void RenderStyle::setHasAutoAccentColor() { SET_PAIR(m_rareInheritedData, hasAutoAccentColor, true, accentColor, Style::Color::currentColor()); }
 inline void RenderStyle::setHasAutoCaretColor() { SET_PAIR(m_rareInheritedData, hasAutoCaretColor, true, caretColor, Style::Color::currentColor()); }
-inline void RenderStyle::setHasAutoColumnCount() { SET_DOUBLY_NESTED_PAIR(m_nonInheritedData, miscData, multiCol, autoCount, true, count, initialColumnCount()); }
-inline void RenderStyle::setHasAutoColumnWidth() { SET_DOUBLY_NESTED_PAIR(m_nonInheritedData, miscData, multiCol, autoWidth, true, width, 0); }
 inline void RenderStyle::setHasAutoOrphans() { SET_PAIR(m_rareInheritedData, hasAutoOrphans, true, orphans, initialOrphans()); }
 inline void RenderStyle::setHasAutoSpecifiedZIndex() { SET_NESTED_PAIR(m_nonInheritedData, boxData, m_hasAutoSpecifiedZIndex, true, m_specifiedZIndex, 0); }
 inline void RenderStyle::setHasAutoUsedZIndex() { SET_NESTED_PAIR(m_nonInheritedData, boxData, m_hasAutoUsedZIndex, true, m_usedZIndex, 0); }
@@ -461,13 +460,6 @@ inline void RenderStyle::setClipPath(Style::ClipPath&& operation)
 {
     if (m_nonInheritedData->rareData->clipPath != operation)
         m_nonInheritedData.access().rareData.access().clipPath = WTFMove(operation);
-}
-
-inline void RenderStyle::setColumnCount(unsigned short count)
-{
-    unsigned short clampedCount = std::max<unsigned short>(count, 1);
-    SET_DOUBLY_NESTED(m_nonInheritedData, miscData, multiCol, count, clampedCount);
-    SET_DOUBLY_NESTED(m_nonInheritedData, miscData, multiCol, autoCount, false);
 }
 
 inline void RenderStyle::setCursor(Style::Cursor&& cursor)

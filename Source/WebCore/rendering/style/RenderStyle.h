@@ -274,6 +274,8 @@ struct Clip;
 struct ClipPath;
 struct Color;
 struct ColorScheme;
+struct ColumnCount;
+struct ColumnWidth;
 struct ContainIntrinsicSize;
 struct ContainerNames;
 struct Content;
@@ -967,10 +969,8 @@ public:
     inline ColumnAxis columnAxis() const;
     inline bool hasInlineColumnAxis() const;
     inline ColumnProgression columnProgression() const;
-    inline float columnWidth() const;
-    inline bool hasAutoColumnWidth() const;
-    inline unsigned short columnCount() const;
-    inline bool hasAutoColumnCount() const;
+    inline Style::ColumnWidth columnWidth() const;
+    inline Style::ColumnCount columnCount() const;
     inline bool specifiesColumns() const;
     inline ColumnFill columnFill() const;
     inline BorderStyle columnRuleStyle() const;
@@ -1578,10 +1578,8 @@ public:
     inline void setResize(Resize);
     inline void setColumnAxis(ColumnAxis);
     inline void setColumnProgression(ColumnProgression);
-    inline void setColumnWidth(float);
-    inline void setHasAutoColumnWidth();
-    inline void setColumnCount(unsigned short);
-    inline void setHasAutoColumnCount();
+    inline void setColumnWidth(Style::ColumnWidth);
+    inline void setColumnCount(Style::ColumnCount);
     inline void setColumnFill(ColumnFill);
     inline void setColumnGap(Style::GapGutter&&);
     inline void setRowGap(Style::GapGutter&&);
@@ -2089,10 +2087,11 @@ public:
 
     static constexpr Order initialRTLOrdering();
     static constexpr Style::WebkitTextStrokeWidth initialTextStrokeWidth();
-    static unsigned short initialColumnCount() { return 1; }
+    static constexpr Style::ColumnCount initialColumnCount();
     static constexpr ColumnFill initialColumnFill();
     static constexpr ColumnSpan initialColumnSpan();
     static inline Style::GapGutter initialColumnGap();
+    static constexpr Style::ColumnWidth initialColumnWidth();
     static inline Style::GapGutter initialRowGap();
     static inline TransformOperations initialTransform();
     static inline Style::TransformOrigin initialTransformOrigin();

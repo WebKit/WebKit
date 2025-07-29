@@ -9098,9 +9098,8 @@
                 "aliases": [
                     "-webkit-column-count"
                 ],
-                "animation-wrapper": "AutoWrapper<unsigned short>",
-                "animation-wrapper-requires-additional-parameters": ["&RenderStyle::hasAutoColumnCount", "&RenderStyle::setHasAutoColumnCount", "1U"],
-                "auto-functions": true,
+                "animation-wrapper": "StyleTypeWrapper",
+                "style-converter": "StyleType<ColumnCount>",
                 "parser-grammar": "auto | <integer [1,inf]>",
                 "parser-exported": true
             },
@@ -9309,10 +9308,8 @@
                 "aliases": [
                     "-webkit-column-width"
                 ],
-                "animation-wrapper": "AutoWrapper<float>",
-                "animation-wrapper-requires-additional-parameters": ["&RenderStyle::hasAutoColumnWidth", "&RenderStyle::setHasAutoColumnWidth", "0.0f"],
-                "style-converter": "ComputedLength<float>",
-                "auto-functions": true,
+                "animation-wrapper": "StyleTypeWrapper",
+                "style-converter": "StyleType<ColumnWidth>",
                 "parser-grammar": "auto | <length [0,inf]>",
                 "parser-exported": true
             },

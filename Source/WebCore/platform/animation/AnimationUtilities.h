@@ -96,6 +96,19 @@ inline unsigned blend(unsigned from, unsigned to, const BlendingContext& context
     return static_cast<unsigned>(lround(from + from + (static_cast<double>(to) - from) * context.progress));
 }
 
+inline unsigned short blend(unsigned short from, unsigned short to, const BlendingContext& context)
+{
+    if (context.iterationCompositeOperation == IterationCompositeOperation::Accumulate && context.currentIteration) {
+        auto iterationIncrement = static_cast<unsigned short>(context.currentIteration * static_cast<double>(to));
+        from += iterationIncrement;
+        to += iterationIncrement;
+    }
+
+    if (context.compositeOperation == CompositeOperation::Replace)
+        return static_cast<unsigned short>(lround(from + (static_cast<double>(to) - from) * context.progress));
+    return static_cast<unsigned short>(lround(from + from + (static_cast<double>(to) - from) * context.progress));
+}
+
 inline double blend(double from, double to, const BlendingContext& context)
 {  
     if (context.iterationCompositeOperation == IterationCompositeOperation::Accumulate && context.currentIteration) {

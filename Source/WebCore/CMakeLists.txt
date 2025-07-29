@@ -220,6 +220,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/style/values/lists"
     "${WEBCORE_DIR}/style/values/masking"
     "${WEBCORE_DIR}/style/values/motion"
+    "${WEBCORE_DIR}/style/values/multicol"
     "${WEBCORE_DIR}/style/values/non-standard"
     "${WEBCORE_DIR}/style/values/overflow"
     "${WEBCORE_DIR}/style/values/position"

@@ -4888,6 +4888,8 @@
 		BC22AABA2E371A4C009AC0C3 /* StyleWebKitBorderSpacing.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AAB92E371A4C009AC0C3 /* StyleWebKitBorderSpacing.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC22AAE42E37F534009AC0C3 /* StylePrimitiveNumericTypes+Evaluation.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB271F42CC018F100265123 /* StylePrimitiveNumericTypes+Evaluation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC22AAE52E37F567009AC0C3 /* StylePrimitiveNumericTypes+Calculation.h in Headers */ = {isa = PBXBuildFile; fileRef = BC05ACC82CEE5C9600750CB1 /* StylePrimitiveNumericTypes+Calculation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC22AB142E3944B4009AC0C3 /* StyleColumnWidth.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AB132E394476009AC0C3 /* StyleColumnWidth.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC22AB172E39485C009AC0C3 /* StyleColumnCount.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AB162E39485C009AC0C3 /* StyleColumnCount.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC22AB362E3ABBDC009AC0C3 /* StyleOpacity.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AB332E3A9B8E009AC0C3 /* StyleOpacity.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC23875B2D84982100698102 /* CSSRatio.h in Headers */ = {isa = PBXBuildFile; fileRef = BC23875A2D84982100698102 /* CSSRatio.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2387602D84A59400698102 /* StyleRatio.h in Headers */ = {isa = PBXBuildFile; fileRef = BC23875F2D84A59400698102 /* StyleRatio.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -18110,6 +18112,10 @@
 		BC22AA9D2E36A2BD009AC0C3 /* StyleImageWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleImageWrapper.h; sourceTree = "<group>"; };
 		BC22AA9F2E36A554009AC0C3 /* StyleImageWrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleImageWrapper.cpp; sourceTree = "<group>"; };
 		BC22AAB92E371A4C009AC0C3 /* StyleWebKitBorderSpacing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleWebKitBorderSpacing.h; sourceTree = "<group>"; };
+		BC22AB122E394476009AC0C3 /* StyleColumnWidth.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleColumnWidth.cpp; sourceTree = "<group>"; };
+		BC22AB132E394476009AC0C3 /* StyleColumnWidth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleColumnWidth.h; sourceTree = "<group>"; };
+		BC22AB152E39485C009AC0C3 /* StyleColumnCount.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleColumnCount.cpp; sourceTree = "<group>"; };
+		BC22AB162E39485C009AC0C3 /* StyleColumnCount.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleColumnCount.h; sourceTree = "<group>"; };
 		BC22AB332E3A9B8E009AC0C3 /* StyleOpacity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleOpacity.h; sourceTree = "<group>"; };
 		BC22AB342E3A9BA3009AC0C3 /* StyleOpacity.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleOpacity.cpp; sourceTree = "<group>"; };
 		BC2387582D84867A00698102 /* CSSPropertyParserConsumer+UnicodeRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+UnicodeRange.h"; sourceTree = "<group>"; };
@@ -35119,6 +35125,17 @@
 			path = js;
 			sourceTree = "<group>";
 		};
+		BC22AB112E394447009AC0C3 /* multicol */ = {
+			isa = PBXGroup;
+			children = (
+				BC22AB152E39485C009AC0C3 /* StyleColumnCount.cpp */,
+				BC22AB162E39485C009AC0C3 /* StyleColumnCount.h */,
+				BC22AB122E394476009AC0C3 /* StyleColumnWidth.cpp */,
+				BC22AB132E394476009AC0C3 /* StyleColumnWidth.h */,
+			);
+			path = multicol;
+			sourceTree = "<group>";
+		};
 		BC2387AA2D8742AB00698102 /* inline */ = {
 			isa = PBXGroup;
 			children = (
@@ -35768,6 +35785,7 @@
 				BC966B3F2E275AB10028A7AF /* lists */,
 				BCCE4F722DF9DDB7005554EA /* masking */,
 				BCEA07322CC5EBBA000AC148 /* motion */,
+				BC22AB112E394447009AC0C3 /* multicol */,
 				BC0929AE2E2AA595002ACB2C /* non-standard */,
 				BC966B362E274F530028A7AF /* overflow */,
 				BC9ABA182DECC6AE00F7E52D /* position */,
@@ -45370,6 +45388,8 @@
 				BCB660952BEEF46200528480 /* StyleColor.h in Headers */,
 				BC4AF4192CF96B930037C65C /* StyleColorOptions.h in Headers */,
 				BCEA078D2CCC719D000AC148 /* StyleColorScheme.h in Headers */,
+				BC22AB172E39485C009AC0C3 /* StyleColumnCount.h in Headers */,
+				BC22AB142E3944B4009AC0C3 /* StyleColumnWidth.h in Headers */,
 				BC2A0EF22E120B93003CBA0E /* StyleContainerName.h in Headers */,
 				BCD9EFE92E18E58000D1C3DF /* StyleContainIntrinsicSize.h in Headers */,
 				BC5EB9810E82072500B25965 /* StyleContent.h in Headers */,

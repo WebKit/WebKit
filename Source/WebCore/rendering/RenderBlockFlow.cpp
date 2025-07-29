@@ -72,6 +72,7 @@
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TextAutoSizing.h"
 #include "TextBoxTrimmer.h"
 #include "TextUtil.h"
@@ -280,20 +281,19 @@ void RenderBlockFlow::rebuildFloatingObjectSetFromIntrudingFloats()
 
 void RenderBlockFlow::adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    if (!style().hasAutoColumnCount() || !style().hasAutoColumnWidth()) {
+    if (!style().columnCount().isAuto() || !style().columnWidth().isAuto()) {
         // The min/max intrinsic widths calculated really tell how much space elements need when
         // laid out inside the columns. In order to eventually end up with the desired column width,
         // we need to convert them to values pertaining to the multicol container.
-        int columnCount = style().hasAutoColumnCount() ? 1 : style().columnCount();
+        int columnCount = style().columnCount().tryValue().value_or(1).value;
         LayoutUnit columnWidth;
         LayoutUnit colGap = columnGap();
         LayoutUnit gapExtra = (columnCount - 1) * colGap;
-        if (style().hasAutoColumnWidth())
-            minLogicalWidth = minLogicalWidth * columnCount + gapExtra;
-        else {
-            columnWidth = style().columnWidth();
+        if (auto columnWidthLength = style().columnWidth().tryLength()) {
+            columnWidth = Style::evaluate(*columnWidthLength);
             minLogicalWidth = std::min(minLogicalWidth, columnWidth);
-        }
+        } else
+            minLogicalWidth = minLogicalWidth * columnCount + gapExtra;
         // FIXME: If column-count is auto here, we should resolve it to calculate the maximum
         // intrinsic width, instead of pretending that it's 1. The only way to do that is by
         // performing a layout pass, but this is not an appropriate time or place for layout. The
@@ -365,20 +365,20 @@ void RenderBlockFlow::computeColumnCountAndWidth()
     LayoutUnit desiredColumnWidth = contentBoxLogicalWidth();
 
     // For now, we don't support multi-column layouts when printing, since we have to do a lot of work for proper pagination.
-    if (document().paginated() || (style().hasAutoColumnCount() && style().hasAutoColumnWidth()) || !style().hasInlineColumnAxis()) {
+    if (document().paginated() || (style().columnCount().isAuto() && style().columnWidth().isAuto()) || !style().hasInlineColumnAxis()) {
         setComputedColumnCountAndWidth(desiredColumnCount, desiredColumnWidth);
         return;
     }
 
     LayoutUnit availWidth = desiredColumnWidth;
     LayoutUnit colGap = columnGap();
-    LayoutUnit colWidth = std::max(1_lu, LayoutUnit(style().columnWidth()));
-    unsigned colCount = std::max<unsigned>(1, style().columnCount());
+    LayoutUnit colWidth = std::max(1_lu, LayoutUnit(Style::evaluate(style().columnWidth().tryLength().value_or(0_css_px))));
+    unsigned colCount = std::max<unsigned>(1, style().columnCount().tryValue().value_or(1).value);
 
-    if (style().hasAutoColumnWidth() && !style().hasAutoColumnCount()) {
+    if (style().columnWidth().isAuto() && !style().columnCount().isAuto()) {
         desiredColumnCount = colCount;
         desiredColumnWidth = std::max<LayoutUnit>(0, (availWidth - ((desiredColumnCount - 1) * colGap)) / desiredColumnCount);
-    } else if (!style().hasAutoColumnWidth() && style().hasAutoColumnCount()) {
+    } else if (!style().columnWidth().isAuto() && style().columnCount().isAuto()) {
         desiredColumnCount = std::max<unsigned>(1, ((availWidth + colGap) / (colWidth + colGap)).toUnsigned());
         desiredColumnWidth = ((availWidth + colGap) / desiredColumnCount) - colGap;
     } else {
@@ -420,15 +420,15 @@ bool RenderBlockFlow::willCreateColumns(std::optional<unsigned> desiredColumnCou
         return true;
 
     // Non-auto column-width always initiates MultiColumnFlow.
-    if (!style().hasAutoColumnWidth())
+    if (!style().columnWidth().isAuto())
         return true;
 
     if (desiredColumnCount)
         return desiredColumnCount.value() > 1;
 
     // column-count > 1 always initiates MultiColumnFlow.
-    if (!style().hasAutoColumnCount())
-        return style().columnCount() > 1;
+    if (auto columnCount = style().columnCount().tryValue())
+        return columnCount->value > 1;
 
     ASSERT_NOT_REACHED();
     return false;

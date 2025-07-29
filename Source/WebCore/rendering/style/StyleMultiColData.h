@@ -4,6 +4,7 @@
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,6 +27,8 @@
 
 #include "BorderValue.h"
 #include "RenderStyleConstants.h"
+#include "StyleColumnCount.h"
+#include "StyleColumnWidth.h"
 #include <wtf/RefCounted.h>
 
 namespace WTF {
@@ -56,13 +59,11 @@ public:
         return rule.width();
     }
 
-    float width { 0 };
-    unsigned short count;
+    Style::ColumnWidth width { CSS::Keyword::Auto { } };
+    Style::ColumnCount count { CSS::Keyword::Auto { } };
     BorderValue rule;
     Style::Color visitedLinkColumnRuleColor;
 
-    bool autoWidth : 1;
-    bool autoCount : 1;
     PREFERRED_TYPE(ColumnFill) unsigned fill : 1;
     PREFERRED_TYPE(ColumnSpan) unsigned columnSpan : 1;
     PREFERRED_TYPE(ColumnAxis) unsigned axis : 2;
