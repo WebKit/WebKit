@@ -4825,6 +4825,7 @@ MediaDevicesEnabled:
       "PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
   disableInLockdownMode: true
+  sharedPreferenceForWebProcess: true
 
 MediaEnabled:
   type: bool

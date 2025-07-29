@@ -23,9 +23,10 @@
 #if ENABLE(WEB_RTC)
 
 [
-    ExceptionForEnabledBy,
+    EnabledBy=PeerConnectionEnabled,
     DispatchedFrom=WebContent,
-    DispatchedTo=Networking
+    DispatchedTo=Networking,
+    SharedPreferencesNeedsConnection
 ]
 messages -> RTCDataChannelRemoteManagerProxy {
     // To source

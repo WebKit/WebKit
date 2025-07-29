@@ -1785,6 +1785,10 @@ void NetworkConnectionToWebProcess::updateSharedPreferencesForWebProcess(SharedP
     m_sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess);
     if (CheckedPtr session = networkSession())
         session->storageManager().updateSharedPreferencesForConnection(m_connection, m_sharedPreferencesForWebProcess);
+#if USE(LIBWEBRTC)
+    if (RefPtr rtcProvider = m_rtcProvider)
+        rtcProvider->updateSharedPreferencesForWebProcess(m_sharedPreferencesForWebProcess);
+#endif
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)

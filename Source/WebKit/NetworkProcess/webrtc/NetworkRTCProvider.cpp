@@ -63,6 +63,7 @@ NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection
     : m_connection(&connection)
     , m_ipcConnection(connection.connection())
     , m_rtcMonitor(*this)
+    , m_sharedPreferences(connection.sharedPreferencesForWebProcessValue())
 #if PLATFORM(COCOA)
     , m_sourceApplicationAuditToken(connection.networkProcess().sourceApplicationAuditToken())
     , m_rtcNetworkThreadQueue(WorkQueue::create("NetworkRTCProvider Queue"_s, WorkQueue::QOS::UserInitiated))
@@ -390,6 +391,18 @@ void NetworkRTCProvider::signalSocketIsClosed(LibWebRTCSocketIdentifier identifi
 Ref<NetworkRTCMonitor> NetworkRTCProvider::protectedRTCMonitor()
 {
     return m_rtcMonitor;
+}
+
+std::optional<SharedPreferencesForWebProcess> NetworkRTCProvider::sharedPreferencesForWebProcess(IPC::Connection& connection)
+{
+    Locker locker { m_sharedPreferencesLock };
+    return m_sharedPreferences;
+}
+
+void NetworkRTCProvider::updateSharedPreferencesForWebProcess(const SharedPreferencesForWebProcess& preferences)
+{
+    Locker locker { m_sharedPreferencesLock };
+    m_sharedPreferences = preferences;
 }
 
 #undef RTC_RELEASE_LOG

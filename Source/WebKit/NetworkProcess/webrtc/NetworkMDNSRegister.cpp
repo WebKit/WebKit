@@ -207,6 +207,15 @@ PAL::SessionID NetworkMDNSRegister::sessionID() const
     return m_connection->sessionID();
 }
 
+std::optional<SharedPreferencesForWebProcess> NetworkMDNSRegister::sharedPreferencesForWebProcess() const
+{
+    RefPtr connectionToWebProcess = m_connection.get();
+    if (!connectionToWebProcess)
+        return std::nullopt;
+
+    return connectionToWebProcess->sharedPreferencesForWebProcess();
+}
+
 } // namespace WebKit
 
 #undef MDNS_RELEASE_LOG

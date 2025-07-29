@@ -30,6 +30,7 @@
 #include "Connection.h"
 #include "MessageReceiver.h"
 #include "RemoteVideoFrameObjectHeap.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "UserMediaCaptureManager.h"
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/IntDegrees.h>

@@ -28,6 +28,7 @@
 #if USE(LIBWEBRTC)
 
 #include "RTCNetwork.h"
+#include "SharedPreferencesForWebProcess.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/WeakPtr.h>
 
@@ -63,6 +64,8 @@ public:
 
     void ref();
     void deref();
+
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(IPC::Connection&) const;
 
 private:
     void startUpdatingIfNeeded();

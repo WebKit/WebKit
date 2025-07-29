@@ -509,6 +509,11 @@ public:
 
     bool mediaPlaybackEnabled() const { return m_mediaPlaybackEnabled; }
 
+#if ENABLE(MEDIA_STREAM)
+    bool anyPageHasMediaDevicesEnabled() const;
+    bool anyPageHasSpeechRecognitionEnabled() const;
+#endif
+
 #if PLATFORM(COCOA)
     void registerAdditionalFonts(AdditionalFonts&&);
     void registerFontMap(HashMap<String, URL>&&, HashMap<String, Vector<String>>&&, Vector<SandboxExtension::Handle>&& sandboxExtensions);

@@ -61,6 +61,9 @@ void RemoteRealtimeAudioSource::remoteAudioSamplesAvailable(const MediaTime& tim
 
 void RemoteRealtimeAudioSource::setIsInBackground(bool value)
 {
+    if (!WebProcess::singleton().anyPageHasMediaDevicesEnabled() && !WebProcess::singleton().anyPageHasSpeechRecognitionEnabled())
+        return;
+
     connection().send(Messages::UserMediaCaptureManagerProxy::SetIsInBackground { identifier(), value }, 0);
 }
 

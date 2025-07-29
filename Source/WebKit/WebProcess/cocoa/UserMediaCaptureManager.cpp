@@ -94,8 +94,10 @@ void UserMediaCaptureManager::setupCaptureProcesses(bool shouldCaptureAudioInUIP
     m_videoFactory.setShouldCaptureInGPUProcess(shouldCaptureVideoInGPUProcess);
     m_displayFactory.setShouldCaptureInGPUProcess(shouldCaptureDisplayInGPUProcess);
 
-    if (shouldCaptureAudioInUIProcess || shouldCaptureAudioInGPUProcess)
-        WebCore::AudioMediaStreamTrackRendererInternalUnit::setCreateFunction(createRemoteAudioMediaStreamTrackRendererInternalUnitProxy);
+    if (shouldCaptureAudioInUIProcess || shouldCaptureAudioInGPUProcess) {
+        if (m_process->anyPageHasMediaDevicesEnabled() || m_process->anyPageHasSpeechRecognitionEnabled())
+            WebCore::AudioMediaStreamTrackRendererInternalUnit::setCreateFunction(createRemoteAudioMediaStreamTrackRendererInternalUnitProxy);
+    }
 
     if (shouldCaptureAudioInUIProcess || shouldCaptureAudioInGPUProcess)
         RealtimeMediaSourceCenter::singleton().setAudioCaptureFactory(m_audioFactory);
@@ -210,6 +212,9 @@ CaptureSourceOrError UserMediaCaptureManager::AudioFactory::createAudioCaptureSo
         return CaptureSourceOrError { "Audio capture in GPUProcess is not implemented"_s };
 #endif
 
+    if (m_shouldCaptureInGPUProcess && !m_manager->m_process->anyPageHasMediaDevicesEnabled() && !m_manager->m_process->anyPageHasSpeechRecognitionEnabled())
+        return CaptureSourceOrError { CaptureSourceError { "MediaDevices and SpeechRecognition are disabled - cannot create remote audio capture source"_s, MediaAccessDenialReason::UserMediaDisabled } };
+
 #if PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)
     // FIXME: Remove disabling of the audio session category management once we move all media playing to GPUProcess.
     if (m_shouldCaptureInGPUProcess)
@@ -235,6 +240,10 @@ CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSo
     if (m_shouldCaptureInGPUProcess)
         return CaptureSourceOrError { "Video capture in GPUProcess is not implemented"_s };
 #endif
+
+    if (m_shouldCaptureInGPUProcess && !m_manager->m_process->anyPageHasMediaDevicesEnabled() && !m_manager->m_process->anyPageHasSpeechRecognitionEnabled())
+        return CaptureSourceOrError { CaptureSourceError { "MediaDevices and SpeechRecognition are disabled - cannot create remote video capture source"_s, MediaAccessDenialReason::UserMediaDisabled } };
+
     if (m_shouldCaptureInGPUProcess)
         m_manager->m_remoteCaptureSampleManager.setVideoFrameObjectHeapProxy(&WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy());
 
@@ -247,6 +256,10 @@ CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptu
     if (m_shouldCaptureInGPUProcess)
         return CaptureSourceOrError { "Display capture in GPUProcess is not implemented"_s };
 #endif
+
+    if (m_shouldCaptureInGPUProcess && !m_manager->m_process->anyPageHasMediaDevicesEnabled() && !m_manager->m_process->anyPageHasSpeechRecognitionEnabled())
+        return CaptureSourceOrError { CaptureSourceError { "MediaDevices and SpeechRecognition are disabled - cannot create remote display capture source"_s, MediaAccessDenialReason::UserMediaDisabled } };
+
     if (m_shouldCaptureInGPUProcess) {
         Ref videoFrameObjectHeapProxy = WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy();
         m_manager->m_remoteCaptureSampleManager.setVideoFrameObjectHeapProxy(WTFMove(videoFrameObjectHeapProxy));
