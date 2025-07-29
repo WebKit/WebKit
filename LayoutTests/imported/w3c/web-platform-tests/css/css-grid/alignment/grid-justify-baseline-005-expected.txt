@@ -14,5 +14,5 @@ offsetLeft expected 100 but got 0
 PASS #target > div 3
 FAIL #target > div 4 assert_equals:
 <div style="grid-row: 4; grid-column: span 3; justify-self: last baseline;" data-offset-x="10">line1<br>line2</div>
-offsetLeft expected 10 but got 0
+offsetLeft expected 10 but got 110
 

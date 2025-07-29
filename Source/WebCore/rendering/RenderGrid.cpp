@@ -2189,9 +2189,17 @@ GridAxisPosition RenderGrid::rowAxisPositionForGridItem(const RenderBox& gridIte
     case ItemPosition::Stretch:
         return GridAxisPosition::GridAxisStart;
     case ItemPosition::Baseline:
-    case ItemPosition::LastBaseline:
-        // FIXME: Implement the previous values. For now, we always 'start' align the grid item.
+        // Flip fallback values for opposite-flow children.
+        if (!GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem))
+            return hasSameDirection ? GridAxisPosition::GridAxisStart : GridAxisPosition::GridAxisEnd;
+        // Follow the grid's writing mode for orthogonal grid items.
         return GridAxisPosition::GridAxisStart;
+    case ItemPosition::LastBaseline:
+        // Flip fallback values for opposite-flow children.
+        if (!GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem))
+            return hasSameDirection ? GridAxisPosition::GridAxisEnd : GridAxisPosition::GridAxisStart;
+        // Follow the grid's writing mode for orthogonal grid items.
+        return GridAxisPosition::GridAxisEnd;
     case ItemPosition::Legacy:
     case ItemPosition::Auto:
     case ItemPosition::Normal:

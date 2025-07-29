@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="help" href="https://www.w3.org/TR/css-align-3/#baseline-values">
+<style>
+.container {
+    width: 300px;
+    background-color: red;
+    height: 50px;
+}
+
+.baseline, .last-baseline {
+    display: inline-block;
+    height: 50px;
+    width: 100px;
+}
+
+.baseline {
+    background-color: lightblue;
+}
+
+.last-baseline {
+    background-color: lightgreen;
+}
+
+/* Utility margin classes */
+.margin-left-50 {
+    margin-left: 50px;
+}
+
+.margin-right-50 {
+    margin-right: 50px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="baseline margin-right-50"></div><div class="last-baseline margin-left-50"></div>
+</div>
+<div class="container">
+  <div class="baseline margin-right-50"></div><div class="last-baseline margin-left-50"></div>
+</div>
+</body>
+</html>

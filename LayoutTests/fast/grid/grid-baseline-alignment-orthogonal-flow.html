@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<link rel="help" href="https://www.w3.org/TR/css-align-3/#baseline-values">
+<head>
+<style>
+.grid {
+    display: grid;
+    grid-template-columns: 150px 150px;
+    width: 300px;
+    background-color: red;
+}
+
+.baseline, .last-baseline {
+    display: inline-block;
+    height: 50px;
+    width: 100px;
+}
+
+.baseline {
+    justify-self: baseline;
+    background-color: lightblue;
+}
+
+.last-baseline {
+    justify-self: last baseline;
+    background-color: lightgreen;
+}
+</style>
+</head>
+<body>
+<div class="grid">
+  <div class="baseline"></div>
+  <div class="last-baseline"></div>
+</div>
+<div class="grid" writing-mode="rtl">
+  <div class="baseline"></div>
+  <div class="last-baseline"></div>
+</div>
+</body>
+</html>
