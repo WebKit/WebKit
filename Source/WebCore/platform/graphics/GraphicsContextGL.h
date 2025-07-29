@@ -46,6 +46,10 @@
 #include <wtf/MachSendRight.h>
 #endif
 
+#if USE(UNIX_DOMAIN_SOCKETS)
+#include <wtf/unix/UnixFileDescriptor.h>
+#endif
+
 #if OS(WINDOWS)
 // Defined in winerror.h
 #ifdef NO_ERROR
@@ -82,6 +86,18 @@ using GraphicsContextGLExternalImageSource = Variant<
     GraphicsContextGLExternalImageSourceMTLSharedTextureHandle
     >;
 using GraphicsContextGLExternalSyncSource = std::tuple<MachSendRight, uint64_t>;
+
+#elif PLATFORM(GTK) || PLATFORM(WPE)
+
+struct GraphicsContextGLExternalImageSource {
+    Vector<WTF::UnixFileDescriptor> fds;
+    Vector<uint32_t> strides;
+    Vector<uint32_t> offsets;
+    uint32_t fourcc;
+    uint64_t modifier;
+    WebCore::IntSize size;
+};
+using GraphicsContextGLExternalSyncSource = int;
 
 #else
 

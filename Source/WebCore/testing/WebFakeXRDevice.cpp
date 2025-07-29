@@ -112,14 +112,6 @@ WebCore::IntSize SimulatedXRDevice::recommendedResolution(PlatformXR::SessionMod
 
 void SimulatedXRDevice::initializeTrackingAndRendering(const WebCore::SecurityOriginData&, PlatformXR::SessionMode, const PlatformXR::Device::FeatureList&)
 {
-#if !PLATFORM(COCOA)
-    GraphicsContextGLAttributes attributes;
-    attributes.depth = false;
-    attributes.stencil = false;
-    attributes.antialias = false;
-    m_gl = createWebProcessGraphicsContextGL(attributes);
-#endif
-
     if (m_trackingAndRenderingClient) {
         // WebXR FakeDevice waits for simulateInputConnection calls to add input sources-
         // There is no way to know how many simulateInputConnection calls will the device receive,
@@ -140,13 +132,6 @@ void SimulatedXRDevice::shutDownTrackingAndRendering()
     if (m_supportsShutdownNotification)
         simulateShutdownCompleted();
     stopTimer();
-#if !PLATFORM(COCOA)
-    if (m_gl) {
-        for (auto layer : m_layers)
-            m_gl->deleteTexture(layer.value);
-        m_gl = nullptr;
-    }
-#endif
     m_layers.clear();
 }
 
@@ -162,7 +147,6 @@ void SimulatedXRDevice::frameTimerFired()
     data.shouldRender = true;
 
     for (auto& layer : m_layers) {
-#if PLATFORM(COCOA)
         PlatformXR::FrameData::LayerSetupData layerSetupData;
         auto width = layer.value.width();
         auto height = layer.value.height();
@@ -170,7 +154,6 @@ void SimulatedXRDevice::frameTimerFired()
         layerSetupData.viewports[0] = { 0, 0, width, height };
         layerSetupData.physicalSize[1] = { 0, 0 };
         layerSetupData.viewports[1] = { 0, 0, 0, 0 };
-
         auto layerData = makeUniqueRef<PlatformXR::FrameData::LayerData>(PlatformXR::FrameData::LayerData {
             .layerSetup = layerSetupData,
             .renderingFrameIndex = 0,
@@ -178,13 +161,6 @@ void SimulatedXRDevice::frameTimerFired()
             .requestDepth = false
         });
         data.layers.add(layer.key, WTFMove(layerData));
-#else
-        auto layerData = makeUniqueRef<PlatformXR::FrameData::LayerData>(PlatformXR::FrameData::LayerData {
-            .framebufferSize = IntSize(0, 0),
-            .opaqueTexture = layer.value
-        });
-        data.layers.add(layer.key, WTFMove(layerData));
-#endif
     }
 
     for (auto& input : m_inputConnections) {
@@ -205,28 +181,10 @@ void SimulatedXRDevice::requestFrame(std::optional<PlatformXR::RequestData>&&, R
 
 std::optional<PlatformXR::LayerHandle> SimulatedXRDevice::createLayerProjection(uint32_t width, uint32_t height, bool alpha)
 {
-#if PLATFORM(COCOA)
     // TODO: Might need to pass the format type to WebXROpaqueFramebuffer to ensure alpha is handled correctly in tests.
     UNUSED_PARAM(alpha);
     PlatformXR::LayerHandle handle = ++m_layerIndex;
     m_layers.add(handle, IntSize { static_cast<int>(width), static_cast<int>(height) });
-#else
-    using GL = GraphicsContextGL;
-    if (!m_gl)
-        return std::nullopt;
-    PlatformXR::LayerHandle handle = ++m_layerIndex;
-    auto texture = m_gl->createTexture();
-    auto colorFormat = alpha ? GL::RGBA : GL::RGB;
-
-    m_gl->bindTexture(GL::TEXTURE_2D, texture);
-    m_gl->texParameteri(GL::TEXTURE_2D, GL::TEXTURE_WRAP_S, GL::CLAMP_TO_EDGE);
-    m_gl->texParameteri(GL::TEXTURE_2D, GL::TEXTURE_WRAP_T, GL::CLAMP_TO_EDGE);
-    m_gl->texParameteri(GL::TEXTURE_2D, GL::TEXTURE_MIN_FILTER, GL::LINEAR);
-    m_gl->texParameteri(GL::TEXTURE_2D, GL::TEXTURE_MAG_FILTER, GL::LINEAR);
-    m_gl->texImage2D(GL::TEXTURE_2D, 0, colorFormat, width, height, 0, colorFormat, GL::UNSIGNED_BYTE, 0);
-
-    m_layers.add(handle, texture);
-#endif
     return handle;
 }
 
@@ -234,10 +192,6 @@ void SimulatedXRDevice::deleteLayer(PlatformXR::LayerHandle handle)
 {
     auto it = m_layers.find(handle);
     if (it != m_layers.end()) {
-#if !PLATFORM(COCOA)
-        if (m_gl)
-            m_gl->deleteTexture(it->value);
-#endif
         m_layers.remove(it);
     }
 }

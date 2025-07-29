@@ -2675,9 +2675,13 @@ webkit.org/b/215912 http/tests/websocket/tests/hybi/handshake-fail-by-no-cr.html
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/208988 http/tests/webxr/webxr-third-party-iframe-requestsession-denied-by-insufficient-feature-policy.html [ Timeout ]
-webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https.html [ Failure ]
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrViewport_valid.https.html [ Failure ]
 webkit.org/b/208988 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_viewports.https.html [ Failure ]
+
+# WebXROpaqueFramebuffer is not able to properly setup gfx resources
+webkit.org/b/296681 imported/w3c/web-platform-tests/webxr [ Skip ]
+
+webkit.org/b/208988 http/wpt/webxr [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebXR-related bugs
@@ -3285,9 +3289,6 @@ webkit.org/b/279434 fast/text/glyph-display-lists/glyph-display-list-gpu-process
 
 # testRunner.webHistoryItemCount implementation is not implemented in WTR
 webkit.org/b/100238 fast/history/window-open.html [ Skip ]
-
-# WebXR is not fully supported yet
-webkit.org/b/208988 http/wpt/webxr [ Skip ]
 
 # Lockdown Mode does not apply
 dom/xsl/lockdown-mode [ Skip ]

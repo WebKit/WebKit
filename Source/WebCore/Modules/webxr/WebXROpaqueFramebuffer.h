@@ -105,26 +105,20 @@ public:
     void endFrame();
     bool usesLayeredMode() const;
 
-#if PLATFORM(COCOA)
     void releaseAllDisplayAttachments();
-#endif
 
 private:
     WebXROpaqueFramebuffer(PlatformXR::LayerHandle, Ref<WebGLFramebuffer>&&, WebGLRenderingContextBase&, Attributes&&, IntSize);
 
-#if PLATFORM(COCOA)
     bool setupFramebuffer(GraphicsContextGL&, const PlatformXR::FrameData::LayerSetupData&);
     const std::array<WebXRExternalAttachments, 2>* reusableDisplayAttachments(const PlatformXR::FrameData::ExternalTextureData&) const;
     void bindCompositorTexturesForDisplay(GraphicsContextGL&, const PlatformXR::FrameData::LayerData&);
     const std::array<WebXRExternalAttachments, 2>* reusableDisplayAttachmentsAtIndex(size_t);
     void releaseDisplayAttachmentsAtIndex(size_t);
-#endif
     void allocateRenderbufferStorage(GraphicsContextGL&, GCGLOwnedRenderbuffer&, GCGLsizei, GCGLenum, IntSize);
     void allocateAttachments(GraphicsContextGL&, WebXRAttachments&, GCGLsizei, IntSize);
     void bindAttachments(GraphicsContextGL&, WebXRAttachments&);
-#if PLATFORM(COCOA)
     void bindResolveAttachments(GraphicsContextGL&, WebXRAttachments&);
-#endif
     void resolveMSAAFramebuffer(GraphicsContextGL&);
     void blitShared(GraphicsContextGL&);
     void blitSharedToLayered(GraphicsContextGL&);
@@ -136,26 +130,22 @@ private:
     Attributes m_attributes;
     PlatformXR::Layout m_displayLayout = PlatformXR::Layout::Shared;
     IntSize m_framebufferSize; // Physical Space
-#if PLATFORM(COCOA)
     IntRect m_leftViewport; // Screen Space
     IntRect m_rightViewport; // Screen Space
     IntSize m_leftPhysicalSize; // Physical Space
     IntSize m_rightPhysicalSize; // Physical Space
-#endif
     WebXRAttachments m_drawAttachments;
     WebXRAttachments m_resolveAttachments;
     GCGLOwnedFramebuffer m_displayFBO;
     GCGLOwnedFramebuffer m_resolvedFBO;
-#if PLATFORM(COCOA)
     Vector<std::array<WebXRExternalAttachments, 2>> m_displayAttachmentsSets;
     size_t m_currentDisplayAttachmentIndex { 0 };
+#if PLATFORM(COCOA)
     MachSendRight m_completionSyncEvent;
+#endif
     uint64_t m_renderingFrameIndex { ~0u };
     bool m_usingFoveation { false };
     bool m_blitDepth { false };
-#else
-    PlatformGLObject m_colorTexture;
-#endif
 };
 
 } // namespace WebCore
