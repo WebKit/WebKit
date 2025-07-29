@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.content-view.elements > .reference-page-link-container {
-    position: absolute;
-    bottom: 6px;
-    inset-inline-end: 6px;
-}
+WI.FrameAccessibilityTreeContentView = class FrameAccessibilityTreeContentView extends WI.AccessibilityTreeContentView
+{
+    constructor(accessibilityTree)
+    {
+        console.assert(accessibilityTree instanceof WI.AccessibilityTree, accessibilityTree);
 
-.accessibility-tree-container {
-    position: absolute;
-    top: 35px;
-    inset-inline-end: 6px;
-}
+        super(accessibilityTree);
 
-.accessibility-tree-container img {
-    width: 40px;
-    height: 40px;
-}
+        this._accessibilityTree = accessibilityTree;
+        this._requestRootDOMNode();
+    }
 
-.disabled-element {
-    opacity: 0.5;
-}
+    // Public
 
-.accessibility-warning {
-    color: orange;
-    font-weight: bold;
-    margin-left: 6px;
-}
+    get accessibilityTree()
+    {
+        return this._accessibilityTree;
+    }
 
-.accessibility-warning-icon {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    margin-left: 4px;
-}
+    closed()
+    {
+        super.closed();
+    }
+
+    // Private
+
+    _rootDOMNodeAvailable(rootDOMNode)
+    {
+        if (this.isClosed)
+            return;
+
+        this.domTreeOutline.rootDOMNode = rootDOMNode;
+
+        if (!rootDOMNode) {
+            this.domTreeOutline.selectDOMNode(null, false);
+            return;
+        }
+        this._restoreSelectedNodeAfterUpdate(this._accessibilityTree.frame.url, rootDOMNode.body || rootDOMNode.documentElement || rootDOMNode.firstChild);
+    }
+
+    _rootDOMNodeInvalidated(event)
+    {
+        this._requestRootDOMNode();
+    }
+
+    _requestRootDOMNode()
+    {
+        this._accessibilityTree.requestRootDOMNode(this._rootDOMNodeAvailable.bind(this));
+    }
+};
