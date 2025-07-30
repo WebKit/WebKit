@@ -64,14 +64,6 @@
 #define Webgpu_webxr_feature_status Unstable
 #endif
 
-#if defined(ENABLE_UNIFIED_PDF_BY_DEFAULT) && ENABLE_UNIFIED_PDF_BY_DEFAULT && PLATFORM(MAC)
-#define Unifiedpdf_feature_status Mature
-#elif defined(ENABLE_UNIFIED_PDF_AS_PREVIEW) && ENABLE_UNIFIED_PDF_AS_PREVIEW
-#define Unifiedpdf_feature_status Preview
-#else
-#define Unifiedpdf_feature_status Internal
-#endif
-
 #if defined(ENABLE_UNPREFIXED_BACKDROP_FILTER) && ENABLE_UNPREFIXED_BACKDROP_FILTER
 #define Backdropfilter_feature_status Stable
 #else

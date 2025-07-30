@@ -7854,7 +7854,7 @@ UndoManagerAPIEnabled:
 
 UnifiedPDFEnabled:
   type: bool
-  status: Unifiedpdf_feature_status
+  status: mature
   category: security
   humanReadableName: "Unified PDF Viewer"
   humanReadableDescription: "Enable Unified PDF Viewer"
