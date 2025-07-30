@@ -70,6 +70,9 @@
 
 @property (nonatomic, copy) void (^didUpdateSidebar)(_WKWebExtensionSidebar *);
 
+@property (nonatomic, copy) void (^createBookmarkWithParentIdentifier)(NSString * parentId, NSNumber * index, NSString * url, NSString * title, void (^)(NSObject<_WKWebExtensionBookmark> *, NSError *));
+@property (nonatomic, copy) void (^getBookmarksForExtensionContext)(void (^)(NSArray<NSObject<_WKWebExtensionBookmark> *> *, NSError *));
+
 @end
 
 #endif // __OBJC__

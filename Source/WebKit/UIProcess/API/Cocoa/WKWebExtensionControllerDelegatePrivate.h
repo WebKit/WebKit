@@ -26,6 +26,9 @@
 #import <WebKit/WKWebExtensionControllerDelegate.h>
 
 @class _WKWebExtensionSidebar;
+@class _WKWebExtensionBookmark;
+@protocol _WKWebExtensionBookmark;
+
 
 WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
@@ -111,6 +114,33 @@ WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
  */
 - (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller didUpdateSidebar:(_WKWebExtensionSidebar * _Nonnull)sidebar forExtensionContext:(WKWebExtensionContext * _Nonnull)context;
 
+/*!
+ @abstract Called when the root-level bookmarks are needed to begin building the bookmark tree.
+ @param controller The web extension controller initiating the request.
+ @param context The context within which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes an array of objects conforming to
+ the `_WKWebExtensionBookmark` protocol and an optional error argument.
+ @discussion This method is the entry point for the `bookmarks.getTree` API. The delegate is responsible for
+ translating its native bookmark objects into objects that conform to the `_WKWebExtensionBookmark` protocol and
+ represent the top-level nodes of the bookmark hierarchy.
+ */
+- (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller getBookmarksForExtensionContext:(WKWebExtensionContext * _Nonnull)context completionHandler:(void (^)(NSArray<NSObject<_WKWebExtensionBookmark> *> * _Nullable, NSError * _Nullable))completionHandler;
+
+/*!
+ @abstract Called when a new bookmark or folder is requested to be created.
+ @param controller The web extension controller initiating the request.
+ @param parentId The string identifier of the parent folder. Can be nil or "0" for a top-level item.
+ @param index The desired index for the new bookmark within its parent. Can be nil.
+ @param url The URL for the new bookmark. Should be nil if creating a folder.
+ @param title The title for the new bookmark or folder.
+ @param context The context within which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes the newly created bookmark node
+ (as an object conforming to the `_WKWebExtensionBookmark` protocol) and an optional error argument.
+ @discussion This method is the entry point for the `bookmarks.create` API. The delegate is responsible for
+ taking the 4 parameters, creating the bookmark in its data store, and returning a new object that
+ represents the created item.
+ */
+- (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller createBookmarkWithParentIdentifier:(nullable NSString *)parentId index:(nullable NSNumber *)index url:(nullable NSString *)url title:(NSString * _Nonnull)title forExtensionContext:(WKWebExtensionContext * _Nonnull)context completionHandler:(void (^)(NSObject<_WKWebExtensionBookmark> * _Nullable, NSError * _Nullable))completionHandler;
 @end
 
 WK_HEADER_AUDIT_END(nullability, sendability)
