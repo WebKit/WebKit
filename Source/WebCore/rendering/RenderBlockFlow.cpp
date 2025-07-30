@@ -2380,6 +2380,13 @@ bool RenderBlockFlow::subtreeContainsFloats() const
     return false;
 }
 
+static bool preferredWidthsDependOnBlockConstraints(const RenderBox& renderer)
+{
+    if (auto* renderFlexibleBox = dynamicDowncast<RenderFlexibleBox>(renderer))
+        return renderFlexibleBox->preferredWidthsDependsOnBlockConstraints();
+    return false;
+}
+
 void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
@@ -2411,6 +2418,16 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
     if (diff == StyleDifference::Layout && selfNeedsLayout() && childrenInline()) {
         for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance())
             walker.current()->setNeedsPreferredWidthsUpdate();
+    }
+
+    auto& style = this->style();
+    auto computedLogicalWidth = style.logicalWidth();
+    if (!childrenInline() && oldStyle && oldStyle->logicalHeight() != style.logicalHeight()
+        && (computedLogicalWidth.isMinContent() || computedLogicalWidth.isMaxContent())) {
+        for (auto& blockLevelChild : childrenOfType<RenderBox>(*this)) {
+            if (preferredWidthsDependOnBlockConstraints(blockLevelChild))
+                blockLevelChild.setNeedsPreferredWidthsUpdate(MarkOnlyThis);
+        }
     }
 
     if (multiColumnFlow())
