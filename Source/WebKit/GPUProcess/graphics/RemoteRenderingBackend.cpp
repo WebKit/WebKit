@@ -88,7 +88,7 @@
 #import "DynamicContentScalingImageBufferBackend.h"
 #endif
 
-#define MESSAGE_CHECK(assertion, message) MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, &m_gpuConnectionToWebProcess->connection(), message);
+#define MESSAGE_CHECK(assertion, message) STREAM_MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, streamConnection(), message);
 
 namespace WebKit {
 using namespace WebCore;

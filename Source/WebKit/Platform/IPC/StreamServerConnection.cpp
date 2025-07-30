@@ -242,7 +242,11 @@ bool StreamServerConnection::processOutOfStreamMessage(Decoder& decoder)
         receiver = m_receivers.get(key);
     }
     if (receiver) {
-        if (!dispatchStreamMessage(*message, *receiver))
+        ASSERT(!m_isProcessingStreamMessage);
+        m_isProcessingStreamMessage = true;
+        bool res = dispatchStreamMessage(*message, *receiver);
+        m_isProcessingStreamMessage = false;
+        if (!res)
             return false;
     }
 
