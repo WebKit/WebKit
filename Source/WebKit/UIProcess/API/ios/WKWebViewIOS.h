@@ -194,8 +194,6 @@ enum class TapHandlingResult : uint8_t;
 
 - (UIColor *)_insertionPointColor;
 
-- (BOOL)_tryToHandleKeyEventInCustomContentView:(UIPressesEvent *)event;
-
 @property (nonatomic, readonly) WKPasswordView *_passwordView;
 @property (nonatomic, readonly) WKWebViewContentProviderRegistry *_contentProviderRegistry;
 @property (nonatomic, readonly) WKSelectionGranularity _selectionGranularity WK_API_DEPRECATED("This property is ignored; selection granularity is always `character`.", ios(8.0, 11.0), visionos(1.0, 1.0));

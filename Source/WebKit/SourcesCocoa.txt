@@ -532,7 +532,6 @@ UIProcess/ios/WKMouseDeviceObserver.mm
 UIProcess/ios/WKMouseInteraction.mm
 UIProcess/ios/WKPageHostedModelView.mm
 UIProcess/ios/WKPasswordView.mm
-UIProcess/ios/WKPDFView.mm
 UIProcess/ios/WKScrollView.mm
 UIProcess/ios/WKScrollViewTrackingTapGestureRecognizer.mm
 UIProcess/ios/WKStylusDeviceObserver.mm

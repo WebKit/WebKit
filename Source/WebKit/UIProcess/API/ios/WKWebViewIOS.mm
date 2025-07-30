@@ -607,52 +607,6 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
     _page->didLayoutForCustomContentProvider();
 }
 
-- (BOOL)_tryToHandleKeyEventInCustomContentView:(UIPressesEvent *)event
-{
-    // We only want to handle key events from the hardware keyboard when we are
-    // first responder and a custom content view is installed; otherwise,
-    // WKContentView will be the first responder and expects to get key events directly.
-    if (self.isFirstResponder && event._hidEvent) {
-        if ([_customContentView respondsToSelector:@selector(web_handleKeyEvent:)]) {
-            if ([_customContentView web_handleKeyEvent:event])
-                return YES;
-        }
-    }
-    return NO;
-}
-
-- (void)pressesBegan:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
-{
-    if ([self _tryToHandleKeyEventInCustomContentView:event])
-        return;
-
-    [super pressesBegan:presses withEvent:event];
-}
-
-- (void)pressesChanged:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
-{
-    if ([self _tryToHandleKeyEventInCustomContentView:event])
-        return;
-
-    [super pressesChanged:presses withEvent:event];
-}
-
-- (void)pressesEnded:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
-{
-    if ([self _tryToHandleKeyEventInCustomContentView:event])
-        return;
-
-    [super pressesEnded:presses withEvent:event];
-}
-
-- (void)pressesCancelled:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
-{
-    if ([self _tryToHandleKeyEventInCustomContentView:event])
-        return;
-
-    [super pressesCancelled:presses withEvent:event];
-}
-
 - (void)_willInvokeUIScrollViewDelegateCallback
 {
     _perProcessState.invokingUIScrollViewDelegateCallback = YES;
@@ -2244,11 +2198,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
 {
-    if (![self usesStandardContentView]) {
-        if ([_customContentView respondsToSelector:@selector(web_scrollViewWillBeginZooming:withView:)])
-            [_customContentView web_scrollViewWillBeginZooming:scrollView withView:view];
+    if (![self usesStandardContentView])
         return;
-    }
 
     if (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateBegan) {
         _page->willStartUserTriggeredZooming();
@@ -2544,9 +2495,6 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 #endif
     }
 
-    if (![self usesStandardContentView] && [_customContentView respondsToSelector:@selector(web_scrollViewDidScroll:)])
-        [_customContentView web_scrollViewDidScroll:(UIScrollView *)scrollView];
-
 #if HAVE(UIFINDINTERACTION)
     [self _updateFindOverlayPosition];
 #endif
@@ -2565,9 +2513,6 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
-    if (![self usesStandardContentView] && [_customContentView respondsToSelector:@selector(web_scrollViewDidZoom:)])
-        [_customContentView web_scrollViewDidZoom:scrollView];
-
     [self _updateScrollViewBackground];
     [self _scheduleVisibleContentRectUpdateAfterScrollInView:scrollView];
 
@@ -2578,9 +2523,6 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(CGFloat)scale
 {
-    if (![self usesStandardContentView] && [_customContentView respondsToSelector:@selector(web_scrollViewDidEndZooming:withView:atScale:)])
-        [_customContentView web_scrollViewDidEndZooming:scrollView withView:view atScale:scale];
-
     ASSERT(scrollView == _scrollView);
 
     // FIXME: remove when rdar://problem/36065495 is fixed.
@@ -4456,16 +4398,12 @@ static bool isLockdownModeWarningNeeded()
 
 - (NSData *)_dataForDisplayedPDF
 {
-    if (![self _isDisplayingPDF])
-        return nil;
-    return [_customContentView web_dataRepresentation];
+    return nil;
 }
 
 - (NSString *)_suggestedFilenameForDisplayedPDF
 {
-    if (![self _isDisplayingPDF])
-        return nil;
-    return [_customContentView web_suggestedFilename];
+    return nil;
 }
 
 - (_WKWebViewPrintFormatter *)_webViewPrintFormatter
@@ -4653,10 +4591,7 @@ static bool isLockdownModeWarningNeeded()
     }();
 
     if (!shouldPerformAnimatedResize) {
-        if ([_customContentView respondsToSelector:@selector(web_beginAnimatedResizeWithUpdates:)])
-            [_customContentView web_beginAnimatedResizeWithUpdates:updateBlock];
-        else
-            updateBlock();
+        updateBlock();
         return;
     }
 
@@ -4854,11 +4789,6 @@ static bool isLockdownModeWarningNeeded()
     CGFloat imageHeight = imageScale * snapshotRectInContentCoordinates.size.height;
     CGSize imageSize = CGSizeMake(imageWidth, imageHeight);
 
-    if ([[_customContentView class] web_requiresCustomSnapshotting]) {
-        [_customContentView web_snapshotRectInContentViewCoordinates:snapshotRectInContentCoordinates snapshotWidth:imageWidth completionHandler:completionHandler];
-        return;
-    }
-
 #if HAVE(CORE_ANIMATION_RENDER_SERVER)
     // If we are parented and not hidden, and thus won't incur a significant penalty from paging in tiles, snapshot the view hierarchy directly.
     NSString *displayName = self.window.screen.displayConfiguration.name;
@@ -4881,7 +4811,6 @@ static bool isLockdownModeWarningNeeded()
 #endif
 
     if (_customContentView) {
-        ASSERT(![[_customContentView class] web_requiresCustomSnapshotting]);
         UIGraphicsBeginImageContextWithOptions(imageSize, YES, 1);
 
         UIView *customContentView = _customContentView.get();

@@ -30,6 +30,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "UnifiedPDFTestHelpers.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKNavigationResponsePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -130,17 +131,21 @@ TEST(WebKit, WKNavigationResponseUnknownMIMEType)
 TEST(WebKit, WKNavigationResponsePDFType)
 {
     isDone = false;
-    auto schemeHandler = adoptNS([[WKNavigationResponseTestSchemeHandler alloc] init]);
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr schemeHandler = adoptNS([[WKNavigationResponseTestSchemeHandler alloc] init]);
+#if ENABLE(LEGACY_PDFKIT_PLUGIN)
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+#else
+    RetainPtr configuration = TestWebKitAPI::configurationForWebViewTestingUnifiedPDF();
+#endif
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-    auto navigationDelegate = adoptNS([[WKNavigationResponseTestNavigationDelegate alloc] init]);
-    webView.get().navigationDelegate = navigationDelegate.get();
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr navigationDelegate = adoptNS([[WKNavigationResponseTestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
 
     [[[webView configuration] processPool] _addSupportedPlugin: @"" named: @"com.apple.webkit.builtinpdfplugin" withMimeTypes: [NSSet setWithArray: @[ @"application/pdf" ]] withExtensions: [NSSet setWithArray: @[ ]]];
 
-    schemeHandler.get().mimeType = @"application/pdf";
-    navigationDelegate.get().expectation = YES;
+    [schemeHandler setMimeType:@"application/pdf"];
+    [navigationDelegate setExpectation:YES];
 
     NSURL *testURL = [NSURL URLWithString:@"test:///pdf-response"];
     [webView loadRequest:[NSURLRequest requestWithURL:testURL]];

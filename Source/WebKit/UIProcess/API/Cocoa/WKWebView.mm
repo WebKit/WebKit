@@ -88,7 +88,6 @@
 #import "WKNavigationInternal.h"
 #import "WKPDFConfiguration.h"
 #import "WKPDFPageNumberIndicator.h"
-#import "WKPDFView.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKScrollGeometry.h"
@@ -1544,13 +1543,9 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         handler(image.get(), nil);
     });
 #else
-    auto useIntrinsicDeviceScaleFactor = [[_customContentView class] web_requiresCustomSnapshotting];
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    // FIXME: <rdar://131638772> UIScreen.mainScreen is deprecated.
-    CGFloat deviceScale = useIntrinsicDeviceScaleFactor ? UIScreen.mainScreen.scale : _page->deviceScaleFactor();
-ALLOW_DEPRECATED_DECLARATIONS_END
-    CGFloat imageWidth = useIntrinsicDeviceScaleFactor ? snapshotWidth : snapshotWidth * deviceScale;
+    CGFloat deviceScale = _page->deviceScaleFactor();
+    CGFloat imageWidth = snapshotWidth * deviceScale;
     RetainPtr<WKWebView> strongSelf = self;
     BOOL afterScreenUpdates = snapshotConfiguration && snapshotConfiguration.afterScreenUpdates;
     auto callSnapshotRect = [strongSelf, afterScreenUpdates, rectInViewCoordinates, imageWidth, deviceScale, handler] {
@@ -5719,40 +5714,14 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (BOOL)_isDisplayingPDF
 {
-    auto mainFrameIsDisplayingPDFDocument = [page = WeakPtr { _page.get() }] {
-        if (!page)
-            return false;
-        if (RefPtr mainFrame = page->mainFrame())
-            return mainFrame->isDisplayingPDFDocument();
-        return false;
-    };
+    if (!_page)
+        return NO;
 
-    bool unifiedPDFEnabled = false;
-#if ENABLE(UNIFIED_PDF)
-    unifiedPDFEnabled = _page->protectedPreferences()->unifiedPDFEnabled();
-#endif
+    RefPtr mainFrame = _page->mainFrame();
+    if (!mainFrame)
+        return NO;
 
-    bool hasCustomContentViewForPDFType = false;
-#if ENABLE(WKPDFVIEW)
-    hasCustomContentViewForPDFType = [weakSelf = WeakObjCPtr<WKWebView>(self)] {
-        if (![WKPDFView platformSupportsPDFView])
-            return false;
-
-        RetainPtr strongSelf = weakSelf.get();
-        if (!strongSelf)
-            return false;
-
-        for (auto& type : WebCore::MIMETypeRegistry::pdfMIMETypes()) {
-            Class providerClass = [strongSelf->_contentProviderRegistry providerForMIMEType:@(type.characters())];
-            if ([strongSelf->_customContentView isKindOfClass:providerClass])
-                return true;
-        }
-
-        return false;
-    }();
-#endif
-
-    return static_cast<BOOL>(!unifiedPDFEnabled && hasCustomContentViewForPDFType ?: mainFrameIsDisplayingPDFDocument());
+    return static_cast<BOOL>(mainFrame->isDisplayingPDFDocument());
 }
 
 - (BOOL)_isDisplayingStandaloneImageDocument

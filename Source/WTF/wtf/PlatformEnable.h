@@ -573,10 +573,6 @@
 #define ENABLE_WRITING_TOOLS 0
 #endif
 
-#if !defined(ENABLE_WKPDFVIEW)
-#define ENABLE_WKPDFVIEW 0
-#endif
-
 #if !defined(ENABLE_WK_WEB_EXTENSIONS)
 #define ENABLE_WK_WEB_EXTENSIONS 0
 #endif
