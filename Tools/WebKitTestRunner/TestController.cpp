@@ -1000,8 +1000,8 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
         WKPageConfigurationSetWebsiteDataStore(pageConfiguration.get(), ephemeralDataStore.get());
     }
 
-    if (options.allowTestOnlyIPC())
-        WKPageConfigurationSetAllowTestOnlyIPC(pageConfiguration.get(), true);
+    if (!options.allowTestOnlyIPC())
+        WKPageConfigurationSetAllowTestOnlyIPC(pageConfiguration.get(), false);
     WKPageConfigurationSetShouldSendConsoleLogsToUIProcessForTesting(pageConfiguration.get(), true);
 
     m_userContentController = adoptWK(WKUserContentControllerCreate());
