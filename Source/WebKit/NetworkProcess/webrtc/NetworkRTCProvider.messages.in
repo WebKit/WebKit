@@ -23,9 +23,10 @@
 #if USE(LIBWEBRTC)
 
 [
-    ExceptionForEnabledBy,
+    EnabledBy=PeerConnectionEnabled,
     DispatchedFrom=WebContent,
-    DispatchedTo=Networking
+    DispatchedTo=Networking,
+    SharedPreferencesNeedsConnection
 ]
 messages -> NetworkRTCProvider {
     CreateUDPSocket(WebCore::LibWebRTCSocketIdentifier identifier, WebKit::WebRTCNetwork::SocketAddress localAddress, uint16_t minPort, uint16_t maxPort, WebKit::WebPageProxyIdentifier pageIdentifier, bool isFirstParty, bool isRelayDisabled, WebCore::RegistrableDomain domain)

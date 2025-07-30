@@ -30,28 +30,32 @@
 #include "NetworkConnectionToWebProcess.h"
 #include "RTCDataChannelRemoteManagerMessages.h"
 #include "RTCDataChannelRemoteManagerProxyMessages.h"
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
-RTCDataChannelRemoteManagerProxy::RTCDataChannelRemoteManagerProxy()
+RTCDataChannelRemoteManagerProxy::RTCDataChannelRemoteManagerProxy(NetworkProcess& networkProcess)
     : m_queue(WorkQueue::create("RTCDataChannelRemoteManagerProxy"_s))
+    , m_networkProcess(networkProcess)
 {
 }
 
 void RTCDataChannelRemoteManagerProxy::registerConnectionToWebProcess(NetworkConnectionToWebProcess& connectionToWebProcess)
 {
-    m_queue->dispatch([this, protectedThis = Ref { *this }, identifier = connectionToWebProcess.webProcessIdentifier(), connectionID = connectionToWebProcess.connection().uniqueID()]() mutable {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, identifier = connectionToWebProcess.webProcessIdentifier(), connectionID = connectionToWebProcess.connection().uniqueID(), sharedPreferences = connectionToWebProcess.sharedPreferencesForWebProcessValue()]() mutable {
         ASSERT(!m_webProcessConnections.contains(identifier));
         m_webProcessConnections.add(identifier, connectionID);
+        m_sharedPreferencesForConnections.add(connectionID, WTFMove(sharedPreferences));
     });
     connectionToWebProcess.connection().addWorkQueueMessageReceiver(Messages::RTCDataChannelRemoteManagerProxy::messageReceiverName(), m_queue, *this);
 }
 
 void RTCDataChannelRemoteManagerProxy::unregisterConnectionToWebProcess(NetworkConnectionToWebProcess& connectionToWebProcess)
 {
-    m_queue->dispatch([this, protectedThis = Ref { *this }, identifier = connectionToWebProcess.webProcessIdentifier()] {
+    m_queue->dispatch([this, protectedThis = Ref { *this }, identifier = connectionToWebProcess.webProcessIdentifier(), connectionID = connectionToWebProcess.connection().uniqueID()] {
         ASSERT(m_webProcessConnections.contains(identifier));
         m_webProcessConnections.remove(identifier);
+        m_sharedPreferencesForConnections.remove(connectionID);
     });
     connectionToWebProcess.connection().removeWorkQueueMessageReceiver(Messages::RTCDataChannelRemoteManagerProxy::messageReceiverName());
 }
@@ -90,6 +94,16 @@ void RTCDataChannelRemoteManagerProxy::bufferedAmountIsDecreasing(WebCore::RTCDa
 {
     if (auto connectionID = m_webProcessConnections.getOptional(identifier.processIdentifier()))
         IPC::Connection::send(*connectionID, Messages::RTCDataChannelRemoteManager::BufferedAmountIsDecreasing { identifier, amount }, 0);
+}
+
+std::optional<SharedPreferencesForWebProcess> RTCDataChannelRemoteManagerProxy::sharedPreferencesForWebProcess(const IPC::Connection& connection)
+{
+    auto iterator = m_sharedPreferencesForConnections.find(connection.uniqueID());
+    if (iterator != m_sharedPreferencesForConnections.end())
+        return iterator->value;
+
+    // Connection not found - this can happen during connection teardown or if called before registration
+    return std::nullopt;
 }
 
 }

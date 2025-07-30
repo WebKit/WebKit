@@ -2643,6 +2643,38 @@ void WebProcess::didReceiveRemoteCommand(PlatformMediaSession::RemoteControlComm
         page->didReceiveRemoteCommand(type, argument);
 }
 
+#if ENABLE(MEDIA_STREAM)
+bool WebProcess::anyPageHasMediaDevicesEnabled() const
+{
+    for (auto& page : m_pageMap.values()) {
+        RefPtr protectedPage = page.get();
+        if (!protectedPage)
+            continue;
+
+        if (RefPtr corePage = protectedPage->corePage()) {
+            if (corePage->settings().mediaDevicesEnabled())
+                return true;
+        }
+    }
+    return false;
+}
+
+bool WebProcess::anyPageHasSpeechRecognitionEnabled() const
+{
+    for (auto& page : m_pageMap.values()) {
+        RefPtr protectedPage = page.get();
+        if (!protectedPage)
+            continue;
+
+        if (RefPtr corePage = protectedPage->corePage()) {
+            if (corePage->settings().speechRecognitionEnabled())
+                return true;
+        }
+    }
+    return false;
+}
+#endif
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_SESSION_ID

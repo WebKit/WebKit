@@ -541,6 +541,12 @@ void NetworkRTCMonitor::deref()
     m_rtcProvider->deref();
 }
 
+std::optional<SharedPreferencesForWebProcess> NetworkRTCMonitor::sharedPreferencesForWebProcess(IPC::Connection& connection) const
+{
+    Ref protectedProvider = m_rtcProvider.get();
+    return protectedProvider->sharedPreferencesForWebProcess(connection);
+}
+
 } // namespace WebKit
 
 #undef RTC_RELEASE_LOG
