@@ -49,6 +49,7 @@ public:
     void dump(PrintStream&) const;
 
     JS_EXPORT_PRIVATE void operator delete(NativeCallee*, std::destroying_delete_t);
+    JS_EXPORT_PRIVATE virtual ~NativeCallee() = default;
 
 protected:
     JS_EXPORT_PRIVATE NativeCallee(Category, ImplementationVisibility);

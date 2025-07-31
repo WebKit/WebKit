@@ -136,7 +136,7 @@ public:
     bool isGrowableShared() const { return m_isGrowableShared; }
     bool isAutoLength() const { return m_isAutoLength; }
 
-    inline ~ArrayBufferView();
+    virtual inline ~ArrayBufferView();
 
     // Helper to verify byte offset is size aligned.
     static bool verifyByteOffsetAlignment(size_t byteOffset, size_t elementSize)

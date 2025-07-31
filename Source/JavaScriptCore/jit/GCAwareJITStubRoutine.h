@@ -59,6 +59,7 @@ public:
     using Base = JITStubRoutine;
     friend class JITStubRoutine;
     GCAwareJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, JSCell* owner, bool isCodeImmutable);
+    ~GCAwareJITStubRoutine() = default;
 
     static Ref<JITStubRoutine> create(VM& vm, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code, JSCell* owner, bool isCodeImmutable)
     {

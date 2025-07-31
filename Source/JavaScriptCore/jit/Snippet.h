@@ -62,6 +62,8 @@ public:
     uint8_t numGPScratchRegisters { 0 };
     uint8_t numFPScratchRegisters { 0 };
 
+    virtual ~Snippet() = default;
+
 protected:
     Snippet() = default;
 

@@ -80,6 +80,8 @@ public:
         , m_type(type)
     {
     }
+
+    virtual ~JITStubRoutine() = default;
     
     // Use this if you want to pass a CodePtr to someone who insists on taking
     // a RefPtr<JITStubRoutine>.

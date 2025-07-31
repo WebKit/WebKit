@@ -166,7 +166,7 @@ class WatchpointSet : public ThreadSafeRefCounted<WatchpointSet> {
 public:
     // FIXME: In many cases, it would be amazing if this *did* fire the watchpoints. I suspect that
     // this might be hard to get right, but still, it might be awesome.
-    JS_EXPORT_PRIVATE ~WatchpointSet(); // Note that this will not fire any of the watchpoints; if you need to know when a WatchpointSet dies then you need a separate mechanism for this.
+    JS_EXPORT_PRIVATE virtual ~WatchpointSet(); // Note that this will not fire any of the watchpoints; if you need to know when a WatchpointSet dies then you need a separate mechanism for this.
 
     static Ref<WatchpointSet> create(WatchpointState state)
     {
