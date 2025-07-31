@@ -107,7 +107,11 @@ void XRDeviceProxy::didCompleteShutdownTriggeredBySystem()
 Vector<PlatformXR::Device::ViewData> XRDeviceProxy::views(SessionMode mode) const
 {
     Vector<Device::ViewData> views;
+#if USE(OPENXR)
+    if (m_supportsStereoRendering && isImmersive(mode)) {
+#else
     if (m_supportsStereoRendering && mode == SessionMode::ImmersiveVr) {
+#endif
         views.append({ .active = true, .eye = Eye::Left });
         views.append({ .active = true, .eye = Eye::Right });
     } else
