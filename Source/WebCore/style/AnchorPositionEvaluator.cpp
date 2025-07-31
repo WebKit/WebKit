@@ -1257,16 +1257,12 @@ bool AnchorPositionEvaluator::overflowsInsetModifiedContainingBlock(const Render
     if (!anchoredBox.isOutOfFlowPositioned())
         return false;
 
-    auto inlineConstraints = PositionedLayoutConstraints { anchoredBox, LogicalBoxAxis::Inline };
-    auto blockConstraints = PositionedLayoutConstraints { anchoredBox, LogicalBoxAxis::Block };
-    inlineConstraints.computeInsets();
-    blockConstraints.computeInsets();
-
-    auto anchorInlineSize = anchoredBox.logicalWidth() + anchoredBox.marginStart() + anchoredBox.marginEnd();
-    auto anchorBlockSize = anchoredBox.logicalHeight() + anchoredBox.marginBefore() + anchoredBox.marginAfter();
-
-    return inlineConstraints.insetModifiedContainingSize() < anchorInlineSize
-        || blockConstraints.insetModifiedContainingSize() < anchorBlockSize;
+    auto containerBox = anchoredBox.containingBlock();
+    if (!containerBox)
+        return false;
+    auto anchorBoxRect = anchoredBox.absoluteBoundingBoxRect();
+    auto anchorContainerBoxRect = containerBox->absoluteBoundingBoxRect();
+    return !anchorContainerBoxRect.contains(anchorBoxRect);
 }
 
 bool AnchorPositionEvaluator::isDefaultAnchorInvisibleOrClippedByInterveningBoxes(const RenderBox& anchoredBox)
