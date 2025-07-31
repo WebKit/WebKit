@@ -17,6 +17,7 @@
 #////////////////////////////////////////////////////////////////////////////////////////
 
 fast/events/constructors/keyboard-event-constructor.html [ Pass ]
+fast/css/scrollbar-custom-gutter-stable-overflow-dynamic-change.html [ Pass ]
 
 webkit.org/b/299561 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-chained-003.html [ Pass ]
 

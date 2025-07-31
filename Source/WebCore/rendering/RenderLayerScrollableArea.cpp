@@ -999,13 +999,38 @@ int RenderLayerScrollableArea::verticalScrollbarWidth(OverlayScrollbarSizeReleva
     if (vBar && vBar->isOverlayScrollbar() && (relevancy == OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize || !vBar->shouldParticipateInHitTesting()))
         return 0;
 
-    if (!vBar && isHorizontalWritingMode && !(scrollbarGutterStyle().isAuto() || ScrollbarTheme::theme().usesOverlayScrollbars()))
-        return ScrollbarTheme::theme().scrollbarThickness(scrollbarWidthStyle());
+    if (!vBar && isHorizontalWritingMode && !scrollbarGutterStyle().isAuto()) {
+        if (ScrollbarTheme::theme().supportsLegacyScrollbarGutter()
+            && m_layer.renderer().style().usesLegacyScrollbarStyle())
+            return computeScrollbarGutterWidth();
+        if (!ScrollbarTheme::theme().usesOverlayScrollbars())
+            return ScrollbarTheme::theme().scrollbarThickness(scrollbarWidthStyle());
+    }
 
     if (!vBar || !showsOverflowControls())
         return 0;
 
     return vBar->width();
+}
+
+// Computes the gutter width and also supports custom-styled scrollbars. Since
+// scrollbar appearance can vary widely, we avoid relying solely on style parsing
+// and instead create a temporary scrollbar to obtain its exact rendered width.
+// This ensures the gutter matches the actual visual scrollbar size.
+
+int RenderLayerScrollableArea::computeScrollbarGutterWidth() const
+{
+    if (!m_gutterWidth) {
+        auto& mutableThis = const_cast<RenderLayerScrollableArea&>(*this);
+        if (RefPtr<Scrollbar> tempVBar = mutableThis.createScrollbar(ScrollbarOrientation::Vertical)) {
+            m_gutterWidth = tempVBar->width();
+            if (!tempVBar->isCustomScrollbar())
+                mutableThis.willRemoveScrollbar(*tempVBar, ScrollbarOrientation::Vertical);
+            tempVBar->removeFromParent();
+            tempVBar = nullptr;
+        }
+    }
+    return (m_gutterWidth ? m_gutterWidth : ScrollbarTheme::theme().scrollbarThickness(scrollbarWidthStyle()));
 }
 
 int RenderLayerScrollableArea::horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy relevancy, bool isHorizontalWritingMode) const
@@ -1268,6 +1293,12 @@ void RenderLayerScrollableArea::updateScrollbarsAfterStyleChange(const RenderSty
     // List box parts handle the scrollbars by themselves so we have nothing to do.
     if (box->style().usedAppearance() == StyleAppearance::Listbox)
         return;
+
+    // Reset cached gutter width when scrollbar style may have changed.
+    // This ensures the gutter width is recalculated for legacy scrollbars.
+    if (ScrollbarTheme::theme().supportsLegacyScrollbarGutter()
+        && m_gutterWidth && box->style().usesLegacyScrollbarStyle())
+        m_gutterWidth = 0;
 
     bool hadVerticalScrollbar = hasVerticalScrollbar();
     updateScrollbarPresenceAndState();

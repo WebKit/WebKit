@@ -37,6 +37,9 @@ public:
     virtual ~ScrollbarThemeAdwaita() = default;
 
 protected:
+#if PLATFORM(WPE)
+    bool supportsLegacyScrollbarGutter() const override;
+#endif
     bool usesOverlayScrollbars() const override;
     bool invalidateOnMouseEnterExit() override { return usesOverlayScrollbars(); }
 

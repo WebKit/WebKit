@@ -86,6 +86,13 @@ bool ScrollbarThemeAdwaita::usesOverlayScrollbars() const
 #endif
 }
 
+#if PLATFORM(WPE)
+bool ScrollbarThemeAdwaita::supportsLegacyScrollbarGutter() const
+{
+    return true;
+}
+#endif
+
 int ScrollbarThemeAdwaita::scrollbarThickness(ScrollbarWidth scrollbarWidth, OverlayScrollbarSizeRelevancy overlayRelevancy)
 {
     if (scrollbarWidth == ScrollbarWidth::None || (usesOverlayScrollbars() && overlayRelevancy == OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize))
