@@ -1,0 +1,4 @@
+
+
+PASS document.caretPositionFromPoint() should return a non-null CaretPosition over audio elements
+

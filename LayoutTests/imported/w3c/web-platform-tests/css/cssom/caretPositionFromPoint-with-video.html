@@ -1,0 +1,15 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>caretPositionFromPoint() should return a non-null CaretPosition over video elements</title>
+<link rel="help" href="https://drafts.csswg.org/cssom-view-1/#dom-document-caretpositionfrompoint">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<video src="support/white.webm"></video>
+<script>
+  test(() => {
+    const video = document.querySelector("video");
+    const caretPosition = document.caretPositionFromPoint(video.offsetLeft + video.offsetWidth / 2, video.offsetTop + video.offsetHeight / 2);
+    assert_equals(caretPosition.offsetNode, document.body);
+    assert_equals(caretPosition.offset, 0);
+  }, "document.caretPositionFromPoint() should return a non-null CaretPosition over video elements");
+</script>

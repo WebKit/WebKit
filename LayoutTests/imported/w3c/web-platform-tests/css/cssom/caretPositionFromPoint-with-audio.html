@@ -1,0 +1,15 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>caretPositionFromPoint() should return a non-null CaretPosition over audio elements</title>
+<link rel="help" href="https://drafts.csswg.org/cssom-view-1/#dom-document-caretpositionfrompoint">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<audio controls></audio>
+<script>
+  test(() => {
+    const audio = document.querySelector("audio");
+    const caretPosition = document.caretPositionFromPoint(audio.offsetLeft + audio.offsetWidth / 2, audio.offsetTop + audio.offsetHeight / 2);
+    assert_equals(caretPosition.offsetNode, document.body);
+    assert_equals(caretPosition.offset, 0);
+  }, "document.caretPositionFromPoint() should return a non-null CaretPosition over audio elements");
+</script>

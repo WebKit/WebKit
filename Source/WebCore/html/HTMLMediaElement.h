@@ -809,6 +809,8 @@ protected:
     SoundStageSize soundStageSize() const { return m_soundStageSize; }
     void setSoundStageSize(SoundStageSize);
 
+    bool canContainRangeEndPoint() const final { return false; }
+
 protected:
     // ActiveDOMObject
     void stop() override;
