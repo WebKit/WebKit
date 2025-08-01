@@ -47,6 +47,7 @@ namespace JSC { namespace Wasm {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TypeDefinition);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TypeInformation);
+WTF_MAKE_COMPACT_TZONE_ALLOCATED_IMPL(RTT);
 
 String TypeDefinition::toString() const
 {

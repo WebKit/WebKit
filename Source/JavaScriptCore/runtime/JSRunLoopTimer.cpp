@@ -40,6 +40,7 @@
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JSRunLoopTimer::Manager);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSRunLoopTimer::Manager::PerVMData);
 
 JSRunLoopTimer::Manager::PerVMData::PerVMData(Manager& manager, RunLoop& runLoop)
     : runLoop(runLoop)

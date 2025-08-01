@@ -590,7 +590,7 @@ private:
     static constexpr unsigned DontEnum = 0 | PropertyAttribute::DontEnum;
 
     class PropertyFilter : public SideDataRepository::SideData {
-        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PropertyFilter);
+        WTF_MAKE_TZONE_ALLOCATED(PropertyFilter);
     public:
         void add(UniquedStringImpl* uid)
         {
@@ -946,6 +946,8 @@ private:
     static void reportUncaughtExceptionAtEventLoop(JSGlobalObject*, Exception*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(GlobalObject, JSGlobalObject);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GlobalObject::PropertyFilter);
 
 static bool supportsRichSourceInfo = true;
 static bool shellSupportsRichSourceInfo(const JSGlobalObject*)

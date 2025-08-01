@@ -27,13 +27,14 @@
 
 #include "DOMJITGetterSetter.h"
 #include "StructureStubInfo.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
 #if ENABLE(JIT)
 
 class SharedJITStubSet {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SharedJITStubSet);
+    WTF_MAKE_TZONE_ALLOCATED(SharedJITStubSet);
 public:
     SharedJITStubSet() = default;
 

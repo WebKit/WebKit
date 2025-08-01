@@ -45,6 +45,7 @@
 #include <wtf/NumberOfCores.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TranslatedProcess.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/threads/Signals.h>
@@ -81,12 +82,11 @@ namespace OptionsHelper {
 // VM run time. For now, the only field it contains is a copy of Options defaults
 // which are only used to provide more info for Options dumps.
 struct Metadata {
-    // This struct does not need to be TZONE_ALLOCATED because it is only used for transient memory
-    // during Options initialization, and will not be re-allocated thereafter. See comment above.
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Metadata);
+    WTF_MAKE_TZONE_ALLOCATED(Metadata);
 public:
     OptionsStorage defaults;
 };
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Metadata);
 
 static LazyNeverDestroyed<std::unique_ptr<Metadata>> g_metadata;
 static LazyNeverDestroyed<WTF::BitSet<NumberOfOptions>> g_optionWasOverridden;

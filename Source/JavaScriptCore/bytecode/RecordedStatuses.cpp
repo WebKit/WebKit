@@ -25,8 +25,11 @@
 
 #include "config.h"
 #include "RecordedStatuses.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RecordedStatuses);
 
 CallLinkStatus* RecordedStatuses::addCallLinkStatus(const CodeOrigin& codeOrigin, const CallLinkStatus& status)
 {

@@ -766,7 +766,7 @@ public:
     void dump(PrintStream&) const;
 
     struct SymbolTableRareData {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SymbolTableRareData);
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(SymbolTableRareData);
         UniqueIDMap m_uniqueIDMap;
         OffsetToVariableMap m_offsetToVariableMap;
         UniqueTypeSetMap m_uniqueTypeSetMap;

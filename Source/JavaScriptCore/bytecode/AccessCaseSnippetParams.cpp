@@ -29,6 +29,7 @@
 #include "InlineCacheCompiler.h"
 #include "LinkBuffer.h"
 #include "StructureStubInfo.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(JIT)
 
@@ -109,5 +110,7 @@ CCallHelpers::JumpList AccessCaseSnippetParams::emitSlowPathCalls(InlineCacheCom
 }
 
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSC::AccessCaseSnippetParams::SlowPathCallGenerator);
 
 #endif

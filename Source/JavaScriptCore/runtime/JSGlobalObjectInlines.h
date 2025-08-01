@@ -41,13 +41,15 @@
 #include "StrongInlines.h"
 #include "StructureInlines.h"
 #include <wtf/Hasher.h>
+#include <wtf/TZoneMalloc.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
 struct JSGlobalObject::RareData {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(JSGlobalObject);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(RareData, JS_EXPORT_PRIVATE);
+public:
 
     unsigned profileGroup { 0 };
     UncheckedKeyHashMap<OpaqueJSClass*, std::unique_ptr<OpaqueJSClassContextData>> opaqueJSClassData;

@@ -77,7 +77,7 @@ namespace GCClient {
 
 class IsoSubspace {
     WTF_MAKE_NONCOPYABLE(IsoSubspace);
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(IsoSubspace);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(IsoSubspace, JS_EXPORT_PRIVATE);
 public:
     JS_EXPORT_PRIVATE IsoSubspace(JSC::IsoSubspace&);
     JS_EXPORT_PRIVATE ~IsoSubspace() = default;

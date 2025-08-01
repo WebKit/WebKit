@@ -41,6 +41,7 @@
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HeapSnapshotBuilder);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HeapSnapshotBuilder::Client);
 
 NodeIdentifier HeapSnapshotBuilder::nextAvailableObjectIdentifier = 1;
 NodeIdentifier HeapSnapshotBuilder::getNextObjectIdentifier() { return nextAvailableObjectIdentifier++; }

@@ -26,10 +26,14 @@
 
 #include "config.h"
 #include "JSCallbackObject.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #include "JSCInlines.h"
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSCallbackObjectData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSCallbackObjectData::JSPrivatePropertyMap);
 
 static JSC_DECLARE_HOST_FUNCTION(callJSNonFinalObjectCallbackObject);
 static JSC_DECLARE_HOST_FUNCTION(constructJSNonFinalObjectCallbackObject);

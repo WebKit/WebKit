@@ -55,6 +55,10 @@ class AccessCase;
 // See GCAwareJITStubRoutine.h for the other stub routines.
 class JITStubRoutine {
     WTF_MAKE_NONCOPYABLE(JITStubRoutine);
+    // Migrating this to TZones, along with the half-dozen or so child classes
+    // that inherit from this, causes a crash due to some type being allocated
+    // with TZone but then freed via FastMalloc via a hash-table.
+    // For now keeping it in FastMalloc until that issue can be resolved.
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(JITStubRoutine);
 public:
     enum class Type : uint8_t {

@@ -26,6 +26,7 @@
 #include "CollectionScope.h"
 #include "CollectorPhase.h"
 #include "CompleteSubspace.h"
+#include <cstddef>
 #include "DeleteAllCodeEffort.h"
 #include "GCConductor.h"
 #include "GCIncomingRefCountedSet.h"
@@ -57,6 +58,7 @@
 #include <wtf/Markable.h>
 #include <wtf/NotFound.h>
 #include <wtf/ParallelHelperPool.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -1129,7 +1131,7 @@ public:
     std::unique_ptr<type> m_##name;
     
     struct SpaceAndSet {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(SpaceAndSet);
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(SpaceAndSet);
 
         IsoSubspace space;
         IsoCellSet set;
@@ -1160,7 +1162,7 @@ public:
     }
 
     struct ScriptExecutableSpaceAndSets {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ScriptExecutableSpaceAndSets);
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(ScriptExecutableSpaceAndSets);
 
         IsoSubspace space;
         IsoCellSet clearableCodeSet;

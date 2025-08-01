@@ -33,10 +33,12 @@
 #include "JSCJSValueInlines.h"
 #include "ResourceExhaustion.h"
 #include "TypeProfiler.h"
-
 #include <wtf/CommaPrinter.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(SymbolTable::SymbolTableRareData);
 
 const ClassInfo SymbolTable::s_info = { "SymbolTable"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(SymbolTable) };
 

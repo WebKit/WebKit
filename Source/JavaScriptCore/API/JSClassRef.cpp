@@ -30,12 +30,17 @@
 #include "InitializeThreading.h"
 #include "JSCInlines.h"
 #include "JSCallbackObject.h"
+#include <wtf/TZoneMallocInlines.h>
 
 using namespace JSC;
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 const JSClassDefinition kJSClassDefinitionEmpty = { 0, 0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StaticValueEntry);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StaticFunctionEntry);
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(OpaqueJSClassContextData);
 
 OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass* protoClass) 
     : parentClass(definition->parentClass)

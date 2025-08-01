@@ -67,7 +67,7 @@ public:
 
 private:
     struct GCCycle {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(GCCycle);
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(GCCycle);
 
         GCCycle()
             : before("Before Marking")

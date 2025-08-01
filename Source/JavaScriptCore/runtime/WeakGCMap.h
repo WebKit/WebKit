@@ -29,6 +29,7 @@
 #include "Weak.h"
 #include "WeakGCHashTable.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -36,7 +37,7 @@ namespace JSC {
 
 template<typename KeyArg, typename ValueArg, typename HashArg = DefaultHash<KeyArg>, typename KeyTraitsArg = HashTraits<KeyArg>>
 class WeakGCMap final : public WeakGCHashTable {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WeakGCMap);
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(WeakGCMap);
     typedef Weak<ValueArg> ValueType;
     typedef UncheckedKeyHashMap<KeyArg, ValueType, HashArg, KeyTraitsArg> HashMapType;
 
@@ -110,5 +111,13 @@ private:
     HashMapType m_map;
     VM& m_vm;
 };
+
+#define TZONE_TEMPLATE_PARAMS template<typename KeyArg, typename ValueArg, typename HashArg, typename KeyTraitsArg>
+#define TZONE_TYPE WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>
+
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL_WITH_MULTIPLE_OR_SPECIALIZED_PARAMETERS();
+
+#undef TZONE_TEMPLATE_PARAMS
+#undef TZONE_TYPE
 
 } // namespace JSC

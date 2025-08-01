@@ -50,12 +50,15 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
 #include <wtf/OSAllocator.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if OS(UNIX) && ASSERT_ENABLED
 #include <sys/mman.h>
 #endif
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StructureAlignedMemoryAllocator);
 
 StructureAlignedMemoryAllocator::StructureAlignedMemoryAllocator() = default;
 StructureAlignedMemoryAllocator::~StructureAlignedMemoryAllocator() = default;

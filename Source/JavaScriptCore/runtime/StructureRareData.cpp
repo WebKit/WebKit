@@ -44,6 +44,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(SpecialPropertyCacheEntry);
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(SpecialPropertyCache);
+
 const ClassInfo StructureRareData::s_info = { "StructureRareData"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(StructureRareData) };
 
 Structure* StructureRareData::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

@@ -21,11 +21,13 @@
 
 #include <glib.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 
 class JSCGLibWrapperObject {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(JSCGLibWrapperObject);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(JSCGLibWrapperObject);
 public:
     JSCGLibWrapperObject(gpointer object, GDestroyNotify destroyFunction)
         : m_object(object)

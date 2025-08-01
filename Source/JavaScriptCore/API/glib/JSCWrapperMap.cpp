@@ -34,6 +34,8 @@
 
 namespace JSC {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WrapperMap);
+
 WrapperMap::WrapperMap(JSGlobalContextRef jsContext)
     : m_cachedJSWrappers(makeUnique<JSC::WeakGCMap<gpointer, JSC::JSObject>>(toJS(jsContext)->vm()))
 {

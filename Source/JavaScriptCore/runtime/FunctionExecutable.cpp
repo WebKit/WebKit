@@ -34,8 +34,11 @@
 #include "SourceCodeKey.h"
 #include "IsoCellSetInlines.h"
 #include "JSCJSValueInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(FunctionExecutable::RareData);
 
 const ClassInfo FunctionExecutable::s_info = { "FunctionExecutable"_s, &ScriptExecutable::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FunctionExecutable) };
 

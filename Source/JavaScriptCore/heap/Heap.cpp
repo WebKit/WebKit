@@ -92,6 +92,7 @@
 #include <wtf/SimpleStats.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/Threading.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if USE(BMALLOC_MEMORY_FOOTPRINT_API)
 #include <bmalloc/bmalloc.h>
@@ -111,6 +112,9 @@ namespace HeapInternal {
 static constexpr bool verbose = false;
 static constexpr bool verboseStop = false;
 }
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Heap::SpaceAndSet);
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Heap::ScriptExecutableSpaceAndSets);
 
 namespace {
 

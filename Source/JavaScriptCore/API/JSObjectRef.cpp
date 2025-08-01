@@ -48,6 +48,7 @@
 #include "PropertyNameArray.h"
 #include "ProxyObject.h"
 #include "RegExpConstructor.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include "JSGlobalObjectInspectorController.h"
@@ -787,7 +788,7 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size
 }
 
 struct OpaqueJSPropertyNameArray {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(OpaqueJSPropertyNameArray);
+    WTF_MAKE_TZONE_ALLOCATED(OpaqueJSPropertyNameArray);
 public:
     // FIXME: Why not inherit from RefCounted?
     OpaqueJSPropertyNameArray(VM* vm)
@@ -800,6 +801,8 @@ public:
     VM* vm;
     Vector<Ref<OpaqueJSString>> array;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpaqueJSPropertyNameArray);
 
 JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef ctx, JSObjectRef object)
 {

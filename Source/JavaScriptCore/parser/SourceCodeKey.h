@@ -29,6 +29,7 @@
 #include "ParserModes.h"
 #include "UnlinkedSourceCode.h"
 #include <wtf/HashTraits.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 
@@ -65,7 +66,7 @@ private:
 };
 
 class SourceCodeKey {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SourceCodeKey);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(SourceCodeKey);
     friend class CachedSourceCodeKey;
 
 public:

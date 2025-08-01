@@ -29,6 +29,7 @@
 #include "BlockDirectory.h"
 #include "HeapInlines.h"
 #include "Subspace.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { 
 
@@ -54,6 +55,8 @@ void AlignedMemoryAllocator::registerSubspace(Subspace* subspace)
     RELEASE_ASSERT(!subspace->nextSubspaceInAlignedMemoryAllocator());
     m_subspaces.append(std::mem_fn(&Subspace::setNextSubspaceInAlignedMemoryAllocator), subspace);
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(AlignedMemoryAllocator);
 
 } // namespace JSC
 

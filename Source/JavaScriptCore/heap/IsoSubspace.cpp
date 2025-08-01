@@ -35,6 +35,7 @@
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IsoSubspace);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GCClient::IsoSubspace);
 
 IsoSubspace::IsoSubspace(CString name, JSC::Heap& heap, const HeapCellType& heapCellType, size_t size, uint8_t numberOfLowerTierPreciseCells, std::unique_ptr<AlignedMemoryAllocator>&& allocator)
     : Subspace(SubspaceKind::IsoSubspace, name, heap)

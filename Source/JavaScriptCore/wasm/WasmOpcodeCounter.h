@@ -28,12 +28,13 @@
 
 #include "WasmTypeDefinition.h"
 #include <wtf/Atomics.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 namespace Wasm {
 
 class WasmOpcodeCounter {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WasmOpcodeCounter);
+    WTF_MAKE_TZONE_ALLOCATED(WasmOpcodeCounter);
     using NumberOfRegisteredOpcodes = size_t;
     using CounterSize = size_t;
 

@@ -30,10 +30,13 @@
 #include <wtf/Assertions.h>
 #include <wtf/DataLog.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 
 const ClassInfo RegExp::s_info = { "RegExp"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(RegExp) };
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RegExp::RareData);
 
 #if REGEXP_FUNC_TEST_DATA_GEN
 const char* const RegExpFunctionalTestCollector::s_fileName = "/tmp/RegExpTestsData";

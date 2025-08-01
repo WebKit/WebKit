@@ -1,4 +1,5 @@
 /*
+    WTF_MAKE_TZONE_ALLOCATED(AlignedMemoryAllocator);
  * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,6 +29,7 @@
 
 #include "BytecodeIndex.h"
 #include "Instruction.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -42,7 +44,7 @@ struct InstructionStreamBufferMalloc final : public InstructionStreamMalloc {
 
 template<typename InstructionType>
 class InstructionStream {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(InstructionStream);
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(InstructionStream);
 
     template<typename> friend class InstructionStreamWriter;
     friend class CachedInstructionStream;
@@ -55,10 +57,11 @@ public:
     }
 
     using Offset = unsigned;
-
 private:
     template<class InstructionBuffer>
     class BaseRef {
+        // For this to be TZone-allocated, we will need a new macro which can
+        // handle the fact that its parent-class is a template
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(BaseRef);
 
         template<typename> friend class InstructionStream;
@@ -203,9 +206,12 @@ protected:
     InstructionBuffer m_instructions;
 };
 
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename InstructionType>, InstructionStream<InstructionType>);
+
 template<typename InstructionType>
 class InstructionStreamWriter : public InstructionStream<InstructionType> {
     friend class BytecodeRewriter;
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(InstructionStreamWriter);
 public:
     using InstructionStream<InstructionType>::InstructionStream;
     using typename InstructionStream<InstructionType>::InstructionBuffer;
@@ -360,6 +366,8 @@ private:
     unsigned m_position { 0 };
     bool m_finalized { false };
 };
+
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename InstructionType>, InstructionStreamWriter<InstructionType>);
 
 using JSInstructionStream = InstructionStream<JSInstruction>;
 using JSInstructionStreamWriter = InstructionStreamWriter<JSInstruction>;

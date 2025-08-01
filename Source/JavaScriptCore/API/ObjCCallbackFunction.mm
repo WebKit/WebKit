@@ -45,13 +45,14 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 class CallbackArgument {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CallbackArgument);
+    WTF_MAKE_TZONE_ALLOCATED(CallbackArgument);
 public:
     virtual ~CallbackArgument();
     virtual void set(NSInvocation *, NSInteger, JSContext *, JSValueRef, JSValueRef*) = 0;
 
     std::unique_ptr<CallbackArgument> m_next;
 };
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CallbackArgument);
 
 CallbackArgument::~CallbackArgument() = default;
 
@@ -280,7 +281,7 @@ public:
 };
 
 class CallbackResult {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CallbackResult);
+    WTF_MAKE_TZONE_ALLOCATED(CallbackResult);
 public:
     virtual ~CallbackResult()
     {
@@ -288,6 +289,7 @@ public:
 
     virtual JSValueRef get(NSInvocation *, JSContext *, JSValueRef*) = 0;
 };
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CallbackResult);
 
 class CallbackResultVoid final : public CallbackResult {
     JSValueRef get(NSInvocation *, JSContext *context, JSValueRef*) final
@@ -410,7 +412,7 @@ enum CallbackType {
 namespace JSC {
 
 class ObjCCallbackFunctionImpl final {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ObjCCallbackFunctionImpl);
+    WTF_MAKE_TZONE_ALLOCATED(ObjCCallbackFunctionImpl);
 public:
     ObjCCallbackFunctionImpl(NSInvocation *invocation, CallbackType type, Class instanceClass, std::unique_ptr<CallbackArgument> arguments, std::unique_ptr<CallbackResult> result)
         : m_type(type)
@@ -466,6 +468,7 @@ private:
     std::unique_ptr<CallbackArgument> m_arguments;
     std::unique_ptr<CallbackResult> m_result;
 };
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ObjCCallbackFunctionImpl);
 
 static JSValueRef objCCallbackFunctionCallAsFunction(JSContextRef callerContext, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {

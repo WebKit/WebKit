@@ -35,8 +35,28 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace Wasm {
+
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Import);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Export);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(GlobalInformation);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(FunctionData);
+    WTF_MAKE_TZONE_ALLOCATED_IMPL(I32InitExpr);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Segment);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Element);
+    WTF_MAKE_TZONE_ALLOCATED_IMPL(TableInformation);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(CustomSection);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(UnlinkedWasmToWasmCall);
+#if ENABLE(JIT)
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Entrypoint);
+#endif
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(InternalFunction);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(WasmCallableFunction);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(WasmToWasmImportableFunction);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(WasmOrJSImportableFunction);
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(WasmOrJSImportableFunctionCallLinkInfo);
 
 constexpr CalleeBits NullWasmCallee = CalleeBits::nullCallee();
 

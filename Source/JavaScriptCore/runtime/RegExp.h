@@ -27,6 +27,7 @@
 #include "Structure.h"
 #include "Yarr.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(YARR_JIT)
@@ -207,7 +208,7 @@ private:
 #endif
 
     struct RareData {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RareData);
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(RareData);
         unsigned m_numDuplicateNamedCaptureGroups;
         Vector<String> m_captureGroupNames;
 

@@ -31,10 +31,13 @@
 #include "DFGJITCode.h"
 #include "InlineCacheCompiler.h"
 #include "Repatch.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 
 #if ENABLE(JIT)
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedJITStubSet);
 
 RefPtr<PolymorphicAccessJITStubRoutine> SharedJITStubSet::getStatelessStub(StatelessCacheKey key) const
 {

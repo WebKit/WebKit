@@ -28,12 +28,13 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include <wtf/Function.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace Inspector {
 
 class MessageParser {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MessageParser);
+    WTF_MAKE_TZONE_ALLOCATED(MessageParser);
 public:
     static Vector<uint8_t> createMessage(std::span<const uint8_t>);
 

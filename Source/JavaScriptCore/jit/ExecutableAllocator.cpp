@@ -1128,6 +1128,8 @@ private:
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FixedVMPoolExecutableAllocator::Islands);
 #endif // ENABLE(JUMP_ISLANDS)
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ExecutableAllocator);
+
 // Keep this pointer in a mutable global variable to help Leaks find it.
 // But we do not use this pointer.
 static FixedVMPoolExecutableAllocator* globalFixedVMPoolExecutableAllocatorToWorkAroundLeaks = nullptr;

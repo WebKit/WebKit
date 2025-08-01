@@ -46,6 +46,7 @@
 #include <wtf/ProcessID.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/TZoneMalloc.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -341,7 +342,7 @@ static void unregisterCodeEntry(JITCodeEntry* entry)
 
 template <typename THeader>
 class DebugSectionBase {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DebugSectionBase);
+    WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(DebugSectionBase);
 
 public:
     virtual ~DebugSectionBase() = default;
@@ -360,6 +361,8 @@ public:
 
     using Header = THeader;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template <typename THeader>, DebugSectionBase<THeader>);
 
 struct MachOSectionHeader {
     char sectname[16];
@@ -645,7 +648,7 @@ void ELFSection::populateHeader(Writer::Slot<ELFSection::Header> header, ELFStri
 
 #if OS(DARWIN)
 class MachO {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MachO);
+    WTF_MAKE_TZONE_ALLOCATED(MachO);
 
 public:
     size_t addSection(std::unique_ptr<MachOSection> section)
@@ -819,6 +822,7 @@ private:
 
     Vector<std::unique_ptr<MachOSection>> m_sections { };
 };
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MachO);
 #endif // OS(DARWIN)
 
 #if OS(LINUX)

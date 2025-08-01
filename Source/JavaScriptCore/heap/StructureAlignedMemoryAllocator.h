@@ -27,6 +27,7 @@
 
 #include "AlignedMemoryAllocator.h"
 #include <wtf/Gigacage.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
 #include <wtf/DebugHeap.h>
@@ -35,6 +36,7 @@
 namespace JSC {
 
 class StructureAlignedMemoryAllocator final : public AlignedMemoryAllocator {
+    WTF_MAKE_TZONE_ALLOCATED(StructureAlignedMemoryAllocator);
 public:
     StructureAlignedMemoryAllocator();
     ~StructureAlignedMemoryAllocator() final;

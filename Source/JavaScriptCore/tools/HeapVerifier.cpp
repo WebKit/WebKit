@@ -40,6 +40,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HeapVerifier);
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(HeapVerifier::GCCycle);
 
 HeapVerifier::HeapVerifier(Heap* heap, unsigned numberOfGCCyclesToRecord)
     : m_heap(heap)

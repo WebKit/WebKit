@@ -30,6 +30,7 @@
 #include <wtf/Atomics.h>
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
@@ -41,6 +42,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 namespace Wasm {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WasmOpcodeCounter);
 
 WasmOpcodeCounter& WasmOpcodeCounter::singleton()
 {

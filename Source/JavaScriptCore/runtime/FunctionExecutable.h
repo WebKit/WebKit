@@ -30,6 +30,7 @@
 #include "SourceCode.h"
 #include <wtf/Box.h>
 #include <wtf/Markable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -292,7 +293,7 @@ public:
     }
 
     struct RareData {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RareData);
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(RareData);
 
         static constexpr ptrdiff_t offsetOfAsString() { return OBJECT_OFFSETOF(RareData, m_asString); }
 

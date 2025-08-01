@@ -311,6 +311,7 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include "JSGlobalObjectDebuggable.h"
@@ -323,6 +324,8 @@
 #endif
 
 namespace JSC {
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(JSGlobalObject::RareData);
 
 #define CHECK_FEATURE_FLAG_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) \
 static_assert(std::is_same_v<std::remove_cv_t<decltype(featureFlag)>, bool> || std::is_same_v<std::remove_cv_t<decltype(featureFlag)>, bool&>);
