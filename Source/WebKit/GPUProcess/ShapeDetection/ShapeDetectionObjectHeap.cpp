@@ -38,35 +38,33 @@ namespace WebKit::ShapeDetection {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ObjectHeap);
 
-ObjectHeap::ObjectHeap() = default;
+ObjectHeap::ObjectHeap()
+{
+    weakPtrFactory().prepareForUseOnlyOnNonMainThread();
+}
 
 ObjectHeap::~ObjectHeap() = default;
 
 void ObjectHeap::addObject(ShapeDetectionIdentifier identifier, RemoteBarcodeDetector& barcodeDetector)
 {
-    auto result = m_barcodeDetectors.add(identifier, barcodeDetector);
-    ASSERT_UNUSED(result, result.isNewEntry);
+    m_barcodeDetectors.add(identifier, barcodeDetector);
 }
 
 void ObjectHeap::addObject(ShapeDetectionIdentifier identifier, RemoteFaceDetector& faceDetector)
 {
-    auto result = m_faceDetectors.add(identifier, faceDetector);
-    ASSERT_UNUSED(result, result.isNewEntry);
+    m_faceDetectors.add(identifier, faceDetector);
 }
 
 void ObjectHeap::addObject(ShapeDetectionIdentifier identifier, RemoteTextDetector& textDetector)
 {
-    auto result = m_textDetectors.add(identifier, textDetector);
-    ASSERT_UNUSED(result, result.isNewEntry);
+    m_textDetectors.add(identifier, textDetector);
 }
 
 void ObjectHeap::removeObject(ShapeDetectionIdentifier identifier)
 {
-    int count = 0;
-    count += m_barcodeDetectors.remove(identifier);
-    count += m_faceDetectors.remove(identifier);
-    count += m_textDetectors.remove(identifier);
-    ASSERT_UNUSED(count, count == 1);
+    m_barcodeDetectors.remove(identifier);
+    m_faceDetectors.remove(identifier);
+    m_textDetectors.remove(identifier);
 }
 
 void ObjectHeap::clear()
