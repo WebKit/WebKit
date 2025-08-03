@@ -370,17 +370,15 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
             if (parentGroup)
                 this._currentSessionOrGroup = parentGroup;
         } else {
-            if (type === WI.ConsoleMessage.MessageType.StartGroup || type === WI.ConsoleMessage.MessageType.StartGroupCollapsed) {
+            if (this._addConsoleMessageToConsoleSourceMapErrorGroup(messageView)) {
+                return;
+            } else if (type === WI.ConsoleMessage.MessageType.StartGroup || type === WI.ConsoleMessage.MessageType.StartGroupCollapsed) {
                 var group = new WI.ConsoleGroup(this._currentSessionOrGroup);
                 var groupElement = group.render(messageView);
                 this._currentSessionOrGroup.append(groupElement);
                 this._currentSessionOrGroup = group;
             } else
                 this._currentSessionOrGroup.addMessageView(messageView);
-            
-            // FIXME: <https://webkit.org/b/264490> (Improve failed SourceMap error grouping to avoid unnecessary work)
-            if (WI.settings.experimentalGroupSourceMapErrors.value && WI.consoleManager.failedSourceMapConsoleMessages.has(messageView.message))
-                this._addConsoleMessageToConsoleSourceMapErrorGroup(messageView);
         }
 
         if (this.delegate && typeof this.delegate.didAppendConsoleMessageView === "function")
@@ -389,9 +387,15 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
     
     _addConsoleMessageToConsoleSourceMapErrorGroup(messageView)
     {
+        if (!WI.settings.experimentalGroupSourceMapErrors.value)
+            return false;
+            
+        if (!WI.consoleManager.failedSourceMapConsoleMessages.has(messageView.message))
+            return false;
+        
         if (!this._firstSourceMapErrorMessageView) {
             this._firstSourceMapErrorMessageView = messageView;
-            return;
+            return true;
         }
         
         if (!this._failedSourceMapsGroup) {
@@ -402,6 +406,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
         }
 
         this._failedSourceMapsGroup.addMessageView(messageView);
+        return true;
     }
 
     _handleShowConsoleMessageTimestampsSettingChanged()
