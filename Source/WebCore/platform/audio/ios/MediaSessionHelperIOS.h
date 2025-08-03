@@ -79,6 +79,7 @@ public:
     static MediaSessionHelper& sharedHelper();
     static void setSharedHelper(Ref<MediaSessionHelper>&&);
     static void resetSharedHelper();
+    static void enableMediaPlayback();
 
     MediaSessionHelper() = default;
     explicit MediaSessionHelper(bool isExternalOutputDeviceAvailable);

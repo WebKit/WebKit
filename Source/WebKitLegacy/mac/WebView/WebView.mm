@@ -375,6 +375,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
+#import <WebCore/MediaSessionHelperIOS.h>
 #import <pal/ios/UIKitSoftLink.h>
 #endif
 
@@ -1471,6 +1472,9 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
 #endif
 #if USE(AUDIO_SESSION)
         WebCore::AudioSession::enableMediaPlayback();
+#endif
+#if PLATFORM(IOS_FAMILY)
+        WebCore::MediaSessionHelper::enableMediaPlayback();
 #endif
 
 #if ENABLE(VIDEO)

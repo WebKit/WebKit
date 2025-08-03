@@ -112,14 +112,43 @@ private:
 #endif
 };
 
+class DummyMediaSessionHelper final : public MediaSessionHelper {
+public:
+    static Ref<DummyMediaSessionHelper> create()
+    {
+        return adoptRef(*new DummyMediaSessionHelper);
+    }
+
+private:
+    DummyMediaSessionHelper() = default;
+    void providePresentingApplicationPID(int, ShouldOverride) final { }
+    void startMonitoringWirelessRoutesInternal() final { }
+    void stopMonitoringWirelessRoutesInternal() final { }
+};
+
 static RefPtr<MediaSessionHelper>& sharedHelperInstance()
 {
     static NeverDestroyed<RefPtr<MediaSessionHelper>> helper;
     return helper;
 }
 
+static Ref<MediaSessionHelper>& dummyHelperInstance()
+{
+    static NeverDestroyed<Ref<MediaSessionHelper>> dummyHelper = DummyMediaSessionHelper::create();
+    return dummyHelper;
+}
+
+static bool s_mediaPlaybackEnabled { false };
+void MediaSessionHelper::enableMediaPlayback()
+{
+    s_mediaPlaybackEnabled = true;
+}
+
 MediaSessionHelper& MediaSessionHelper::sharedHelper()
 {
+    if (!s_mediaPlaybackEnabled)
+        return dummyHelperInstance();
+
     auto& helper = sharedHelperInstance();
     if (!helper)
         resetSharedHelper();

@@ -2597,6 +2597,10 @@ void WebProcess::enableMediaPlayback()
 #if ENABLE(ROUTING_ARBITRATION)
     m_routingArbitrator = makeUnique<AudioSessionRoutingArbitrator>(*this);
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+    MediaSessionHelper::enableMediaPlayback();
+#endif
 }
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
