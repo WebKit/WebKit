@@ -169,7 +169,7 @@ constexpr bool operator==(const ColorComponents<T, N>& a, const ColorComponents<
     for (size_t i = 0; i < N; ++i) {
         if (a[i] == b[i])
             continue;
-        if (isNaNConstExpr(a[i]) && isNaNConstExpr(b[i]))
+        if (std::isnan(a[i]) && std::isnan(b[i]))
             continue;
         return false;
     }

@@ -313,7 +313,7 @@ constexpr FloatPoint FloatPoint::nanPoint()
 
 constexpr bool FloatPoint::isNaN() const
 {
-    return isNaNConstExpr(x());
+    return std::isnan(x());
 }
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatPoint&);
