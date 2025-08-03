@@ -46,7 +46,7 @@
 
 -(id)initWithCallback:(id)cb selector:(SEL)sel
 {
-    self = [self init];
+    self = [super init];
     if (self != nil) {
         callback = [cb retain];
         selector = sel;

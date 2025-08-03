@@ -36,10 +36,10 @@
 @synthesize documentView = _documentView;
 @synthesize copiesOnScroll = _copiesOnScroll;
 
-- (id)initWithFrame:(CGRect)rect
+- (instancetype)initWithFrame:(CGRect)rect
 {
     WKViewRef view = WKViewCreateWithFrame(rect, &viewContext);
-    self = [self _initWithViewRef:view];
+    self = [super _initWithViewRef:view];
     WAKRelease(view);
     return self;
 }

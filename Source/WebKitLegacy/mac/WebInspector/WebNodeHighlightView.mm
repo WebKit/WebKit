@@ -56,7 +56,7 @@ using namespace WebCore;
 
 - (id)initWithWebNodeHighlight:(WebNodeHighlight *)webNodeHighlight
 {
-    self = [self initWithFrame:NSZeroRect];
+    self = [super initWithFrame:NSZeroRect];
     if (!self)
         return nil;
 

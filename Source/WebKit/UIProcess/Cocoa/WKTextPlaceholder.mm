@@ -38,7 +38,7 @@
 
 - (instancetype)initWithElementContext:(const WebCore::ElementContext&)context
 {
-    if (!(self = [self init]))
+    if (!(self = [super init]))
         return nil;
     _elementContext = context;
     return self;

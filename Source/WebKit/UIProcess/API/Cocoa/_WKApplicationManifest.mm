@@ -102,7 +102,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
 
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
-    if (!(self = [self init]))
+    if (!(self = [super init]))
         return nil;
 
     _src = adoptNS([[coder decodeObjectOfClass:[NSURL class] forKey:@"src"] copy]);
@@ -181,7 +181,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
 
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
-    if (!(self = [self init]))
+    if (!(self = [super init]))
         return nil;
 
     _name = adoptNS([[coder decodeObjectOfClass:[NSString class] forKey:@"name"] copy]);

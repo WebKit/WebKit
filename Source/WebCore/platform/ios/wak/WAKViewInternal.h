@@ -44,7 +44,7 @@
 
 - (WKViewRef)_viewRef;
 + (WAKView *)_wrapperForViewRef:(WKViewRef)_viewRef;
-- (id)_initWithViewRef:(WKViewRef)view;
+- (instancetype)_initWithViewRef:(WKViewRef)view;
 - (BOOL)_handleResponderCall:(WKViewResponderCallbackType)type;
 - (NSMutableSet *)_subviewReferences;
 - (BOOL)_selfHandleEvent:(WebEvent *)event;

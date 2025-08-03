@@ -70,7 +70,7 @@ static WAKScrollView *enclosingScrollView(WAKView *view)
 @end
 
 @interface WAKView (WAKInternal)
-- (id)_initWithViewRef:(WKViewRef)viewRef;
+- (instancetype)_initWithViewRef:(WKViewRef)viewRef;
 @end
 
 @implementation WAKView
@@ -204,7 +204,7 @@ static void invalidateGStateCallback(WKViewRef view)
     return nil;
 }
 
-- (id)_initWithViewRef:(WKViewRef)viewR
+- (instancetype)_initWithViewRef:(WKViewRef)viewR
 {
     self = [super init];
     if (!self)
@@ -216,12 +216,12 @@ static void invalidateGStateCallback(WKViewRef view)
     return self;
 }
 
-- (id)init
+- (instancetype)init
 {
     return [self initWithFrame:CGRectZero];
 }
 
-- (id)initWithFrame:(CGRect)rect
+- (instancetype)initWithFrame:(CGRect)rect
 {
     WKViewRef view = WKViewCreateWithFrame(rect, &viewContext);
     self = [self _initWithViewRef:view];

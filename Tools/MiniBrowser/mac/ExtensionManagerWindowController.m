@@ -33,7 +33,7 @@
 
 - (instancetype)init
 {
-    self = [self initWithWindowNibName:@"ExtensionManagerWindowController"];
+    self = [super initWithWindowNibName:@"ExtensionManagerWindowController"];
     if (self) {
         NSArray *installedContentExtensions = [[NSUserDefaults standardUserDefaults] arrayForKey:@"InstalledContentExtensions"];
         if (installedContentExtensions) {
