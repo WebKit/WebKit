@@ -64,7 +64,9 @@ IntSize ImageBufferCairoImageSurfaceBackend::calculateSafeBackendSize(const Para
 
 unsigned ImageBufferCairoImageSurfaceBackend::calculateBytesPerRow(const IntSize& backendSize)
 {
-    ASSERT(!backendSize.isEmpty());
+    if (backendSize.isEmpty())
+        return 0;
+
     return cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, backendSize.width());
 }
 
@@ -75,7 +77,8 @@ size_t ImageBufferCairoImageSurfaceBackend::calculateMemoryCost(const Parameters
 
 std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfaceBackend::create(const Parameters& parameters, const ImageBufferCreationContext&)
 {
-    ASSERT(parameters.pixelFormat == ImageBufferPixelFormat::BGRA8);
+    if (parameters.bufferFormat.pixelFormat != ImageBufferPixelFormat::BGRA8)
+        return nullptr;
 
     static cairo_user_data_key_t s_surfaceDataKey;
 

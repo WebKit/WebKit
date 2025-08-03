@@ -35,7 +35,9 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferRemotePDFDocumentBackend);
 
 unsigned ImageBufferRemotePDFDocumentBackend::calculateBytesPerRow(const IntSize& backendSize)
 {
-    ASSERT(!backendSize.isEmpty());
+    if (backendSize.isEmpty())
+        return 0;
+
     return CheckedUint32(backendSize.width()) * 4;
 }
 
