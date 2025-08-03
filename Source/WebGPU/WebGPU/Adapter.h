@@ -50,8 +50,9 @@ public:
     {
         return adoptRef(*new Adapter(device, instance, xrCompatible, WTFMove(capabilities)));
     }
-    static Ref<Adapter> createInvalid(Instance& instance)
+    static Ref<Adapter> createInvalid(Instance& instance, NSString* error = nil)
     {
+        WGPU_REPORT_INVALID_OBJECT(error);
         return adoptRef(*new Adapter(instance));
     }
 

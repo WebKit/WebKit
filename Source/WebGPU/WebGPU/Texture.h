@@ -54,8 +54,9 @@ public:
     {
         return adoptRef(*new Texture(texture, descriptor, WTFMove(viewFormats), device));
     }
-    static Ref<Texture> createInvalid(Device& device)
+    static Ref<Texture> createInvalid(Device& device, NSString* error = nil)
     {
+        WGPU_REPORT_INVALID_OBJECT(error);
         return adoptRef(*new Texture(device));
     }
 

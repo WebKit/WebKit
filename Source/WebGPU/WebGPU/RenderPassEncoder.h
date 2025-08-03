@@ -66,6 +66,7 @@ public:
     }
     static Ref<RenderPassEncoder> createInvalid(CommandEncoder& parentEncoder, Device& device, NSString* errorString)
     {
+        WGPU_REPORT_INVALID_OBJECT(errorString);
         return adoptRef(*new RenderPassEncoder(parentEncoder, device, errorString));
     }
 

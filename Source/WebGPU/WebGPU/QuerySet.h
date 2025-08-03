@@ -58,8 +58,9 @@ public:
     {
         return adoptRef(*new QuerySet(counterSampleBuffer, count, type, device));
     }
-    static Ref<QuerySet> createInvalid(Device& device)
+    static Ref<QuerySet> createInvalid(Device& device, NSString* error = nil)
     {
+        WGPU_REPORT_INVALID_OBJECT(error);
         return adoptRef(*new QuerySet(device));
     }
 

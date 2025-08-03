@@ -48,8 +48,9 @@ public:
     {
         return adoptRef(*new ExternalTexture(pixelBuffer, colorSpace, device));
     }
-    static Ref<ExternalTexture> createInvalid(Device& device)
+    static Ref<ExternalTexture> createInvalid(Device& device, NSString* error)
     {
+        WGPU_REPORT_INVALID_OBJECT(error);
         return adoptRef(*new ExternalTexture(device));
     }
 

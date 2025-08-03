@@ -40,30 +40,30 @@ __attribute__((no_destroy)) std::unique_ptr<Sampler::RetainedSamplerStateContain
 __attribute__((no_destroy)) std::unique_ptr<Sampler::CachedKeyContainer> Sampler::lastAccessedKeys = nullptr;
 Lock Sampler::samplerStateLock;
 
-static bool validateCreateSampler(Device& device, const WGPUSamplerDescriptor& descriptor)
+static NSString* errorValidatingCreateSampler(Device& device, const WGPUSamplerDescriptor& descriptor)
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-gpusamplerdescriptor
-
+#define ERROR_STRING(...) [NSString stringWithFormat:@"GPUDevice.createSampler: %@", __VA_ARGS__]
     if (!device.isValid())
-        return false;
+        return ERROR_STRING(@"device is not valid");
 
     if (std::isnan(descriptor.lodMinClamp) || descriptor.lodMinClamp < 0)
-        return false;
+        return ERROR_STRING([NSString stringWithFormat:@"descriptor.lodMinClamp(%f) is NaN or < 0", descriptor.lodMinClamp]);
 
     if (std::isnan(descriptor.lodMaxClamp) || descriptor.lodMaxClamp < descriptor.lodMinClamp)
-        return false;
+        return ERROR_STRING([NSString stringWithFormat:@"descriptor.lodMaxClamp(%f) is NaN or < 0", descriptor.lodMaxClamp]);
 
     if (descriptor.maxAnisotropy < 1)
-        return false;
+        return ERROR_STRING([NSString stringWithFormat:@"descriptor.maxAnisotropy(%hu) is < 1", descriptor.maxAnisotropy]);
 
     if (descriptor.maxAnisotropy > 1) {
         if (descriptor.magFilter != WGPUFilterMode_Linear
             || descriptor.minFilter != WGPUFilterMode_Linear
             || descriptor.mipmapFilter != WGPUMipmapFilterMode_Linear)
-            return false;
+            return ERROR_STRING([NSString stringWithFormat:@"descriptor.maxAnisotropy(%hu) is > 1 but descriptor.magFilter(%u) != WGPUFilterMode_Linear || descriptor.minFilter(%u) != WGPUFilterMode_Linear || descriptor.mipmapFilter(%u) != WGPUMipmapFilterMode_Linear", descriptor.maxAnisotropy, descriptor.magFilter, descriptor.minFilter, descriptor.mipmapFilter]);
     }
 
-    return true;
+    return nil;
 }
 
 static MTLSamplerAddressMode addressMode(WGPUAddressMode addressMode)
@@ -206,12 +206,12 @@ static MTLSamplerDescriptor *createMetalDescriptorFromDescriptor(const WGPUSampl
 Ref<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
 {
     if (descriptor.nextInChain || !isValid())
-        return Sampler::createInvalid(*this);
+        return Sampler::createInvalid(*this, @"descriptor is invalid");
 
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createsampler
 
-    if (!validateCreateSampler(*this, descriptor)) {
-        generateAValidationError("Validation failure."_s);
+    if (NSString* error = errorValidatingCreateSampler(*this, descriptor)) {
+        generateAValidationError(error);
         return Sampler::createInvalid(*this);
     }
 

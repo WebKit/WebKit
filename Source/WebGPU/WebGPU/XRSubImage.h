@@ -29,8 +29,8 @@
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
+#import <wtf/RefCountedAndCanMakeWeakPtr.h>
 #import <wtf/WeakPtr.h>
-#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
 struct WGPUXRSubImageImpl {
 };
@@ -49,8 +49,9 @@ public:
     {
         return adoptRef(*new XRSubImage(true, device));
     }
-    static Ref<XRSubImage> createInvalid(Device& device)
+    static Ref<XRSubImage> createInvalid(Device& device, NSString* error)
     {
+        WGPU_REPORT_INVALID_OBJECT(error);
         return adoptRef(*new XRSubImage(device));
     }
 

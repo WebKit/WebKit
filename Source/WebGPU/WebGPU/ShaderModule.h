@@ -60,8 +60,9 @@ public:
     {
         return adoptRef(*new ShaderModule(WTFMove(checkResult), WTFMove(pipelineLayoutHints), WTFMove(entryPointInformation), library, device));
     }
-    static Ref<ShaderModule> createInvalid(Device& device, CheckResult&& checkResult = std::monostate { })
+    static Ref<ShaderModule> createInvalid(Device& device, NSString* error = nil, CheckResult&& checkResult = std::monostate { })
     {
+        WGPU_REPORT_INVALID_OBJECT(error);
         return adoptRef(*new ShaderModule(device, WTFMove(checkResult)));
     }
 

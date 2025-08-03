@@ -54,8 +54,9 @@ public:
     {
         return adoptRef(*new ComputePipeline(computePipelineState, WTFMove(pipelineLayout), threadsPerThreadgroup, WTFMove(minimumBufferSizes), uniqueId, device));
     }
-    static Ref<ComputePipeline> createInvalid(Device& device)
+    static Ref<ComputePipeline> createInvalid(Device& device, NSString* error)
     {
+        WGPU_REPORT_INVALID_OBJECT(error);
         return adoptRef(*new ComputePipeline(device));
     }
 

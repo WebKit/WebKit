@@ -73,9 +73,11 @@ static std::optional<MTLSize> metalSize(auto workgroupSize, const HashMap<String
 
 static std::pair<Ref<ComputePipeline>, NSString*> returnInvalidComputePipeline(WebGPU::Device &object, bool isAsync, NSString* error = nil)
 {
+    if (!error)
+        error = @"createComputePipeline failed";
     if (!isAsync)
-        object.generateAValidationError(error ?: @"createComputePipeline failed");
-    return std::make_pair(ComputePipeline::createInvalid(object), error);
+        object.generateAValidationError(error);
+    return std::make_pair(ComputePipeline::createInvalid(object, error), error);
 }
 
 std::pair<Ref<ComputePipeline>, NSString*> Device::createComputePipeline(const WGPUComputePipelineDescriptor& descriptor, bool isAsync)
@@ -168,7 +170,7 @@ ComputePipeline::ComputePipeline(id<MTLComputePipelineState> computePipelineStat
 ComputePipeline::ComputePipeline(Device& device)
     : m_device(device)
     , m_threadsPerThreadgroup(MTLSizeMake(0, 0, 0))
-    , m_pipelineLayout(PipelineLayout::createInvalid(device))
+    , m_pipelineLayout(PipelineLayout::createInvalid(device, @"invalid compute pipeline"))
     , m_minimumBufferSizes({ })
 {
 }

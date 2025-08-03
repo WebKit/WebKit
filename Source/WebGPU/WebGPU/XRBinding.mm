@@ -48,7 +48,7 @@ XRBinding::~XRBinding() = default;
 Ref<XRBinding> Device::createXRBinding()
 {
     if (!isValid())
-        return XRBinding::createInvalid(*this);
+        return XRBinding::createInvalid(*this, @"device is invalid");
 
     return XRBinding::create(*this);
 }

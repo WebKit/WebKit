@@ -29,7 +29,7 @@
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
-#include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#import <wtf/RefCountedAndCanMakeWeakPtr.h>
 
 struct WGPUXRViewImpl {
 };
@@ -47,8 +47,9 @@ public:
     {
         return adoptRef(*new XRView(true, device));
     }
-    static Ref<XRView> createInvalid(Device& device)
+    static Ref<XRView> createInvalid(Device& device, NSString* error)
     {
+        WGPU_REPORT_INVALID_OBJECT(error);
         return adoptRef(*new XRView(device));
     }
 

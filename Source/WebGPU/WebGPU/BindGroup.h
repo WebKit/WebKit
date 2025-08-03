@@ -72,8 +72,9 @@ public:
     {
         return adoptRef(*new BindGroup(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer, WTFMove(resources), bindGroupLayout, WTFMove(dynamicBuffers), WTFMove(samplers), WTFMove(externalTextureIndices), uniqueIdentifier, device));
     }
-    static Ref<BindGroup> createInvalid(Device& device)
+    static Ref<BindGroup> createInvalid(Device& device, NSString* error = nil)
     {
+        WGPU_REPORT_INVALID_OBJECT(error);
         return adoptRef(*new BindGroup(device));
     }
 

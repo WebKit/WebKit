@@ -28,6 +28,12 @@
 
 #ifdef __cplusplus
 
+#ifdef NDEBUG
+#define WGPU_REPORT_INVALID_OBJECT(error) { UNUSED_PARAM(error); }
+#else
+#define WGPU_REPORT_INVALID_OBJECT(error) { if (error.length) WTFLogAlways("%s failed: error %@", __PRETTY_FUNCTION__, error); }
+#endif
+
 #include <CoreGraphics/CGImage.h>
 #ifndef __swift__
 // Swift C++ Interop does not support extern C. This header has that.

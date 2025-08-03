@@ -57,10 +57,10 @@ Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
         NSError* error = nil;
         id<MTLCounterSampleBuffer> buffer = [m_device newCounterSampleBufferWithDescriptor:sampleBufferDesc error:&error];
         if (error)
-            return QuerySet::createInvalid(*this);
+            return QuerySet::createInvalid(*this, @"counter sample buffer could not be created");
         return QuerySet::create(buffer, count, type, *this);
 #else
-        return QuerySet::createInvalid(*this);
+        return QuerySet::createInvalid(*this, @"counter sample buffer is not supported on watchOS");
 #endif
     } case WGPUQueryType_Occlusion: {
         auto buffer = safeCreateBuffer(sizeof(uint64_t) * count, MTLStorageModePrivate);
@@ -68,7 +68,7 @@ Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
         return QuerySet::create(buffer, count, type, *this);
     }
     case WGPUQueryType_Force32:
-        return QuerySet::createInvalid(*this);
+        return QuerySet::createInvalid(*this, @"descriptor type is invalid");
     }
 }
 

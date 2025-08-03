@@ -50,8 +50,9 @@ public:
     {
         return adoptRef(*new TextureView(texture, descriptor, renderExtent, parentTexture, device));
     }
-    static Ref<TextureView> createInvalid(Texture& texture, Device& device)
+    static Ref<TextureView> createInvalid(Texture& texture, Device& device, NSString* error = nil)
     {
+        WGPU_REPORT_INVALID_OBJECT(error);
         return adoptRef(*new TextureView(texture, device));
     }
 

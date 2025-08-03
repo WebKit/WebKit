@@ -101,8 +101,9 @@ class Device : public WGPUDeviceImpl, public ThreadSafeRefCountedAndCanMakeThrea
     WTF_MAKE_TZONE_ALLOCATED(Device);
 public:
     static Ref<Device> create(id<MTLDevice>, String&& deviceLabel, HardwareCapabilities&&, Adapter&);
-    static Ref<Device> createInvalid(Adapter& adapter)
+    static Ref<Device> createInvalid(Adapter& adapter, NSString* error)
     {
+        WGPU_REPORT_INVALID_OBJECT(error);
         return adoptRef(*new Device(adapter));
     }
 

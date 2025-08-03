@@ -44,15 +44,15 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Instance);
 Ref<Instance> Instance::create(const WGPUInstanceDescriptor& descriptor)
 {
     if (!descriptor.nextInChain)
-        return Instance::createInvalid();
+        return Instance::createInvalid(@"descriptor is invalid");
 
     if (descriptor.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_InstanceCocoaDescriptor))
-        return Instance::createInvalid();
+        return Instance::createInvalid(@"chain type is unexpected");
 
     const WGPUInstanceCocoaDescriptor& cocoaDescriptor = reinterpret_cast<const WGPUInstanceCocoaDescriptor&>(*descriptor.nextInChain);
 
     if (cocoaDescriptor.chain.next)
-        return Instance::createInvalid();
+        return Instance::createInvalid(@"chain.next is not nil");
 
     return adoptRef(*new Instance(cocoaDescriptor.scheduleWorkBlock, reinterpret_cast<const WTF::MachSendRight*>(cocoaDescriptor.webProcessResourceOwner)));
 }

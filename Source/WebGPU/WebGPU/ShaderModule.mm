@@ -177,17 +177,17 @@ static Ref<ShaderModule> handleShaderSuccessOrFailure(WebGPU::Device &object, Va
         message.print("\n"_s, error);
 
     object.generateAValidationError(message.toString());
-    return ShaderModule::createInvalid(object, failedCheck);
+    return ShaderModule::createInvalid(object, nil, failedCheck);
 }
 
 Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& descriptor)
 {
     if (!descriptor.nextInChain || !isValid())
-        return ShaderModule::createInvalid(*this);
+        return ShaderModule::createInvalid(*this, @"shader module descriptor is not valid");
 
     auto shaderModuleParameters = findShaderModuleParameters(descriptor);
     if (!shaderModuleParameters)
-        return ShaderModule::createInvalid(*this);
+        return ShaderModule::createInvalid(*this, @"shader module parameters is nil");
 
     auto supportedFeatures = buildFeatureSet(m_capabilities.features);
     auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgsl.code), std::nullopt, WGSL::Configuration {

@@ -39,7 +39,7 @@ namespace WebGPU {
 Ref<ExternalTexture> Device::createExternalTexture(const WGPUExternalTextureDescriptor& descriptor)
 {
     if (!isValid())
-        return ExternalTexture::createInvalid(*this);
+        return ExternalTexture::createInvalid(*this, @"device is invalid");
 
     return ExternalTexture::create(descriptor.pixelBuffer, descriptor.colorSpace, *this);
 }

@@ -50,8 +50,9 @@ class PresentationContext : public WGPUSurfaceImpl, public WGPUSwapChainImpl, pu
     WTF_MAKE_TZONE_ALLOCATED(PresentationContext);
 public:
     static Ref<PresentationContext> create(const WGPUSurfaceDescriptor&, const Instance&);
-    static Ref<PresentationContext> createInvalid()
+    static Ref<PresentationContext> createInvalid(NSString* error)
     {
+        WGPU_REPORT_INVALID_OBJECT(error);
         return adoptRef(*new PresentationContext());
     }
 

@@ -56,8 +56,9 @@ class Instance : public WGPUInstanceImpl, public ThreadSafeRefCountedAndCanMakeT
     WTF_MAKE_TZONE_ALLOCATED(Instance);
 public:
     static Ref<Instance> create(const WGPUInstanceDescriptor&);
-    static Ref<Instance> createInvalid()
+    static Ref<Instance> createInvalid(NSString* error)
     {
+        WGPU_REPORT_INVALID_OBJECT(error);
         return adoptRef(*new Instance());
     }
 

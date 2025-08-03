@@ -61,6 +61,7 @@ public:
     }
     static Ref<ComputePassEncoder> createInvalid(CommandEncoder& parentEncoder, Device& device, NSString* errorString)
     {
+        WGPU_REPORT_INVALID_OBJECT(errorString);
         return adoptRef(*new ComputePassEncoder(parentEncoder, device, errorString));
     }
 

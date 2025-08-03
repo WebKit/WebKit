@@ -45,7 +45,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PresentationContext);
 Ref<PresentationContext> PresentationContext::create(const WGPUSurfaceDescriptor& descriptor, const Instance& instance)
 {
     if (!descriptor.nextInChain || descriptor.nextInChain->next)
-        return PresentationContext::createInvalid();
+        return PresentationContext::createInvalid(@"descriptor is invalid");
 
     switch (static_cast<unsigned>(descriptor.nextInChain->sType)) {
     case WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking:
@@ -53,7 +53,7 @@ Ref<PresentationContext> PresentationContext::create(const WGPUSurfaceDescriptor
     case WGPUSType_SurfaceDescriptorFromMetalLayer:
         return PresentationContextCoreAnimation::create(descriptor);
     default:
-        return PresentationContext::createInvalid();
+        return PresentationContext::createInvalid(@"descriptor is corrupted");
     }
 }
 

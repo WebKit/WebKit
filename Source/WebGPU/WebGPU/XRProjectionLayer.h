@@ -47,8 +47,9 @@ public:
     {
         return adoptRef(*new XRProjectionLayer(colorFormat, optionalDepthStencilFormat, flags, scale, device));
     }
-    static Ref<XRProjectionLayer> createInvalid(Device& device)
+    static Ref<XRProjectionLayer> createInvalid(Device& device, NSString* error)
     {
+        WGPU_REPORT_INVALID_OBJECT(error);
         return adoptRef(*new XRProjectionLayer(device));
     }
 

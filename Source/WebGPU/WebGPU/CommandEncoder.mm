@@ -117,7 +117,7 @@ DEFINE_SWIFTCXX_THUNK(WebGPU::CommandEncoder, runClearEncoder, void, (NSMutableD
 Ref<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescriptor& descriptor)
 {
     if (descriptor.nextInChain || !isValid())
-        return CommandEncoder::createInvalid(*this);
+        return CommandEncoder::createInvalid(*this, @"descriptor is invalid");
 
     captureFrameIfNeeded();
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createcommandencoder
@@ -125,7 +125,7 @@ Ref<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescrip
     auto *commandBufferDescriptor = [MTLCommandBufferDescriptor new];
     auto commandBuffer = protectedQueue()->commandBufferWithDescriptor(commandBufferDescriptor);
     if (!commandBuffer)
-        return CommandEncoder::createInvalid(*this);
+        return CommandEncoder::createInvalid(*this, @"command buffer could not be created");
 
     commandBuffer.label = fromAPI(descriptor.label).createNSString().get();
 

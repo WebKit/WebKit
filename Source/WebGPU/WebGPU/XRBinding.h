@@ -50,8 +50,9 @@ public:
     {
         return adoptRef(*new XRBinding(true, device));
     }
-    static Ref<XRBinding> createInvalid(Device& device)
+    static Ref<XRBinding> createInvalid(Device& device, NSString* error)
     {
+        WGPU_REPORT_INVALID_OBJECT(error);
         return adoptRef(*new XRBinding(device));
     }
 

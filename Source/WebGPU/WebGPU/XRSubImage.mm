@@ -51,7 +51,7 @@ XRSubImage::~XRSubImage() = default;
 Ref<XRSubImage> Device::createXRSubImage()
 {
     if (!isValid())
-        return XRSubImage::createInvalid(*this);
+        return XRSubImage::createInvalid(*this, @"device is invalid");
 
     return XRSubImage::create(*this);
 }

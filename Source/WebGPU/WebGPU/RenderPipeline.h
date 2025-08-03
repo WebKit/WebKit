@@ -62,8 +62,9 @@ public:
         return adoptRef(*new RenderPipeline(renderPipelineState, primitiveType, indexType, frontFace, cullMode, depthClipMode, depthStencilDescriptor, WTFMove(pipelineLayout), depthBias, depthBiasSlopeScale, depthBiasClamp, sampleMask, renderPipelineDescriptor, colorAttachmentCount, descriptor, WTFMove(requiredBufferIndices), WTFMove(minimumBufferSizes), uniqueId, vertexShaderBindingCount, device));
     }
 
-    static Ref<RenderPipeline> createInvalid(Device& device)
+    static Ref<RenderPipeline> createInvalid(Device& device, NSString* error)
     {
+        WGPU_REPORT_INVALID_OBJECT(error);
         return adoptRef(*new RenderPipeline(device));
     }
 

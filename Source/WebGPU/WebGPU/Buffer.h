@@ -66,8 +66,9 @@ public:
     {
         return adoptRef(*new Buffer(buffer, initialSize, usage, initialState, initialMappingRange, device));
     }
-    static Ref<Buffer> createInvalid(Device& device)
+    static Ref<Buffer> createInvalid(Device& device, NSString* error = nil)
     {
+        WGPU_REPORT_INVALID_OBJECT(error);
         return adoptRef(*new Buffer(device));
     }
 

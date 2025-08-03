@@ -58,8 +58,9 @@ public:
     {
         return adoptRef(*new Queue(commandQueue, adapter, device));
     }
-    static Ref<Queue> createInvalid(Adapter& adapter, Device& device)
+    static Ref<Queue> createInvalid(Adapter& adapter, Device& device, NSString* error)
     {
+        WGPU_REPORT_INVALID_OBJECT(error);
         return adoptRef(*new Queue(adapter, device));
     }
 
