@@ -36,6 +36,8 @@ WEBKIT_CLASS_DEPRECATED_MAC(10_4, 10_14)
 @property (readonly) int screenY;
 @property (readonly) int clientX;
 @property (readonly) int clientY;
+@property (readonly) int pageX;
+@property (readonly) int pageY;
 @property (readonly) BOOL ctrlKey;
 @property (readonly) BOOL shiftKey;
 @property (readonly) BOOL altKey;
