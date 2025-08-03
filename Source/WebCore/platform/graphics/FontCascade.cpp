@@ -339,7 +339,7 @@ float FontCascade::width(const TextRun& run, SingleThreadWeakHashSet<const Font>
     else
         result = widthForSimpleText(run, fallbackFonts, glyphOverflow);
 
-    if (cacheEntry && fallbackFonts->isEmptyIgnoringNullReferences())
+    if (cacheEntry)
         *cacheEntry = result;
     return result;
 }
