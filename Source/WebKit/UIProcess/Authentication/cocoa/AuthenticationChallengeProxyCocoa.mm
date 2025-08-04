@@ -40,11 +40,11 @@ void AuthenticationChallengeProxy::sendClientCertificateCredentialOverXpc(IPC::C
 {
     ASSERT(secKeyProxyStore.isInitialized());
 
-    auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    auto message = adoptOSObject(xpc_dictionary_create_empty());
     xpc_dictionary_set_string(message.get(), ClientCertificateAuthentication::XPCMessageNameKey, ClientCertificateAuthentication::XPCMessageNameValue);
     xpc_dictionary_set_uint64(message.get(), ClientCertificateAuthentication::XPCChallengeIDKey, challengeID.toUInt64());
     xpc_dictionary_set_value(message.get(), ClientCertificateAuthentication::XPCSecKeyProxyEndpointKey, secKeyProxyStore.get().endpoint._endpoint);
-    auto certificateDataArray = adoptOSObject(xpc_array_create(nullptr, 0));
+    auto certificateDataArray = adoptOSObject(xpc_array_create_empty());
     for (id certificate in credential.nsCredential().certificates) {
         auto data = adoptCF(SecCertificateCopyData((SecCertificateRef)certificate));
         xpc_array_append_value(certificateDataArray.get(), adoptOSObject(xpc_data_create(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()))).get());

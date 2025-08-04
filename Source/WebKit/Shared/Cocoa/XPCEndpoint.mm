@@ -83,7 +83,7 @@ void XPCEndpoint::sendEndpointToConnection(xpc_connection_t connection)
     if (!connection)
         return;
 
-    auto message = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    auto message = adoptOSObject(xpc_dictionary_create_empty());
     xpc_dictionary_set_string(message.get(), xpcEndpointMessageNameKey(), xpcEndpointMessageName());
     xpc_dictionary_set_value(message.get(), xpcEndpointNameKey(), m_endpoint.get());
 
