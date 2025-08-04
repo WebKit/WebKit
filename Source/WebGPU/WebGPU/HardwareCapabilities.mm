@@ -163,13 +163,33 @@ bool isShaderValidationEnabled(id<MTLDevice> device)
     return result;
 }
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+static bool allowMemoryBarriers(id<MTLDevice> device)
+{
+    if (!isShaderValidationEnabled(device))
+        return true;
+
+    static bool result = false;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        result = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitAllowWebGPUMemoryBarriersAlways"];
+    });
+    return result;
+
+}
+#endif
+
 static HardwareCapabilities apple4(id<MTLDevice> device)
 {
     auto baseCapabilities = WebGPU::baseCapabilities(device);
 
     baseCapabilities.supportsNonPrivateDepthStencilTextures = true;
     baseCapabilities.canPresentRGB10A2PixelFormats = false;
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    baseCapabilities.memoryBarrierLimit = !allowMemoryBarriers(device) ? 0u : std::numeric_limits<decltype(baseCapabilities.memoryBarrierLimit)>::max();
+#else
     baseCapabilities.memoryBarrierLimit = isShaderValidationEnabled(device) ? 0u : std::numeric_limits<decltype(baseCapabilities.memoryBarrierLimit)>::max();
+#endif
 
     auto features = WebGPU::baseFeatures(device, baseCapabilities);
 
