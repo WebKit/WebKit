@@ -101,6 +101,22 @@ ASCIILiteral RenderFlexibleBox::renderName() const
     return "RenderFlexibleBox"_s;
 }
 
+bool RenderFlexibleBox::preferredWidthsDependsOnBlockConstraints() const
+{
+    auto computedLogicalHeight = style().logicalHeight();
+    if (computedLogicalHeight.isPercentOrCalculated()) {
+        for (auto& flexItem : childrenOfType<RenderBox>(*this)) {
+            if (flexItem.isOutOfFlowPositioned())
+                continue;
+            auto& flexItemStyle = flexItem.style();
+            if (flexItemStyle.logicalWidth().isAuto() && flexItemStyle.logicalHeight().isAuto()
+                && flexItemStyle.hasAspectRatio())
+                return true;
+        }
+    }
+    return false;
+}
+
 void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     auto addScrollbarWidth = [&]() {
