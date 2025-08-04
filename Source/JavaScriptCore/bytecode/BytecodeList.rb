@@ -26,6 +26,7 @@ types [
 
     :BasicBlockLocation,
     :BoundLabel,
+    :CompareProfile,
     :DataOnlyCallLinkInfo,
     :DebugHookType,
     :ECMAMode,
@@ -772,6 +773,51 @@ op :try_get_by_id,
     }
 
 # Alignment: 1
+
+op_group :CompareJmp,
+    [
+        :jeq,
+        :jstricteq,
+        :jneq,
+        :jnstricteq,
+        :jless,
+        :jlesseq,
+        :jgreater,
+        :jgreatereq,
+        :jnless,
+        :jnlesseq,
+        :jngreater,
+        :jngreatereq,
+    ],
+    args: {
+        lhs: VirtualRegister,
+        rhs: VirtualRegister,
+        targetLabel: BoundLabel,
+    },
+    metadata: {
+        profile: CompareProfile,
+    }
+
+op_group :CompareOp,
+    [
+        :eq,
+        :neq,
+        :stricteq,
+        :nstricteq,
+        :less,
+        :lesseq,
+        :greater,
+        :greatereq,
+    ],
+    args: {
+        dst: VirtualRegister,
+        lhs: VirtualRegister,
+        rhs: VirtualRegister,
+    },
+    metadata: {
+        profile: CompareProfile,
+    }
+
 op :jneq_ptr,
     args: {
         value: VirtualRegister,
@@ -783,6 +829,32 @@ op :jneq_ptr,
     }
 
 # Opcodes without metadata are last
+
+op_group :BinaryJmp,
+    [
+        :jbelow,
+        :jbeloweq,
+    ],
+    args: {
+        lhs: VirtualRegister,
+        rhs: VirtualRegister,
+        targetLabel: BoundLabel,
+    }
+
+op_group :BinaryOp,
+    [
+        :below,
+        :beloweq,
+        :mod,
+        :pow,
+        :urshift,
+    ],
+    args: {
+        dst: VirtualRegister,
+        lhs: VirtualRegister,
+        rhs: VirtualRegister,
+    }
+
 op :get_argument,
     args: {
         dst: VirtualRegister,
@@ -988,29 +1060,6 @@ op :jeq_ptr,
     args: {
         value: VirtualRegister,
         specialPointer: VirtualRegister,
-        targetLabel: BoundLabel,
-    }
-
-op_group :BinaryJmp,
-    [
-        :jeq,
-        :jstricteq,
-        :jneq,
-        :jnstricteq,
-        :jless,
-        :jlesseq,
-        :jgreater,
-        :jgreatereq,
-        :jnless,
-        :jnlesseq,
-        :jngreater,
-        :jngreatereq,
-        :jbelow,
-        :jbeloweq,
-    ],
-    args: {
-        lhs: VirtualRegister,
-        rhs: VirtualRegister,
         targetLabel: BoundLabel,
     }
 
@@ -1270,28 +1319,6 @@ op :mov,
     args: {
         dst: VirtualRegister,
         src: VirtualRegister,
-    }
-
-op_group :BinaryOp,
-    [
-        :eq,
-        :neq,
-        :stricteq,
-        :nstricteq,
-        :less,
-        :lesseq,
-        :greater,
-        :greatereq,
-        :below,
-        :beloweq,
-        :mod,
-        :pow,
-        :urshift,
-    ],
-    args: {
-        dst: VirtualRegister,
-        lhs: VirtualRegister,
-        rhs: VirtualRegister,
     }
 
 op_group :ProfiledBinaryOpWithOperandTypes,

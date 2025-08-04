@@ -2824,7 +2824,7 @@ bool CodeBlock::shouldReoptimizeFromLoopNow()
 }
 #endif
 
-ArrayProfile* CodeBlock::getArrayProfile(const ConcurrentJSLocker&, BytecodeIndex bytecodeIndex)
+ArrayProfile* CodeBlock::getArrayProfile(BytecodeIndex bytecodeIndex)
 {
     auto instruction = instructions().at(bytecodeIndex);
 
@@ -2846,6 +2846,27 @@ ArrayProfile* CodeBlock::getArrayProfile(const ConcurrentJSLocker&, BytecodeInde
 
     return nullptr;
 }
+
+CompareProfile* CodeBlock::getCompareProfile(BytecodeIndex bytecodeIndex)
+{
+    auto instruction = instructions().at(bytecodeIndex);
+
+    switch (instruction->opcodeID()) {
+#define CASE(Op) \
+    case Op::opcodeID: \
+        return &instruction->as<Op>().metadata(this).m_profile;
+
+    FOR_EACH_OPCODE_WITH_SIMPLE_COMPARE_PROFILE(CASE)
+
+#undef CASE
+
+    default:
+        break;
+    }
+
+    return nullptr;
+}
+
 
 #if ENABLE(DFG_JIT)
 DFG::CodeOriginPool& CodeBlock::codeOrigins()

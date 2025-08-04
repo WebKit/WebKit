@@ -35,6 +35,7 @@
 #include "CodeBlockHash.h"
 #include "CodeOrigin.h"
 #include "CodeType.h"
+#include "CompareProfile.h"
 #include "CompilationResult.h"
 #include "ConcurrentJSLock.h"
 #include "DFGCodeOriginPool.h"
@@ -474,7 +475,8 @@ public:
 
     bool couldTakeSpecialArithFastCase(BytecodeIndex bytecodeOffset);
 
-    ArrayProfile* getArrayProfile(const ConcurrentJSLocker&, BytecodeIndex);
+    ArrayProfile* getArrayProfile(BytecodeIndex);
+    CompareProfile* getCompareProfile(BytecodeIndex);
 
     // Exception handling support
 

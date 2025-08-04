@@ -215,6 +215,7 @@ module DSL
 #include "ArithProfile.h"
 #include "ArrayAllocationProfile.h"
 #include "BytecodeDumper.h"
+#include "CompareProfile.h"
 #include "Fits.h"
 #include "GetByIdMetadata.h"
 #include "Instruction.h"
