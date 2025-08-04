@@ -240,7 +240,7 @@ public:
 #endif
 
     bool canRenderCombiningCharacterSequence(StringView) const;
-    GlyphBufferAdvance applyTransforms(GlyphBuffer&, unsigned beginningGlyphIndex, unsigned beginningStringIndex, bool enableKerning, bool requiresShaping, const AtomString& locale, StringView text, TextDirection) const;
+    GlyphBufferAdvance applyTransforms(GlyphBuffer&, unsigned beginningGlyphIndex, bool enableKerning, bool requiresShaping, const AtomString& locale, StringView text, TextDirection) const;
 
     // Returns nullopt if none of the glyphs are OT-SVG glyphs.
     std::optional<BitVector> findOTSVGGlyphs(std::span<const GlyphBufferGlyph>) const;

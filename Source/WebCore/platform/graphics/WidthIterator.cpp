@@ -92,7 +92,7 @@ inline auto WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, unsigne
     for (unsigned i = lastGlyphCount; i < glyphBufferSize; ++i)
         beforeWidth += width(advances[i]);
 
-    auto initialAdvance = font.applyTransforms(glyphBuffer, lastGlyphCount, m_currentCharacterIndex, m_enableKerning, m_requiresShaping, m_fontCascade->fontDescription().computedLocale(), m_run->text(), direction());
+    auto initialAdvance = font.applyTransforms(glyphBuffer, lastGlyphCount, m_enableKerning, m_requiresShaping, m_fontCascade->fontDescription().computedLocale(), m_run->text(), direction());
 
     glyphBufferSize = glyphBuffer.size();
     advances = glyphBuffer.advances();
