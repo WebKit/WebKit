@@ -263,8 +263,8 @@
         "com.apple.mt"
         "com.apple.preferences.sounds")
 
-    (deny mach-lookup
-        (global-name "com.apple.frontboard.systemappservices"))                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
+    (deny mach-lookup (with no-report)
+        (global-name "com.apple.frontboard.systemappservices"))
 
 #if !ENABLE(CARENDERSERVER_BLOCKING_IN_WEBCONTENT)
     (with-filter (require-not (state-flag "EnableExperimentalSandbox"))
