@@ -695,30 +695,32 @@ install(FILES ${WPE_API_INSTALLED_HEADERS}
         COMPONENT "Development"
 )
 
-# XXX: Using ${JavaScriptCore_INSTALLED_HEADERS} here expands to nothing.
-GI_INTROSPECT(WPEJavaScriptCore ${WPE_API_VERSION} jsc/jsc.h
-    TARGET WebKit
-    PACKAGE wpe-javascriptcore
-    SYMBOL_PREFIX jsc
-    DEPENDENCIES GObject-2.0
-    OPTIONS
-        -I${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
-        -I${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}
-    SOURCES
-        ${JAVASCRIPTCORE_DIR}/API/glib/JSCOptions.h
-        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCClass.h
-        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCContext.h
-        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCDefines.h
-        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCException.h
-        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCValue.h
-        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCVersion.h
-        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCVirtualMachine.h
-        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCWeakValue.h
-        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/jsc.h
-        ${JAVASCRIPTCORE_DIR}/API/glib
-    NO_IMPLICIT_SOURCES
-)
-GI_DOCGEN(WPEJavaScriptCore "${JAVASCRIPTCORE_DIR}/API/glib/docs/jsc.toml.in")
+if (NOT USE_SHARED_JSC)
+    # XXX: Using ${JavaScriptCore_INSTALLED_HEADERS} here expands to nothing.
+    GI_INTROSPECT(WPEJavaScriptCore ${WPE_API_VERSION} jsc/jsc.h
+        TARGET WebKit
+        PACKAGE wpe-javascriptcore
+        SYMBOL_PREFIX jsc
+        DEPENDENCIES GObject-2.0
+        OPTIONS
+            -I${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
+            -I${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}
+        SOURCES
+            ${JAVASCRIPTCORE_DIR}/API/glib/JSCOptions.h
+            ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCClass.h
+            ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCContext.h
+            ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCDefines.h
+            ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCException.h
+            ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCValue.h
+            ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCVersion.h
+            ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCVirtualMachine.h
+            ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCWeakValue.h
+            ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/jsc.h
+            ${JAVASCRIPTCORE_DIR}/API/glib
+        NO_IMPLICIT_SOURCES
+    )
+    GI_DOCGEN(WPEJavaScriptCore "${JAVASCRIPTCORE_DIR}/API/glib/docs/jsc.toml.in")
+endif ()
 
 set(WPE_SOURCES_FOR_INTROSPECTION
     UIProcess/API/wpe/WebKitColor.cpp
@@ -734,10 +736,17 @@ else ()
     list(APPEND WPE_SOURCES_FOR_INTROSPECTION UIProcess/API/wpe/WebKitWebViewWPE1.cpp)
 endif ()
 
-set(WPE_LIBRARIES_FOR_INTROSPECTION
-    WPEJavaScriptCore
-    Soup-${SOUP_API_VERSION}:libsoup-${SOUP_API_VERSION}
-)
+if (NOT USE_SHARED_JSC)
+    set(WPE_LIBRARIES_FOR_INTROSPECTION
+        WPEJavaScriptCore
+        Soup-${SOUP_API_VERSION}:libsoup-${SOUP_API_VERSION}
+    )
+else ()
+    set(WPE_LIBRARIES_FOR_INTROSPECTION
+        JavaScriptCore
+        Soup-${SOUP_API_VERSION}:libsoup-${SOUP_API_VERSION}
+    )
+endif ()
 
 set(WPE_INCLUDE_DIRS_FOR_INTROSPECTION
     -I${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
@@ -792,8 +801,7 @@ GI_INTROSPECT(${WPE_WEB_PROCESS_EXTENSION_API_NAME} ${WPE_API_VERSION} wpe/${WPE
     IDENTIFIER_PREFIX WebKit
     SYMBOL_PREFIX webkit
     DEPENDENCIES
-        WPEJavaScriptCore
-        Soup-${SOUP_API_VERSION}:libsoup-${SOUP_API_VERSION}
+        ${WPE_LIBRARIES_FOR_INTROSPECTION}
     OPTIONS
         -I${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
         -I${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}
