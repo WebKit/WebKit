@@ -690,6 +690,19 @@ ExceptionOr<void> ContainerNode::insertBefore(Node& newChild, RefPtr<Node>&& ref
     return { };
 }
 
+static inline void invalidateChildIndices(Node* firstSiblingWithAffectedIndex)
+{
+    CheckedPtr siblingWithAffectedIndex = firstSiblingWithAffectedIndex;
+    while (siblingWithAffectedIndex) {
+        if (CheckedPtr siblingElementWithAffectedIndex = dynamicDowncast<Element>(siblingWithAffectedIndex)) {
+            if (!siblingElementWithAffectedIndex->childIndex())
+                break;
+            siblingElementWithAffectedIndex->setChildIndex(0);
+        }
+        siblingWithAffectedIndex = siblingWithAffectedIndex->nextSibling();
+    }
+}
+
 void ContainerNode::insertBeforeCommon(Node& nextChild, Node& newChild)
 {
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -715,6 +728,8 @@ void ContainerNode::insertBeforeCommon(Node& nextChild, Node& newChild)
     newChild.setParentNode(this);
     newChild.setPreviousSibling(previousSibling);
     newChild.setNextSibling(&nextChild);
+
+    invalidateChildIndices(&nextChild);
 }
 
 void ContainerNode::appendChildCommon(Node& child)
@@ -903,6 +918,8 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& ol
     oldChild.setParentNode(nullptr);
 
     oldChild.setTreeScopeRecursively(document());
+
+    invalidateChildIndices(nextChild);
 }
 
 void ContainerNode::parserRemoveChild(Node& oldChild)
