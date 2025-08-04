@@ -1,0 +1,27 @@
+option('docs',
+       type: 'boolean', value: false,
+       description: 'Build reference manual (requires gi-doc and gobject-introspection)')
+option('examples',
+       type: 'boolean', value: true,
+       description: 'Build example programs')
+option('stack-protector',
+       type: 'boolean', value: true,
+       description: 'Enable stack-protector')
+option('vapi',
+       type: 'boolean', value: true,
+       description: 'Generate vapi data (requires vapigen)')
+option('introspection',
+       type: 'feature', value: 'enabled',
+       description: 'Generate gir data (requires gobject-introspection)')
+option('sysprof',
+       type: 'boolean', value: false,
+       description: 'Provide anscillary profiling information when run under Sysprof')
+option('tests',
+       type: 'boolean', value: true,
+       description: 'Build and enable tests')
+option('liburing',
+       type: 'feature', value: 'auto',
+       description: 'Allow use of liburing (io_uring)')
+option('eventfd',
+       type: 'feature', value: 'auto',
+       description: 'Allow use of eventfd')

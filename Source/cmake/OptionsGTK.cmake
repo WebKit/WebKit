@@ -36,6 +36,12 @@ if (WTF_CPU_ARM OR WTF_CPU_MIPS)
     SET_AND_EXPOSE_TO_BUILD(USE_CAPSTONE ${DEVELOPER_MODE})
 endif ()
 
+# TODO: Remove once the SDK has libdex 0.8+
+set(USE_SYSTEM_LIBDEX_DEFAULT ON)
+if (DEVELOPER_MODE)
+    set(USE_SYSTEM_LIBDEX_DEFAULT OFF)
+endif ()
+
 # Public options specific to the GTK port. Do not add any options here unless
 # there is a strong reason we should support changing the value of the option,
 # and the option is not relevant to other WebKit ports.
@@ -45,6 +51,7 @@ WEBKIT_OPTION_DEFINE(ENABLE_JOURNALD_LOG "Whether to enable journald logging" PU
 WEBKIT_OPTION_DEFINE(ENABLE_QUARTZ_TARGET "Whether to enable support for the Quartz windowing target." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_WAYLAND_TARGET "Whether to enable support for the Wayland windowing target." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_X11_TARGET "Whether to enable support for the X11 windowing target." PUBLIC ON)
+WEBKIT_OPTION_DEFINE(ENABLE_SYSPROF_MUPROF "Whether to build the bundled muprof profile capture tool." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_FLITE "Whether to enable usage of Flite for speech synthesis." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_GBM "Whether to enable usage of GBM." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_GTK4 "Whether to enable usage of GTK4 instead of GTK3." PUBLIC ON)
@@ -54,6 +61,7 @@ WEBKIT_OPTION_DEFINE(USE_LIBHYPHEN "Whether to enable the default automatic hyph
 WEBKIT_OPTION_DEFINE(USE_LIBSECRET "Whether to enable the persistent credential storage using libsecret." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_SKIA_OPENTYPE_SVG "Whether to use the Skia built-in support for OpenType SVG fonts." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_SOUP2 "Whether to enable usage of Soup 2 instead of Soup 3." PUBLIC OFF)
+WEBKIT_OPTION_DEFINE(USE_SYSTEM_LIBDEX "Whether to use a system-provided libdex." PUBLIC ${USE_SYSTEM_LIBDEX_DEFAULT})
 WEBKIT_OPTION_DEFINE(USE_SYSTEM_SYSPROF_CAPTURE "Whether to use a system-provided libsysprof-capture" PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_JSC_RESTRICTED_OPTIONS_BY_DEFAULT "Whether to enable dangerous development options in JSC by default." PRIVATE OFF)
 
@@ -70,6 +78,8 @@ WEBKIT_OPTION_DEFINE(USE_SYSPROF_CAPTURE "Whether to use libsysprof-capture for 
 WEBKIT_OPTION_DEFINE(USE_SYSTEM_UNIFDEF "Whether to use a system-provided unifdef" PRIVATE ON)
 
 WEBKIT_OPTION_DEPEND(USE_SYSTEM_SYSPROF_CAPTURE USE_SYSPROF_CAPTURE)
+WEBKIT_OPTION_DEPEND(USE_SYSTEM_LIBDEX ENABLE_SYSPROF_MUPROF)
+WEBKIT_OPTION_DEPEND(ENABLE_SYSPROF_MUPROF USE_SYSPROF_CAPTURE)
 
 SET_AND_EXPOSE_TO_BUILD(ENABLE_DEVELOPER_MODE ${DEVELOPER_MODE})
 if (DEVELOPER_MODE)

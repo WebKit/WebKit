@@ -1,0 +1,16 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+
+[*.[ch]]
+indent_size = 2
+indent_style = space
+insert_final_newline = true
+max_line_length = 100
+tab_width = 2
+
+[meson.build]
+indent_size = 2
+indent_style = space

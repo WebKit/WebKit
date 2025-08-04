@@ -1,0 +1,18 @@
+This directory contains a copy of muprof from the official repository.
+
+  - URL: https://gitlab.gnome.org/feaneron/muprof
+  - Commit: 7d285f46ff12017fa6cd86ab838c5c8ab3b8fb32
+
+The simplest way of updating its contents is to re-create the directory
+from scratch, and restoring the needed files with Git. Example commands:
+
+  rm -rf Source/ThirdParty/muprof
+  cp -ar ../path/to/muprof Source/ThirdParty/
+  git checkout -- \
+      Source/ThirdParty/muprof/README.WebKit \
+      Source/ThirdParty/muprof/CMakeLists.txt
+  rm -rf Source/ThirdParty/muprof/.git/
+  git add -A Source/ThirdParty/muprof/
+
+Then check whether the updated sources require any changes to the CMake
+build system, and update the muprof commit identifier in this file.

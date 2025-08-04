@@ -1,0 +1,20 @@
+This directory contains a copy of libdex from the official repository.
+
+  - URL: https://gitlab.gnome.org/GNOME/libdex
+  - Commit: 01652cc39452170bf3d79d96cde7fb884b366db6 (tag "0.8.1")
+
+The simplest way of updating its contents is to re-create the directory
+from scratch, and restoring the needed files with Git. Example commands:
+
+  rm -rf Source/ThirdParty/libdex
+  cp -ar ../path/to/libdex Source/ThirdParty/
+  git checkout -- \
+      Source/ThirdParty/libdex/README.WebKit \
+      Source/ThirdParty/libdex/CMakeLists.txt \
+      Source/ThirdParty/libdex/cmake-config.h.i
+  rm -rf Source/ThirdParty/libdex/.git/
+  git add -A Source/ThirdParty/libdex/
+
+Then check whether the updated sources require any changes to the CMake build
+system, and update the libdex commit identifier (and tag, if applicable) in
+this file.

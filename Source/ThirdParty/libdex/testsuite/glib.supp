@@ -1,0 +1,120 @@
+{
+  <boxed_type>
+  Memcheck:Leak
+  ...
+  fun:g_boxed_type_register_static
+}
+{
+  <quark_init>
+  Memcheck:Leak
+  ...
+  fun:g_quark_init
+}
+{
+  <quark_strdup>
+  Memcheck:Leak
+  ...
+  fun:quark_strdup
+}
+{
+  <quark_new>
+  Memcheck:Leak
+  ...
+  fun:quark_new
+}
+{
+  <type_reg>
+  Memcheck:Leak
+  ...
+  fun:g_type_register_static
+}
+{
+  <rand_init>
+  Memcheck:Leak
+  ...
+  fun:g_rand_new
+}
+{
+  <gobject_init>
+  Memcheck:Leak
+  ...
+  fun:gobject_init
+}
+{
+  <gsignl_init>
+  Memcheck:Leak
+  ...
+  fun:_g_signal_init
+}
+{
+  <gerror_init>
+  Memcheck:Leak
+  ...
+  fun:g_error_init
+}
+{
+  <gtest_init>
+  Memcheck:Leak
+  ...
+  fun:g_test_init
+}
+{
+  <test_run_seed>
+  Memcheck:Leak
+  ...
+  fun:test_run_seed
+}
+{
+  <test_paths>
+  Memcheck:Leak
+  ...
+  fun:g_string_maybe_expand
+  fun:g_string_sized_new
+  fun:g_build_path_va
+  fun:g_build_path
+  fun:g_test_run_suite_internal
+}
+{
+  <test_suite_add>
+  Memcheck:Leak
+  ...
+  fun:g_test_add_vtable
+}
+{
+  <test_suite_run>
+  Memcheck:Leak
+  ...
+  fun:g_timer_new
+  fun:test_suite_run
+}
+{
+  <test_suite_run>
+  Memcheck:Leak
+  ...
+  fun:g_strdup_printf
+  fun:g_test_run_suite
+}
+{
+  <gprivate>
+  Memcheck:Leak
+  ...
+  fun:g_private_impl_new
+}
+{
+  <thread_new>
+  Memcheck:Leak
+  ...
+  fun:g_thread_new
+}
+{
+  <sysprof_collector>
+  Memcheck:Leak
+  ...
+  fun:sysprof_malloc0
+}
+{
+  <dex_init>
+  Memcheck:Leak
+  ...
+  fun:dex_init_once
+}

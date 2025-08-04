@@ -1,0 +1,182 @@
+libdex 0.8.1
+============
+
+This is a stable release for GNOME 47.0
+
+ * Fix disabling of assertions in production builds
+
+libdex 0.8.0
+============
+
+This is a stable release for GNOME 47.0
+
+ * Various build system improvements to help catch correctness issues.
+ * Increased assertions in fibers to help Coverity discover usage patterns.
+ * Avoid releasing discarded future until chained future is released.
+ * Fix overflow in extremely large timeout calculation.
+ * Various introspection fixes.
+ * Fix inclusion from C++.
+
+libdex 0.7.1
+============
+
+This is an beta release for GNOME 47.beta
+
+ * Allow disabling stack protector on systems that do not support it
+ * Always use ucontext.h on macOS to simplify integration there
+
+libdex 0.7.0
+============
+
+This is an alpha release for GNOME 47.alpha
+
+ * Various build fixes for macOS 14+
+ * dex_future_new_true() and dex_future_new_false() convenience macros
+ * Avoid possible linking of asm.S on Linux so that we do not make the
+   GCC annobin checker unhappy.
+ * Allow a NULL GObject for dex_future_new_take_object().
+
+libdex 0.6.0
+============
+
+This is a stable release for GNOME 46
+
+ * No changes since 0.5.1
+
+libdex 0.5.1
+============
+
+ * Add convenience API for checking exact future status without enum
+ * Lots of documentation additions
+
+libdex 0.5.0
+============
+
+This is a beta release for GNOME 46.
+
+ * Various API now warns about unused results to help avoid unintended
+   leaks of futures.
+ * dex_file_query_exists() is a new wrapper for g_file_query_exists()
+ * Documentation fixes
+
+libdex 0.4.3
+============
+
+This release contains a few more followup fixes for fallback scheduling,
+particularly on Linux systems without io_uring. We've also enabled CI
+to test this situation more closely as we're most likely to run into it
+on distribution build systems running older Linux kernels.
+
+ * New build options for disabling io_uring and eventfd support which
+   enable testing more fallback paths in CI.
+ * Worker threads will now use a GMainLoop instead iterating GMainContext
+   manually.
+ * An idle is used for scheduling work items directly onto a worker thread
+   instead of going through the global work queue when not already running
+   on a worker thread. Otherwise the lock-free work queue is used.
+ * A fix for a potential deadlock when failing to create an additional
+   worker thread.
+ * Fix a release build warning.
+
+libdex 0.4.2
+============
+
+This release contains an important fix for running on systems with
+io_uring and recent Linux kernels.
+
+ * io_uring AIO backend will now attempt to create the io_uring on the
+   target worker thread so that IORING_SETUP_SINGLE_ISSUER may restrict
+   submissions correctly.
+ * Linux distributions may optionally disable liburing using the build
+   time option -Dliburing=disabled. In that case, the fallback of POSIX
+   IO with a thread-pool will be used.
+
+libdex 0.4.1
+============
+
+This release includes an important fix for how io_uring CQE are handled.
+
+libdex 0.4.0
+============
+
+This is the release for GNOME 45.
+
+Changes in this release:
+
+ * Documentation fix
+
+libdex 0.3.1
+============
+
+This is the beta release for GNOME 45.
+
+Changes in this release:
+
+ * A new "Infinite" future type which will never resolve or reject.
+ * The gio wrappers will now set debuggable names for their futures.
+ * A `dex_async_pair_set_cancel_on_discard()` function has been added which
+   ensures that the `GCancellable` will not be cancelled when the future
+   is discarded. This can help in situations where you might repeatedly
+   await on a future and do not want intermediate cancellation between
+   attempts to await.
+ * A `dex_input_stream_skip_async()` function has been added to wrap the
+   underlying GIO function.
+ * A `dex_future_disown()` function has been added which simplifies the
+   case where you want a future to run but are not interested in the result.
+
+libdex 0.3.0
+============
+
+This is the first alpha release for GNOME 45.
+
+Changes in this release:
+
+ * Documentation updates
+ * pkg-config improvements
+ * Build system improvements for GIR
+ * Support for GVariant-based futures
+ * New Future-based wrappers for GDBusConnection
+ * The FD-based AIO API is now public, allowing for use of io_uring
+   on Linux kernels that support it. If unsupported, a threadpool
+   approach is used similar to GIO.
+ * Improvements to introspection for language bindings.
+ * You can now return NULL for a DexPromise expecting a GObject as
+   as a resolved value.
+ * DexFiber will now get static names associated with them when
+   used from C which points to the line of code. This is only enabled
+   when debugging is enabled for libdex through the use of macros.
+
+libdex 0.2.0
+============
+
+This is the first release intended for end-users.
+
+Changes in this release:
+
+ * Followup fixes for building on mips
+ * Fixes for introspection gi-scanner
+ * Remove abstract type flag from DexFuture to satisfy GObject Introspection
+   rules about constructors.
+ * Many documentation/gi-annotation fixes
+ * Build system improvements
+ * Default to `-Dintrospection=enabled`
+
+libdex 0.1.1
+============
+
+Changes in this release:
+
+ * Fix soname versioning
+ * Documentation improvements
+ * Fix various GObject Introspection issues
+ * More backports for older GLib use
+ * Various ucontext fiber fixes for less-used architectures
+ * Fixes for various incorrect cast-align warnings
+ * Tweaks for better Forward portability
+ * Add some missing g_autoptr() definitions
+ * Add GCancellation integration to DexPromise
+
+libdex 0.1.0
+============
+
+This is an initial release of libdex meant for experimentation and testing.

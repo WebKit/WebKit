@@ -1,0 +1,61 @@
+stages:
+    - test
+    - docs
+    - deploy
+
+variables:
+    FEDORA_IMAGE: "registry.gitlab.gnome.org/gnome/gtksourceview/fedora:latest"
+
+test:
+  image: 'registry.fedoraproject.org/fedora:39'
+  stage: test
+  variables:
+    DEPS: >-
+      gcc
+      gcc-c++
+      gettext
+      libatomic
+      liburing-devel
+      meson
+      ninja-build
+      redhat-rpm-config
+      glib2-devel
+      gobject-introspection-devel
+      git
+  before_script:
+    - 'cat /proc/cpuinfo'
+    - "dnf install -y $DEPS"
+  script:
+    - 'meson setup _build . -Ddocs=false -Dexamples=false -Dvapi=false -Dintrospection=enabled -Dsysprof=false -Dtests=true -Dliburing=enabled -Deventfd=enabled'
+    - 'cd _build'
+    - 'ninja test'
+    - 'meson configure -Dliburing=disabled -Deventfd=disabled'
+    - 'ninja test'
+
+reference:
+    image: $FEDORA_IMAGE
+    stage: docs
+    needs: []
+    variables:
+        MESON_FLAGS: "-Ddocs=true -Dexamples=false -Dvapi=false -Dintrospection=enabled -Dsysprof=false -Dtests=false"
+    script:
+        - sudo dnf install -y libatomic liburing-devel
+        - mkdir -p pfx/
+        - meson ${MESON_FLAGS} --prefix=${PWD}/pfx _build
+        - ninja -C _build install
+        - mkdir -p _reference/
+        - mv pfx/share/doc/libdex-1/ _reference/
+    artifacts:
+        paths:
+            - _reference
+
+pages:
+    stage: deploy
+    needs: ['reference']
+    script:
+        - mv _reference public/
+    artifacts:
+        paths:
+            - public
+    only:
+        - main

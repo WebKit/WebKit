@@ -1,0 +1,22 @@
+/*
+ * Template for the generated config.h header for libdex. This is the minimum
+ * needed to build the parts of libdex used by muprof, while avoiding as much
+ * pollution of the global CMake variable namespace as possible.
+ */
+#pragma once
+
+#define PACKAGE_VERSION "@Dex_VERSION@"
+
+#define HAVE_MADVISE 1
+#define HAVE_MPROTECT 1
+
+#cmakedefine01 HAVE_EVENTFD
+
+#cmakedefine01 HAVE_UCONTEXT_H
+
+#cmakedefine01 Dex_HAVE_LIBURING
+#if defined(Dex_HAVE_LIBURING) && Dex_HAVE_LIBURING
+#  define HAVE_LIBURING Dex_HAVE_LIBURING
+#endif
+
+#define ALIGN_OF_UCONTEXT @Dex_ALIGN_OF_UCONTEXT@

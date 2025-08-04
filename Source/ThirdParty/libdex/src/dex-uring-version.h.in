@@ -1,0 +1,7 @@
+#pragma once
+
+#define DEX_URING_MAJOR_VERSION (@DEX_URING_MAJOR_VERSION@)
+#define DEX_URING_MINOR_VERSION (@DEX_URING_MINOR_VERSION@)
+#define DEX_URING_CHECK_VERSION(major,minor) \
+        (DEX_URING_MAJOR_VERSION > (major) || \
+         (DEX_URING_MAJOR_VERSION == (major) && DEX_URING_MINOR_VERSION >= (minor)))

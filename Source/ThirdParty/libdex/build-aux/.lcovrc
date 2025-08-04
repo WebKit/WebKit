@@ -1,0 +1,13 @@
+# lcov and genhtml configuration
+# See http://ltp.sourceforge.net/coverage/lcov/lcovrc.5.php
+
+# Always enable branch coverage
+lcov_branch_coverage = 1
+
+# Exclude precondition assertions, as we can never reasonably get full branch
+# coverage of them, as they should never normally fail.
+# See https://github.com/linux-test-project/lcov/issues/44
+lcov_excl_br_line = LCOV_EXCL_BR_LINE|g_return_if_fail|g_return_val_if_fail|g_assert|g_assert_|g_clear_|dex_clear
+
+# Similarly for unreachable assertions.
+lcov_excl_line = LCOV_EXCL_LINE|g_return_if_reached|g_return_val_if_reached|g_assert_not_reached
