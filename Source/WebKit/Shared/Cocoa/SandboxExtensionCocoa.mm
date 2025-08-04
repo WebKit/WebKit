@@ -29,8 +29,11 @@
 #if ENABLE(SANDBOX_EXTENSIONS)
 
 #import "Logging.h"
+#import <pwd.h>
 #import <string.h>
 #import <wtf/FileSystem.h>
+#import <wtf/SafeStrerror.h>
+#import <wtf/StdFilesystem.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/CString.h>
 
@@ -63,7 +66,7 @@ bool WARN_UNUSED_RETURN SandboxExtensionImpl::consume()
     return !sandbox_check(getpid(), 0, SANDBOX_FILTER_NONE);
 #else
     if (m_handle == -1) {
-        RELEASE_LOG_ERROR(Sandbox, "Could not create a sandbox extension for '%s', errno = %d", m_token.data(), errno);
+        RELEASE_LOG_ERROR(Sandbox, "Could not consume a sandbox extension for '%s': %s", m_token.data(), safeStrerror(errno).data());
         return false;
     }
     return true;
@@ -180,6 +183,72 @@ String resolvePathForSandboxExtension(StringView path)
     return resolvedPath;
 }
 
+static ASCIILiteral sandboxExtensionType(SandboxExtensionType type)
+{
+    switch (type) {
+    case SandboxExtensionType::ReadOnly:
+        return "ReadOnly"_s;
+    case SandboxExtensionType::ReadWrite:
+        return "ReadWrite"_s;
+    case SandboxExtensionType::Mach:
+        return "Mach"_s;
+    case SandboxExtensionType::IOKit:
+        return "IOKit"_s;
+    case SandboxExtensionType::Generic:
+        return "Generic"_s;
+    case SandboxExtensionType::ReadByProcess:
+        return "ReadByProcess"_s;
+    }
+}
+
+static void logDiagnosticsInfo(StringView path)
+{
+    int ret = sandbox_check(getpid(), "file-read-data", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_PATH), path.utf8().data());
+    if (ret)
+        RELEASE_LOG_ERROR(Sandbox, "No read access to '%s'", path.utf8().data());
+    else
+        RELEASE_LOG_ERROR(Sandbox, "Read access to '%s'", path.utf8().data());
+
+    ret = sandbox_check(getpid(), "file-write-data", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_PATH), path.utf8().data());
+    if (ret)
+        RELEASE_LOG_ERROR(Sandbox, "No write access to '%s'", path.utf8().data());
+    else
+        RELEASE_LOG_ERROR(Sandbox, "Write access to '%s'", path.utf8().data());
+
+    char resolvedPath[PATH_MAX] = { 0 };
+    if (!realpath(path.utf8().data(), resolvedPath))
+        RELEASE_LOG_ERROR(Sandbox, "Could not canonicalize path: %s", safeStrerror(errno).data());
+    RELEASE_LOG_ERROR(Sandbox, "realpath: %s", resolvedPath);
+
+    struct stat fileInfo;
+
+    if (stat(path.utf8().data(), &fileInfo) == -1) {
+        RELEASE_LOG_ERROR(Sandbox, "Error calling stat: %s", safeStrerror(errno).data());
+        return;
+    }
+
+    auto appendMask = [=](StringBuilder& mask, char op, int perm) {
+        mask.append((perm & fileInfo.st_mode) ? op : '-');
+    };
+
+    StringBuilder mask;
+    appendMask(mask, 'r', S_IRUSR);
+    appendMask(mask, 'w', S_IWUSR);
+    appendMask(mask, 'x', S_IXUSR);
+    appendMask(mask, 'r', S_IRGRP);
+    appendMask(mask, 'w', S_IWGRP);
+    appendMask(mask, 'x', S_IXGRP);
+    appendMask(mask, 'r', S_IROTH);
+    appendMask(mask, 'w', S_IWOTH);
+    appendMask(mask, 'x', S_IXOTH);
+
+    RELEASE_LOG_ERROR(Sandbox, "File mode: %d", fileInfo.st_mode);
+    RELEASE_LOG_ERROR(Sandbox, "File mask: %s", mask.toString().utf8().data());
+
+    struct passwd *pws = getpwuid(fileInfo.st_uid);
+    RELEASE_LOG_ERROR(Sandbox, "File owner: %s", pws->pw_name);
+}
+
 auto SandboxExtension::createHandleWithoutResolvingPath(StringView path, Type type) -> std::optional<Handle>
 {
     Handle handle;
@@ -187,9 +256,11 @@ auto SandboxExtension::createHandleWithoutResolvingPath(StringView path, Type ty
 
     handle.m_sandboxExtension = SandboxExtensionImpl::create(path.utf8().data(), type, std::nullopt, Flags::DoNotCanonicalize);
     if (!handle.m_sandboxExtension) {
-        RELEASE_LOG_ERROR(Sandbox, "Could not create a sandbox extension for '%s'", path.utf8().data());
+        RELEASE_LOG_ERROR(Sandbox, "Could not create a %s sandbox extension for '%s': %s", sandboxExtensionType(type).characters(), path.utf8().data(), safeStrerror(errno).data());
+        logDiagnosticsInfo(path);
         return std::nullopt;
-    }
+    } else
+        RELEASE_LOG(Sandbox, "Created a %s sandbox extension for '%s'", sandboxExtensionType(type).characters(), path.utf8().data());
     return WTFMove(handle);
 }
 
@@ -214,7 +285,7 @@ auto SandboxExtension::createReadOnlyHandlesForFiles(ASCIILiteral logLabel, cons
         if (!handle) {
             // This can legitimately fail if a directory containing the file is deleted after the file was chosen.
             // We also have reports of cases where this likely fails for some unknown reason, <rdar://problem/10156710>.
-            WTFLogAlways("%s: could not create a sandbox extension for '%s'\n", logLabel.characters(), path.utf8().data());
+            RELEASE_LOG_ERROR(Sandbox, "%s: could not create a sandbox extension for '%s': %s", logLabel.characters(), path.utf8().data(), safeStrerror(errno).data());
             ASSERT_NOT_REACHED();
         }
         return handle;
@@ -253,7 +324,7 @@ auto SandboxExtension::createHandleForTemporaryFile(StringView prefix, Type type
     handle.m_sandboxExtension = SandboxExtensionImpl::create(FileSystem::fileSystemRepresentation(pathString).data(), type);
 
     if (!handle.m_sandboxExtension) {
-        WTFLogAlways("Could not create a sandbox extension for temporary file '%s'", pathString.utf8().data());
+        RELEASE_LOG_ERROR(Sandbox, "Could not create a sandbox extension for temporary file '%s': %s", pathString.utf8().data(), safeStrerror(errno).data());
         return std::nullopt;
     }
     return { { WTFMove(handle), WTFMove(pathString) } };
@@ -266,7 +337,7 @@ auto SandboxExtension::createHandleForGenericExtension(ASCIILiteral extensionCla
 
     handle.m_sandboxExtension = SandboxExtensionImpl::create(extensionClass.characters(), Type::Generic);
     if (!handle.m_sandboxExtension) {
-        WTFLogAlways("Could not create a '%s' sandbox extension", extensionClass.characters());
+        RELEASE_LOG_ERROR(Sandbox, "Could not create a '%s' sandbox extension: %s", extensionClass.characters(), safeStrerror(errno).data());
         return std::nullopt;
     }
     
@@ -288,7 +359,7 @@ auto SandboxExtension::createHandleForMachLookup(ASCIILiteral service, std::opti
     
     handle.m_sandboxExtension = SandboxExtensionImpl::create(service.characters(), Type::Mach, auditToken, flags);
     if (!handle.m_sandboxExtension) {
-        WTFLogAlways("Could not create a '%s' sandbox extension", service.characters());
+        RELEASE_LOG_ERROR(Sandbox, "Could not create a '%s' sandbox extension: %s", service.characters(), safeStrerror(errno).data());
         return std::nullopt;
     }
     
@@ -322,9 +393,11 @@ auto SandboxExtension::createHandleForReadByAuditToken(StringView path, audit_to
 
     handle.m_sandboxExtension = SandboxExtensionImpl::create(path.utf8().data(), Type::ReadByProcess, auditToken);
     if (!handle.m_sandboxExtension) {
-        RELEASE_LOG_ERROR(Sandbox, "Could not create a sandbox extension for '%s'", path.utf8().data());
+        RELEASE_LOG_ERROR(Sandbox, "Could not create a read sandbox extension for '%s': %s", path.utf8().data(), safeStrerror(errno).data());
+        logDiagnosticsInfo(path);
         return std::nullopt;
-    }
+    } else
+        RELEASE_LOG(Sandbox, "Created a read sandbox extension for '%s'", path.utf8().data());
     
     return WTFMove(handle);
 }
@@ -336,7 +409,7 @@ auto SandboxExtension::createHandleForIOKitClassExtension(ASCIILiteral ioKitClas
 
     handle.m_sandboxExtension = SandboxExtensionImpl::create(ioKitClass.characters(), Type::IOKit, auditToken);
     if (!handle.m_sandboxExtension) {
-        RELEASE_LOG_ERROR(Sandbox, "Could not create a sandbox extension for '%s'", ioKitClass.characters());
+        RELEASE_LOG_ERROR(Sandbox, "Could not create a sandbox extension for '%s': %s", ioKitClass.characters(), safeStrerror(errno).data());
         return std::nullopt;
     }
 
