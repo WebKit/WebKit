@@ -22,6 +22,7 @@
 #ifndef WidthIterator_h
 #define WidthIterator_h
 
+#include "Font.h"
 #include "GlyphBuffer.h"
 #include "WritingMode.h"
 #include <unicode/umachine.h>
@@ -33,7 +34,6 @@ namespace WebCore {
 
 class FontCascade;
 class FontCascadeDescription;
-class Font;
 class TextRun;
 struct GlyphData;
 struct GlyphIndexRange;
