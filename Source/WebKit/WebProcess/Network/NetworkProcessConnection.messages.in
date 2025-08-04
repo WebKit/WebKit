@@ -24,7 +24,7 @@
     DispatchedFrom=Networking,
     DispatchedTo=WebContent
 ]
-messages -> NetworkProcessConnection WantsDispatchMessage {
+messages -> NetworkProcessConnection {
 
 #if ENABLE(SHAREABLE_RESOURCE)
     DidCacheResource(WebCore::ResourceRequest request, WebCore::ShareableResourceHandle resource)
