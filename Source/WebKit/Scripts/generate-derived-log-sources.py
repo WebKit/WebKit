@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
+import argparse
 import importlib
-import re
 import sys
 
-log_declarations_module = importlib.import_module("generate-log-declarations")
+log_declarations_module = None
 
 
 def generate_messages_file(log_messages, log_messages_receiver_input_file, streaming_ipc):
@@ -120,34 +120,50 @@ def generate_message_receiver_implementations_file(log_messages, log_messages_re
     return
 
 
-def main(argv):
+def main(raw_args):
+    global log_declarations_module
 
-    webkit_log_messages_input_file = sys.argv[1]
-    webcore_log_messages_input_file = sys.argv[2]
-    log_messages_receiver_input_file = sys.argv[3]
-    message_receiver_declarations_file = sys.argv[4]
-    message_receiver_implementations_file = sys.argv[5]
-    webkit_log_client_declarations_file = sys.argv[6]
-    webcore_log_client_declarations_file = sys.argv[7]
-    defines = sys.argv[8]
+    parser = argparse.ArgumentParser()
 
-    print("WebKit Log messages input file:", webkit_log_messages_input_file)
-    print("WebCore Log messages input file:", webcore_log_messages_input_file)
+    parser.add_argument("--generate-log-declarations-file")
 
-    streaming_ipc = defines.find("ENABLE_STREAMING_IPC_IN_LOG_FORWARDING") != -1
+    parser.add_argument("webkit_log_messages_input_file")
+    parser.add_argument("webcore_log_messages_input_file")
+    parser.add_argument("log_messages_receiver_input_file")
+    parser.add_argument("message_receiver_declarations_file")
+    parser.add_argument("message_receiver_implementations_file")
+    parser.add_argument("webkit_log_client_declarations_file")
+    parser.add_argument("webcore_log_client_declarations_file")
+    parser.add_argument("defines")
 
-    webkit_log_messages = log_declarations_module.get_log_messages(webkit_log_messages_input_file)
-    webcore_log_messages = log_declarations_module.get_log_messages(webcore_log_messages_input_file)
+    args = parser.parse_args(raw_args)
+
+    if args.generate_log_declarations_file is not None:
+        spec = importlib.util.spec_from_file_location("generate-log-declarations", args.generate_log_declarations_file)
+        module = importlib.util.module_from_spec(spec)
+        sys.modules["generate-log-declarations"] = module
+        spec.loader.exec_module(module)
+        log_declarations_module = module
+    else:
+        log_declarations_module = importlib.import_module("generate-log-declarations")
+
+    print("WebKit Log messages input file:", args.webkit_log_messages_input_file)
+    print("WebCore Log messages input file:", args.webcore_log_messages_input_file)
+
+    streaming_ipc = args.defines.find("ENABLE_STREAMING_IPC_IN_LOG_FORWARDING") != -1
+
+    webkit_log_messages = log_declarations_module.get_log_messages(args.webkit_log_messages_input_file)
+    webcore_log_messages = log_declarations_module.get_log_messages(args.webcore_log_messages_input_file)
 
     log_messages = webkit_log_messages + webcore_log_messages
 
-    generate_messages_file(log_messages, log_messages_receiver_input_file, streaming_ipc)
+    generate_messages_file(log_messages, args.log_messages_receiver_input_file, streaming_ipc)
 
-    generate_message_receiver_declarations_file(log_messages, message_receiver_declarations_file)
-    generate_message_receiver_implementations_file(log_messages, message_receiver_implementations_file)
+    generate_message_receiver_declarations_file(log_messages, args.message_receiver_declarations_file)
+    generate_message_receiver_implementations_file(log_messages, args.message_receiver_implementations_file)
 
-    generate_log_client_declarations_file(webkit_log_messages, webkit_log_client_declarations_file)
-    generate_log_client_declarations_file(webcore_log_messages, webcore_log_client_declarations_file)
+    generate_log_client_declarations_file(webkit_log_messages, args.webkit_log_client_declarations_file)
+    generate_log_client_declarations_file(webcore_log_messages, args.webcore_log_client_declarations_file)
 
     return 0
 

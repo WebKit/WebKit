@@ -991,7 +991,7 @@
 				"$(HEADER_OUTPUT_DIR)/Scripts/$(INPUT_FILE_DIR:base)/$(INPUT_FILE_NAME)",
 			);
 			runOncePerArchitecture = 0;
-			script = "cp -f \"${INPUT_FILE_PATH}\" \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			script = "set -eux\ncp -f \"${INPUT_FILE_PATH}\" \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 		DDF307FB27C08869006A526F /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -1019,7 +1019,7 @@
 				"$(HEADER_OUTPUT_DIR)/Scripts/$(INPUT_FILE_NAME)",
 			);
 			runOncePerArchitecture = 0;
-			script = "cp -f \"${INPUT_FILE_PATH}\" \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			script = "set -eux\ncp -f \"${INPUT_FILE_PATH}\" \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 		DDF3080F27C091A9006A526F /* PBXBuildRule */ = {
 			isa = PBXBuildRule;

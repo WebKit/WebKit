@@ -116,9 +116,13 @@ VPATH = \
 # Workaround for rdar://84212106.
 find_tool = $(realpath $(shell xcrun --sdk $(SDK_NAME) -f $(1)))
 
-PYTHON := $(call find_tool,python3)
+PYTHON := $(call find_tool,python3) -Es
 PERL := perl
 RUBY := ruby
+
+# Note we do not use the -I shorthand here as the semantics it changed
+# in Python 3.11, including the new -P option which we don't want.
+PYTHON_FLAGS := -Es
 
 ifeq ($(OS),Windows_NT)
     DELETE = cmd //C del
@@ -401,7 +405,7 @@ WEBCORE_LOG_DECLARATIONS_FILES = \
 
 $(WEBCORE_LOG_DECLARATIONS_FILES) : $(WebCorePrivateHeaders)/LogMessages.in
 	@echo Creating WebCore log definitions $@
-	$(PYTHON) $(WebCorePrivateHeaders)/generate-log-declarations.py $< $(WEBCORE_LOG_DECLARATIONS_FILES)
+	$(PYTHON) $(PYTHON_FLAGS) $(WebCorePrivateHeaders)/generate-log-declarations.py $< $(WEBCORE_LOG_DECLARATIONS_FILES)
 
 WEBKIT_LOG_DECLARATIONS_FILES = \
     WebKitLogDefinitions.h \
@@ -409,7 +413,7 @@ WEBKIT_LOG_DECLARATIONS_FILES = \
 
 $(WEBKIT_LOG_DECLARATIONS_FILES) : Platform/LogMessages.in
 	@echo Creating WebKit log definitions $@
-	$(PYTHON) $(WebCorePrivateHeaders)/generate-log-declarations.py $< $(WEBKIT_LOG_DECLARATIONS_FILES)
+	$(PYTHON) $(PYTHON_FLAGS) $(WebCorePrivateHeaders)/generate-log-declarations.py $< $(WEBKIT_LOG_DECLARATIONS_FILES)
 
 LOG_OUTPUT_FILES = \
     LogStream.messages.in \
@@ -426,12 +430,12 @@ GENERATE_DERIVED_LOG_SOURCES_SCRIPT = $(WebKit2)/Scripts/generate-derived-log-so
 
 $(LOG_OUTPUT_FILES) : $(GENERATE_DERIVED_LOG_SOURCES_SCRIPT) $(LOG_IN_FILES) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
 	@echo Generating derived log sources from $(LOG_IN_FILES)
-	PYTHONPATH=$(WebCorePrivateHeaders) $(PYTHON) $(GENERATE_DERIVED_LOG_SOURCES_SCRIPT) $(LOG_IN_FILES) $(LOG_OUTPUT_FILES) "$(FEATURE_AND_PLATFORM_DEFINES)"
+	$(PYTHON) $(PYTHON_FLAGS) $(GENERATE_DERIVED_LOG_SOURCES_SCRIPT) --generate-log-declarations-file "$(WebCorePrivateHeaders)/generate-log-declarations.py" $(LOG_IN_FILES) $(LOG_OUTPUT_FILES) "$(FEATURE_AND_PLATFORM_DEFINES)"
 
 all : $(GENERATED_MESSAGES_FILES)
 
 $(GENERATED_MESSAGES_FILES_AS_PATTERNS) : $(LOG_OUTPUT_FILES) $(MESSAGES_IN_FILES) $(GENERATE_MESSAGE_RECEIVER_SCRIPTS)
-	$(PYTHON) $(GENERATE_MESSAGE_RECEIVER_SCRIPT) $(WebKit2) $(MESSAGE_RECEIVERS)
+	$(PYTHON) $(PYTHON_FLAGS) $(GENERATE_MESSAGE_RECEIVER_SCRIPT) $(WebKit2) $(MESSAGE_RECEIVERS)
 
 TEXT_PREPROCESSOR_FLAGS=-E -P -w
 
@@ -509,14 +513,14 @@ AUTOMATION_PROTOCOL_OUTPUT_PATTERNS = $(call to-pattern, $(AUTOMATION_PROTOCOL_O
 
 # Files for the Automation protocol which implements WebDriver Classic commands.
 $(AUTOMATION_PROTOCOL_OUTPUT_PATTERNS) : $(AUTOMATION_PROTOCOL_INPUT_FILES) $(JSON_RPC_GENERATOR_SCRIPTS)
-	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-inspector-protocol-bindings.py --framework WebKit --backend --outputDir . $(AUTOMATION_PROTOCOL_INPUT_FILES)
+	$(PYTHON) $(PYTHON_FLAGS) $(JavaScriptCore_SCRIPTS_DIR)/generate-inspector-protocol-bindings.py --framework WebKit --backend --outputDir . $(AUTOMATION_PROTOCOL_INPUT_FILES)
 
 all : $(AUTOMATION_PROTOCOL_OUTPUT_FILES)
 
 # For JavaScript Selenium / WebDriver atoms, generate symbols with byte arrays that contain the minified file contents.
 %ScriptSource.h : %.js $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl
 	echo "//# sourceURL=__InjectedScript_$(notdir $<)" > $(basename $(notdir $<)).min.js
-	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py < $< >> $(basename $(notdir $<)).min.js
+	$(PYTHON) $(PYTHON_FLAGS) $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py < $< >> $(basename $(notdir $<)).min.js
 	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl $(basename $(notdir $<))ScriptSource $(basename $(notdir $<)).min.js $@
 	$(DELETE) $(basename $(notdir $<)).min.js
 
@@ -544,16 +548,16 @@ WEBDRIVER_BIDI_PROTOCOL_OUTPUT_FILES = \
 # adding, modifying, or removing domains will trigger regeneration of inspector files.
 .PHONY: force
 EnabledWebDriverBidiDomains : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py force
-	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py '$(WEBDRIVER_BIDI_PROTOCOL_INPUT_FILES)' $@
+	$(PYTHON) $(PYTHON_FLAGS) $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py '$(WEBDRIVER_BIDI_PROTOCOL_INPUT_FILES)' $@
 
 CombinedWebDriverBidiDomains.json : $(JavaScriptCore_SCRIPTS_DIR)/generate-combined-inspector-json.py $(WEBDRIVER_BIDI_PROTOCOL_INPUT_FILES) EnabledWebDriverBidiDomains
-	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-combined-inspector-json.py $(WEBDRIVER_BIDI_PROTOCOL_INPUT_FILES) "$(FEATURE_AND_PLATFORM_DEFINES)" > ./CombinedWebDriverBidiDomains.json
+	$(PYTHON) $(PYTHON_FLAGS) $(JavaScriptCore_SCRIPTS_DIR)/generate-combined-inspector-json.py $(WEBDRIVER_BIDI_PROTOCOL_INPUT_FILES) "$(FEATURE_AND_PLATFORM_DEFINES)" > ./CombinedWebDriverBidiDomains.json
 
 WEBDRIVER_BIDI_PROTOCOL_OUTPUT_PATTERNS = $(call to-pattern, $(WEBDRIVER_BIDI_PROTOCOL_OUTPUT_FILES))
 
 # Files for the WebDriverBidi protocol which implements WebDriver BiDi commands.
 $(WEBDRIVER_BIDI_PROTOCOL_OUTPUT_PATTERNS) : CombinedWebDriverBidiDomains.json $(JSON_RPC_GENERATOR_SCRIPTS)
-	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-inspector-protocol-bindings.py --framework WebDriverBidi --backend --outputDir . ./CombinedWebDriverBidiDomains.json
+	$(PYTHON) $(PYTHON_FLAGS) $(JavaScriptCore_SCRIPTS_DIR)/generate-inspector-protocol-bindings.py --framework WebDriverBidi --backend --outputDir . ./CombinedWebDriverBidiDomains.json
 
 all : $(WEBDRIVER_BIDI_PROTOCOL_OUTPUT_FILES)
 
@@ -957,7 +961,7 @@ GENERATED_SERIALIZERS_OUTPUT_FILES = \
 GENERATED_SERIALIZERS_OUTPUT_PATTERNS = $(call to-pattern, $(GENERATED_SERIALIZERS_OUTPUT_FILES))
 
 $(GENERATED_SERIALIZERS_OUTPUT_PATTERNS) : $(WebKit2)/Scripts/generate-serializers.py $(SERIALIZATION_DESCRIPTION_FILES) $(WebKit2)/DerivedSources.make $(WEBCORE_SERIALIZATION_DESCRIPTION_FILES_FULLPATH)
-	$(PYTHON) $(WebKit2)/Scripts/generate-serializers.py mm $(filter %.in,$^)
+	$(PYTHON) $(PYTHON_FLAGS) $(WebKit2)/Scripts/generate-serializers.py mm $(filter %.in,$^)
 
 EXTENSIONS_DIR = $(WebKit2)/WebProcess/Extensions
 EXTENSIONS_SCRIPTS_DIR = $(EXTENSIONS_DIR)/Bindings/Scripts
