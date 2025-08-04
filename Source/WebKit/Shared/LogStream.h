@@ -78,6 +78,8 @@ private:
 
     void logOnBehalfOfWebContent(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, uint8_t logType);
 
+    os_log_t osLogObject(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory);
+
 #if __has_include("LogMessagesDeclarations.h")
 #include "LogMessagesDeclarations.h"
 #endif
@@ -89,6 +91,7 @@ private:
 #endif
     LogStreamIdentifier m_logStreamIdentifier;
     int32_t m_pid { 0 };
+    HashMap<std::pair<String, String>, OSObjectPtr<os_log_t>> m_osLogs;
 };
 
 } // namespace WebKit

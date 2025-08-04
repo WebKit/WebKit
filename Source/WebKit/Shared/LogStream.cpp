@@ -62,6 +62,19 @@ void LogStream::stopListeningForIPC()
 #endif
 }
 
+os_log_t LogStream::osLogObject(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory)
+{
+    String logChannelString(logChannel);
+    String logCategoryString(logCategory);
+    if (auto log = m_osLogs.getOptional({ logChannelString, logCategoryString }))
+        return log->get();
+    auto subsystem = byteCast<char>(logChannel.data());
+    auto category = byteCast<char>(logCategory.data());
+    OSObjectPtr<os_log_t> log = adoptOSObject(os_log_create(subsystem, category));
+    m_osLogs.set({ logChannelString, logCategoryString }, log);
+    return log.get();
+}
+
 void LogStream::logOnBehalfOfWebContent(std::span<const uint8_t> logSubsystem, std::span<const uint8_t> logCategory, std::span<const uint8_t> nullTerminatedLogString, uint8_t logType)
 {
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
@@ -86,13 +99,11 @@ void LogStream::logOnBehalfOfWebContent(std::span<const uint8_t> logSubsystem, s
     MESSAGE_CHECK(nullTerminatedLogString.size() <= logStringMaxSize, logConnection);
 
     // os_log_hook on sender side sends a null category and subsystem when logging to OS_LOG_DEFAULT.
-    auto osLog = OSObjectPtr<os_log_t>();
+    OSObjectPtr<os_log_t> osLog;
     if (isNullTerminated(logSubsystem) && isNullTerminated(logCategory)) {
-        auto subsystem = byteCast<char>(logSubsystem.data());
-        auto category = byteCast<char>(logCategory.data());
         if (equalSpans("Testing\0"_span, logCategory))
             globalLogCountForTesting++;
-        osLog = adoptOSObject(os_log_create(subsystem, category));
+        osLog = osLogObject(logSubsystem, logCategory);
     }
 
     auto osLogPointer = osLog.get() ? osLog.get() : OS_LOG_DEFAULT;
