@@ -48,6 +48,7 @@
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKFeature.h>
+#import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKPageLoadTiming.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreDelegate.h>
@@ -188,6 +189,7 @@ TEST(WKNavigation, UserAgentAndAccept)
 @end
 
 @implementation FrameNavigationDelegate {
+@protected
     RetainPtr<NSMutableArray<NSURLRequest *>> _requests;
     RetainPtr<NSMutableArray<WKFrameInfo *>> _frames;
     RetainPtr<NSMutableArray<NSString *>> _callbacks;
@@ -4492,3 +4494,149 @@ TEST(WKNavigation, FrameNavigationWithPrivateTokenPermissionAndAllowOriginsAndWi
     didReceiveAllowPrivateToken = false;
 }
 #endif
+
+@interface FrameNavigationDelegateWithExtendedDidStartProvisionalLoadForFrame  : FrameNavigationDelegate
+@end
+
+@implementation FrameNavigationDelegateWithExtendedDidStartProvisionalLoadForFrame {
+}
+
+- (void)_webView:(WKWebView *)webView didStartProvisionalLoadWithRequest:(NSURLRequest *)request withFrameTreeNode:(_WKFrameTreeNode *)frameTreeNode {
+    if (!_requests)
+        _requests = [NSMutableArray array];
+    [_requests addObject:request];
+
+    if (!_frames)
+        _frames = [NSMutableArray array];
+    [_frames addObject:frameTreeNode.info];
+
+    if (!_callbacks)
+        _callbacks = [NSMutableArray array];
+    [_callbacks addObject:@"start provisional with frameTreeNode"];
+}
+@end
+
+TEST(WKNavigation, didStartProvisionalLoadWithRequest_withFrameTreeNode)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSString *responseString = nil;
+        if ([task.request.URL.absoluteString isEqualToString:@"frame://host1/"])
+            responseString = @"<iframe src='frame://host2/'></iframe>";
+        else if ([task.request.URL.absoluteString isEqualToString:@"frame://host2/"])
+            responseString = @"<script>function navigate() { window.location='frame://host3/' }</script><body onload='navigate()'></body>";
+        else if ([task.request.URL.absoluteString isEqualToString:@"frame://host3/"]) {
+            [task didFailWithError:[NSError errorWithDomain:@"testErrorDomain" code:42 userInfo:nil]];
+            return;
+        } else if ([task.request.URL.absoluteString isEqualToString:@"frame://host4/"])
+            responseString = @"<p>Hello World</p>";
+
+        ASSERT(responseString);
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:responseString.length textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:[responseString dataUsingEncoding:NSUTF8StringEncoding]];
+        [task didFinish];
+    }];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"frame"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto delegate = adoptNS([FrameNavigationDelegateWithExtendedDidStartProvisionalLoadForFrame new]);
+    webView.get().navigationDelegate = delegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"frame://host1/"]]];
+    [delegate waitForNavigations:3];
+
+    struct ExpectedStrings {
+        const char* callback;
+        const char* frameRequest;
+        const char* frameSecurityOriginHost;
+        const char* request;
+    };
+
+    auto checkCallbacks = [delegate] (Vector<ExpectedStrings> expectedVector) {
+        NSArray<NSURLRequest *> *requests = delegate.get().requests;
+        NSArray<WKFrameInfo *> *frames = delegate.get().frames;
+        NSArray<NSString *> *callbacks = delegate.get().callbacks;
+        EXPECT_EQ(requests.count, expectedVector.size());
+        EXPECT_EQ(frames.count, expectedVector.size());
+        EXPECT_EQ(callbacks.count, expectedVector.size());
+
+        auto checkCallback = [] (NSString *callback, WKFrameInfo *frame, NSURLRequest *request, const ExpectedStrings& expected) {
+            EXPECT_WK_STREQ(callback, expected.callback);
+            EXPECT_WK_STREQ(frame.request.URL.absoluteString, expected.frameRequest);
+            EXPECT_WK_STREQ(frame.securityOrigin.host, expected.frameSecurityOriginHost);
+            EXPECT_WK_STREQ(request.URL.absoluteString, expected.request);
+        };
+
+        for (size_t i = 0; i < expectedVector.size(); ++i)
+            checkCallback(callbacks[i], frames[i], requests[i], expectedVector[i]);
+    };
+
+    checkCallbacks({
+        {
+            "start provisional with frameTreeNode",
+            "",
+            "",
+            "frame://host1/"
+        }, {
+            "commit",
+            "frame://host1/",
+            "host1",
+            "frame://host1/"
+        }, {
+            "start provisional with frameTreeNode",
+            "",
+            "host1",
+            "frame://host2/"
+        }, {
+            "commit",
+            "frame://host2/",
+            "host2",
+            "frame://host2/"
+        }, {
+            "finish",
+            "frame://host2/",
+            "host2",
+            "frame://host2/"
+        }, {
+            "finish",
+            "frame://host1/",
+            "host1",
+            "frame://host1/"
+        }, {
+            "start provisional with frameTreeNode",
+            "frame://host2/",
+            "host2",
+            "frame://host3/"
+        }, {
+            "fail provisional",
+            "frame://host2/",
+            "host2",
+            "frame://host3/"
+        }
+    });
+
+    // After the failed navigation, perform another successful navigation that will clear the errorOccurred state.
+    [delegate clearState];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"frame://host4/"]]];
+    [delegate waitForNavigations:1];
+
+    checkCallbacks({
+        {
+            "start provisional with frameTreeNode",
+            "frame://host1/",
+            "host1",
+            "frame://host4/"
+        }, {
+            "commit",
+            "frame://host4/",
+            "host4",
+            "frame://host4/"
+        }, {
+            "finish",
+            "frame://host4/",
+            "host4",
+            "frame://host4/"
+        }
+    });
+}

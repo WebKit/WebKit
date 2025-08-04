@@ -28,6 +28,7 @@
 
 #import "APIContentRuleListAction.h"
 #import "APIFrameInfo.h"
+#import "APIFrameTreeNode.h"
 #import "APINavigationData.h"
 #import "APINavigationResponse.h"
 #import "APIPageConfiguration.h"
@@ -37,6 +38,7 @@
 #import "AuthenticationChallengeDispositionCocoa.h"
 #import "AuthenticationDecisionListener.h"
 #import "CompletionHandlerCallChecker.h"
+#import "FrameTreeNodeData.h"
 #import "Logging.h"
 #import "NavigationActionData.h"
 #import "PageLoadState.h"
@@ -70,6 +72,7 @@
 #import "_WKContentRuleListActionInternal.h"
 #import "_WKErrorRecoveryAttempting.h"
 #import "_WKFrameHandleInternal.h"
+#import "_WKFrameTreeNodeInternal.h"
 #import "_WKPageLoadTimingInternal.h"
 #import "_WKRenderingProgressEventsInternal.h"
 #import "_WKSameDocumentNavigationTypeInternal.h"
@@ -188,6 +191,7 @@ void NavigationState::setNavigationDelegate(id<WKNavigationDelegate> delegate)
 
     m_navigationDelegateMethods.webViewDidStartProvisionalNavigation = [delegate respondsToSelector:@selector(webView:didStartProvisionalNavigation:)];
     m_navigationDelegateMethods.webViewDidStartProvisionalLoadWithRequestInFrame = [delegate respondsToSelector:@selector(_webView:didStartProvisionalLoadWithRequest:inFrame:)];
+    m_navigationDelegateMethods.webViewDidStartProvisionalLoadWithRequestWithFrameTreeNode = [delegate respondsToSelector:@selector(_webView:didStartProvisionalLoadWithRequest:withFrameTreeNode:)];
     m_navigationDelegateMethods.webViewDidReceiveServerRedirectForProvisionalNavigation = [delegate respondsToSelector:@selector(webView:didReceiveServerRedirectForProvisionalNavigation:)];
     m_navigationDelegateMethods.webViewDidFailProvisionalNavigationWithError = [delegate respondsToSelector:@selector(webView:didFailProvisionalNavigation:withError:)];
     m_navigationDelegateMethods.webViewDidFailProvisionalLoadWithRequestInFrameWithError = [delegate respondsToSelector:@selector(_webView:didFailProvisionalLoadWithRequest:inFrame:withError:)];
@@ -824,7 +828,7 @@ void NavigationState::NavigationClient::didStartProvisionalNavigation(WebPagePro
         [navigationDelegate webView:navigationState->webView().get() didStartProvisionalNavigation:wrapper(navigation)];
 }
 
-void NavigationState::NavigationClient::didStartProvisionalLoadForFrame(WebPageProxy& page, WebCore::ResourceRequest&& request, FrameInfoData&& frameInfo)
+void NavigationState::NavigationClient::didStartProvisionalLoadForFrame(WebPageProxy& page, WebCore::ResourceRequest&& request, FrameTreeNodeData&& frameTreeNode)
 {
     RefPtr navigationState = m_navigationState.get();
     if (!navigationState)
@@ -834,8 +838,10 @@ void NavigationState::NavigationClient::didStartProvisionalLoadForFrame(WebPageP
     if (!navigationDelegate)
         return;
 
-    if (navigationState->m_navigationDelegateMethods.webViewDidStartProvisionalLoadWithRequestInFrame)
-        [static_cast<id<WKNavigationDelegatePrivate>>(navigationDelegate) _webView:navigationState->webView().get() didStartProvisionalLoadWithRequest:request.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) inFrame:wrapper(API::FrameInfo::create(WTFMove(frameInfo), &page)).get()];
+    if (navigationState->m_navigationDelegateMethods.webViewDidStartProvisionalLoadWithRequestWithFrameTreeNode)
+        [static_cast<id<WKNavigationDelegatePrivate>>(navigationDelegate) _webView:navigationState->webView().get() didStartProvisionalLoadWithRequest:request.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) withFrameTreeNode:wrapper(API::FrameTreeNode::create(WTFMove(frameTreeNode), page)).get()];
+    else if (navigationState->m_navigationDelegateMethods.webViewDidStartProvisionalLoadWithRequestInFrame)
+        [static_cast<id<WKNavigationDelegatePrivate>>(navigationDelegate) _webView:navigationState->webView().get() didStartProvisionalLoadWithRequest:request.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) inFrame:wrapper(API::FrameInfo::create(WTFMove(frameTreeNode.info), &page)).get()];
 }
 
 void NavigationState::NavigationClient::didReceiveServerRedirectForProvisionalNavigation(WebPageProxy& page, API::Navigation* navigation, API::Object*)

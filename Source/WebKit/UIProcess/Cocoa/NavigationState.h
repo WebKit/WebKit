@@ -108,7 +108,7 @@ private:
         RefPtr<NavigationState> protectedNavigationState() const { return m_navigationState.get(); }
 
         void didStartProvisionalNavigation(WebPageProxy&, const WebCore::ResourceRequest&, API::Navigation*, API::Object*) override;
-        void didStartProvisionalLoadForFrame(WebPageProxy&, WebCore::ResourceRequest&&, FrameInfoData&&) override;
+        void didStartProvisionalLoadForFrame(WebPageProxy&, WebCore::ResourceRequest&&, FrameTreeNodeData&&) override;
         void didReceiveServerRedirectForProvisionalNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
         void willPerformClientRedirect(WebPageProxy&, WTF::String&&, double) override;
         void didPerformClientRedirect(WebPageProxy&, const WTF::String&, const WTF::String&) override;
@@ -224,6 +224,7 @@ private:
 
         bool webViewDidStartProvisionalNavigation : 1;
         bool webViewDidStartProvisionalLoadWithRequestInFrame : 1;
+        bool webViewDidStartProvisionalLoadWithRequestWithFrameTreeNode : 1;
         bool webViewDidReceiveServerRedirectForProvisionalNavigation : 1;
         bool webViewDidFailProvisionalNavigationWithError : 1;
         bool webViewDidFailProvisionalLoadWithRequestInFrameWithError : 1;
