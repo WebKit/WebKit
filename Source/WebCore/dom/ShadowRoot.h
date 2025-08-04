@@ -220,6 +220,25 @@ inline RefPtr<ContainerNode> Node::protectedParentOrShadowHostNode() const
     return parentOrShadowHostNode();
 }
 
+inline ShadowRoot* Node::shadowRoot() const
+{
+    if (auto* element = dynamicDowncast<Element>(*this))
+        return element->shadowRoot();
+    return nullptr;
+}
+
+inline RefPtr<ShadowRoot> Node::protectedShadowRoot() const
+{
+    return shadowRoot();
+}
+
+inline void Element::removeShadowRoot()
+{
+    if (!m_shadowRoot) [[likely]]
+        return;
+    removeShadowRootSlow(*m_shadowRoot.copyRef());
+}
+
 inline bool hasShadowRootParent(const Node& node)
 {
     return node.parentNode() && node.parentNode()->isShadowRoot();

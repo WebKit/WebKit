@@ -185,6 +185,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Element);
 struct SameSizeAsElement : public ContainerNode {
     QualifiedName tagName;
     void* elementData;
+    void* shadowRoot;
 };
 
 static_assert(sizeof(Element) == sizeof(SameSizeAsElement), "Element should stay small");
@@ -3261,7 +3262,7 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
         if (renderer() || hasDisplayContents())
             RenderTreeUpdater::tearDownRenderersForShadowRootInsertion(*this);
 
-        ensureElementRareData().setShadowRoot(WTFMove(newShadowRoot));
+        m_shadowRoot = WTFMove(newShadowRoot);
 
         shadowRoot->setHost(*this);
         shadowRoot->setParentTreeScope(treeScope());
@@ -3288,7 +3289,7 @@ void Element::removeShadowRootSlow(ShadowRoot& oldRoot)
 
     ASSERT(!oldRoot.renderer());
 
-    elementRareData()->clearShadowRoot();
+    m_shadowRoot = nullptr;
 
     oldRoot.setHost(nullptr);
     oldRoot.setParentTreeScope(document());

@@ -70,10 +70,6 @@ public:
     void setChildIndex(unsigned index) { m_childIndex = index; }
     static constexpr ptrdiff_t childIndexMemoryOffset() { return OBJECT_OFFSETOF(ElementRareData, m_childIndex); }
 
-    void clearShadowRoot() { m_shadowRoot = nullptr; }
-    ShadowRoot* shadowRoot() const { return m_shadowRoot.get(); }
-    void setShadowRoot(RefPtr<ShadowRoot>&& shadowRoot) { m_shadowRoot = WTFMove(shadowRoot); }
-
     CustomElementReactionQueue* customElementReactionQueue() { return m_customElementReactionQueue.get(); }
     void setCustomElementReactionQueue(std::unique_ptr<CustomElementReactionQueue>&& queue) { m_customElementReactionQueue = WTFMove(queue); }
 
@@ -180,8 +176,6 @@ public:
             result.add(UseType::Dataset);
         if (m_classList)
             result.add(UseType::ClassList);
-        if (m_shadowRoot)
-            result.add(UseType::ShadowRoot);
         if (m_customElementReactionQueue)
             result.add(UseType::CustomElementReactionQueue);
         if (m_customElementDefaultARIA)
@@ -239,7 +233,6 @@ private:
     AtomString m_effectiveLang;
     const std::unique_ptr<DatasetDOMStringMap> m_dataset;
     const std::unique_ptr<DOMTokenList> m_classList;
-    RefPtr<ShadowRoot> m_shadowRoot;
     std::unique_ptr<CustomElementReactionQueue> m_customElementReactionQueue;
     std::unique_ptr<CustomElementDefaultARIA> m_customElementDefaultARIA;
     const std::unique_ptr<FormAssociatedCustomElement> m_formAssociatedCustomElement;
@@ -287,7 +280,6 @@ inline ElementRareData::ElementRareData()
 
 inline ElementRareData::~ElementRareData()
 {
-    ASSERT(!m_shadowRoot);
     ASSERT(!m_beforePseudoElement);
     ASSERT(!m_afterPseudoElement);
 }
@@ -362,31 +354,6 @@ inline ElementRareData* Element::elementRareData() const
 {
     ASSERT_WITH_SECURITY_IMPLICATION(hasRareData());
     return static_cast<ElementRareData*>(rareData());
-}
-
-inline ShadowRoot* Node::shadowRoot() const
-{
-    if (auto* element = dynamicDowncast<Element>(*this))
-        return element->shadowRoot();
-    return nullptr;
-}
-
-inline ShadowRoot* Element::shadowRoot() const
-{
-    return hasRareData() ? elementRareData()->shadowRoot() : nullptr;
-}
-
-inline RefPtr<ShadowRoot> Node::protectedShadowRoot() const
-{
-    return shadowRoot();
-}
-
-inline void Element::removeShadowRoot()
-{
-    RefPtr shadowRoot = this->shadowRoot();
-    if (!shadowRoot) [[likely]]
-        return;
-    removeShadowRootSlow(*shadowRoot);
 }
 
 } // namespace WebCore

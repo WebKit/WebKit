@@ -31,6 +31,7 @@
 #include "ElementData.h"
 #include "HTMLNames.h"
 #include "RenderStyleInlines.h"
+#include "ShadowRoot.h"
 #include "StyleChange.h"
 
 namespace WebCore {
