@@ -40,9 +40,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC { namespace Wasm {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(Table);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ExternOrAnyRefTable);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(FuncRefTable);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WasmTable);
 
 template<typename Visitor> constexpr decltype(auto) Table::visitDerived(Visitor&& visitor)
 {
@@ -111,6 +109,20 @@ RefPtr<Table> Table::tryCreate(uint32_t initial, std::optional<uint32_t> maximum
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+template<typename T>
+static bool reallocate(std::unique_ptr<T, Table::StorageDeleter<T>>& ptr, uint32_t newLength)
+{
+    ASSERT(ptr.get_deleter().ownsStorage);
+    CheckedUint32 reallocSizeChecked = newLength;
+    reallocSizeChecked *= sizeof(T);
+    if (reallocSizeChecked.hasOverflowed())
+        return false;
+    auto* storage = ptr.release();
+    void* reallocated = Table::MallocOps::realloc(storage, reallocSizeChecked);
+    ptr = std::unique_ptr<T, Table::StorageDeleter<T>>(static_cast<T*>(reallocated), { newLength, true });
+    return true;
+}
+
 std::optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
 {
     RELEASE_ASSERT(m_owner);
@@ -130,16 +142,15 @@ std::optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
     if (!isValidLength(newLength))
         return std::nullopt;
 
+    uint32_t actualNewLength = allocatedLength(newLength);
     auto checkedGrow = [&] (auto& container, auto initializer) {
-        if (newLengthChecked > allocatedLength(m_length)) {
-            CheckedUint32 reallocSizeChecked = allocatedLength(newLengthChecked);
-            reallocSizeChecked *= sizeof(*container.get());
-            if (reallocSizeChecked.hasOverflowed())
-                return false;
+        if (newLength > allocatedLength(m_length)) {
             // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
-            container.realloc(reallocSizeChecked);
+            bool success = reallocate(container, actualNewLength);
+            if (!success)
+                return false;
         }
-        for (uint32_t i = m_length; i < allocatedLength(newLength); ++i) {
+        for (uint32_t i = m_length; i < actualNewLength; ++i) {
             new (&container.get()[i]) std::remove_reference_t<decltype(*container.get())>();
             initializer(container.get()[i]);
         }
@@ -241,7 +252,9 @@ ExternOrAnyRefTable::ExternOrAnyRefTable(uint32_t initial, std::optional<uint32_
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.
     // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
-    m_jsValues = MallocPtr<WriteBarrier<Unknown>, VMMalloc>::malloc(sizeof(WriteBarrier<Unknown>) * Checked<size_t>(allocatedLength(m_length)));
+    size_t allocationSize = sizeof(WriteBarrier<Unknown>) * Checked<size_t>(allocatedLength(m_length));
+    WriteBarrier<Unknown>* storage = static_cast<WriteBarrier<Unknown>*>(MallocOps::malloc(allocationSize));
+    m_jsValues = std::unique_ptr<WriteBarrier<Unknown>, Deleter>(storage, { m_length, true });
     for (uint32_t i = 0; i < allocatedLength(m_length); ++i)
         new (&m_jsValues.get()[i]) WriteBarrier<Unknown>(NullWriteBarrierTag);
 }
@@ -263,25 +276,20 @@ FuncRefTable::FuncRefTable(uint32_t initial, std::optional<uint32_t> maximum, Ty
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.
     // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
+    uint32_t actualLength = allocatedLength(m_length);
     if (isFixedSized())
-        m_importableFunctions = adoptMallocPtr<Function, VMMalloc>(tailPointer());
-    else
-        m_importableFunctions = MallocPtr<Function, VMMalloc>::malloc(sizeof(Function) * Checked<size_t>(allocatedLength(m_length)));
+        m_importableFunctions = std::unique_ptr<Function, Deleter>(tailPointer(), { actualLength, false });
+    else {
+        size_t allocationSize = sizeof(Function) * Checked<size_t>(actualLength);
+        Function* storage = static_cast<Function*>(MallocOps::malloc(allocationSize));
+        m_importableFunctions = std::unique_ptr<Function, Deleter>(storage, { actualLength, true });
+    }
 
-    for (uint32_t i = 0; i < allocatedLength(m_length); ++i) {
+    for (uint32_t i = 0; i < actualLength; ++i) {
         new (&m_importableFunctions.get()[i]) Function();
         ASSERT(m_importableFunctions.get()[i].m_function.typeIndex == Wasm::TypeDefinition::invalidIndex); // We rely on this in compiled code.
         ASSERT(!m_importableFunctions.get()[i].m_instance);
         ASSERT(m_importableFunctions.get()[i].m_value.isNull());
-    }
-}
-
-FuncRefTable::~FuncRefTable()
-{
-    // If FuncRefTable is fixed-sized, this pointer is not managed by this handle.
-    if (isFixedSized()) {
-        auto* unmanagedPointer = m_importableFunctions.leakPtr();
-        UNUSED_PARAM(unmanagedPointer);
     }
 }
 

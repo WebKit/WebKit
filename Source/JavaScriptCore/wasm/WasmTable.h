@@ -32,7 +32,6 @@
 #include "WasmFormat.h"
 #include "WasmLimits.h"
 #include "WriteBarrier.h"
-#include <wtf/MallocPtr.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -48,13 +47,35 @@ namespace Wasm {
 
 class FuncRefTable;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WasmTable);
+
 class Table : public ThreadSafeRefCounted<Table> {
     WTF_MAKE_NONCOPYABLE(Table);
-    WTF_MAKE_TZONE_ALLOCATED(Table);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Table, WasmTable);
 public:
+    using MallocOps = WasmTableMalloc;
+
     static RefPtr<Table> tryCreate(uint32_t initial, std::optional<uint32_t> maximum, TableElementType, Type);
 
-    JS_EXPORT_PRIVATE ~Table() = default;
+    JS_EXPORT_PRIVATE ~Table() = default; // The applicable subclass destructor is called by operator delete().
+
+    DECLARE_VISIT_AGGREGATE;
+    void operator delete(Table*, std::destroying_delete_t);
+
+    template<typename T>
+    struct StorageDeleter {
+        void operator()(T* ptr)
+        {
+            // The operator is defined here not because it must be inlined,
+            // but because if it isn't, the Windows build fails with a linker error.
+            std::destroy_n(ptr, count);
+            if (ownsStorage)
+                MallocOps::free(ptr);
+        }
+
+        size_t count { 0 };
+        bool ownsStorage { false };
+    };
 
     std::optional<uint32_t> maximum() const { return m_maximum; }
     uint32_t length() const { return m_length; }
@@ -86,10 +107,6 @@ public:
     std::optional<uint32_t> grow(uint32_t delta, JSValue defaultValue);
     void copy(const Table* srcTable, uint32_t dstIndex, uint32_t srcIndex);
 
-    DECLARE_VISIT_AGGREGATE;
-
-    void operator delete(Table*, std::destroying_delete_t);
-
 protected:
     Table(uint32_t initial, std::optional<uint32_t> maximum, Type, TableElementType = TableElementType::Externref);
 
@@ -109,7 +126,7 @@ protected:
 };
 
 class ExternOrAnyRefTable final : public Table {
-    WTF_MAKE_TZONE_ALLOCATED(ExternOrAnyRefTable);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ExternOrAnyRefTable, WasmTable);
 public:
     friend class Table;
 
@@ -120,15 +137,16 @@ public:
 private:
     ExternOrAnyRefTable(uint32_t initial, std::optional<uint32_t> maximum, Type wasmType);
 
-    MallocPtr<WriteBarrier<Unknown>, VMMalloc> m_jsValues;
+    using Deleter = StorageDeleter<WriteBarrier<Unknown>>;
+    std::unique_ptr<WriteBarrier<Unknown>, Deleter> m_jsValues;
 };
 
 class FuncRefTable final : public Table {
-    WTF_MAKE_TZONE_ALLOCATED(FuncRefTable);
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(FuncRefTable, WasmTable);
 public:
     friend class Table;
 
-    JS_EXPORT_PRIVATE ~FuncRefTable();
+    JS_EXPORT_PRIVATE ~FuncRefTable() = default;
 
     // call_indirect needs to do an Instance check to potentially context switch when calling a function to another instance. We can hold raw pointers to JSWebAssemblyInstance here because the js ensures that Table keeps all the instances alive.
     struct Function {
@@ -172,7 +190,8 @@ private:
 
     static Ref<FuncRefTable> createFixedSized(uint32_t size, Type wasmType);
 
-    MallocPtr<Function, VMMalloc> m_importableFunctions;
+    using Deleter = StorageDeleter<Function>;
+    std::unique_ptr<Function, Deleter> m_importableFunctions;
 };
 
 } } // namespace JSC::Wasm

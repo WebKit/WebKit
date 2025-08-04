@@ -68,12 +68,12 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/DoublyLinkedList.h>
+#include <wtf/FixedVector.h>
 #include <wtf/Forward.h>
 #include <wtf/Gigacage.h>
 #include <wtf/HashMap.h>
 #include <wtf/LazyRef.h>
 #include <wtf/LazyUniqueRef.h>
-#include <wtf/MallocPtr.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackPointer.h>
 #include <wtf/Stopwatch.h>
@@ -749,9 +749,9 @@ public:
     EncodedJSValue* exceptionFuzzingBuffer(size_t size)
     {
         ASSERT(Options::useExceptionFuzz());
-        if (!m_exceptionFuzzBuffer)
-            m_exceptionFuzzBuffer = MallocPtr<EncodedJSValue, VMMalloc>::malloc(size);
-        return m_exceptionFuzzBuffer.get();
+        if (m_exceptionFuzzBuffer.size() < size)
+            m_exceptionFuzzBuffer = FixedVector<EncodedJSValue, VMMalloc>(size);
+        return &m_exceptionFuzzBuffer.first();
     }
 
     void gatherScratchBufferRoots(ConservativeRoots&);
@@ -1079,7 +1079,7 @@ private:
     FunctionHasExecutedCache m_functionHasExecutedCache;
     std::unique_ptr<ControlFlowProfiler> m_controlFlowProfiler;
     unsigned m_controlFlowProfilerEnabledCount { 0 };
-    MallocPtr<EncodedJSValue, VMMalloc> m_exceptionFuzzBuffer;
+    FixedVector<EncodedJSValue, VMMalloc> m_exceptionFuzzBuffer;
     LazyRef<VM, Watchdog> m_watchdog;
     LazyUniqueRef<VM, HeapProfiler> m_heapProfiler;
     LazyUniqueRef<VM, AdaptiveStringSearcherTables> m_stringSearcherTables;
