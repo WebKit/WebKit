@@ -208,6 +208,7 @@ enum class WebCore::MediaSessionReadyState : uint8_t {
 };
 #endif // ENABLE(MEDIA_SESSION_COORDINATOR)
 
+#if ENABLE(WEB_RTC)
 header: <WebCore/RTCErrorDetailType.h>
 enum class WebCore::RTCErrorDetailType : uint8_t {
     DataChannelFailure,
@@ -216,6 +217,24 @@ enum class WebCore::RTCErrorDetailType : uint8_t {
     SctpFailure,
     SdpSyntaxError
 };
+
+header: <WebCore/RTCIceComponent.h>
+enum class WebCore::RTCIceComponent : uint8_t {
+     Rtp,
+     Rtcp
+};
+
+header: <WebCore/RTCIceConnectionState.h>
+enum class WebCore::RTCIceConnectionState : uint8_t {
+    New,
+    Checking,
+    Connected,
+    Completed,
+    Failed,
+    Disconnected,
+    Closed
+};
+#endif // ENABLE(WEB_RTC)
 
 enum class WebCore::NotificationEventType : bool;
 
@@ -6115,6 +6134,13 @@ header: <WebCore/RTCDataChannelHandler.h>
 };
 
 #endif // ENABLE(WEB_RTC)
+
+#if USE(GSTREAMER_WEBRTC)
+header: <WebCore/GStreamerIceBuffer.h>
+[CustomHeader] struct WebCore::GStreamerIceBuffer {
+    std::span<const uint8_t> data;
+};
+#endif // USE(GSTREAMER_WEBRTC)
 
 #if ENABLE(CONTENT_EXTENSIONS)
 

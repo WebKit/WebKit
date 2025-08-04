@@ -65,6 +65,13 @@ if (ENABLE_MEDIA_STREAM AND ENABLE_WEB_RTC)
         if (NOT OPENSSL_FOUND OR OPENSSL_VERSION VERSION_LESS "3.0.0")
             message(FATAL_ERROR "OpenSSL 3 is needed for ENABLE_WEB_RTC.")
         endif ()
+
+        find_package(LibNice 0.1.22 REQUIRED)
+        if (NOT LibNice_FOUND)
+          message(FATAL_ERROR "libnice is needed for ENABLE_WEB_RTC.")
+        endif ()
+        SET_AND_EXPOSE_TO_BUILD(USE_LIBNICE TRUE)
+
     else ()
         SET_AND_EXPOSE_TO_BUILD(USE_LIBWEBRTC TRUE)
     endif ()

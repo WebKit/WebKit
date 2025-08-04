@@ -119,6 +119,10 @@
 #include <WebCore/ResourceMonitorThrottlerHolder.h>
 #endif
 
+#if USE(GSTREAMER_WEBRTC)
+#include "GStreamerIceBackendMessages.h"
+#endif
+
 #define CONNECTION_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webProcessIdentifier=%" PRIu64 "] NetworkConnectionToWebProcess::" fmt, this, this->webProcessIdentifier().toUInt64(), ##__VA_ARGS__)
 #define CONNECTION_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [webProcessIdentifier=%" PRIu64 "] NetworkConnectionToWebProcess::" fmt, this, this->webProcessIdentifier().toUInt64(), ##__VA_ARGS__)
 
@@ -309,7 +313,16 @@ bool NetworkConnectionToWebProcess::dispatchMessage(IPC::Connection& connection,
             networkTransportSession->didReceiveMessage(connection, decoder);
         return true;
     }
-    
+
+#if USE(GSTREAMER_WEBRTC)
+    if (decoder.messageReceiverName() == Messages::GStreamerIceBackend::messageReceiverName()) {
+        MESSAGE_CHECK_WITH_RETURN_VALUE(GStreamerIceBackendIdentifier::isValidIdentifier(decoder.destinationID()), false);
+        if (RefPtr iceBackend = m_gstreamerIceBackends.get(GStreamerIceBackendIdentifier(decoder.destinationID())))
+            iceBackend->didReceiveMessage(connection, decoder);
+        return true;
+    }
+#endif
+
     if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
         if (RefPtr swConnection = m_swConnection.get())
             swConnection->didReceiveMessage(connection, decoder);
@@ -429,6 +442,14 @@ bool NetworkConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connect
     if (decoder.messageReceiverName() == Messages::IPCTester::messageReceiverName())
         return m_ipcTester->didReceiveSyncMessage(connection, decoder, reply);
 #endif
+
+#if USE(GSTREAMER_WEBRTC)
+    if (decoder.messageReceiverName() == Messages::GStreamerIceBackend::messageReceiverName()) {
+        if (RefPtr iceBackend = m_gstreamerIceBackends.get(GStreamerIceBackendIdentifier(decoder.destinationID())))
+            return iceBackend->didReceiveSyncMessage(connection, decoder, reply);
+    }
+#endif
+
     return false;
 }
 
@@ -1766,6 +1787,28 @@ void NetworkConnectionToWebProcess::destroyWebTransportSession(WebTransportSessi
     ASSERT(m_networkTransportSessions.contains(identifier));
     m_networkTransportSessions.remove(identifier);
 }
+
+#if USE(GSTREAMER_WEBRTC)
+void NetworkConnectionToWebProcess::initializeGStreamerIceBackend(WebPageProxyIdentifier&& pageID, CompletionHandler<void(std::optional<GStreamerIceBackendIdentifier>)>&& completionHandler)
+{
+    GStreamerIceBackend::initialize(*this, WTFMove(pageID), [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)](RefPtr<GStreamerIceBackend>&& backend) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!backend || !protectedThis)
+            return completionHandler(std::nullopt);
+
+        auto identifier = backend->identifier();
+        ASSERT(!protectedThis->m_gstreamerIceBackends.contains(identifier));
+        protectedThis->m_gstreamerIceBackends.set(identifier, backend.releaseNonNull());
+        completionHandler(identifier);
+    });
+}
+
+void NetworkConnectionToWebProcess::destroyGStreamerIceBackend(GStreamerIceBackendIdentifier identifier)
+{
+    ASSERT(m_gstreamerIceBackends.contains(identifier));
+    m_gstreamerIceBackends.remove(identifier);
+}
+#endif
 
 void NetworkConnectionToWebProcess::clearFrameLoadRecordsForStorageAccess(WebCore::FrameIdentifier frameID)
 {

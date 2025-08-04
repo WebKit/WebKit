@@ -935,10 +935,26 @@ void disconnectSimpleBusMessageCallback(GstElement* pipeline)
 struct MessageBusData {
     GThreadSafeWeakPtr<GstElement> pipeline;
     Function<void(GstMessage*)> handler;
+    AsynchronousPipelineDumping asynchronousPipelineDumping;
 };
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(MessageBusData)
 
-void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMessage*)>&& customHandler)
+struct AsyncPipelineDumpData {
+    String dotFileName;
+};
+WEBKIT_DEFINE_ASYNC_DATA_STRUCT(AsyncPipelineDumpData)
+
+static void dumpPipelineAsynchronously(const GRefPtr<GstElement>& pipeline, String&& dotFileName)
+{
+    auto data = createAsyncPipelineDumpData();
+    data->dotFileName = WTFMove(dotFileName);
+    gst_element_call_async(pipeline.get(), reinterpret_cast<GstElementCallAsyncFunc>(+[](GstElement* pipeline, gpointer userData) {
+        auto data = reinterpret_cast<AsyncPipelineDumpData*>(userData);
+        GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(pipeline), GST_DEBUG_GRAPH_SHOW_ALL, data->dotFileName.utf8().data());
+    }), data, reinterpret_cast<GDestroyNotify>(destroyAsyncPipelineDumpData));
+}
+
+void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMessage*)>&& customHandler, AsynchronousPipelineDumping asynchronousPipelineDumping)
 {
     auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(pipeline)));
     gst_bus_add_signal_watch_full(bus.get(), RunLoopSourcePriority::RunLoopDispatcher);
@@ -946,6 +962,7 @@ void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMess
     auto data = createMessageBusData();
     data->pipeline.reset(pipeline);
     data->handler = WTFMove(customHandler);
+    data->asynchronousPipelineDumping = asynchronousPipelineDumping;
     auto handler = g_signal_connect_data(bus.get(), "message", G_CALLBACK(+[](GstBus*, GstMessage* message, gpointer userData) {
         auto data = reinterpret_cast<MessageBusData*>(userData);
         auto pipeline = data->pipeline.get();
@@ -956,6 +973,10 @@ void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMess
         case GST_MESSAGE_ERROR: {
             GST_ERROR_OBJECT(pipeline.get(), "Got message: %" GST_PTR_FORMAT, message);
             auto dotFileName = makeString(unsafeSpan(GST_OBJECT_NAME(pipeline.get())), "_error"_s);
+            if (data->asynchronousPipelineDumping == AsynchronousPipelineDumping::Yes) {
+                dumpPipelineAsynchronously(pipeline, WTFMove(dotFileName));
+                break;
+            }
             GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
             break;
         }
@@ -972,6 +993,10 @@ void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMess
                 gst_element_state_get_name(newState), gst_element_state_get_name(pending));
 
             auto dotFileName = makeString(unsafeSpan(GST_OBJECT_NAME(pipeline.get())), '_', unsafeSpan(gst_element_state_get_name(oldState)), '_', unsafeSpan(gst_element_state_get_name(newState)));
+            if (data->asynchronousPipelineDumping == AsynchronousPipelineDumping::Yes) {
+                dumpPipelineAsynchronously(pipeline, WTFMove(dotFileName));
+                break;
+            }
             GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.utf8().data());
             break;
         }

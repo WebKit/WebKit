@@ -38,6 +38,7 @@
 #include "RTCIceTransport.h"
 #include "RTCPeerConnection.h"
 #include "ScriptExecutionContext.h"
+#include "ScriptExecutionContextInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -62,6 +63,11 @@ RTCDtlsTransport::RTCDtlsTransport(ScriptExecutionContext& context, UniqueRef<RT
 RTCDtlsTransport::~RTCDtlsTransport()
 {
     m_backend->unregisterClient();
+}
+
+ScriptExecutionContext* RTCDtlsTransport::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 Vector<Ref<JSC::ArrayBuffer>> RTCDtlsTransport::getRemoteCertificates()

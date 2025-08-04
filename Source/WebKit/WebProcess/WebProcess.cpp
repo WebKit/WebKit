@@ -248,6 +248,10 @@
 #import <pal/cocoa/LockdownModeCocoa.h>
 #endif
 
+#if USE(GSTREAMER_WEBRTC)
+#include "GStreamerIceBackendProxy.h"
+#endif
+
 #if PLATFORM(MAC)
 #import <wtf/spi/darwin/SandboxSPI.h>
 #endif
@@ -2568,6 +2572,28 @@ void WebProcess::removeWebTransportSession(WebTransportSessionIdentifier identif
     ASSERT(m_webTransportSessions.contains(identifier));
     m_webTransportSessions.remove(identifier);
 }
+
+#if USE(GSTREAMER_WEBRTC)
+RefPtr<GStreamerIceBackendProxy> WebProcess::gstreamerIceBackend(GStreamerIceBackendIdentifier identifier)
+{
+    ASSERT(RunLoop::isMain());
+    return m_gstreamerIceBackends.get(identifier).get();
+}
+
+void WebProcess::addGStreamerIceBackend(GStreamerIceBackendIdentifier identifier, GStreamerIceBackendProxy& backend)
+{
+    ASSERT(RunLoop::isMain());
+    ASSERT(!m_gstreamerIceBackends.contains(identifier));
+    m_gstreamerIceBackends.set(identifier, backend);
+}
+
+void WebProcess::removeGStreamerIceBackend(GStreamerIceBackendIdentifier identifier)
+{
+    ASSERT(RunLoop::isMain());
+    ASSERT(m_gstreamerIceBackends.contains(identifier));
+    m_gstreamerIceBackends.remove(identifier);
+}
+#endif // USE(GSTREAMER_WEBRTC)
 
 void WebProcess::updateCachedCookiesEnabled()
 {

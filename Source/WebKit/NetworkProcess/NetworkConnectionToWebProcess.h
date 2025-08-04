@@ -69,6 +69,10 @@
 #include "CocoaWindow.h"
 #endif
 
+#if USE(GSTREAMER_WEBRTC)
+#include "GStreamerIceBackend.h"
+#endif
+
 namespace PAL {
 class SessionID;
 }
@@ -430,6 +434,11 @@ private:
     void initializeWebTransportSession(URL&&, WebPageProxyIdentifier&&, WebCore::ClientOrigin&&, CompletionHandler<void(std::optional<WebTransportSessionIdentifier>)>&&);
     void destroyWebTransportSession(WebTransportSessionIdentifier);
 
+#if USE(GSTREAMER_WEBRTC)
+    void initializeGStreamerIceBackend(WebPageProxyIdentifier&&, CompletionHandler<void(std::optional<GStreamerIceBackendIdentifier>)>&&);
+    void destroyGStreamerIceBackend(GStreamerIceBackendIdentifier);
+#endif
+
     struct ResourceNetworkActivityTracker {
         ResourceNetworkActivityTracker(const ResourceNetworkActivityTracker&) = default;
         ResourceNetworkActivityTracker(ResourceNetworkActivityTracker&&) = default;
@@ -540,6 +549,10 @@ private:
     HashSet<String> m_allowedFilePaths;
 #if ENABLE(IPC_TESTING_API)
     const Ref<IPCTester> m_ipcTester;
+#endif
+
+#if USE(GSTREAMER_WEBRTC)
+    HashMap<GStreamerIceBackendIdentifier, Ref<GStreamerIceBackend>> m_gstreamerIceBackends;
 #endif
 
     HashMap<WebTransportSessionIdentifier, Ref<NetworkTransportSession>> m_networkTransportSessions;

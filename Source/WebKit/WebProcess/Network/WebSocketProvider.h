@@ -37,6 +37,10 @@ private:
     RefPtr<WebCore::ThreadableWebSocketChannel> createWebSocketChannel(WebCore::Document&, WebCore::WebSocketChannelClient&) final;
     Ref<WebCore::WebTransportSessionPromise> initializeWebTransportSession(WebCore::ScriptExecutionContext&, WebCore::WebTransportSessionClient&, const URL&) final;
 
+#if USE(GSTREAMER_WEBRTC)
+    RefPtr<WebCore::GStreamerIceBackend> createGStreamerIceBackend(WebCore::GStreamerIceBackendClient&) final;
+#endif
+
     explicit WebSocketProvider(WebPageProxyIdentifier webPageProxyID)
         : m_webPageProxyID(webPageProxyID) { }
     WebPageProxyIdentifier m_webPageProxyID;

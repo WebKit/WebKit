@@ -27,6 +27,7 @@
 #include "ExceptionOr.h"
 #include "GStreamerCommon.h"
 #include "GStreamerDataChannelHandler.h"
+#include "GStreamerIceAgent.h"
 #include "GStreamerIncomingTrackProcessor.h"
 #include "GStreamerRegistryScanner.h"
 #include "GStreamerRtpReceiverBackend.h"
@@ -152,6 +153,12 @@ void GStreamerMediaEndpoint::maybeInsertNetSimForElement(GstBin* bin, GstElement
 
 bool GStreamerMediaEndpoint::initializePipeline()
 {
+    auto webrtcBinFactory = adoptGRef(gst_element_factory_find("webrtcbin"));
+    if (!webrtcBinFactory) {
+        gst_printerrln("GStreamer element webrtcbin not found. Please install gst-plugins-bad");
+        return false;
+    }
+
     static uint32_t nPipeline = 0;
     auto pipelineName = makeString("webkit-webrtc-pipeline-"_s, nPipeline);
     m_pipeline = gst_pipeline_new(pipelineName.ascii().data());
@@ -164,12 +171,28 @@ bool GStreamerMediaEndpoint::initializePipeline()
 
     connectSimpleBusMessageCallback(m_pipeline.get(), [this](GstMessage* message) {
         handleMessage(message);
-    });
+    }, AsynchronousPipelineDumping::Yes);
 
-    auto binName = makeString("webkit-webrtcbin-"_s, nPipeline++);
-    m_webrtcBin = makeGStreamerElement("webrtcbin"_s, binName);
+    auto binName = makeString("webkit-webrtcbin-"_s, nPipeline);
+    nPipeline++;
+
+#if GST_CHECK_VERSION(1, 20, 0)
+    if (webkitGstCheckVersion(1, 22, 0)) {
+        auto peerConnectionBackend = this->peerConnectionBackend();
+        if (!peerConnectionBackend)
+            return false;
+
+        auto agentName = makeString(binName, ":ice"_s);
+        auto agent = webkitGstWebRTCCreateIceAgent(agentName, peerConnectionBackend->context());
+        if (!agent) {
+            gst_printerrln("Unable to create ICE agent");
+            return false;
+        }
+        m_webrtcBin = gst_element_factory_create_full(webrtcBinFactory.get(), "name", binName.ascii().data(), "ice-agent", agent, nullptr);
+    }
+#endif
     if (!m_webrtcBin)
-        return false;
+        m_webrtcBin = gst_element_factory_create(webrtcBinFactory.get(), binName.ascii().data());
 
     // Lower default latency from 200ms to 40ms.
     g_object_set(m_webrtcBin.get(), "latency", 40, nullptr);
@@ -342,9 +365,6 @@ bool GStreamerMediaEndpoint::handleMessage(GstMessage* message)
 {
     GST_TRACE_OBJECT(m_pipeline.get(), "Received message %s from %s", GST_MESSAGE_TYPE_NAME(message), GST_MESSAGE_SRC_NAME(message));
     switch (GST_MESSAGE_TYPE(message)) {
-    case GST_MESSAGE_EOS:
-        GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, "eos");
-        break;
     case GST_MESSAGE_ELEMENT: {
         const auto* data = gst_message_get_structure(message);
         if (gstStructureGetName(data) == "GstBinForwarded"_s) {

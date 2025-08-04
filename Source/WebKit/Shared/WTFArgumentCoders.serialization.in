@@ -140,6 +140,7 @@ template: struct WebKit::DisplayLinkObserverIDType
 template: struct WebKit::DrawingAreaIdentifierType
 template: struct WebKit::DownloadIDType
 template: struct WebKit::GeolocationIdentifierType
+template: struct WebKit::GStreamerIceBackendIdentifierType
 template: struct WebKit::IPCConnectionTesterIdentifierType
 template: struct WebKit::IPCStreamTesterIdentifierType
 template: struct WebKit::JSObjectIDType

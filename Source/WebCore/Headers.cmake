@@ -2473,6 +2473,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mediastream/RTCDataChannelRemoteHandlerConnection.h
     platform/mediastream/RTCDataChannelRemoteSourceConnection.h
     platform/mediastream/RTCDataChannelState.h
+    platform/mediastream/RTCIceConnectionState.h
     platform/mediastream/RTCPriorityType.h
     platform/mediastream/RTCRtpCapabilities.h
     platform/mediastream/RTCRtpCodecCapability.h

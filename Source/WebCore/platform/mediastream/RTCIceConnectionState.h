@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-enum class RTCIceConnectionState {
+enum class RTCIceConnectionState : uint8_t {
     New,
     Checking,
     Connected,

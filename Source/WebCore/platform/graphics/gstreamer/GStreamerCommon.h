@@ -259,7 +259,8 @@ private:
     bool m_isValid { false };
 };
 
-void connectSimpleBusMessageCallback(GstElement*, Function<void(GstMessage*)>&& = [](GstMessage*) { });
+enum class AsynchronousPipelineDumping : bool { No, Yes };
+void connectSimpleBusMessageCallback(GstElement*, Function<void(GstMessage*)>&& = [](GstMessage*) { }, AsynchronousPipelineDumping = AsynchronousPipelineDumping::No);
 void disconnectSimpleBusMessageCallback(GstElement*);
 
 enum class GstVideoDecoderPlatform { ImxVPU, Video4Linux, OpenMAX };

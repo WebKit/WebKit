@@ -1,0 +1,33 @@
+# Copyright (C) 2025 Igalia S.L. All rights reserved.
+# Copyright (C) 2025 Metrological Group B.V.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+#if USE(GSTREAMER_WEBRTC)
+
+[
+    ExceptionForEnabledBy,
+    DispatchedFrom=Networking,
+    DispatchedTo=WebContent
+]
+messages -> GStreamerIceBackendProxy {
+    NotifyNewCandidate(unsigned sessionId, String candidate);
+    NotifyGatheringDone(unsigned streamId);
+    NotifyComponentStateChanged(unsigned streamId, enum:uint8_t WebCore::RTCIceComponent component, enum:uint8_t WebCore::RTCIceConnectionState state);
+    NotifyNewSelectedPair(unsigned streamId, enum:uint8_t WebCore::RTCIceComponent component);
+    NotifyDataRead(unsigned streamId, enum:uint8_t WebCore::RTCIceComponent component, std::span<const uint8_t> data);
+}
+
+#endif

@@ -270,6 +270,8 @@ set(WebKit_MESSAGES_IN_FILES
     NetworkProcess/webrtc/NetworkRTCProvider
     NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy
 
+    NetworkProcess/webrtc/gstreamer/GStreamerIceBackend
+
     NetworkProcess/webtransport/NetworkTransportSession
 
     Shared/AuxiliaryProcess
@@ -373,6 +375,8 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/Network/webrtc/RTCDataChannelRemoteManager
     WebProcess/Network/webrtc/WebRTCMonitor
     WebProcess/Network/webrtc/WebRTCResolver
+
+    WebProcess/Network/webrtc/gstreamer/GStreamerIceBackendProxy
 
     WebProcess/Network/NetworkProcessConnection
     WebProcess/Network/WebResourceLoader
@@ -759,6 +763,11 @@ if (USE_LIBWEBRTC)
         "${THIRDPARTY_DIR}/libwebrtc/Source/webrtc"
         "${THIRDPARTY_DIR}/libwebrtc/Source/third_party/abseil-cpp")
     list(APPEND WebKit_LIBRARIES webrtc)
+endif ()
+
+if (USE_LIBNICE)
+    list(APPEND WebKit_LIBRARIES LibNice::LibNice)
+    list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES "${WEBKIT_DIR}/NetworkProcess/webrtc/nice")
 endif ()
 
 if (ATOMICS_REQUIRE_LIBATOMIC)

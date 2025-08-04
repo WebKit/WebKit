@@ -39,6 +39,10 @@
 #include <WebCore/WebTransportSessionClient.h>
 #include <WebCore/WorkerGlobalScope.h>
 
+#if USE(GSTREAMER_WEBRTC)
+#include "GStreamerIceBackendProxy.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -76,5 +80,12 @@ Ref<WebCore::WebTransportSessionPromise> WebSocketProvider::initializeWebTranspo
     ASSERT(RunLoop::isMain());
     return WebKit::WebTransportSession::initialize(WebProcess::singleton().ensureNetworkProcessConnection().connection(), client, url, m_webPageProxyID, document->clientOrigin());
 }
+
+#if USE(GSTREAMER_WEBRTC)
+RefPtr<WebCore::GStreamerIceBackend> WebSocketProvider::createGStreamerIceBackend(WebCore::GStreamerIceBackendClient& client)
+{
+    return WebKit::GStreamerIceBackendProxy::create(m_webPageProxyID, client);
+}
+#endif
 
 } // namespace WebKit
