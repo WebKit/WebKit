@@ -38,7 +38,6 @@ typedef struct CGContext *CGContextRef;
 
 namespace WebCore {
 
-class LayerPool;
 class PlatformCALayer;
 class PlatformCAAnimation;
 class PlatformCALayerClient;
@@ -341,7 +340,7 @@ public:
 #endif
 
     virtual Ref<PlatformCALayer> createCompatibleLayer(LayerType, PlatformCALayerClient*) const = 0;
-    Ref<PlatformCALayer> createCompatibleLayerOrTakeFromPool(LayerType, PlatformCALayerClient*, IntSize);
+    Ref<PlatformCALayer> createCompatibleLayer(LayerType, PlatformCALayerClient*, IntSize) const;
 
     virtual void enumerateRectsBeingDrawn(GraphicsContext&, void (^block)(FloatRect)) = 0;
 
@@ -359,7 +358,6 @@ public:
     static ContentsFormat contentsFormatForLayer(PlatformCALayerClient* = nullptr);
 
     virtual void markFrontBufferVolatileForTesting() { }
-    void moveToLayerPool();
 
     virtual void dumpAdditionalProperties(TextStream&, OptionSet<PlatformLayerTreeAsTextFlags>);
 
@@ -370,8 +368,6 @@ public:
 
 protected:
     PlatformCALayer(LayerType, PlatformCALayerClient* owner);
-
-    virtual LayerPool* layerPool();
 
     const LayerType m_layerType;
     const PlatformLayerIdentifier m_layerID;

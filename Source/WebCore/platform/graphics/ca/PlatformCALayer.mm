@@ -30,7 +30,6 @@
 
 #include "GraphicsContextCG.h"
 #include "IOSurface.h"
-#include "LayerPool.h"
 #include "PlatformCALayerClient.h"
 #include "PlatformCALayerDelegatedContents.h"
 #include <CoreFoundation/CoreFoundation.h>
@@ -166,14 +165,9 @@ void PlatformCALayer::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloat y
     CTLineDraw(line.get(), context);
 }
 
-Ref<PlatformCALayer> PlatformCALayer::createCompatibleLayerOrTakeFromPool(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client, IntSize size)
+Ref<PlatformCALayer> PlatformCALayer::createCompatibleLayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* client, IntSize size) const
 {
-    if (auto layerFromPool = layerPool() ? layerPool()->takeLayerWithSize(size) : nullptr) {
-        layerFromPool->setOwner(client);
-        return layerFromPool.releaseNonNull();
-    }
-
-    auto layer = createCompatibleLayer(layerType, client);
+    Ref layer = createCompatibleLayer(layerType, client);
     layer->setBounds(FloatRect(FloatPoint(), size));
     return layer;
 }
@@ -198,19 +192,6 @@ ContentsFormat PlatformCALayer::contentsFormatForLayer(PlatformCALayerClient* cl
     UNUSED_PARAM(contentsFormats);
     ASSERT(contentsFormats.contains(ContentsFormat::RGBA8));
     return ContentsFormat::RGBA8;
-}
-
-void PlatformCALayer::moveToLayerPool()
-{
-    ASSERT(!superlayer());
-    if (auto pool = layerPool())
-        pool->addLayer(this);
-}
-
-LayerPool* PlatformCALayer::layerPool()
-{
-    static LayerPool* sharedPool = new LayerPool;
-    return sharedPool;
 }
 
 void PlatformCALayer::clearContents()

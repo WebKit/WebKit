@@ -394,7 +394,6 @@ platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm
 platform/graphics/avfoundation/objc/WebAVContentKeyGroup.mm @no-unify
 platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm
 platform/graphics/ca/GraphicsLayerCA.cpp
-platform/graphics/ca/LayerPool.cpp
 platform/graphics/ca/PlatformCAAnimation.cpp
 platform/graphics/ca/PlatformCALayer.mm
 platform/graphics/ca/TileController.cpp

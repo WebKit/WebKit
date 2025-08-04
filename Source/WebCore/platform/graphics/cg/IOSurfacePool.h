@@ -65,31 +65,22 @@ public:
 private:
     IOSurfacePool();
 
-    struct CachedSurfaceDetails {
-        CachedSurfaceDetails()
-            : hasMarkedPurgeable(false)
-        { }
-
-        void resetLastUseTime() { lastUseTime = MonotonicTime::now(); }
-
-        MonotonicTime lastUseTime;
-        bool hasMarkedPurgeable;
-    };
-
     using CachedSurfaceQueue = Deque<std::unique_ptr<IOSurface>>;
     using CachedSurfaceMap = HashMap<IntSize, CachedSurfaceQueue>;
-    using CachedSurfaceDetailsMap = HashMap<IOSurface*, CachedSurfaceDetails>;
 
-#if PLATFORM(MAC)
     static constexpr size_t defaultMaximumBytesCached { 256 * MB };
+    // in-use surfaces can't be immediately recycled but may be available soon. We should
+    // limit caching in use surfaces so that we don't end up with a pool of surfaces we
+    // can't readily recycle.
+#if PLATFORM(MAC)
+    static constexpr size_t maximumInUseBytes = 0.5 * defaultMaximumBytesCached;
 #else
-    static constexpr size_t defaultMaximumBytesCached { 64 * MB };
+    // 32 MB is chosen for iOS as it is approximately the size of a set of front and back buffer
+    // for 4 page tiles of dimensions 1024x1024. This should provide a good trade off of soon to be
+    // available surfaces without contributing too much non-volatile footprint during memory pressure situations.
+    static constexpr size_t maximumInUseBytes { 32 * MB };
 #endif
 
-    // We'll never allow more than 1/2 of the cache to be filled with in-use surfaces, because
-    // they can't be immediately returned when requested (but will be freed up in the future).
-    static constexpr size_t maximumInUseBytes = defaultMaximumBytesCached / 2;
-    
     bool shouldCacheSurface(const IOSurface&) const WTF_REQUIRES_LOCK(m_lock);
 
     void willAddSurface(IOSurface&, bool inUse) WTF_REQUIRES_LOCK(m_lock);
@@ -105,7 +96,6 @@ private:
     void scheduleCollectionTimer() WTF_REQUIRES_LOCK(m_lock);
     void collectionTimerFired();
     void collectInUseSurfaces() WTF_REQUIRES_LOCK(m_lock);
-    bool markOlderSurfacesPurgeable() WTF_REQUIRES_LOCK(m_lock);
 
     void platformGarbageCollectNow();
 
@@ -117,7 +107,6 @@ private:
     RunLoop::Timer m_collectionTimer WTF_GUARDED_BY_LOCK(m_lock);
     CachedSurfaceMap m_cachedSurfaces WTF_GUARDED_BY_LOCK(m_lock);
     CachedSurfaceQueue m_inUseSurfaces WTF_GUARDED_BY_LOCK(m_lock);
-    CachedSurfaceDetailsMap m_surfaceDetails WTF_GUARDED_BY_LOCK(m_lock);
     Vector<IntSize> m_sizesInPruneOrder WTF_GUARDED_BY_LOCK(m_lock);
 
     size_t m_bytesCached WTF_GUARDED_BY_LOCK(m_lock) { 0 };

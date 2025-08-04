@@ -30,7 +30,6 @@
 #include "TileGrid.h"
 
 #include "GraphicsContext.h"
-#include "LayerPool.h"
 #include "Logging.h"
 #include "PlatformCALayer.h"
 #include "TileController.h"
@@ -326,7 +325,6 @@ void TileGrid::removeTiles(const Vector<TileIndex>& toRemove)
         TileInfo tileInfo = m_tiles.take(tileIndex);
         tileInfo.layer->removeFromSuperlayer();
         m_tileRepaintCounts.removeAll(tileInfo.layer.get());
-        tileInfo.layer->moveToLayerPool();
         m_controller->willRemoveTile(*this, tileIndex);
     }
 }

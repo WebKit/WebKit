@@ -28,6 +28,7 @@
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
 
+#include "LibWebRTCRefWrappers.h"
 #include <pal/cf/CoreMediaSoftLink.h>
 #include "CoreVideoSoftLink.h"
 
