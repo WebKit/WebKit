@@ -22,7 +22,6 @@
 
 import json
 import os
-import re
 import shutil
 
 from webkitbugspy import Tracker, bugzilla, github, radar
