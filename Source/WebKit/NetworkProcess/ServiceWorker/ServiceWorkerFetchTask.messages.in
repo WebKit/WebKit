@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 [
-    ExceptionForEnabledBy,
+    EnabledBy=ServiceWorkersEnabled,
     DispatchedFrom=WebContent,
     DispatchedTo=Networking
 ]
