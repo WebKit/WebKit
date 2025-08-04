@@ -89,16 +89,14 @@ void StreamServerConnection::startReceivingMessages(StreamMessageReceiver& recei
 {
     auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
     Locker locker { m_receiversLock };
-    auto result = m_receivers.add(key, receiver);
-    ASSERT_UNUSED(result, result.isNewEntry);
+    m_receivers.add(key, receiver);
 }
 
 void StreamServerConnection::stopReceivingMessages(ReceiverName receiverName, uint64_t destinationID)
 {
     auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
     Locker locker { m_receiversLock };
-    bool didRemove = m_receivers.remove(key);
-    ASSERT_UNUSED(didRemove, didRemove);
+    m_receivers.remove(key);
 }
 
 void StreamServerConnection::enqueueMessage(Connection&, UniqueRef<Decoder>&& message)
