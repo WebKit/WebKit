@@ -15,7 +15,7 @@ layer at (0,0) size 800x514
             RenderTableCol {COL} at (0,0) size 0x0
             RenderTableCol {COL} at (0,0) size 0x0
           RenderTableSection {TBODY} at (0,0) size 256x186
-            RenderTableRow {TR} at (0,2) size 256x182
+            RenderTableRow {TR} at (2,2) size 252x182
               RenderTableCell {TD} at (2,2) size 150x182 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 148x180
                   text run at (1,1) width 91: "Cras tincidunt"
@@ -36,7 +36,7 @@ layer at (0,0) size 800x514
             text run at (0,0) width 153: "Table 2: width in <TD>"
         RenderTable {TABLE} at (0,304) size 260x186
           RenderTableSection {TBODY} at (0,0) size 260x186
-            RenderTableRow {TR} at (0,2) size 260x182
+            RenderTableRow {TR} at (2,2) size 256x182
               RenderTableCell {TD} at (2,2) size 152x182 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 149x180
                   text run at (1,1) width 91: "Cras tincidunt"

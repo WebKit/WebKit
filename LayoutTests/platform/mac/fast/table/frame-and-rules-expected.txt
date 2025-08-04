@@ -2220,12 +2220,12 @@ layer at (393,24) size 392x150
       RenderTableCol {COLGROUP} at (0,0) size 0x0
       RenderTableCol {COLGROUP} at (0,0) size 0x0
       RenderTableSection {THEAD} at (0,18) size 355x40
-        RenderTableRow {TR} at (0,2) size 355x17
+        RenderTableRow {TR} at (2,2) size 351x17
           RenderTableCell {TH} at (2,19) size 73x2 [r=0 c=0 rs=2 cs=2]
           RenderTableCell {TH} at (76,2) size 277x17 [r=0 c=2 rs=1 cs=9]
             RenderText {#text} at (120,1) size 35x15
               text run at (120,1) width 35: "Frame"
-        RenderTableRow {TR} at (0,21) size 355x17
+        RenderTableRow {TR} at (2,21) size 351x17
           RenderTableCell {TH} at (76,21) size 27x17 [r=1 c=2 rs=1 cs=1]
             RenderText {#text} at (1,1) size 24x15
               text run at (1,1) width 24: "void"
@@ -2254,7 +2254,7 @@ layer at (393,24) size 392x150
             RenderText {#text} at (1,1) size 35x15
               text run at (1,1) width 35: "border"
       RenderTableSection {TBODY} at (0,58) size 355x95
-        RenderTableRow {TR} at (0,0) size 355x17
+        RenderTableRow {TR} at (2,0) size 351x17
           RenderTableCell {TH} at (2,38) size 33x17 [r=0 c=0 rs=5 cs=1]
             RenderText {#text} at (1,39) size 31x15
               text run at (1,1) width 31: "Rules"
@@ -2297,7 +2297,7 @@ layer at (393,24) size 392x150
             RenderInline {A} at (11,1) size 15x15 [color=#0000EE]
               RenderText {#text} at (11,1) size 15x15
                 text run at (11,1) width 15: "Go"
-        RenderTableRow {TR} at (0,19) size 355x17
+        RenderTableRow {TR} at (2,19) size 351x17
           RenderTableCell {TH} at (36,19) size 39x17 [r=1 c=1 rs=1 cs=1]
             RenderText {#text} at (1,1) size 37x15
               text run at (1,1) width 37: "groups"
@@ -2337,7 +2337,7 @@ layer at (393,24) size 392x150
             RenderInline {A} at (11,1) size 15x15 [color=#0000EE]
               RenderText {#text} at (11,1) size 15x15
                 text run at (11,1) width 15: "Go"
-        RenderTableRow {TR} at (0,38) size 355x17
+        RenderTableRow {TR} at (2,38) size 351x17
           RenderTableCell {TH} at (36,38) size 39x17 [r=2 c=1 rs=1 cs=1]
             RenderText {#text} at (11,1) size 27x15
               text run at (11,1) width 27: "rows"
@@ -2377,7 +2377,7 @@ layer at (393,24) size 392x150
             RenderInline {A} at (11,1) size 15x15 [color=#0000EE]
               RenderText {#text} at (11,1) size 15x15
                 text run at (11,1) width 15: "Go"
-        RenderTableRow {TR} at (0,57) size 355x17
+        RenderTableRow {TR} at (2,57) size 351x17
           RenderTableCell {TH} at (36,57) size 39x17 [r=3 c=1 rs=1 cs=1]
             RenderText {#text} at (15,1) size 23x15
               text run at (15,1) width 23: "cols"
@@ -2417,7 +2417,7 @@ layer at (393,24) size 392x150
             RenderInline {A} at (11,1) size 15x15 [color=#0000EE]
               RenderText {#text} at (11,1) size 15x15
                 text run at (11,1) width 15: "Go"
-        RenderTableRow {TR} at (0,76) size 355x17
+        RenderTableRow {TR} at (2,76) size 351x17
           RenderTableCell {TH} at (36,76) size 39x17 [r=4 c=1 rs=1 cs=1]
             RenderText {#text} at (23,1) size 15x15
               text run at (23,1) width 15: "all"

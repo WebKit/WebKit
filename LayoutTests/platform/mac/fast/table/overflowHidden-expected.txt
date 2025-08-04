@@ -5,7 +5,7 @@ layer at (0,0) size 785x2424
     RenderBody {BODY} at (8,8) size 769x2408
       RenderTable {TABLE} at (0,0) size 418x112 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 414x108
-          RenderTableRow {TR} at (0,2) size 414x104
+          RenderTableRow {TR} at (2,2) size 410x104
             RenderTableCell {TD} at (308,2) size 104x104 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 100x100 [bgcolor=#800080]
       RenderBlock (anonymous) at (0,112) size 769x36
@@ -13,7 +13,7 @@ layer at (0,0) size 785x2424
         RenderBR {BR} at (0,18) size 0x18
       RenderTable {TABLE} at (0,148) size 718x112 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 714x108
-          RenderTableRow {TR} at (0,2) size 714x104
+          RenderTableRow {TR} at (2,2) size 710x104
             RenderTableCell {TD} at (608,2) size 104x104 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 100x100 [bgcolor=#800080]
       RenderBlock (anonymous) at (0,260) size 769x36
@@ -21,7 +21,7 @@ layer at (0,0) size 785x2424
         RenderBR {BR} at (0,18) size 0x18
       RenderTable {TABLE} at (0,296) size 718x112 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 714x108
-          RenderTableRow {TR} at (0,2) size 714x104
+          RenderTableRow {TR} at (2,2) size 710x104
             RenderTableCell {TD} at (608,2) size 104x104 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 100x100 [bgcolor=#800080]
       RenderBlock (anonymous) at (0,408) size 769x36
@@ -29,7 +29,7 @@ layer at (0,0) size 785x2424
         RenderBR {BR} at (0,18) size 0x18
       RenderTable {TABLE} at (0,444) size 418x112 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 414x108
-          RenderTableRow {TR} at (0,2) size 414x104
+          RenderTableRow {TR} at (2,2) size 410x104
             RenderTableCell {TD} at (308,2) size 104x104 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 100x100 [bgcolor=#800080]
       RenderBlock (anonymous) at (0,556) size 769x36
@@ -37,7 +37,7 @@ layer at (0,0) size 785x2424
         RenderBR {BR} at (0,18) size 0x18
       RenderTable {TABLE} at (0,592) size 418x112 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 414x108
-          RenderTableRow {TR} at (0,2) size 414x104
+          RenderTableRow {TR} at (2,2) size 410x104
             RenderTableCell {TD} at (2,2) size 104x104 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 100x100 [bgcolor=#800080]
       RenderBlock (anonymous) at (0,704) size 769x36
@@ -45,10 +45,10 @@ layer at (0,0) size 785x2424
         RenderBR {BR} at (0,18) size 0x18
       RenderTable {TABLE} at (0,740) size 618x218 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 614x214
-          RenderTableRow {TR} at (0,2) size 614x104
+          RenderTableRow {TR} at (2,2) size 610x104
             RenderTableCell {TD} at (308,2) size 304x104 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 300x100 [bgcolor=#800080]
-          RenderTableRow {TR} at (0,108) size 614x104
+          RenderTableRow {TR} at (2,108) size 610x104
             RenderTableCell {TD} at (2,108) size 304x104 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 300x100 [bgcolor=#800080]
       RenderBlock (anonymous) at (0,958) size 769x36
@@ -56,7 +56,7 @@ layer at (0,0) size 785x2424
         RenderBR {BR} at (0,18) size 0x18
       RenderTable {TABLE} at (0,994) size 718x112 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 714x108
-          RenderTableRow {TR} at (0,2) size 714x104
+          RenderTableRow {TR} at (2,2) size 710x104
             RenderTableCell {TD} at (608,2) size 104x104 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 100x100 [bgcolor=#800080]
       RenderBlock (anonymous) at (0,1106) size 769x36
@@ -64,7 +64,7 @@ layer at (0,0) size 785x2424
         RenderBR {BR} at (0,18) size 0x18
       RenderTable {TABLE} at (0,1142) size 718x112 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 714x108
-          RenderTableRow {TR} at (0,2) size 714x104
+          RenderTableRow {TR} at (2,2) size 710x104
             RenderTableCell {TD} at (608,2) size 104x104 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 100x100 [bgcolor=#800080]
       RenderBlock (anonymous) at (0,1254) size 769x36
@@ -72,7 +72,7 @@ layer at (0,0) size 785x2424
         RenderBR {BR} at (0,18) size 0x18
       RenderTable {TABLE} at (0,1290) size 718x112 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 714x108
-          RenderTableRow {TR} at (0,2) size 714x104
+          RenderTableRow {TR} at (2,2) size 710x104
             RenderTableCell {TD} at (608,2) size 104x104 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 100x100 [bgcolor=#800080]
       RenderBlock (anonymous) at (0,1402) size 769x36
@@ -112,7 +112,7 @@ layer at (0,0) size 785x2424
         RenderBR {BR} at (0,18) size 0x18
       RenderTable {TABLE} at (0,2006) size 418x112 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 414x108
-          RenderTableRow {TR} at (0,2) size 414x104
+          RenderTableRow {TR} at (2,2) size 410x104
             RenderTableCell {TD} at (308,2) size 104x104 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 100x100 [bgcolor=#800080]
       RenderBlock (anonymous) at (0,2118) size 769x36
@@ -120,7 +120,7 @@ layer at (0,0) size 785x2424
         RenderBR {BR} at (0,18) size 0x18
       RenderTable {TABLE} at (0,2154) size 433x112 [border: (2px outset #000000)]
         RenderTableSection {TBODY} at (2,2) size 429x108
-          RenderTableRow {TR} at (0,2) size 429x104
+          RenderTableRow {TR} at (2,2) size 425x104
             RenderTableCell {TD} at (323,2) size 104x104 [border: (1px inset #000000)] [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 100x100 [bgcolor=#800080]
       RenderBlock (anonymous) at (0,2266) size 769x36
@@ -128,7 +128,7 @@ layer at (0,0) size 785x2424
         RenderBR {BR} at (0,18) size 0x18
       RenderTable {TABLE} at (0,2302) size 470x106
         RenderTableSection {TBODY} at (0,0) size 470x106
-          RenderTableRow {TR} at (0,2) size 470x102
+          RenderTableRow {TR} at (2,2) size 466x102
             RenderTableCell {TD} at (366,2) size 102x102 [r=0 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 100x100 [bgcolor=#800080]
 layer at (12,12) size 304x104 clip at (13,13) size 302x102
@@ -195,8 +195,8 @@ layer at (10,2312) size 362x102 clip at (40,2342) size 302x27 scrollWidth 601
       RenderBlock {DIV} at (0,0) size 600x18 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 152x18
           text run at (0,0) width 152: "Test with overflow:auto"
-layer at (14,90) size 600x18
-  RenderBlock (positioned) {DIV} at (14,90) size 600x18 [bgcolor=#00FFFF]
+layer at (16,90) size 600x18
+  RenderBlock (positioned) {DIV} at (16,90) size 600x18 [bgcolor=#00FFFF]
     RenderText {#text} at (0,0) size 213x18
       text run at (0,0) width 213: "With absolute positioning on div."
 layer at (14,203) size 600x18

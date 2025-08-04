@@ -5,7 +5,7 @@ layer at (0,0) size 800x84
     RenderBody {BODY} at (8,8) size 784x68
       RenderTable {TABLE} at (0,0) size 67x68
         RenderTableSection {THEAD} at (0,0) size 67x24
-          RenderTableRow {TR} at (0,2) size 67x20
+          RenderTableRow {TR} at (2,2) size 63x20
             RenderTableCell {TH} at (2,2) size 15x20 [color=#FF0000] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 13x18
                 text run at (1,1) width 13: "H"
@@ -19,7 +19,7 @@ layer at (0,0) size 800x84
               RenderText {#text} at (1,1) size 12x18
                 text run at (1,1) width 12: "D"
         RenderTableSection {TFOOT} at (0,46) size 67x22
-          RenderTableRow {TR} at (0,0) size 67x20
+          RenderTableRow {TR} at (2,0) size 63x20
             RenderTableCell {TH} at (2,0) size 15x20 [color=#0000FF] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,1) size 11x18
                 text run at (2,1) width 11: "F"
@@ -33,7 +33,7 @@ layer at (0,0) size 800x84
               RenderText {#text} at (1,1) size 12x18
                 text run at (1,1) width 12: "T"
         RenderTableSection {TBODY} at (0,24) size 67x22
-          RenderTableRow {TR} at (0,0) size 67x20
+          RenderTableRow {TR} at (2,0) size 63x20
             RenderTableCell {TD} at (2,0) size 15x20 [color=#008000] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 8x18
                 text run at (1,1) width 8: "b"

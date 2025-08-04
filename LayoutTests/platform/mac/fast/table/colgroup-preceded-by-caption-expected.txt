@@ -11,7 +11,7 @@ layer at (0,0) size 800x136
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FFFF00]
         RenderTableSection {TBODY} at (0,36) size 275x24
-          RenderTableRow {TR} at (0,2) size 275x20
+          RenderTableRow {TR} at (2,2) size 271x20
             RenderTableCell {TD} at (2,2) size 271x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 269x18
                 text run at (1,1) width 269: "This line should have yellow background."
@@ -23,7 +23,7 @@ layer at (0,0) size 800x136
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0 [bgcolor=#FFFF00]
         RenderTableSection {TBODY} at (0,36) size 275x24
-          RenderTableRow {TR} at (0,2) size 275x20
+          RenderTableRow {TR} at (2,2) size 271x20
             RenderTableCell {TD} at (2,2) size 271x20 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 269x18
                 text run at (1,1) width 269: "This line should have yellow background."

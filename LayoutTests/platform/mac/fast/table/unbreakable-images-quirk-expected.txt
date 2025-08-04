@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 88: "No line break"
       RenderTable {TABLE} at (0,18) size 123x60 [bgcolor=#C0C0C0]
         RenderTableSection {TBODY} at (0,0) size 123x60
-          RenderTableRow {TR} at (0,2) size 123x56
+          RenderTableRow {TR} at (2,2) size 119x56
             RenderTableCell {TD} at (2,2) size 119x56 [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 20x50 [bgcolor=#ADD8E6]
               RenderText {#text} at (21,37) size 77x18
@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 88: "No line break"
       RenderTable {TABLE} at (0,114) size 103x60 [bgcolor=#C0C0C0]
         RenderTableSection {TBODY} at (0,0) size 103x60
-          RenderTableRow {TR} at (0,2) size 103x56
+          RenderTableRow {TR} at (2,2) size 99x56
             RenderTableCell {TD} at (2,2) size 99x56 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,37) size 77x18
                 text run at (1,37) width 77: "loremipsum"
@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 154: "Line break after the \"a\"."
       RenderTable {TABLE} at (0,210) size 103x74 [bgcolor=#C0C0C0]
         RenderTableSection {TBODY} at (0,0) size 103x74
-          RenderTableRow {TR} at (0,2) size 103x70
+          RenderTableRow {TR} at (2,2) size 99x70
             RenderTableCell {TD} at (2,2) size 99x70 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 88x18
                 text run at (1,1) width 88: "a loremipsum"
@@ -42,7 +42,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 154: "Line break after the \"a\"."
       RenderTable {TABLE} at (0,320) size 123x110 [bgcolor=#C0C0C0]
         RenderTableSection {TBODY} at (0,0) size 123x110
-          RenderTableRow {TR} at (0,2) size 123x106
+          RenderTableRow {TR} at (2,2) size 119x106
             RenderTableCell {TD} at (2,2) size 119x106 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,37) size 12x18
                 text run at (1,37) width 12: "a "
@@ -56,7 +56,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 188: "Line break after \"wideword\"."
       RenderTable {TABLE} at (0,466) size 123x114 [bgcolor=#C0C0C0]
         RenderTableSection {TBODY} at (0,0) size 123x114
-          RenderTableRow {TR} at (0,2) size 123x110
+          RenderTableRow {TR} at (2,2) size 119x110
             RenderTableCell {TD} at (2,2) size 119x110 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,37) size 68x18
                 text run at (1,37) width 68: "wideword "

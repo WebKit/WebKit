@@ -42,11 +42,11 @@ layer at (0,0) size 800x585
             RenderTableCell {TD} at (222,26) size 350x312 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (4,4) size 342x304
                 RenderTableSection {TBODY} at (0,0) size 342x304
-                  RenderTableRow {TR} at (0,2) size 342x300
+                  RenderTableRow {TR} at (2,2) size 338x300
                     RenderTableCell {TD} at (2,2) size 338x300 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
                       RenderTable {TABLE} at (2,2) size 334x296
                         RenderTableSection {TBODY} at (0,0) size 334x296
-                          RenderTableRow {TR} at (0,2) size 334x292
+                          RenderTableRow {TR} at (2,2) size 330x292
                             RenderTableCell {TD} at (2,146) size 127x4 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
                             RenderTableCell {TD} at (130,2) size 73x292 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
                               RenderText {#text} at (2,2) size 68x288
