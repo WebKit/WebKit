@@ -587,8 +587,6 @@ void PositionedLayoutConstraints::computeInlineStaticDistance()
             if (!renderBox)
                 continue;
             staticPosition += haveOrthogonalWritingModes ? renderBox->logicalTop() : renderBox->logicalLeft();
-            if (renderBox->isInFlowPositioned())
-                staticPosition += renderBox->isHorizontalWritingMode() ? renderBox->offsetForInFlowPosition().width() : renderBox->offsetForInFlowPosition().height();
         }
         if (needsGridAreaAdjustmentBeforeStaticPositioning())
             staticPosition -= haveOrthogonalWritingModes ? m_container->borderBefore() : m_container->borderLogicalLeft();
