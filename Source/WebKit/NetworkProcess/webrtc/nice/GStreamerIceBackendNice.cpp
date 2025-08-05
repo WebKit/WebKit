@@ -176,7 +176,7 @@ void GStreamerIceBackendNice::fillLocalCandidateCredentials(const NiceCandidate&
 
     GUniqueOutPtr<char> ufrag;
     GUniqueOutPtr<char> password;
-    auto gotCredentials = nice_agent_get_local_credentials(m_agent.get(), candidate.stream_id, &ufrag.outPtr(), &password.outPtr());
+    [[maybe_unused]] auto gotCredentials = nice_agent_get_local_credentials(m_agent.get(), candidate.stream_id, &ufrag.outPtr(), &password.outPtr());
     ASSERT(gotCredentials);
 
     if (!candidate.username)
