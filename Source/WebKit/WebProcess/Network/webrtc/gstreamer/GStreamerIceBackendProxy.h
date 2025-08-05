@@ -29,6 +29,7 @@
 #include <WebCore/Document.h>
 #include <WebCore/GStreamerIceAgent.h>
 #include <WebCore/GStreamerIceBuffer.h>
+#include <WebCore/GStreamerIceCandidateStatsPair.h>
 #include <WebCore/RTCIceComponent.h>
 #include <WebCore/RTCIceConnectionState.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -74,6 +75,8 @@ private:
     void send(unsigned, WebCore::RTCIceComponent, Vector<WebCore::GStreamerIceBuffer>&&) final;
 
     void finalizeStream(unsigned) final;
+
+    std::optional<WebCore::GStreamerIceCandidateStatsPair> getSelectedPairStats(unsigned) final;
 
     void refGStreamerIceBackend() final { ref(); }
     void derefGStreamerIceBackend() final { deref(); }

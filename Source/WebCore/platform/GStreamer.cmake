@@ -124,6 +124,8 @@ if (ENABLE_VIDEO)
         list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
             Modules/mediastream/gstreamer/GStreamerIceAgent.h
             Modules/mediastream/gstreamer/GStreamerIceBuffer.h
+            Modules/mediastream/gstreamer/GStreamerIceCandidateStats.h
+            Modules/mediastream/gstreamer/GStreamerIceCandidateStatsPair.h
         )
 
         if (NOT USE_GSTREAMER_FULL)

@@ -23,6 +23,7 @@
 
 #include "ExceptionData.h"
 #include "GStreamerIceBuffer.h"
+#include "GStreamerIceCandidateStatsPair.h"
 #include "RTCIceComponent.h"
 #include "RTCIceConnectionState.h"
 
@@ -110,6 +111,8 @@ public:
     virtual void send(unsigned, RTCIceComponent, Vector<GStreamerIceBuffer>&&) = 0;
 
     virtual void finalizeStream(unsigned) = 0;
+
+    virtual std::optional<GStreamerIceCandidateStatsPair> getSelectedPairStats(unsigned) = 0;
 
 protected:
     GStreamerIceBackend() = default;

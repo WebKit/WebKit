@@ -26,6 +26,6 @@
 
 namespace WebCore {
 
-enum class RTCIceTcpCandidateType { Active, Passive, So };
+enum class RTCIceTcpCandidateType : uint8_t { Active, Passive, So };
 
 } // namespace WebCore

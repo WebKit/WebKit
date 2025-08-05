@@ -234,6 +234,27 @@ enum class WebCore::RTCIceConnectionState : uint8_t {
     Disconnected,
     Closed
 };
+
+header: <WebCore/RTCIceProtocol.h>
+enum class WebCore::RTCIceProtocol : uint8_t {
+    Udp,
+    Tcp
+};
+
+header: <WebCore/RTCIceCandidateType.h>
+enum class WebCore::RTCIceCandidateType : uint8_t {
+    Host,
+    Srflx,
+    Prflx,
+    Relay
+};
+
+header: <WebCore/RTCIceTcpCandidateType.h>
+enum class WebCore::RTCIceTcpCandidateType : uint8_t {
+    Active,
+    Passive,
+    So
+};
 #endif // ENABLE(WEB_RTC)
 
 enum class WebCore::NotificationEventType : bool;
@@ -6139,6 +6160,28 @@ header: <WebCore/RTCDataChannelHandler.h>
 header: <WebCore/GStreamerIceBuffer.h>
 [CustomHeader] struct WebCore::GStreamerIceBuffer {
     std::span<const uint8_t> data;
+};
+
+header: <WebCore/GStreamerIceCandidateStats.h>
+[CustomHeader] struct WebCore::GStreamerIceCandidateStats {
+    String ipAddress;
+    unsigned port;
+    unsigned streamId;
+    WebCore::RTCIceCandidateType type;
+    WebCore::RTCIceProtocol protocol;
+    String relayProtocol;
+    unsigned priority;
+    String url;
+    String foundation;
+    String relatedAddress;
+    unsigned relatedPort;
+    String usernameFragment;
+    WebCore::RTCIceTcpCandidateType tcpType;
+};
+header: <WebCore/GStreamerIceCandidateStatsPair.h>
+struct WebCore::GStreamerIceCandidateStatsPair {
+    WebCore::GStreamerIceCandidateStats local;
+    WebCore::GStreamerIceCandidateStats remote;
 };
 #endif // USE(GSTREAMER_WEBRTC)
 

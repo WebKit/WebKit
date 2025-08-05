@@ -22,9 +22,12 @@
 
 #if USE(GSTREAMER_WEBRTC)
 
+#include "GStreamerIceCandidateStats.h"
 #include "GStreamerIceStream.h"
 #include "GStreamerIceTransport.h"
 #include "NotImplemented.h"
+#include "RTCIceCandidateType.h"
+#include "RTCIceProtocol.h"
 #include "ScriptExecutionContext.h"
 #include "SocketProvider.h"
 #include <gst/webrtc/ice.h>
@@ -236,6 +239,75 @@ static gchar* webkitGstWebRTCIceAgentGetHttpProxy(GstWebRTCICE*)
     return nullptr;
 }
 
+static void populateCandidateStats(const GStreamerIceCandidateStats& stats, GstWebRTCICECandidateStats* gstStats)
+{
+    gstStats->ipaddr = g_strdup(stats.ipAddress.utf8().data());
+    gstStats->port = stats.port;
+    gstStats->stream_id = stats.streamId;
+
+    switch (stats.type) {
+    case RTCIceCandidateType::Host:
+        gstStats->type = "host";
+        break;
+    case RTCIceCandidateType::Prflx:
+        gstStats->type = "prflx";
+        break;
+    case RTCIceCandidateType::Relay:
+        gstStats->type = "relay";
+        break;
+    case RTCIceCandidateType::Srflx:
+        gstStats->type = "srflx";
+        break;
+    };
+    switch (stats.protocol) {
+    case RTCIceProtocol::Tcp:
+        gstStats->proto = "tcp";
+        break;
+    case RTCIceProtocol::Udp:
+        gstStats->proto = "udp";
+        break;
+    }
+    gstStats->relay_proto = stats.relayProtocol.ascii().data();
+    gstStats->prio = stats.priority;
+    gstStats->url = g_strdup(stats.url.utf8().data());
+#if GST_CHECK_VERSION(1, 27, 0)
+    gstStats->foundation = g_strdup(stats.foundation.utf8().data());
+    gstStats->related_address = g_strdup(stats.relatedAddress.utf8().data());
+    gstStats->related_port = stats.relatedPort;
+    gstStats->user_name_fragment = g_strdup(stats.usernameFragment.utf8().data());
+    switch (stats.tcpType) {
+    case RTCIceTcpCandidateType::Active:
+        gstStats->tcp_type = GST_WEBRTC_ICE_TCP_CANDIDATE_TYPE_ACTIVE;
+        break;
+    case RTCIceTcpCandidateType::Passive:
+        gstStats->tcp_type = GST_WEBRTC_ICE_TCP_CANDIDATE_TYPE_PASSIVE;
+        break;
+    case RTCIceTcpCandidateType::So:
+        gstStats->tcp_type = GST_WEBRTC_ICE_TCP_CANDIDATE_TYPE_SO;
+        break;
+    };
+#endif
+}
+
+static gboolean webkitGstWebRTCIceAgentGetSelectedPair(GstWebRTCICE* ice,
+    GstWebRTCICEStream* stream, GstWebRTCICECandidateStats** localStats,
+    GstWebRTCICECandidateStats** remoteStats)
+{
+    if (!stream)
+        return FALSE;
+
+    auto backend = WEBKIT_GST_WEBRTC_ICE_BACKEND(ice);
+    auto stats = backend->priv->iceBackend->getSelectedPairStats(stream->stream_id);
+    if (!stats)
+        return FALSE;
+
+    *localStats = g_new0(GstWebRTCICECandidateStats, 1);
+    populateCandidateStats(stats->local, *localStats);
+    *remoteStats = g_new0(GstWebRTCICECandidateStats, 1);
+    populateCandidateStats(stats->remote, *remoteStats);
+    return TRUE;
+}
+
 bool webkitGstWebRTCIceAgentGatherCandidates(WebKitGstIceAgent* agent, unsigned streamId)
 {
     if (!agent->priv->iceBackend)
@@ -383,10 +455,10 @@ static void webkit_gst_webrtc_ice_backend_class_init(WebKitGstIceAgentClass* kla
     iceClass->set_remote_credentials = webkitGstWebRTCIceAgentSetRemoteCredentials;
     iceClass->set_http_proxy = webkitGstWebRTCIceAgentSetHttpProxy;
     iceClass->get_http_proxy = webkitGstWebRTCIceAgentGetHttpProxy;
+    iceClass->get_selected_pair = webkitGstWebRTCIceAgentGetSelectedPair;
     // TODO:
     // - get_local_candidates
     // - get_remote_candidates
-    // - get_selected_pair
     // - close (pending https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/9379)
 }
 

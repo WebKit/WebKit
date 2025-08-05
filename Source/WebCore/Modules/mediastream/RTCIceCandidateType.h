@@ -26,6 +26,6 @@
 
 namespace WebCore {
 
-enum class RTCIceCandidateType { Host, Srflx, Prflx, Relay };
+enum class RTCIceCandidateType : uint8_t { Host, Srflx, Prflx, Relay };
 
 } // namespace WebCore

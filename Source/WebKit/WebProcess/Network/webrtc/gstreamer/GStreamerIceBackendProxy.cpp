@@ -196,6 +196,17 @@ void GStreamerIceBackendProxy::finalizeStream(unsigned streamId)
     MessageSender::send(Messages::GStreamerIceBackend::FinalizeStream { streamId });
 }
 
+std::optional<GStreamerIceCandidateStatsPair> GStreamerIceBackendProxy::getSelectedPairStats(unsigned streamId)
+{
+    std::optional<GStreamerIceCandidateStatsPair> result;
+    callOnMainRunLoopAndWait([&] {
+        auto sendResult = m_connection->sendSync(Messages::GStreamerIceBackend::GetSelectedPairStats { streamId }, messageSenderDestinationID());
+        auto [reply] = sendResult.takeReply();
+        result = reply;
+    });
+    return result;
+}
+
 } // namespace WebKit
 
 #endif // USE(GSTREAMER_WEBRTC)

@@ -188,6 +188,7 @@ def types_that_must_be_moved():
         'WebKit::ImageBufferSetPrepareBufferForDisplayOutputData',
         'HashMap<WebKit::RemoteImageBufferSetIdentifier, std::unique_ptr<WebKit::BufferSetBackendHandle>>',
         'std::optional<WebCore::DMABufBufferAttributes>',
+        'std::optional<WebCore::GStreamerIceCandidateStatsPair>',
     ]
 
 

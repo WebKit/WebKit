@@ -185,6 +185,17 @@ void GStreamerIceBackendNice::fillLocalCandidateCredentials(const NiceCandidate&
         result->password = password.release();
 }
 
+void GStreamerIceBackendNice::fillRemoteCandidateCredentials(unsigned streamId, const NiceCandidate& candidate, GUniqueOutPtr<NiceCandidate>& result)
+{
+    auto credentials = m_streamCredentials.getOptional(streamId);
+    if (!credentials) [[unlikely]]
+        return;
+
+    result.outPtr() = nice_candidate_copy(&candidate);
+    result->username = g_strdup(credentials->ufrag.ascii().data());
+    result->password = g_strdup(credentials->pwd.ascii().data());
+}
+
 void GStreamerIceBackendNice::setForceRelay(bool forceRelay)
 {
     g_object_set(m_agent.get(), "force-relay", forceRelay, nullptr);
@@ -514,6 +525,131 @@ void GStreamerIceBackendNice::sendData(unsigned streamId, RTCIceComponent compon
 void GStreamerIceBackendNice::finalizeStream(unsigned streamId)
 {
     nice_agent_attach_recv(m_agent.get(), streamId, NICE_COMPONENT_TYPE_RTP, m_mainContext.get(), nullptr, nullptr);
+}
+
+void GStreamerIceBackendNice::populateCandidateStats(WebCore::GStreamerIceCandidateStats& stats, const NiceCandidate& candidate, bool isLocal)
+{
+    gchar ipaddr[INET6_ADDRSTRLEN];
+    nice_address_to_string(&candidate.addr, ipaddr);
+    stats.port = nice_address_get_port(&candidate.addr);
+    stats.ipAddress = String::fromUTF8(ipaddr);
+    switch (candidate.type) {
+    case NICE_CANDIDATE_TYPE_HOST:
+        stats.type = RTCIceCandidateType::Host;
+        break;
+    case NICE_CANDIDATE_TYPE_RELAYED:
+        stats.type = RTCIceCandidateType::Relay;
+        break;
+    case NICE_CANDIDATE_TYPE_PEER_REFLEXIVE:
+        stats.type = RTCIceCandidateType::Prflx;
+        break;
+    case NICE_CANDIDATE_TYPE_SERVER_REFLEXIVE:
+        stats.type = RTCIceCandidateType::Srflx;
+        break;
+    };
+    stats.priority = candidate.priority;
+    switch (candidate.transport) {
+    case NICE_CANDIDATE_TRANSPORT_UDP:
+        stats.protocol = RTCIceProtocol::Udp;
+        break;
+    default:
+        stats.protocol = RTCIceProtocol::Tcp;
+    };
+    if (isLocal) {
+        if (candidate.type == NICE_CANDIDATE_TYPE_RELAYED) {
+            NiceAddress relay_address;
+            nice_candidate_relay_address(&candidate, &relay_address);
+            GUniquePtr<char> addr(nice_address_dup_string(&relay_address));
+            stats.relatedAddress = String::fromUTF8(addr.get());
+            stats.relatedPort = nice_address_get_port(&relay_address);
+
+            URL turnServer(m_turnServer);
+            if (turnServer.isValid()) {
+                auto proto = turnServer.protocol();
+                if (proto == "turns"_s)
+                    stats.relayProtocol = "tls"_s;
+                else {
+                    StringView transport;
+                    for (const auto& [key, value] : queryParameters(turnServer)) {
+                        if (key == "transport"_s) {
+                            transport = value;
+                            break;
+                        }
+                    }
+
+                    if (!transport || transport == "udp"_s)
+                        stats.relayProtocol = "udp"_s;
+                    else if (!transport || transport == "tcp"_s)
+                        stats.relayProtocol = "tcp"_s;
+                }
+            } else
+                stats.relayProtocol = "none"_s;
+        }
+        switch (candidate.type) {
+        case NICE_CANDIDATE_TYPE_RELAYED: {
+            NiceAddress addr;
+            gchar ipaddr[NICE_ADDRESS_STRING_LEN];
+            nice_candidate_relay_address(&candidate, &addr);
+            nice_address_to_string(&addr, ipaddr);
+            stats.url = String::fromUTF8(ipaddr);
+            break;
+        }
+        case NICE_CANDIDATE_TYPE_SERVER_REFLEXIVE: {
+            NiceAddress addr;
+            gchar ipaddr[NICE_ADDRESS_STRING_LEN];
+            if (nice_candidate_stun_server_address(&candidate, &addr)) {
+                nice_address_to_string(&addr, ipaddr);
+                stats.url = String::fromUTF8(ipaddr);
+                break;
+            }
+            URL stunServer(m_stunServer);
+            stats.url = stunServer.host().toString();
+            break;
+        }
+        default:
+            break;
+        };
+    }
+
+    stats.foundation = String::fromUTF8(candidate.foundation);
+
+    switch (candidate.transport) {
+    case NICE_CANDIDATE_TRANSPORT_UDP:
+        break;
+    case NICE_CANDIDATE_TRANSPORT_TCP_ACTIVE:
+        stats.tcpType = RTCIceTcpCandidateType::Active;
+        break;
+    case NICE_CANDIDATE_TRANSPORT_TCP_PASSIVE:
+        stats.tcpType = RTCIceTcpCandidateType::Passive;
+        break;
+    case NICE_CANDIDATE_TRANSPORT_TCP_SO:
+        stats.tcpType = RTCIceTcpCandidateType::So;
+        break;
+    };
+
+    stats.usernameFragment = String::fromUTF8(candidate.username);
+}
+
+void GStreamerIceBackendNice::getSelectedPairStats(unsigned streamId, CompletionHandler<void(std::optional<WebCore::GStreamerIceCandidateStatsPair>)>&& completionHandler)
+{
+    NiceCandidate* localCandidate = NULL;
+    NiceCandidate* remoteCandidate = NULL;
+
+    if (!nice_agent_get_selected_pair(m_agent.get(), streamId, NICE_COMPONENT_TYPE_RTP, &localCandidate, &remoteCandidate)) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    GUniqueOutPtr<NiceCandidate> filledLocalCandidate, filledRemoteCandidate;
+    fillLocalCandidateCredentials(*localCandidate, filledLocalCandidate);
+    fillRemoteCandidateCredentials(streamId, *remoteCandidate, filledRemoteCandidate);
+
+    GStreamerIceCandidateStatsPair result;
+    result.local.streamId = streamId;
+    result.remote.streamId = streamId;
+    populateCandidateStats(result.local, *filledLocalCandidate.get(), true);
+    populateCandidateStats(result.remote, *filledRemoteCandidate.get(), false);
+    completionHandler(result);
 }
 
 } // namespace WebKit

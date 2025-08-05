@@ -36,6 +36,7 @@ messages -> GStreamerIceBackend {
     SetRemoteCredentials(unsigned streamId, String ufrag, String pwd) -> (bool result) Synchronous
     SendData(unsigned streamId, enum:uint8_t WebCore::RTCIceComponent component, Vector<WebCore::GStreamerIceBuffer> buffers);
     FinalizeStream(unsigned streamId);
+    GetSelectedPairStats(unsigned streamId) -> (struct std::optional<WebCore::GStreamerIceCandidateStatsPair> stats) Synchronous
 }
 
 #endif

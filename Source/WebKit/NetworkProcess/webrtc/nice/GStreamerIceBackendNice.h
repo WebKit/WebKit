@@ -21,12 +21,12 @@
 
 #if USE(GSTREAMER_WEBRTC) && USE(LIBNICE)
 
-#include "GRefPtrNice.h"
 #include "GUniquePtrNice.h"
 
 #include <WebCore/ExceptionData.h>
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/GStreamerIceBuffer.h>
+#include <WebCore/GStreamerIceCandidateStatsPair.h>
 #include <WebCore/RTCIceComponent.h>
 #include <wtf/Condition.h>
 #include <wtf/Expected.h>
@@ -63,6 +63,7 @@ public:
     void setRemoteCredentials(unsigned, const String&, const String&, CompletionHandler<void(bool)>&&);
     void sendData(unsigned, WebCore::RTCIceComponent, Vector<WebCore::GStreamerIceBuffer>&&);
     void finalizeStream(unsigned);
+    void getSelectedPairStats(unsigned, CompletionHandler<void(std::optional<WebCore::GStreamerIceCandidateStatsPair>)>&&);
 
 private:
     virtual IPC::Connection* connection() const = 0;
@@ -76,6 +77,9 @@ private:
     void handleIncomingData(unsigned, NiceComponentType, std::span<const uint8_t>&&);
 
     void fillLocalCandidateCredentials(const NiceCandidate&, GUniqueOutPtr<NiceCandidate>&);
+    void fillRemoteCandidateCredentials(unsigned, const NiceCandidate&, GUniqueOutPtr<NiceCandidate>&);
+
+    void populateCandidateStats(WebCore::GStreamerIceCandidateStats&, const NiceCandidate&, bool);
 
     struct CandidateAddress {
         String prefix;
