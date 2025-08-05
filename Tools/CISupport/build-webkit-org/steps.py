@@ -509,9 +509,9 @@ class CompileLLINTCLoop(CompileWebKit):
     build_command = ["perl", "Tools/Scripts/build-jsc", "--cloop"]
 
 
-class Compile32bitJSC(CompileWebKit):
+class CompileJSCOnly32(CompileWebKit):
     name = 'compile-jsc-32bit'
-    build_command = ["perl", "Tools/Scripts/build-jsc", "--32-bit"]
+    build_command = ["linux32", "perl", "Tools/Scripts/build-jsc", "--32-bit"]
 
 
 class CompileJSCOnly(CompileWebKit):

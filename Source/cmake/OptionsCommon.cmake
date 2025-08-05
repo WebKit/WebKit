@@ -53,6 +53,14 @@ if (USE_LD_LLD)
     endif ()
 endif ()
 
+if (ARM_THUMB2_DETECTED AND NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin"))
+    set(USE_LD_LLD OFF)
+    # We run out of virtual memory easily, and gold seems to be the most reliable option.
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " -fuse-ld=gold -Wl,--no-map-whole-files -Wl,--no-keep-memory -Wl,--no-keep-files-mapped -Wl,--no-mmap-output-file")
+    string(APPEND CMAKE_SHARED_LINKER_FLAGS " -fuse-ld=gold -Wl,--no-map-whole-files -Wl,--no-keep-memory -Wl,--no-keep-files-mapped -Wl,--no-mmap-output-file")
+    string(APPEND CMAKE_MODULE_LINKER_FLAGS " -fuse-ld=gold -Wl,--no-map-whole-files -Wl,--no-keep-memory -Wl,--no-keep-files-mapped -Wl,--no-mmap-output-file")
+endif ()
+
 # Determine which linker is being used with the chosen linker flags.
 separate_arguments(LD_VERSION_COMMAND UNIX_COMMAND
     "${CMAKE_C_COMPILER} ${CMAKE_EXE_LINKER_FLAGS} -Wl,--version"

@@ -572,7 +572,7 @@
                     "workernames": ["jsconly-linux-igalia-bot-2"]
                   },
                   {
-                    "name": "JSCOnly-Linux-ARMv7-Thumb2-Release", "factory": "BuildAndJSCTestsFactory",
+                    "name": "JSCOnly-Linux-ARMv7-Thumb2-Release", "factory": "BuildAndJSCTests32Factory",
                     "platform": "jsc-only", "configuration": "release", "architectures": ["armv7"],
                     "workernames": ["jsconly-linux-igalia-bot-3"]
                   },

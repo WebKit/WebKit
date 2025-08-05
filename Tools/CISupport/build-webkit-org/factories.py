@@ -150,13 +150,6 @@ class BuildAndTestLLINTCLoopFactory(Factory):
         self.addStep(RunLLINTCLoopTests())
 
 
-class BuildAndTest32bitJSCFactory(Factory):
-    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None, **kwargs):
-        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
-        self.addStep(Compile32bitJSC())
-        self.addStep(Run32bitJSCTests())
-
-
 class BuildAndNonLayoutTestFactory(BuildAndTestFactory):
     LayoutTestClass = None
 
@@ -165,6 +158,13 @@ class BuildAndJSCTestsFactory(Factory):
     def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
         self.addStep(CompileJSCOnly(timeout=60 * 60))
+        self.addStep(RunJavaScriptCoreTests(timeout=60 * 60))
+
+
+class BuildAndJSCTests32Factory(Factory):
+    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
+        self.addStep(CompileJSCOnly32(timeout=60 * 60))
         self.addStep(RunJavaScriptCoreTests(timeout=60 * 60))
 
 
