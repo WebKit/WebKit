@@ -557,11 +557,11 @@ void GStreamerIceBackendNice::populateCandidateStats(WebCore::GStreamerIceCandid
     };
     if (isLocal) {
         if (candidate.type == NICE_CANDIDATE_TYPE_RELAYED) {
-            NiceAddress relay_address;
-            nice_candidate_relay_address(&candidate, &relay_address);
-            GUniquePtr<char> addr(nice_address_dup_string(&relay_address));
+            NiceAddress relayAddress;
+            nice_candidate_relay_address(&candidate, &relayAddress);
+            GUniquePtr<char> addr(nice_address_dup_string(&relayAddress));
             stats.relatedAddress = String::fromUTF8(addr.get());
-            stats.relatedPort = nice_address_get_port(&relay_address);
+            stats.relatedPort = nice_address_get_port(&relayAddress);
 
             URL turnServer(m_turnServer);
             if (turnServer.isValid()) {
@@ -632,8 +632,8 @@ void GStreamerIceBackendNice::populateCandidateStats(WebCore::GStreamerIceCandid
 
 void GStreamerIceBackendNice::getSelectedPairStats(unsigned streamId, CompletionHandler<void(std::optional<WebCore::GStreamerIceCandidateStatsPair>)>&& completionHandler)
 {
-    NiceCandidate* localCandidate = NULL;
-    NiceCandidate* remoteCandidate = NULL;
+    NiceCandidate* localCandidate = nullptr;
+    NiceCandidate* remoteCandidate = nullptr;
 
     if (!nice_agent_get_selected_pair(m_agent.get(), streamId, NICE_COMPONENT_TYPE_RTP, &localCandidate, &remoteCandidate)) {
         completionHandler(std::nullopt);
