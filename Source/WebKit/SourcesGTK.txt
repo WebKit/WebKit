@@ -56,7 +56,6 @@ NetworkProcess/webrtc/NetworkRTCProvider.cpp
 
 NetworkProcess/webrtc/gstreamer/GStreamerIceBackend.cpp
 
-NetworkProcess/webrtc/nice/GRefPtrNice.cpp
 NetworkProcess/webrtc/nice/GStreamerIceBackendNice.cpp
 
 Platform/IPC/unix/ArgumentCodersUnix.cpp

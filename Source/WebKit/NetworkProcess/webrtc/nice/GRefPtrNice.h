@@ -21,15 +21,12 @@
 
 #if USE(LIBNICE)
 
+#include <nice.h>
 #include <wtf/glib/GRefPtr.h>
-
-typedef struct _NiceAgent NiceAgent;
 
 namespace WTF {
 
-template<> GRefPtr<NiceAgent> adoptGRef(NiceAgent*);
-template<> NiceAgent* refGPtr<NiceAgent>(NiceAgent*);
-template<> void derefGPtr<NiceAgent>(NiceAgent*);
+WTF_DEFINE_GREF_TRAITS_INLINE(NiceAgent, g_object_ref, g_object_unref)
 
 } // namespace WTF
 
