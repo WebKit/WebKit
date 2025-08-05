@@ -471,7 +471,7 @@ void GStreamerIceBackendNice::addTurnServerForStream(unsigned streamId, const UR
         StringView transport;
         for (const auto& [key, value] : queryParameters(url)) {
             if (key == "transport"_s) {
-                transport = WTFMove(value);
+                transport = value;
                 break;
             }
         }
