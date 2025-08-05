@@ -202,7 +202,7 @@ std::optional<GStreamerIceCandidateStatsPair> GStreamerIceBackendProxy::getSelec
     callOnMainRunLoopAndWait([&] {
         auto sendResult = m_connection->sendSync(Messages::GStreamerIceBackend::GetSelectedPairStats { streamId }, messageSenderDestinationID());
         auto [reply] = sendResult.takeReply();
-        result = reply;
+        result = *reply;
     });
     return result;
 }

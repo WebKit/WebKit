@@ -353,6 +353,8 @@ static void webkitGstWebRTCIceAgentConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_gst_webrtc_ice_backend_parent_class)->constructed(object);
 
+    g_object_ref_sink(object);
+
     auto backend = WEBKIT_GST_WEBRTC_ICE_BACKEND(object);
     auto priv = backend->priv;
     priv->backendClient = GStreamerIceBackendClient::create();
