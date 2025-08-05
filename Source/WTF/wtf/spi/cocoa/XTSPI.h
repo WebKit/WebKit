@@ -36,3 +36,16 @@ enum {
 };
 
 typedef uint32_t XTScope;
+
+enum {
+    kXTOptionsDefault                   = 0,
+    kXTOptionsPreferAppleSystemFonts    = 1 << 0,
+    kXTOptionsRemoveDuplicateFonts      = 1 << 1,
+    kXTOptionsRemoveInvisibleFonts      = 1 << 2,
+    kXTOptionsRestrictToPostScriptName  = 1 << 3,
+    kXTOptionsDoNotSortResults          = 1 << 4,
+    kXTOptionsIncludeDisabledFonts      = 1 << 5,
+    kXTOptionsDisableFontProviders      = 1 << 16,
+    kXTOptionsDisableAutoActivation     = 1 << 17
+};
+typedef uint32_t XTOptions;

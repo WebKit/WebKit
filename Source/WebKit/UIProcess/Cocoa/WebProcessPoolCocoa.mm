@@ -194,6 +194,10 @@ SOFT_LINK_CONSTANT_MAY_FAIL(libAccessibility, kAXSReduceMotionAutoplayAnimatedIm
 #if PLATFORM(MAC)
 SOFT_LINK_LIBRARY_WITH_PATH(libFontRegistry, "/System/Library/Frameworks/ApplicationServices.framework/Frameworks/ATS.framework/Versions/A/Resources/")
 SOFT_LINK(libFontRegistry, XTCopyPropertiesForAllFonts, CFArrayRef, (CFSetRef propertyKeys, XTScope scope), (propertyKeys, scope));
+SOFT_LINK(libFontRegistry, XTCopyFontsWithProperties, CFArrayRef, (CFDictionaryRef properties, XTScope scope, XTOptions options), (properties, scope, options));
+SOFT_LINK(libFontRegistry, XTCopyPropertiesForFonts, CFDictionaryRef, (CFArrayRef fontURLs, CFSetRef propertyKeys, XTScope scope), (fontURLs, propertyKeys, scope));
+SOFT_LINK_CONSTANT(libFontRegistry, kXTFontPropertyDomain, CFStringRef)
+#define kXTFontPropertyDomain getkXTFontPropertyDomain()
 #endif
 
 #define WEBPROCESSPOOL_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - WebProcessPool::" fmt, this, ##__VA_ARGS__)
@@ -1518,7 +1522,53 @@ void WebProcessPool::registerUserInstalledFonts(WebProcessProxy& process)
     HashMap<String, Vector<String>> fontFamilyMap;
     Vector<URL> sandboxExtensionURLs;
 
+#if 1
+    RELEASE_LOG_ERROR(Process, "Font time start");
+    RetainPtr domainProperties = @{ (id)kXTFontPropertyDomain : @(kCFUserDomainMask | kCFLocalDomainMask) };
+    RetainPtr fonts = adoptCF(XTCopyFontsWithProperties(bridge_cast(domainProperties.get()), kXTScopeGlobal, kXTOptionsDoNotSortResults));
+    if (!fonts)
+        return;
+    RetainPtr propertiesToCheck = [NSSet setWithObjects:@"NSFontNameAttribute", @"NSFontFamilyAttribute", @"NSCTFontFileURLAttribute", @"NSCTFontUserInstalledAttribute", nil];
+    RetainPtr result = adoptCF(XTCopyPropertiesForFonts(fonts.get(), bridge_cast(propertiesToCheck.get()), kXTScopeGlobal));
+    if (!result)
+        return;
+    size_t fontPropertiesCount = CFDictionaryGetCount(result.get());
+
+    Vector<CFTypeRef> values(fontPropertiesCount);
+    CFDictionaryGetKeysAndValues(result.get(), nullptr, values.mutableSpan().data());
+    for (unsigned i = 0; i < fontPropertiesCount; ++i) {
+        RetainPtr fontDictionary = checked_cf_cast<CFDictionaryRef>(values[i]);
+        if (!fontDictionary)
+            continue;
+        RetainPtr cfFontURL = checked_cf_cast<CFURLRef>(CFDictionaryGetValue(fontDictionary.get(), CFSTR("NSCTFontFileURLAttribute")));
+        URL fontURL(cfFontURL.get());
+        RetainPtr userInstalled = checked_cf_cast<CFBooleanRef>(CFDictionaryGetValue(fontDictionary.get(), CFSTR("NSCTFontUserInstalledAttribute")));
+        ASSERT(userInstalled.get() && kCFBooleanTrue == userInstalled.get());
+        RetainPtr fontNameAttribute = checked_cf_cast<CFStringRef>(CFDictionaryGetValue(fontDictionary.get(), CFSTR("NSFontNameAttribute")));
+        RetainPtr fontFamilyNameAttribute = checked_cf_cast<CFStringRef>(CFDictionaryGetValue(fontDictionary.get(), CFSTR("NSFontFamilyAttribute")));
+        String fontName(fontNameAttribute.get());
+        String fontFamilyName(fontFamilyNameAttribute.get());
+        auto fontNameLowerCase = fontName.convertToASCIILowercase();
+        if (fontNameLowerCase.isEmpty())
+            continue;
+        fontURLs.add(fontNameLowerCase, fontURL);
+        auto fontFamilyNameLowerCase = fontFamilyName.convertToASCIILowercase();
+        if (fontFamilyNameLowerCase.isEmpty())
+            continue;
+        auto fontNames = fontFamilyMap.find(fontFamilyNameLowerCase);
+        if (fontNames != fontFamilyMap.end())
+            fontNames->value.append(fontNameLowerCase);
+        else {
+            Vector<String> fontNames { fontNameLowerCase };
+            fontFamilyMap.add(fontFamilyNameLowerCase, WTFMove(fontNames));
+        }
+    }
+
+    RELEASE_LOG_ERROR(Process, "Font time end");
+#endif
+#if 1
     RELEASE_LOG(Process, "WebProcessPool::registerUserInstalledFonts: start registering fonts");
+    RELEASE_LOG_ERROR(Process, "Font time start");
     RetainPtr requestedProperties = [NSSet setWithArray:@[@"NSFontNameAttribute", @"NSFontFamilyAttribute", @"NSCTFontFileURLAttribute", @"NSCTFontUserInstalledAttribute"]];
     RetainPtr fontProperties = adoptCF(XTCopyPropertiesForAllFonts(bridge_cast(requestedProperties.get()), kXTScopeAll));
     if (!fontProperties)
@@ -1528,6 +1578,9 @@ void WebProcessPool::registerUserInstalledFonts(WebProcessProxy& process)
         if (!fontDictionary)
             continue;
         RetainPtr cfFontURL = checked_cf_cast<CFURLRef>(CFDictionaryGetValue(fontDictionary.get(), CFSTR("NSCTFontFileURLAttribute")));
+        RetainPtr userInstalled = checked_cf_cast<CFBooleanRef>(CFDictionaryGetValue(fontDictionary.get(), CFSTR("NSCTFontUserInstalledAttribute")));
+        if (userInstalled.get() && kCFBooleanTrue != userInstalled.get())
+            continue;
         URL fontURL(cfFontURL.get());
         if (fontURL.string().startsWith("file:///System/Library/Fonts/"_s))
             continue;
@@ -1552,14 +1605,16 @@ void WebProcessPool::registerUserInstalledFonts(WebProcessProxy& process)
             fontFamilyMap.add(fontFamilyNameLowerCase, WTFMove(fontNames));
         }
     }
+    RELEASE_LOG_ERROR(Process, "Font time end");
     RELEASE_LOG(Process, "WebProcessPool::registerUserInstalledFonts: done registering fonts");
-
+#endif
     RetainPtr assetFontURL7 = adoptNS([[NSURL alloc] initFileURLWithPath:@"/System/Library/AssetsV2/com_apple_MobileAsset_Font7" isDirectory:YES]);
     RetainPtr assetFontURL8 = adoptNS([[NSURL alloc] initFileURLWithPath:@"/System/Library/AssetsV2/com_apple_MobileAsset_Font8" isDirectory:YES]);
     sandboxExtensionURLs.append(URL(assetFontURL7.get()));
     sandboxExtensionURLs.append(URL(assetFontURL8.get()));
 
     process.send(Messages::WebProcess::RegisterFontMap(fontURLs, fontFamilyMap, sandboxExtensionsForFonts(sandboxExtensionURLs, process.auditToken())), 0);
+    RELEASE_LOG(Process, "Font time url count %d", fontURLs.size());
     m_userInstalledFontURLs = WTFMove(fontURLs);
     m_userInstalledFontFamilyMap = WTFMove(fontFamilyMap);
     m_sandboxExtensionURLs = WTFMove(sandboxExtensionURLs);
