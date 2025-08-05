@@ -33,6 +33,7 @@ import shutil
 import subprocess
 import sys
 import zipfile
+import stat
 
 webkitTopAbsPath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
@@ -113,8 +114,23 @@ def determineWebKitBuildDirectories(platform, fullPlatform, configuration, cross
     return _topLevelBuildDirectory
 
 
+def fixFilePermissionsIfNeeded(dir):
+    for path, _, filenames in os.walk(dir):
+        for file in filenames:
+            fullpath = os.path.join(path, file)
+
+            if not os.path.isfile(fullpath):
+                continue
+            
+            if not os.access(fullpath, os.R_OK | os.W_OK):
+                os.chmod(fullpath, stat.S_IREAD | stat.S_IWRITE)
+
 def removeDirectoryIfExists(thinDirectory):
     if os.path.isdir(thinDirectory):
+        # We do this to try and guarantee a clean directory removal with rmtree. At some
+        # point the build bots ended up with some files with write-only permissions which
+        # lead to broken bots
+        fixFilePermissionsIfNeeded(thinDirectory)
         shutil.rmtree(thinDirectory)
 
 
