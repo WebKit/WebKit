@@ -529,7 +529,7 @@ void GStreamerIceBackendNice::finalizeStream(unsigned streamId)
 
 void GStreamerIceBackendNice::populateCandidateStats(WebCore::GStreamerIceCandidateStats& stats, const NiceCandidate& candidate, bool isLocal)
 {
-    gchar ipaddr[INET6_ADDRSTRLEN];
+    char ipaddr[INET6_ADDRSTRLEN];
     nice_address_to_string(&candidate.addr, ipaddr);
     stats.port = nice_address_get_port(&candidate.addr);
     stats.ipAddress = String::fromUTF8(ipaddr);
@@ -554,62 +554,8 @@ void GStreamerIceBackendNice::populateCandidateStats(WebCore::GStreamerIceCandid
         break;
     default:
         stats.protocol = RTCIceProtocol::Tcp;
+        break;
     };
-    if (isLocal) {
-        if (candidate.type == NICE_CANDIDATE_TYPE_RELAYED) {
-            NiceAddress relayAddress;
-            nice_candidate_relay_address(&candidate, &relayAddress);
-            GUniquePtr<char> addr(nice_address_dup_string(&relayAddress));
-            stats.relatedAddress = String::fromUTF8(addr.get());
-            stats.relatedPort = nice_address_get_port(&relayAddress);
-
-            URL turnServer(m_turnServer);
-            if (turnServer.isValid()) {
-                auto proto = turnServer.protocol();
-                if (proto == "turns"_s)
-                    stats.relayProtocol = "tls"_s;
-                else {
-                    StringView transport;
-                    for (const auto& [key, value] : queryParameters(turnServer)) {
-                        if (key == "transport"_s) {
-                            transport = value;
-                            break;
-                        }
-                    }
-
-                    if (!transport || transport == "udp"_s)
-                        stats.relayProtocol = "udp"_s;
-                    else if (!transport || transport == "tcp"_s)
-                        stats.relayProtocol = "tcp"_s;
-                }
-            } else
-                stats.relayProtocol = "none"_s;
-        }
-        switch (candidate.type) {
-        case NICE_CANDIDATE_TYPE_RELAYED: {
-            NiceAddress addr;
-            gchar ipaddr[NICE_ADDRESS_STRING_LEN];
-            nice_candidate_relay_address(&candidate, &addr);
-            nice_address_to_string(&addr, ipaddr);
-            stats.url = String::fromUTF8(ipaddr);
-            break;
-        }
-        case NICE_CANDIDATE_TYPE_SERVER_REFLEXIVE: {
-            NiceAddress addr;
-            gchar ipaddr[NICE_ADDRESS_STRING_LEN];
-            if (nice_candidate_stun_server_address(&candidate, &addr)) {
-                nice_address_to_string(&addr, ipaddr);
-                stats.url = String::fromUTF8(ipaddr);
-                break;
-            }
-            URL stunServer(m_stunServer);
-            stats.url = stunServer.host().toString();
-            break;
-        }
-        default:
-            break;
-        };
-    }
 
     stats.foundation = String::fromUTF8(candidate.foundation);
 
@@ -628,13 +574,69 @@ void GStreamerIceBackendNice::populateCandidateStats(WebCore::GStreamerIceCandid
     };
 
     stats.usernameFragment = String::fromUTF8(candidate.username);
+
+    if (!isLocal)
+        return;
+
+    if (candidate.type == NICE_CANDIDATE_TYPE_RELAYED) {
+        NiceAddress relayAddress;
+        nice_candidate_relay_address(&candidate, &relayAddress);
+        GUniquePtr<char> addr(nice_address_dup_string(&relayAddress));
+        stats.relatedAddress = String::fromUTF8(addr.get());
+        stats.relatedPort = nice_address_get_port(&relayAddress);
+
+        URL turnServer(m_turnServer);
+        if (turnServer.isValid()) {
+            auto proto = turnServer.protocol();
+            if (proto == "turns"_s)
+                stats.relayProtocol = "tls"_s;
+            else {
+                StringView transport;
+                for (const auto& [key, value] : queryParameters(turnServer)) {
+                    if (key == "transport"_s) {
+                        transport = value;
+                        break;
+                    }
+                }
+
+                if (!transport || transport == "udp"_s)
+                    stats.relayProtocol = "udp"_s;
+                else if (!transport || transport == "tcp"_s)
+                    stats.relayProtocol = "tcp"_s;
+            }
+        } else
+            stats.relayProtocol = "none"_s;
+    }
+    switch (candidate.type) {
+    case NICE_CANDIDATE_TYPE_RELAYED: {
+        NiceAddress addr;
+        char ipaddr[NICE_ADDRESS_STRING_LEN];
+        nice_candidate_relay_address(&candidate, &addr);
+        nice_address_to_string(&addr, ipaddr);
+        stats.url = String::fromUTF8(ipaddr);
+        break;
+    }
+    case NICE_CANDIDATE_TYPE_SERVER_REFLEXIVE: {
+        NiceAddress addr;
+        char ipaddr[NICE_ADDRESS_STRING_LEN];
+        if (nice_candidate_stun_server_address(&candidate, &addr)) {
+            nice_address_to_string(&addr, ipaddr);
+            stats.url = String::fromUTF8(ipaddr);
+            break;
+        }
+        URL stunServer(m_stunServer);
+        stats.url = stunServer.host().toString();
+        break;
+    }
+    default:
+        break;
+    };
 }
 
 void GStreamerIceBackendNice::getSelectedPairStats(unsigned streamId, CompletionHandler<void(std::optional<WebCore::GStreamerIceCandidateStatsPair>&&)>&& completionHandler)
 {
     NiceCandidate* localCandidate = nullptr;
     NiceCandidate* remoteCandidate = nullptr;
-
     if (!nice_agent_get_selected_pair(m_agent.get(), streamId, NICE_COMPONENT_TYPE_RTP, &localCandidate, &remoteCandidate)) {
         completionHandler(std::nullopt);
         return;
