@@ -188,7 +188,6 @@ def types_that_must_be_moved():
         'WebKit::ImageBufferSetPrepareBufferForDisplayOutputData',
         'HashMap<WebKit::RemoteImageBufferSetIdentifier, std::unique_ptr<WebKit::BufferSetBackendHandle>>',
         'std::optional<WebCore::DMABufBufferAttributes>',
-        'std::optional<WebCore::GStreamerIceCandidateStatsPair>',
     ]
 
 
@@ -572,8 +571,11 @@ def types_that_cannot_be_forward_declared():
         'WebCore::PlaybackTargetClientContextIdentifier',
         'WebCore::PointerID',
         'WebCore::RTCDataChannelIdentifier',
+        'WebCore::RTCIceCandidateType',
         'WebCore::RTCIceComponent',
         'WebCore::RTCIceConnectionState',
+        'WebCore::RTCIceProtocol',
+        'WebCore::RTCIceTcpCandidateType',
         'WebCore::RenderingMode',
         'WebCore::RenderingPurpose',
         'WebCore::SandboxFlags',

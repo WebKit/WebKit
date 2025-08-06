@@ -191,6 +191,9 @@ static void webkit_gst_webrtc_ice_stream_class_init(WebKitGstIceStreamClass* kla
 WebKitGstIceStream* webkitGstWebRTCCreateIceStream(WebKitGstIceAgent* agent, unsigned streamId)
 {
     auto stream = reinterpret_cast<WebKitGstIceStream*>(g_object_new(WEBKIT_TYPE_GST_WEBRTC_ICE_STREAM, "stream-id", streamId, nullptr));
+
+    gst_object_ref_sink(stream);
+
     stream->priv->agent.reset(agent);
     return stream;
 }

@@ -63,7 +63,7 @@ public:
     void setRemoteCredentials(unsigned, const String&, const String&, CompletionHandler<void(bool)>&&);
     void sendData(unsigned, WebCore::RTCIceComponent, Vector<WebCore::GStreamerIceBuffer>&&);
     void finalizeStream(unsigned);
-    void getSelectedPairStats(unsigned, CompletionHandler<void(std::optional<WebCore::GStreamerIceCandidateStatsPair>)>&&);
+    void getSelectedPairStats(unsigned, CompletionHandler<void(std::optional<WebCore::GStreamerIceCandidateStatsPair>&&)>&&);
 
 private:
     virtual IPC::Connection* connection() const = 0;

@@ -159,6 +159,9 @@ static void webkit_gst_webrtc_ice_transport_class_init(WebKitGstIceTransportClas
 WebKitGstIceTransport* webkitGstWebRTCCreateIceTransport(WebKitGstIceAgent* agent, unsigned streamId, GstWebRTCICEComponent component, bool isController)
 {
     auto transport = reinterpret_cast<WebKitGstIceTransport*>(g_object_new(WEBKIT_TYPE_GST_WEBRTC_ICE_TRANSPORT, "component", component, nullptr));
+
+    gst_object_ref_sink(transport);
+
     auto priv = transport->priv;
     priv->agent.reset(agent);
     priv->streamId = streamId;

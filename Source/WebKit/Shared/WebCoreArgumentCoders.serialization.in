@@ -6176,10 +6176,10 @@ header: <WebCore/GStreamerIceCandidateStats.h>
     String relatedAddress;
     unsigned relatedPort;
     String usernameFragment;
-    WebCore::RTCIceTcpCandidateType tcpType;
+    std::optional<WebCore::RTCIceTcpCandidateType> tcpType;
 };
 header: <WebCore/GStreamerIceCandidateStatsPair.h>
-struct WebCore::GStreamerIceCandidateStatsPair {
+[CustomHeader] struct WebCore::GStreamerIceCandidateStatsPair {
     WebCore::GStreamerIceCandidateStats local;
     WebCore::GStreamerIceCandidateStats remote;
 };

@@ -64,11 +64,6 @@ typedef struct _WebKitGstIceAgentClass {
     GstWebRTCICEClass parentClass;
 } WebKitGstIceAgentClass;
 
-enum {
-    PROP_0,
-    PROP_SOCKET_PROVIDER,
-};
-
 GST_DEBUG_CATEGORY(webkit_webrtc_ice_agent_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_ice_agent_debug
 
@@ -275,6 +270,8 @@ static void populateCandidateStats(const GStreamerIceCandidateStats& stats, GstW
     gstStats->related_address = g_strdup(stats.relatedAddress.utf8().data());
     gstStats->related_port = stats.relatedPort;
     gstStats->user_name_fragment = g_strdup(stats.usernameFragment.utf8().data());
+    if (!stats.tcpType)
+        return;
     switch (stats.tcpType) {
     case RTCIceTcpCandidateType::Active:
         gstStats->tcp_type = GST_WEBRTC_ICE_TCP_CANDIDATE_TYPE_ACTIVE;
@@ -349,14 +346,10 @@ static void webkitGstWebRTCIceAgentFinalize(GObject* object)
     G_OBJECT_CLASS(webkit_gst_webrtc_ice_backend_parent_class)->finalize(object);
 }
 
-static void webkitGstWebRTCIceAgentConstructed(GObject* object)
+static void webkitGstWebRTCIceAgentConfigure(WebKitGstIceAgent* backend, RefPtr<SocketProvider>&& socketProvider)
 {
-    G_OBJECT_CLASS(webkit_gst_webrtc_ice_backend_parent_class)->constructed(object);
-
-    g_object_ref_sink(object);
-
-    auto backend = WEBKIT_GST_WEBRTC_ICE_BACKEND(object);
     auto priv = backend->priv;
+    priv->socketProvider = WTFMove(socketProvider);
     priv->backendClient = GStreamerIceBackendClient::create();
     priv->iceBackend = priv->socketProvider->createGStreamerIceBackend(*priv->backendClient);
     priv->backendClient->setOnStreamGatheringDone([weakThis = GThreadSafeWeakPtr(backend)](unsigned streamId) mutable {
@@ -397,46 +390,10 @@ static void webkitGstWebRTCIceAgentConstructed(GObject* object)
     });
 }
 
-static void webkitGstWebRTCIceAgentSetProperty(GObject* object, unsigned propertyId, const GValue* value, GParamSpec* paramSpec)
-{
-    auto backend = WEBKIT_GST_WEBRTC_ICE_BACKEND(object);
-
-    switch (propertyId) {
-    case PROP_SOCKET_PROVIDER:
-        backend->priv->socketProvider = adoptRef(reinterpret_cast<SocketProvider*>(g_value_get_pointer(value)));
-        break;
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, paramSpec);
-        break;
-    }
-}
-
-static void
-webkitGstWebRTCIceAgentGetProperty(GObject* object, unsigned propertyId, GValue* value, GParamSpec* paramSpec)
-{
-    auto backend = WEBKIT_GST_WEBRTC_ICE_BACKEND(object);
-
-    switch (propertyId) {
-    case PROP_SOCKET_PROVIDER:
-        g_value_set_pointer(value, backend->priv->socketProvider.get());
-        break;
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, paramSpec);
-        break;
-    }
-}
-
 static void webkit_gst_webrtc_ice_backend_class_init(WebKitGstIceAgentClass* klass)
 {
     auto gobjectClass = G_OBJECT_CLASS(klass);
-    gobjectClass->constructed = webkitGstWebRTCIceAgentConstructed;
     gobjectClass->finalize = webkitGstWebRTCIceAgentFinalize;
-    gobjectClass->get_property = webkitGstWebRTCIceAgentGetProperty;
-    gobjectClass->set_property = webkitGstWebRTCIceAgentSetProperty;
-
-    g_object_class_install_property(gobjectClass, PROP_SOCKET_PROVIDER,
-        g_param_spec_pointer("socket-provider", "Socket Provider", "Socket provider associated with this ICE agent",
-            static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS)));
 
     auto iceClass = GST_WEBRTC_ICE_CLASS(klass);
     iceClass->set_on_ice_candidate = webkitGstWebRTCIceAgentSetOnIceCandidate;
@@ -473,7 +430,11 @@ WebKitGstIceAgent* webkitGstWebRTCCreateIceAgent(const String& name, ScriptExecu
     if (!socketProvider)
         return nullptr;
 
-    auto backend = reinterpret_cast<WebKitGstIceAgent*>(g_object_new(WEBKIT_TYPE_GST_WEBRTC_ICE_BACKEND, "name", name.ascii().data(), "socket-provider", socketProvider.leakRef(), nullptr));
+    auto backend = reinterpret_cast<WebKitGstIceAgent*>(g_object_new(WEBKIT_TYPE_GST_WEBRTC_ICE_BACKEND, "name", name.ascii().data(), nullptr));
+
+    gst_object_ref_sink(backend);
+    webkitGstWebRTCIceAgentConfigure(backend, WTFMove(socketProvider));
+
     return backend;
 }
 

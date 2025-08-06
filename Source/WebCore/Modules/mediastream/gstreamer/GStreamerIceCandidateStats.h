@@ -41,7 +41,7 @@ struct GStreamerIceCandidateStats {
     String relatedAddress;
     unsigned relatedPort;
     String usernameFragment;
-    RTCIceTcpCandidateType tcpType;
+    std::optional<RTCIceTcpCandidateType> tcpType;
 };
 
 } // namespace WebCore

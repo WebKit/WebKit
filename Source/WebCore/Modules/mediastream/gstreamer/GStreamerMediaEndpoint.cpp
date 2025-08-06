@@ -177,15 +177,15 @@ bool GStreamerMediaEndpoint::initializePipeline()
     nPipeline++;
 
 #if GST_CHECK_VERSION(1, 20, 0)
-    if (webkitGstCheckVersion(1, 22, 0)) {
+    auto disableNetworkSandbox = StringView::fromLatin1(g_getenv("WEBKIT_GST_DISABLE_WEBRTC_NETWORK_SANDBOX"));
+    if (webkitGstCheckVersion(1, 22, 0) && disableNetworkSandbox != "1"_s) {
         auto peerConnectionBackend = this->peerConnectionBackend();
         if (!peerConnectionBackend)
             return false;
 
-        auto agentName = makeString(binName, ":ice"_s);
-        auto agent = webkitGstWebRTCCreateIceAgent(agentName, peerConnectionBackend->context());
+        auto agent = webkitGstWebRTCCreateIceAgent(makeString(binName, ":ice"_s), peerConnectionBackend->context());
         if (!agent) {
-            gst_printerrln("Unable to create ICE agent");
+            gst_printerrln("Unable to create WebRTC ICE agent");
             return false;
         }
         m_webrtcBin = gst_element_factory_create_full(webrtcBinFactory.get(), "name", binName.ascii().data(), "ice-agent", agent, nullptr);
@@ -204,7 +204,7 @@ bool GStreamerMediaEndpoint::initializePipeline()
             g_signal_connect_swapped(m_webrtcBin.get(), "deep-element-added", G_CALLBACK(+[](GStreamerMediaEndpoint* self, GstBin* bin, GstElement* element) {
                 GUniquePtr<char> elementName(gst_element_get_name(element));
                 auto view = StringView::fromLatin1(elementName.get());
-                if (view.startsWith("nice"_s))
+                if (view.startsWith("nice"_s) || view.startsWith("ice-sink"_s) || view.startsWith("ice-src"_s))
                     self->maybeInsertNetSimForElement(bin, element);
             }), this);
         } else
@@ -708,73 +708,96 @@ void GStreamerMediaEndpoint::linkOutgoingSources(GstSDPMessage* sdpMessage)
     }
 }
 
+struct InitialDescriptionData {
+    RefPtr<GStreamerMediaEndpoint> endPoint;
+    GUniqueOutPtr<GstWebRTCSessionDescription> sessionDescription;
+    bool result { false };
+};
+WEBKIT_DEFINE_ASYNC_DATA_STRUCT(InitialDescriptionData)
+
 void GStreamerMediaEndpoint::doSetLocalDescription(const RTCSessionDescription* description)
 {
     RefPtr initialDescription = description;
     if (!initialDescription) {
         // Generate offer or answer. Workaround for https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/3218.
-        auto promise = gst_promise_new();
         switch (fetchSignalingState(m_webrtcBin.get())) {
         case GST_WEBRTC_SIGNALING_STATE_STABLE:
         case GST_WEBRTC_SIGNALING_STATE_HAVE_LOCAL_OFFER:
         case GST_WEBRTC_SIGNALING_STATE_HAVE_REMOTE_PRANSWER: {
             GST_DEBUG_OBJECT(m_pipeline.get(), "Empty local description, generating an offer");
-            g_signal_emit_by_name(m_webrtcBin.get(), "create-offer", nullptr, promise);
-            auto result = gst_promise_wait(promise);
-            const auto reply = gst_promise_get_reply(promise);
-            if (result != GST_PROMISE_RESULT_REPLIED || (reply && gst_structure_has_field(reply, "error"))) {
-                if (reply) {
-                    GUniqueOutPtr<GError> error;
-                    gst_structure_get(reply, "error", G_TYPE_ERROR, &error.outPtr(), nullptr);
-                    auto errorMessage = makeString("Unable to set local description, error: "_s, unsafeSpan(error->message));
-                    GST_ERROR_OBJECT(m_webrtcBin.get(), "%s", errorMessage.utf8().data());
-                    if (auto peerConnectionBackend = this->peerConnectionBackend())
-                        peerConnectionBackend->setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, WTFMove(errorMessage) });
+            auto data = createInitialDescriptionData();
+            data->endPoint = this;
+            g_signal_emit_by_name(m_webrtcBin.get(), "create-offer", nullptr, gst_promise_new_with_change_func([](GstPromise* rawPromise, gpointer userData) {
+                auto promise = adoptGRef(rawPromise);
+                auto result = gst_promise_wait(promise.get());
+                const auto* reply = gst_promise_get_reply(promise.get());
+                auto data = reinterpret_cast<InitialDescriptionData*>(userData);
+                if (result != GST_PROMISE_RESULT_REPLIED || (reply && gst_structure_has_field(reply, "error"))) {
+                    if (reply) {
+                        GUniqueOutPtr<GError> error;
+                        gst_structure_get(reply, "error", G_TYPE_ERROR, &error.outPtr(), nullptr);
+                        auto errorMessage = makeString("Unable to set local description, error: "_s, unsafeSpan(error->message));
+                        GST_ERROR_OBJECT(data->endPoint->m_webrtcBin.get(), "%s", errorMessage.utf8().data());
+                        if (auto peerConnectionBackend = data->endPoint->peerConnectionBackend())
+                            peerConnectionBackend->setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, WTFMove(errorMessage) });
+                        return;
+                    }
+                    if (auto peerConnectionBackend = data->endPoint->peerConnectionBackend())
+                        peerConnectionBackend->setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, "Unable to set local description"_s });
                     return;
                 }
-                if (auto peerConnectionBackend = this->peerConnectionBackend())
-                    peerConnectionBackend->setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, "Unable to set local description"_s });
-                return;
-            }
+                data->result = true;
+                gst_structure_get(reply, "offer", GST_TYPE_WEBRTC_SESSION_DESCRIPTION, &data->sessionDescription.outPtr(), nullptr);
+            }, data, nullptr));
 
-            GUniqueOutPtr<GstWebRTCSessionDescription> sessionDescription;
-            gst_structure_get(reply, "offer", GST_TYPE_WEBRTC_SESSION_DESCRIPTION, &sessionDescription.outPtr(), nullptr);
-            initialDescription = RTCSessionDescription::create(RTCSdpType::Offer, sdpAsString(sessionDescription->sdp));
+            auto scopeExit = makeScopeExit([&] {
+                destroyInitialDescriptionData(data);
+            });
+            if (data->result)
+                initialDescription = RTCSessionDescription::create(RTCSdpType::Offer, sdpAsString(data->sessionDescription->sdp));
             break;
         }
         case GST_WEBRTC_SIGNALING_STATE_HAVE_LOCAL_PRANSWER:
         case GST_WEBRTC_SIGNALING_STATE_HAVE_REMOTE_OFFER: {
             GST_DEBUG_OBJECT(m_pipeline.get(), "Empty local description, generating an answer");
             auto pendingRemoteDescription = fetchDescription(m_webrtcBin.get(), "pending-remote"_s);
-            g_signal_emit_by_name(m_webrtcBin.get(), "create-answer", nullptr, promise);
-            auto result = gst_promise_wait(promise);
-            const auto reply = gst_promise_get_reply(promise);
-            if (result != GST_PROMISE_RESULT_REPLIED || (reply && gst_structure_has_field(reply, "error"))) {
-                if (reply) {
-                    GUniqueOutPtr<GError> error;
-                    gst_structure_get(reply, "error", G_TYPE_ERROR, &error.outPtr(), nullptr);
-                    auto errorMessage = makeString("Unable to set local description, error: "_s, unsafeSpan(error->message));
-                    GST_ERROR_OBJECT(m_webrtcBin.get(), "%s", errorMessage.utf8().data());
-                    if (auto peerConnectionBackend = this->peerConnectionBackend())
-                        peerConnectionBackend->setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, WTFMove(errorMessage) });
+            auto data = createInitialDescriptionData();
+            data->endPoint = this;
+
+            g_signal_emit_by_name(m_webrtcBin.get(), "create-answer", nullptr, gst_promise_new_with_change_func([](GstPromise* rawPromise, gpointer userData) {
+                auto promise = adoptGRef(rawPromise);
+                auto result = gst_promise_wait(promise.get());
+                const auto* reply = gst_promise_get_reply(promise.get());
+                auto data = reinterpret_cast<InitialDescriptionData*>(userData);
+                if (result != GST_PROMISE_RESULT_REPLIED || (reply && gst_structure_has_field(reply, "error"))) {
+                    if (reply) {
+                        GUniqueOutPtr<GError> error;
+                        gst_structure_get(reply, "error", G_TYPE_ERROR, &error.outPtr(), nullptr);
+                        auto errorMessage = makeString("Unable to set local description, error: "_s, unsafeSpan(error->message));
+                        GST_ERROR_OBJECT(data->endPoint->m_webrtcBin.get(), "%s", errorMessage.utf8().data());
+                        if (auto peerConnectionBackend = data->endPoint->peerConnectionBackend())
+                            peerConnectionBackend->setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, WTFMove(errorMessage) });
+                        return;
+                    }
+                    if (auto peerConnectionBackend = data->endPoint->peerConnectionBackend())
+                        peerConnectionBackend->setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, "Unable to set local description"_s });
                     return;
                 }
-                if (auto peerConnectionBackend = this->peerConnectionBackend())
-                    peerConnectionBackend->setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, "Unable to set local description"_s });
-                return;
+                data->result = true;
+                gst_structure_get(reply, "answer", GST_TYPE_WEBRTC_SESSION_DESCRIPTION, &data->sessionDescription.outPtr(), nullptr);
+            }, data, nullptr));
+
+            auto scopeExit = makeScopeExit([&] {
+                destroyInitialDescriptionData(data);
+            });
+            if (data->result) {
+                if (pendingRemoteDescription) {
+                    auto updatedAnswer = completeSDPAnswer(pendingRemoteDescription->second, data->sessionDescription->sdp);
+                    data->sessionDescription.outPtr() = gst_webrtc_session_description_new(data->sessionDescription->type, updatedAnswer.release());
+                }
+
+                initialDescription = RTCSessionDescription::create(RTCSdpType::Answer, sdpAsString(data->sessionDescription->sdp));
             }
-
-            GUniqueOutPtr<GstWebRTCSessionDescription> sessionDescription;
-            gst_structure_get(reply, "answer", GST_TYPE_WEBRTC_SESSION_DESCRIPTION, &sessionDescription.outPtr(), nullptr);
-
-            GUniquePtr<GstWebRTCSessionDescription> description;
-            if (pendingRemoteDescription) {
-                auto updatedAnswer = completeSDPAnswer(pendingRemoteDescription->second, sessionDescription->sdp);
-                description.reset(gst_webrtc_session_description_new(sessionDescription->type, updatedAnswer.release()));
-            } else
-                description.reset(sessionDescription.release());
-
-            initialDescription = RTCSessionDescription::create(RTCSdpType::Answer, sdpAsString(description->sdp));
             break;
         }
         case GST_WEBRTC_SIGNALING_STATE_CLOSED:

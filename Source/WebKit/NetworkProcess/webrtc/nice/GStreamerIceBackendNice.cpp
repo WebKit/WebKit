@@ -630,7 +630,7 @@ void GStreamerIceBackendNice::populateCandidateStats(WebCore::GStreamerIceCandid
     stats.usernameFragment = String::fromUTF8(candidate.username);
 }
 
-void GStreamerIceBackendNice::getSelectedPairStats(unsigned streamId, CompletionHandler<void(std::optional<WebCore::GStreamerIceCandidateStatsPair>)>&& completionHandler)
+void GStreamerIceBackendNice::getSelectedPairStats(unsigned streamId, CompletionHandler<void(std::optional<WebCore::GStreamerIceCandidateStatsPair>&&)>&& completionHandler)
 {
     NiceCandidate* localCandidate = nullptr;
     NiceCandidate* remoteCandidate = nullptr;
@@ -649,7 +649,7 @@ void GStreamerIceBackendNice::getSelectedPairStats(unsigned streamId, Completion
     result.remote.streamId = streamId;
     populateCandidateStats(result.local, *filledLocalCandidate.get(), true);
     populateCandidateStats(result.remote, *filledRemoteCandidate.get(), false);
-    completionHandler(result);
+    completionHandler(WTFMove(result));
 }
 
 } // namespace WebKit

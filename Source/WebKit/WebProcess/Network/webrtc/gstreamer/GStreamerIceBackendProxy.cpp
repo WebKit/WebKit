@@ -95,11 +95,12 @@ void GStreamerIceBackendProxy::setTos(unsigned streamId, unsigned tos)
 
 bool GStreamerIceBackendProxy::setLocalCredentials(unsigned streamId, const String& ufrag, const String& pwd)
 {
-    // Called from webrtcbin PC thread, and as this is a sync message it needs to be sent from the main thread.
-    bool result;
+    bool result = false;
     callOnMainRunLoopAndWait([&] {
         auto sendResult = m_connection->sendSync(Messages::GStreamerIceBackend::SetLocalCredentials { streamId, ufrag, pwd }, messageSenderDestinationID());
-        auto [reply] = sendResult.takeReply();
+        if (!sendResult.succeeded())
+            return;
+        auto& [reply] = sendResult.reply();
         result = reply;
     });
     return result;
@@ -107,11 +108,12 @@ bool GStreamerIceBackendProxy::setLocalCredentials(unsigned streamId, const Stri
 
 bool GStreamerIceBackendProxy::setRemoteCredentials(unsigned streamId, const String& ufrag, const String& pwd)
 {
-    // Called from webrtcbin PC thread, and as this is a sync message it needs to be sent from the main thread.
-    bool result;
+    bool result = false;
     callOnMainRunLoopAndWait([&] {
         auto sendResult = m_connection->sendSync(Messages::GStreamerIceBackend::SetRemoteCredentials { streamId, ufrag, pwd }, messageSenderDestinationID());
-        auto [reply] = sendResult.takeReply();
+        if (!sendResult.succeeded())
+            return;
+        auto& [reply] = sendResult.reply();
         result = reply;
     });
     return result;
@@ -119,7 +121,6 @@ bool GStreamerIceBackendProxy::setRemoteCredentials(unsigned streamId, const Str
 
 std::optional<unsigned> GStreamerIceBackendProxy::addStream(unsigned sessionId)
 {
-    // Called from webrtcbin PC thread, and as this is a sync message it needs to be sent from the main thread.
     std::optional<unsigned> streamId;
     callOnMainRunLoopAndWait([&] {
         auto sendResult = m_connection->sendSync(Messages::GStreamerIceBackend::AddStream { sessionId }, messageSenderDestinationID());
@@ -131,11 +132,12 @@ std::optional<unsigned> GStreamerIceBackendProxy::addStream(unsigned sessionId)
 
 bool GStreamerIceBackendProxy::gatherCandidatesForStream(unsigned streamId)
 {
-    // Called from webrtcbin PC thread, and as this is a sync message it needs to be sent from the main thread.
-    bool result;
+    bool result = false;
     callOnMainRunLoopAndWait([&] {
         auto sendResult = m_connection->sendSync(Messages::GStreamerIceBackend::GatherCandidatesForStream { streamId }, messageSenderDestinationID());
-        auto [reply] = sendResult.takeReply();
+        if (!sendResult.succeeded())
+            return;
+        auto& [reply] = sendResult.reply();
         result = reply;
     });
     return result;
@@ -201,8 +203,10 @@ std::optional<GStreamerIceCandidateStatsPair> GStreamerIceBackendProxy::getSelec
     std::optional<GStreamerIceCandidateStatsPair> result;
     callOnMainRunLoopAndWait([&] {
         auto sendResult = m_connection->sendSync(Messages::GStreamerIceBackend::GetSelectedPairStats { streamId }, messageSenderDestinationID());
+        if (!sendResult.succeeded())
+            return;
         auto [reply] = sendResult.takeReply();
-        result = *reply;
+        result = reply;
     });
     return result;
 }
