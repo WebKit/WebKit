@@ -815,7 +815,7 @@ void GStreamerMediaEndpoint::doSetLocalDescription(const RTCSessionDescription* 
     String remoteDescriptionSdp = remoteDescription ? remoteDescription->sdp() : emptyString();
     std::optional<RTCSdpType> remoteDescriptionSdpType = remoteDescription ? std::make_optional(remoteDescription->type()) : std::nullopt;
 
-    if (!initialDescription->sdp().isEmpty()) {
+    if (initialDescription && !initialDescription->sdp().isEmpty()) {
         GUniqueOutPtr<GstSDPMessage> sdpMessage;
         if (gst_sdp_message_new_from_text(initialDescription->sdp().utf8().data(), &sdpMessage.outPtr()) != GST_SDP_OK) {
             peerConnectionBackend->setLocalDescriptionFailed(Exception { ExceptionCode::OperationError, "Invalid SDP"_s });
