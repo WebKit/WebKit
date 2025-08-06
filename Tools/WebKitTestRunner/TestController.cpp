@@ -1276,6 +1276,11 @@ void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test
         if (!m_createdOtherPage && m_mainWebView->viewSupportsOptions(options) && !options.isAppBoundWebView())
             return;
 
+        // If we're creating a new view due to different preferences, terminate all existing WebContent processes
+        // to prevent stale processes from handling messages with incorrect preference states
+        if (!m_mainWebView->viewSupportsOptions(options))
+            terminateWebContentProcess();
+
         willDestroyWebView();
 
         WKPageSetPageUIClient(m_mainWebView->page(), nullptr);
