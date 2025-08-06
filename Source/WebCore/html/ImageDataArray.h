@@ -43,6 +43,7 @@ public:
 
     ImageDataArray(Ref<JSC::Uint8ClampedArray>&&);
     ImageDataArray(Ref<JSC::Float16Array>&&);
+    ImageDataArray(Ref<JSC::ArrayBufferView>&&);
     ImageDataArray(ImageDataArray&& original, std::optional<ImageDataStorageFormat> overridingStorageFormat);
 
     static std::optional<ImageDataArray> tryCreate(size_t, ImageDataStorageFormat, std::span<const uint8_t> = { });
@@ -62,8 +63,6 @@ public:
     Ref<JSON::Value> copyToJSONArray() const;
 
 private:
-    ImageDataArray(Ref<JSC::ArrayBufferView>&&);
-
     Ref<ArrayBufferView> extractBufferViewWithStorageFormat(std::optional<ImageDataStorageFormat>) &&;
 
     // Needed by `toJS<IDLUnion<IDLUint8ClampedArray, ...>, const ImageDataArray&>()`

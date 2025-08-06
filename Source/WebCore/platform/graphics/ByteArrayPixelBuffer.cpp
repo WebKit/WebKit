@@ -103,21 +103,12 @@ RefPtr<ByteArrayPixelBuffer> ByteArrayPixelBuffer::tryCreate(const PixelBufferFo
 }
 
 ByteArrayPixelBuffer::ByteArrayPixelBuffer(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::Uint8ClampedArray>&& data)
-    : PixelBuffer(format, size, data->mutableSpan())
-    , m_data(WTFMove(data))
-{
-}
+    : ArrayPixelBuffer(format, size, WTFMove(data))
+{ }
 
 RefPtr<PixelBuffer> ByteArrayPixelBuffer::createScratchPixelBuffer(const IntSize& size) const
 {
     return ByteArrayPixelBuffer::tryCreate(m_format, size);
-}
-
-std::span<const uint8_t> ByteArrayPixelBuffer::span() const
-{
-    Ref data = m_data;
-    ASSERT(data->byteLength() == (m_size.area() * 4));
-    return data->span();
 }
 
 } // namespace WebCore

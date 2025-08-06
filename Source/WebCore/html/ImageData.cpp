@@ -57,7 +57,8 @@ static ImageDataStorageFormat computeStorageFormat(std::optional<ImageDataSettin
 Ref<ImageData> ImageData::create(Ref<ByteArrayPixelBuffer>&& pixelBuffer, std::optional<ImageDataStorageFormat> overridingStorageFormat)
 {
     auto colorSpace = toPredefinedColorSpace(pixelBuffer->format().colorSpace);
-    return adoptRef(*new ImageData(pixelBuffer->size(), pixelBuffer->takeData(), *colorSpace, overridingStorageFormat));
+    auto size = pixelBuffer->size();
+    return adoptRef(*new ImageData(size, WTFMove(pixelBuffer.get()).takeData(), *colorSpace, overridingStorageFormat));
 }
 
 RefPtr<ImageData> ImageData::create(RefPtr<ByteArrayPixelBuffer>&& pixelBuffer, std::optional<ImageDataStorageFormat> overridingStorageFormat)

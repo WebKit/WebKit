@@ -62,7 +62,7 @@ public:
 #endif
         Other
     };
-    virtual Type type() const { return Type::Other; }
+    virtual Type type() const = 0;
     virtual RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const = 0;
 
     bool setRange(std::span<const uint8_t> data, size_t byteOffset);
@@ -74,7 +74,7 @@ public:
 
 protected:
     WEBCORE_EXPORT PixelBuffer(const PixelBufferFormat&, const IntSize&, std::span<uint8_t> bytes);
-    
+
     PixelBufferFormat m_format;
     IntSize m_size;
 

@@ -33,13 +33,14 @@ class SharedMemory;
 
 namespace WebKit {
 
-class ShareablePixelBuffer : public WebCore::PixelBuffer {
+class ShareablePixelBuffer final : public WebCore::PixelBuffer {
 public:
     static RefPtr<ShareablePixelBuffer> tryCreate(const WebCore::PixelBufferFormat&, const WebCore::IntSize&);
 
     WebCore::SharedMemory& data() const { return m_data.get(); }
     Ref<WebCore::SharedMemory> protectedData() const;
 
+    Type type() const override { return Type::Other; }
     RefPtr<WebCore::PixelBuffer> createScratchPixelBuffer(const WebCore::IntSize&) const override;
 
 private:
