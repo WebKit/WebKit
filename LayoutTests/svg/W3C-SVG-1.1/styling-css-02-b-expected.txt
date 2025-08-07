@@ -9,7 +9,8 @@ layer at (0,0) size 480x360
           chunk 1 text run 1 at (40.00,14.00) startOffset 0 endOffset 33 width 189.00: "Rectangle should be red not green"
       RenderSVGText {text} at (40,25) size 332x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 332x14
-          chunk 1 text run 1 at (40.00,36.00) startOffset 0 endOffset 64 width 332.00: "This tests id selectors: <rect id=\"one\" /> and the selector #one"
+          chunk 1 text run 1 at (40.00,36.00) startOffset 0 endOffset 11 width 54.00: "This tests "
+          chunk 1 text run 1 at (94.00,36.00) startOffset 0 endOffset 53 width 278.00: "id selectors: <rect id=\"one\" /> and the selector #one"
       RenderSVGContainer {g} at (130,70) size 260x60
         RenderSVGEllipse {circle} at (130,70) size 60x60 [fill={[type=SOLID] [color=#008000]}] [cx=160.00] [cy=100.00] [r=30.00]
         RenderSVGRect {rect} at (220,80) size 60x40 [fill={[type=SOLID] [color=#FF0000]}] [x=220.00] [y=80.00] [width=60.00] [height=40.00]
@@ -20,7 +21,8 @@ layer at (0,0) size 480x360
             chunk 1 text run 1 at (40.00,14.00) startOffset 0 endOffset 51 width 264.00: "Circle should be red not green; rectangle still red"
         RenderSVGText {text} at (40,25) size 318x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 318x14
-            chunk 1 text run 1 at (40.00,36.00) startOffset 0 endOffset 63 width 318.00: "This tests attribute selectors: <circle transform=\"scale(2)\" />"
+            chunk 1 text run 1 at (40.00,36.00) startOffset 0 endOffset 11 width 54.00: "This tests "
+            chunk 1 text run 1 at (94.00,36.00) startOffset 0 endOffset 52 width 264.00: "attribute selectors: <circle transform=\"scale(2)\" />"
         RenderSVGText {text} at (40,47) size 206x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 206x14
             chunk 1 text run 1 at (40.00,58.00) startOffset 0 endOffset 39 width 206.00: "and the selector [transform=\"scale(2)\"]"
