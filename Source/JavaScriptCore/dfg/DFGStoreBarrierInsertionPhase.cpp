@@ -388,7 +388,6 @@ private:
             case NewTypedArray:
             case NewTypedArrayBuffer:
             case NewRegExp:
-            case NewRegExpUntyped:
             case NewStringObject:
             case NewMap:
             case NewSet:

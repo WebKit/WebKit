@@ -789,6 +789,7 @@ runtime/DateConversion.cpp
 runtime/DateInstance.cpp
 runtime/DatePrototype.cpp
 runtime/DeferredWorkTimer.cpp
+runtime/DestructibleException.cpp
 runtime/DirectArguments.cpp
 runtime/DirectArgumentsOffset.cpp
 runtime/DirectEvalExecutable.cpp
@@ -809,6 +810,7 @@ runtime/ExceptionEventLocation.cpp
 runtime/ExceptionFuzz.cpp
 runtime/ExceptionHelpers.cpp
 runtime/ExceptionScope.cpp
+runtime/ExceptionStack.cpp
 runtime/ExecutableBase.cpp
 runtime/FileBasedFuzzerAgent.cpp
 runtime/FileBasedFuzzerAgentBase.cpp

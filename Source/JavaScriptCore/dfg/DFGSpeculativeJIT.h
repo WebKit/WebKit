@@ -1454,6 +1454,7 @@ public:
     void compileNewMap(Node*);
     void compileNewSet(Node*);
     void compileNewRegExpUntyped(Node*);
+    void compileNewError(Node*);
 
     void emitNewTypedArrayWithSizeInRegister(Node*, TypedArrayType, RegisteredStructure, GPRReg sizeGPR);
     void compileNewTypedArrayWithSize(Node*);
@@ -1732,6 +1733,7 @@ public:
     void compileStringSubstring(Node*);
     void compileToLowerCase(Node*);
     void compileThrow(Node*);
+    void compileThrowWithAdjustment(Node*);
     void compileThrowStaticError(Node*);
 
     void compileExtractFromTuple(Node*);

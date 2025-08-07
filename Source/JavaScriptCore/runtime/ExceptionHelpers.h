@@ -36,29 +36,27 @@
 
 namespace JSC {
 
-typedef JSObject* (*ErrorFactory)(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
-
 String defaultSourceAppender(const String&, StringView, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred);
 String notAFunctionSourceAppender(const String&, StringView, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred);
 
 String constructErrorMessage(JSGlobalObject*, JSValue, const String&);
-JS_EXPORT_PRIVATE JSObject* createError(JSGlobalObject*, JSValue, const String&, ErrorInstance::SourceAppender);
-JS_EXPORT_PRIVATE JSObject* createStackOverflowError(JSGlobalObject*);
-JSObject* createUndefinedVariableError(JSGlobalObject*, const Identifier&);
-JSObject* createTDZError(JSGlobalObject*);
-JSObject* createNotAnObjectError(JSGlobalObject*, JSValue);
-JSObject* createInvalidFunctionApplyParameterError(JSGlobalObject*, JSValue);
-JSObject* createInvalidInParameterError(JSGlobalObject*, JSValue);
-JSObject* createInvalidInstanceofParameterErrorNotFunction(JSGlobalObject*, JSValue);
-JSObject* createInvalidInstanceofParameterErrorHasInstanceValueNotFunction(JSGlobalObject*, JSValue);
-JSObject* createNotAConstructorError(JSGlobalObject*, JSValue);
-JSObject* createNotAFunctionError(JSGlobalObject*, JSValue);
-JSObject* createInvalidPrototypeError(JSGlobalObject*, JSValue);
-JSObject* createErrorForDuplicateGlobalVariableDeclaration(JSGlobalObject*, UniquedStringImpl*);
-JSObject* createErrorForInvalidGlobalFunctionDeclaration(JSGlobalObject*, const Identifier&);
-JSObject* createErrorForInvalidGlobalVarDeclaration(JSGlobalObject*, const Identifier&);
-JSObject* createInvalidPrivateNameError(JSGlobalObject*);
-JSObject* createRedefinedPrivateNameError(JSGlobalObject*);
+JS_EXPORT_PRIVATE ErrorInstance* createError(JSGlobalObject*, JSValue, const String&, ErrorInstance::SourceAppender);
+JS_EXPORT_PRIVATE ErrorInstance* createStackOverflowError(JSGlobalObject*);
+ErrorInstance* createUndefinedVariableError(JSGlobalObject*, const Identifier&);
+ErrorInstance* createTDZError(JSGlobalObject*);
+ErrorInstance* createNotAnObjectError(JSGlobalObject*, JSValue);
+ErrorInstance* createInvalidFunctionApplyParameterError(JSGlobalObject*, JSValue);
+ErrorInstance* createInvalidInParameterError(JSGlobalObject*, JSValue);
+ErrorInstance* createInvalidInstanceofParameterErrorNotFunction(JSGlobalObject*, JSValue);
+ErrorInstance* createInvalidInstanceofParameterErrorHasInstanceValueNotFunction(JSGlobalObject*, JSValue);
+ErrorInstance* createNotAConstructorError(JSGlobalObject*, JSValue);
+ErrorInstance* createNotAFunctionError(JSGlobalObject*, JSValue);
+ErrorInstance* createInvalidPrototypeError(JSGlobalObject*, JSValue);
+ErrorInstance* createErrorForDuplicateGlobalVariableDeclaration(JSGlobalObject*, UniquedStringImpl*);
+ErrorInstance* createErrorForInvalidGlobalFunctionDeclaration(JSGlobalObject*, const Identifier&);
+ErrorInstance* createErrorForInvalidGlobalVarDeclaration(JSGlobalObject*, const Identifier&);
+ErrorInstance* createInvalidPrivateNameError(JSGlobalObject*);
+ErrorInstance* createRedefinedPrivateNameError(JSGlobalObject*);
 String errorDescriptionForValue(JSGlobalObject*, JSValue);
 
 JS_EXPORT_PRIVATE Exception* throwOutOfMemoryError(JSGlobalObject*, ThrowScope&);

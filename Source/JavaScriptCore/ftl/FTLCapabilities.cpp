@@ -79,6 +79,7 @@ inline CapabilityLevel canCompile(Node* node)
     case NewAsyncGenerator:
     case NewStringObject:
     case NewRegExpUntyped:
+    case NewError:
     case NewSymbol:
     case NewArray:
     case NewArrayWithSpread:
@@ -269,6 +270,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ToPropertyKey:
     case ToPropertyKeyOrNumber:
     case Throw:
+    case ThrowWithAdjustment:
     case ThrowStaticError:
     case Unreachable:
     case InByVal:

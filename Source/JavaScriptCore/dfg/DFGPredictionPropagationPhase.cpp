@@ -1415,6 +1415,10 @@ private:
             setPrediction(SpecRegExpObject);
             break;
         }
+        case NewError: {
+            setPrediction(SpecObjectOther);
+            break;
+        }
         case NewSymbol: {
             setPrediction(SpecSymbol);
             break;
@@ -1660,6 +1664,7 @@ private:
         case PutToArguments:
         case Return:
         case Throw:
+        case ThrowWithAdjustment:
         case ThrowStaticError:
         case TailCall:
         case DirectTailCall:

@@ -22,6 +22,7 @@
 #include "ErrorInstance.h"
 
 #include "CodeBlock.h"
+#include "ExceptionStack.h"
 #include "InlineCallFrame.h"
 #include "IntegrityInlines.h"
 #include "Interpreter.h"
@@ -112,22 +113,17 @@ void ErrorInstance::finishCreation(VM& vm, const String& message, JSValue cause,
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
 
-    m_sourceAppender = appender;
     m_runtimeTypeForCause = type;
-
-    std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(vm, this, useCurrentFrame);
-    {
-        Locker locker { cellLock() };
-        m_stackTrace = WTFMove(stackTrace);
-    }
+    auto stack = ExceptionStackContent::create(getStackTrace(vm, this, useCurrentFrame));
+    WTF::storeStoreFence();
+    m_stackTrace = WTFMove(stack);
     vm.writeBarrier(this);
+    vm.heap.reportExtraMemoryAllocated(this, m_stackTrace->sizeInBytes());
 
     String messageWithSource = message;
-    if (m_stackTrace && !m_stackTrace->isEmpty() && hasSourceAppender()) {
+    if (!m_stackTrace->isEmpty() && appender) {
         auto [codeBlock, bytecodeIndex] = getBytecodeIndex(vm, vm.topCallFrame);
         if (codeBlock) {
-            ErrorInstance::SourceAppender appender = sourceAppender();
-            clearSourceAppender();
             RuntimeType type = runtimeTypeForCause();
             clearRuntimeTypeForCause();
             messageWithSource = appendSourceToErrorMessage(codeBlock, bytecodeIndex, message, type, appender);
@@ -145,13 +141,11 @@ void ErrorInstance::finishCreation(VM& vm, const String& message, JSValue cause,
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-
-    std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(vm, this, /* useCurrentFrame */ true, owner, callLinkInfo);
-    {
-        Locker locker { cellLock() };
-        m_stackTrace = WTFMove(stackTrace);
-    }
+    auto stack = ExceptionStackContent::create(getStackTrace(vm, this, /* useCurrentFrame */ true, owner, callLinkInfo));
+    WTF::storeStoreFence();
+    m_stackTrace = WTFMove(stack);
     vm.writeBarrier(this);
+    vm.heap.reportExtraMemoryAllocated(this, m_stackTrace->sizeInBytes());
     if (!message.isNull())
         putDirect(vm, vm.propertyNames->message, jsString(vm, message), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
@@ -163,10 +157,10 @@ void ErrorInstance::finishCreation(VM& vm, String&& message, LineColumn lineColu
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
-
-    m_lineColumn = lineColumn;
-    m_sourceURL = WTFMove(sourceURL);
-    m_stackString = WTFMove(stackString);
+    auto stack = ExceptionStackContent::create(lineColumn, WTFMove(stackString), WTFMove(sourceURL));
+    WTF::storeStoreFence();
+    m_stackTrace = WTFMove(stack);
+    vm.heap.reportExtraMemoryAllocated(this, m_stackTrace->sizeInBytes());
     if (!message.isNull())
         putDirect(vm, vm.propertyNames->message, jsString(vm, WTFMove(message)), static_cast<unsigned>(PropertyAttribute::DontEnum));
     if (!cause.isNull())
@@ -256,34 +250,10 @@ String ErrorInstance::tryGetMessageForDebugging()
     return emptyString();
 }
 
-void ErrorInstance::finalizeUnconditionally(VM& vm, CollectionScope)
+void ErrorInstance::finalizeUnconditionally(VM& vm, CollectionScope scope)
 {
-    if (!m_stackTrace)
-        return;
-
-    // We don't want to keep our stack traces alive forever if the user doesn't access the stack trace.
-    // If we did, we might end up keeping functions (and their global objects) alive that happened to
-    // get caught in a trace.
-    for (const auto& frame : *m_stackTrace.get()) {
-        if (!frame.isMarked(vm)) {
-            computeErrorInfo(vm);
-            return;
-        }
-    }
-}
-
-void ErrorInstance::computeErrorInfo(VM& vm)
-{
-    ASSERT(!m_errorInfoMaterialized);
-    // Here we use DeferGCForAWhile instead of DeferGC since GC's Heap::runEndPhase can trigger this function. In
-    // that case, DeferGC's destructor might trigger another GC cycle which is unexpected.
-    DeferGCForAWhile deferGC(vm);
-
-    if (m_stackTrace && !m_stackTrace->isEmpty()) {
-        getLineColumnAndSource(vm, m_stackTrace.get(), m_lineColumn, m_sourceURL);
-        m_stackString = Interpreter::stackTraceAsString(vm, *m_stackTrace.get());
-        m_stackTrace = nullptr;
-    }
+    if (m_stackTrace)
+        m_stackTrace->finalizeUnconditionally(vm, scope);
 }
 
 bool ErrorInstance::materializeErrorInfoIfNeeded(VM& vm)
@@ -291,17 +261,19 @@ bool ErrorInstance::materializeErrorInfoIfNeeded(VM& vm)
     if (m_errorInfoMaterialized)
         return false;
 
-    computeErrorInfo(vm);
+    if (m_stackTrace) {
+        m_stackTrace->computeErrorInfo(vm);
 
-    if (!m_stackString.isNull()) {
-        auto attributes = static_cast<unsigned>(PropertyAttribute::DontEnum);
+        if (!m_stackTrace->stackString().isNull()) {
+            auto attributes = static_cast<unsigned>(PropertyAttribute::DontEnum);
 
-        putDirect(vm, vm.propertyNames->line, jsNumber(m_lineColumn.line), attributes);
-        putDirect(vm, vm.propertyNames->column, jsNumber(m_lineColumn.column), attributes);
-        if (!m_sourceURL.isEmpty())
-            putDirect(vm, vm.propertyNames->sourceURL, jsString(vm, WTFMove(m_sourceURL)), attributes);
+            putDirect(vm, vm.propertyNames->line, jsNumber(m_stackTrace->lineColumn().line), attributes);
+            putDirect(vm, vm.propertyNames->column, jsNumber(m_stackTrace->lineColumn().column), attributes);
+            if (!m_stackTrace->sourceURL().isEmpty())
+                putDirect(vm, vm.propertyNames->sourceURL, jsString(vm, m_stackTrace->sourceURL()), attributes);
 
-        putDirect(vm, vm.propertyNames->stack, jsString(vm, WTFMove(m_stackString)), attributes);
+            putDirect(vm, vm.propertyNames->stack, jsString(vm, m_stackTrace->stackString()), attributes);
+        }
     }
 
     m_errorInfoMaterialized = true;

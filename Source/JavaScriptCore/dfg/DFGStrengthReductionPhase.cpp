@@ -1747,6 +1747,27 @@ private:
             break;
         }
 
+        case Throw: {
+            if (m_node->child1()->op() == NewError) {
+                auto* throwingInlineCallFrame = m_node->origin.semantic.inlineCallFrame();
+                CodeOrigin codeOrigin = m_node->child1()->origin.semantic;
+                unsigned depth = 0;
+                while (true) {
+                    auto* inlineCallFrame = codeOrigin.inlineCallFrame();
+                    if (inlineCallFrame == throwingInlineCallFrame) {
+                        m_node->convertToThrowWithAdjustment(depth);
+                        m_changed = true;
+                        break;
+                    }
+                    if (!inlineCallFrame)
+                        break;
+                    codeOrigin = inlineCallFrame->directCaller;
+                    ++depth;
+                }
+            }
+            break;
+        }
+
         default:
             break;
         }

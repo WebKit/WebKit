@@ -793,10 +793,10 @@ inline JSValue JSObject::get(JSGlobalObject* globalObject, uint64_t propertyName
     return get(globalObject, Identifier::from(globalObject->vm(), propertyName));
 }
 
-JSObject* createInvalidPrivateNameError(JSGlobalObject*);
-JSObject* createRedefinedPrivateNameError(JSGlobalObject*);
-JSObject* createReinstallPrivateMethodError(JSGlobalObject*);
-JSObject* createPrivateMethodAccessError(JSGlobalObject*);
+ErrorInstance* createInvalidPrivateNameError(JSGlobalObject*);
+ErrorInstance* createRedefinedPrivateNameError(JSGlobalObject*);
+ErrorInstance* createReinstallPrivateMethodError(JSGlobalObject*);
+ErrorInstance* createPrivateMethodAccessError(JSGlobalObject*);
 
 ALWAYS_INLINE bool JSObject::getPrivateFieldSlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {

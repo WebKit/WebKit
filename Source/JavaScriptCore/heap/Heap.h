@@ -127,8 +127,9 @@ class Heap;
     v(clonedArgumentsSpace, cellHeapCellType, ClonedArguments) \
     v(customGetterSetterSpace, cellHeapCellType, CustomGetterSetter) \
     v(dateInstanceSpace, dateInstanceHeapCellType, DateInstance) \
+    v(destructibleExceptionSpace, destructibleCellHeapCellType, DestructibleException) \
     v(domAttributeGetterSetterSpace, cellHeapCellType, DOMAttributeGetterSetter) \
-    v(exceptionSpace, destructibleCellHeapCellType, Exception) \
+    v(exceptionSpace, cellHeapCellType, Exception) \
     v(functionSpace, cellHeapCellType, JSFunction) \
     v(getterSetterSpace, cellHeapCellType, GetterSetter) \
     v(globalLexicalEnvironmentSpace, globalLexicalEnvironmentHeapCellType, JSGlobalLexicalEnvironment) \

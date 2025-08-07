@@ -21,6 +21,7 @@
 #pragma once
 
 #include "ErrorType.h"
+#include "ExceptionStack.h"
 #include "JSObject.h"
 #include "RuntimeType.h"
 #include "StackFrame.h"
@@ -71,10 +72,6 @@ public:
     JS_EXPORT_PRIVATE static ErrorInstance* create(JSGlobalObject*, String&& message, ErrorType, LineColumn, String&& sourceURL, String&& stackString, String&& cause = { });
     static ErrorInstance* create(JSGlobalObject*, Structure*, JSValue message, JSValue options, SourceAppender = nullptr, RuntimeType = TypeNothing, ErrorType = ErrorType::Error, bool useCurrentFrame = true);
 
-    bool hasSourceAppender() const { return !!m_sourceAppender; }
-    SourceAppender sourceAppender() const { return m_sourceAppender; }
-    void setSourceAppender(SourceAppender appender) { m_sourceAppender = appender; }
-    void clearSourceAppender() { m_sourceAppender = nullptr; }
     void setRuntimeTypeForCause(RuntimeType type) { m_runtimeTypeForCause = type; }
     RuntimeType runtimeTypeForCause() const { return m_runtimeTypeForCause; }
     void clearRuntimeTypeForCause() { m_runtimeTypeForCause = TypeNothing; }
@@ -111,7 +108,7 @@ public:
     
     JS_EXPORT_PRIVATE String tryGetMessageForDebugging();
 
-    Vector<StackFrame>* stackTrace() { return m_stackTrace.get(); }
+    ExceptionStack stackTrace() { return ExceptionStack { m_stackTrace }; }
 
     bool materializeErrorInfoIfNeeded(VM&);
     bool materializeErrorInfoIfNeeded(VM&, PropertyName);
@@ -131,13 +128,7 @@ protected:
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
 
-    void computeErrorInfo(VM&);
-
-    SourceAppender m_sourceAppender { nullptr };
-    std::unique_ptr<Vector<StackFrame>> m_stackTrace;
-    LineColumn m_lineColumn;
-    String m_sourceURL;
-    String m_stackString;
+    RefPtr<ExceptionStackContent> m_stackTrace;
     RuntimeType m_runtimeTypeForCause { TypeNothing };
     ErrorType m_errorType { ErrorType::Error };
     bool m_stackOverflowError : 1;

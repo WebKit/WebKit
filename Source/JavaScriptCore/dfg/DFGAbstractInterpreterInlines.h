@@ -3393,6 +3393,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case Throw:
+    case ThrowWithAdjustment:
     case ThrowStaticError:
     case TailCall:
     case DirectTailCall:
@@ -3635,6 +3636,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
         clobberWorld();
         makeHeapTopForNode(node);
+        break;
+    }
+
+    case NewError: {
+        clobberWorld();
+        setTypeForNode(node, SpecObjectOther);
         break;
     }
 

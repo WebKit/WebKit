@@ -540,6 +540,13 @@ public:
     void convertToPutByIdMaybeMegamorphic(Graph&, CacheableIdentifier);
     void convertToInByIdMaybeMegamorphic(Graph&, CacheableIdentifier);
 
+    void convertToThrowWithAdjustment(unsigned depth)
+    {
+        setOp(ThrowWithAdjustment);
+        child1().setUseKind(KnownCellUse);
+        m_opInfo = depth;
+    }
+
     bool mustGenerate() const
     {
         return m_flags & NodeMustGenerate;
@@ -1850,6 +1857,7 @@ public:
         case Unreachable:
         case Throw:
         case ThrowStaticError:
+        case ThrowWithAdjustment:
             return true;
         default:
             return false;
@@ -2412,6 +2420,7 @@ public:
         case NewSet:
         case NewArrayWithSizeAndStructure:
         case NewTypedArrayBuffer:
+        case NewError:
             return true;
         default:
             return false;
@@ -3802,6 +3811,17 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
+    }
+
+    bool hasCallDepth() const
+    {
+        return op() == ThrowWithAdjustment;
+    }
+
+    unsigned callDepth()
+    {
+        ASSERT(hasCallDepth());
+        return m_opInfo.as<unsigned>();
     }
 
     void resetOpInfo()

@@ -40,14 +40,14 @@
 
 namespace JSC {
 
-JSObject* createStackOverflowError(JSGlobalObject* globalObject)
+ErrorInstance* createStackOverflowError(JSGlobalObject* globalObject)
 {
     auto* error = createRangeError(globalObject, "Maximum call stack size exceeded."_s);
     jsCast<ErrorInstance*>(error)->setStackOverflowError();
     return error;
 }
 
-JSObject* createUndefinedVariableError(JSGlobalObject* globalObject, const Identifier& ident)
+ErrorInstance* createUndefinedVariableError(JSGlobalObject* globalObject, const Identifier& ident)
 {
     if (ident.isPrivateName())
         return createReferenceError(globalObject, makeString("Can't find private variable: PrivateSymbol."_s, ident.string()));
@@ -265,7 +265,7 @@ String constructErrorMessage(JSGlobalObject* globalObject, JSValue value, const 
     return tryMakeString(valueDescription, ' ', message);
 }
 
-JSObject* createError(JSGlobalObject* globalObject, JSValue value, const String& message, ErrorInstance::SourceAppender appender)
+ErrorInstance* createError(JSGlobalObject* globalObject, JSValue value, const String& message, ErrorInstance::SourceAppender appender)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
@@ -280,87 +280,87 @@ JSObject* createError(JSGlobalObject* globalObject, JSValue value, const String&
         return createOutOfMemoryError(globalObject);
     }
     scope.assertNoException();
-    JSObject* exception = createTypeError(globalObject, errorMessage, appender, runtimeTypeForValue(value));
+    ErrorInstance* exception = createTypeError(globalObject, errorMessage, appender, runtimeTypeForValue(value));
     ASSERT(exception->isErrorInstance());
     return exception;
 }
 
-JSObject* createInvalidFunctionApplyParameterError(JSGlobalObject* globalObject, JSValue value)
+ErrorInstance* createInvalidFunctionApplyParameterError(JSGlobalObject* globalObject, JSValue value)
 {
     return createTypeError(globalObject, "second argument to Function.prototype.apply must be an Array-like object"_s, defaultSourceAppender, runtimeTypeForValue(value));
 }
 
-JSObject* createInvalidInParameterError(JSGlobalObject* globalObject, JSValue value)
+ErrorInstance* createInvalidInParameterError(JSGlobalObject* globalObject, JSValue value)
 {
     return createError(globalObject, value, "is not an Object."_s, invalidParameterInSourceAppender);
 }
 
-JSObject* createInvalidInstanceofParameterErrorNotFunction(JSGlobalObject* globalObject, JSValue value)
+ErrorInstance* createInvalidInstanceofParameterErrorNotFunction(JSGlobalObject* globalObject, JSValue value)
 {
     return createError(globalObject, value, " is not a function"_s, invalidParameterInstanceofNotFunctionSourceAppender);
 }
 
-JSObject* createInvalidInstanceofParameterErrorHasInstanceValueNotFunction(JSGlobalObject* globalObject, JSValue value)
+ErrorInstance* createInvalidInstanceofParameterErrorHasInstanceValueNotFunction(JSGlobalObject* globalObject, JSValue value)
 {
     return createError(globalObject, value, "[Symbol.hasInstance] is not a function, undefined, or null"_s, invalidParameterInstanceofhasInstanceValueNotFunctionSourceAppender);
 }
 
-JSObject* createNotAConstructorError(JSGlobalObject* globalObject, JSValue value)
+ErrorInstance* createNotAConstructorError(JSGlobalObject* globalObject, JSValue value)
 {
     return createError(globalObject, value, "is not a constructor"_s, defaultSourceAppender);
 }
 
-JSObject* createNotAFunctionError(JSGlobalObject* globalObject, JSValue value)
+ErrorInstance* createNotAFunctionError(JSGlobalObject* globalObject, JSValue value)
 {
     return createError(globalObject, value, "is not a function"_s, notAFunctionSourceAppender);
 }
 
-JSObject* createNotAnObjectError(JSGlobalObject* globalObject, JSValue value)
+ErrorInstance* createNotAnObjectError(JSGlobalObject* globalObject, JSValue value)
 {
     return createError(globalObject, value, "is not an object"_s, defaultSourceAppender);
 }
 
-JSObject* createInvalidPrototypeError(JSGlobalObject* globalObject, JSValue value)
+ErrorInstance* createInvalidPrototypeError(JSGlobalObject* globalObject, JSValue value)
 {
     return createError(globalObject, value, "is not an object or null"_s, invalidPrototypeSourceAppender);
 }
 
-JSObject* createErrorForDuplicateGlobalVariableDeclaration(JSGlobalObject* globalObject, UniquedStringImpl* key)
+ErrorInstance* createErrorForDuplicateGlobalVariableDeclaration(JSGlobalObject* globalObject, UniquedStringImpl* key)
 {
     return createSyntaxError(globalObject, makeString("Can't create duplicate variable: '"_s, StringView(key), '\''));
 }
 
-JSObject* createErrorForInvalidGlobalFunctionDeclaration(JSGlobalObject* globalObject, const Identifier& ident)
+ErrorInstance* createErrorForInvalidGlobalFunctionDeclaration(JSGlobalObject* globalObject, const Identifier& ident)
 {
     return createTypeError(globalObject, makeString("Can't declare global function '"_s, ident.string(), "': property must be either configurable or both writable and enumerable"_s));
 }
 
-JSObject* createErrorForInvalidGlobalVarDeclaration(JSGlobalObject* globalObject, const Identifier& ident)
+ErrorInstance* createErrorForInvalidGlobalVarDeclaration(JSGlobalObject* globalObject, const Identifier& ident)
 {
     return createTypeError(globalObject, makeString("Can't declare global variable '"_s, ident.string(), "': global object must be extensible"_s));
 }
 
-JSObject* createTDZError(JSGlobalObject* globalObject)
+ErrorInstance* createTDZError(JSGlobalObject* globalObject)
 {
     return createReferenceError(globalObject, "Cannot access uninitialized variable."_s);
 }
 
-JSObject* createInvalidPrivateNameError(JSGlobalObject* globalObject)
+ErrorInstance* createInvalidPrivateNameError(JSGlobalObject* globalObject)
 {
     return createTypeError(globalObject, "Cannot access invalid private field"_s, defaultSourceAppender, TypeNothing);
 }
 
-JSObject* createRedefinedPrivateNameError(JSGlobalObject* globalObject)
+ErrorInstance* createRedefinedPrivateNameError(JSGlobalObject* globalObject)
 {
     return createTypeError(globalObject, "Cannot redefine existing private field"_s, defaultSourceAppender, TypeNothing);
 }
 
-JSObject* createPrivateMethodAccessError(JSGlobalObject* globalObject)
+ErrorInstance* createPrivateMethodAccessError(JSGlobalObject* globalObject)
 {
     return createTypeError(globalObject, "Cannot access private method or acessor"_s, defaultSourceAppender, TypeNothing);
 }
 
-JSObject* createReinstallPrivateMethodError(JSGlobalObject* globalObject)
+ErrorInstance* createReinstallPrivateMethodError(JSGlobalObject* globalObject)
 {
     return createTypeError(globalObject, "Cannot install same private methods on object more than once"_s, defaultSourceAppender, TypeNothing);
 }

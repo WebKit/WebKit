@@ -64,7 +64,6 @@ runtime/DateInstance.h
 runtime/DirectArguments.cpp
 runtime/ErrorInstance.h
 runtime/EvalExecutable.cpp
-runtime/Exception.cpp
 runtime/ExecutableBase.cpp
 runtime/FunctionExecutable.cpp
 runtime/FunctionRareData.cpp

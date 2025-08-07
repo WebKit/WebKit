@@ -397,6 +397,8 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
         out.print(comma, *node->putByStatus());
     if (node->hasEnumeratorMetadata())
         out.print(comma, "enumeratorModes = "_s, node->enumeratorMetadata().toRaw());
+    if (node->hasCallDepth())
+        out.print(comma, "callDepth = "_s, node->callDepth());
     if (node->hasExtractOffset())
         out.print(comma, "<<"_s, node->extractOffset());
     if (node->isJump())

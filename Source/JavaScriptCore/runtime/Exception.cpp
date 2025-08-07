@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Exception.h"
 
+#include "DestructibleException.h"
 #include "Interpreter.h"
 #include "JSCJSValueInlines.h"
 #include "JSObjectInlines.h"
@@ -39,15 +40,27 @@ const ClassInfo Exception::s_info = { "Exception"_s, nullptr, nullptr, nullptr, 
 
 Exception* Exception::create(VM& vm, JSValue thrownValue, StackCaptureAction action)
 {
-    Exception* result = new (NotNull, allocateCell<Exception>(vm)) Exception(vm, thrownValue);
-    result->finishCreation(vm, action);
+    if (action == CaptureStack)
+        return DestructibleException::create(vm, thrownValue);
+    Exception* result = new (NotNull, allocateCell<Exception>(vm)) Exception(vm, vm.exceptionStructure.get(), thrownValue);
+    result->finishCreation(vm);
     return result;
 }
 
-void Exception::destroy(JSCell* cell)
+Exception* Exception::createWithStackFromError(VM& vm, ErrorInstance* error)
 {
-    Exception* exception = static_cast<Exception*>(cell);
-    exception->~Exception();
+    Exception* result = new (NotNull, allocateCell<Exception>(vm)) Exception(vm, vm.exceptionStructure.get(), error);
+    result->finishCreation(vm);
+    return result;
+}
+
+Exception* Exception::createWithFrameAdjustment(VM& vm, ErrorInstance* error, LineColumn lineColumn, unsigned callDepth)
+{
+    Exception* result = new (NotNull, allocateCell<Exception>(vm)) Exception(vm, vm.exceptionStructure.get(), error);
+    result->finishCreation(vm);
+    result->m_replacedLineColumn = lineColumn;
+    result->m_callDepth = callDepth;
+    return result;
 }
 
 Structure* Exception::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -61,32 +74,26 @@ void Exception::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     Exception* thisObject = jsCast<Exception*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-
     visitor.append(thisObject->m_value);
-    for (StackFrame& frame : thisObject->m_stack)
-        frame.visitAggregate(visitor);
-    visitor.reportExtraMemoryVisited(thisObject->m_stack.sizeInBytes());
 }
 
 DEFINE_VISIT_CHILDREN(Exception);
 
-Exception::Exception(VM& vm, JSValue thrownValue)
-    : Base(vm, vm.exceptionStructure.get())
+Exception::Exception(VM& vm, Structure* structure, JSValue thrownValue)
+    : Base(vm, structure)
     , m_value(thrownValue, WriteBarrierEarlyInit)
 {
 }
 
 Exception::~Exception() = default;
 
-void Exception::finishCreation(VM& vm, StackCaptureAction action)
+ExceptionStack Exception::stack() const
 {
-    Base::finishCreation(vm);
-
-    Vector<StackFrame> stackTrace;
-    if (action == StackCaptureAction::CaptureStack)
-        vm.interpreter.getStackTrace(this, stackTrace, 0, Options::exceptionStackTraceLimit());
-    m_stack = WTFMove(stackTrace);
-    vm.heap.reportExtraMemoryAllocated(this, m_stack.sizeInBytes());
+    if (auto* derived = jsDynamicCast<const DestructibleException*>(this))
+        return derived->stack();
+    if (auto* error = jsDynamicCast<ErrorInstance*>(m_value.get()))
+        return ExceptionStack { error->stackTrace().stack(), m_replacedLineColumn, m_callDepth };
+    return ExceptionStack { nullptr, m_replacedLineColumn, m_callDepth };
 }
 
 #if ENABLE(WEBASSEMBLY)

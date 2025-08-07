@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "DebuggerPrimitives.h"
+#include "InlineCallFrame.h"
 #include "JSCellInlines.h"
 #include <wtf/text/MakeString.h>
 
@@ -148,18 +149,30 @@ String StackFrame::functionName(VM& vm) const
     return name.isNull() ? emptyString() : name;
 }
 
+LineColumn StackFrame::lineAndColumnForBytecodeIndex(CodeBlock* codeBlock, CodeOrigin codeOrigin)
+{
+    if (!codeBlock)
+        return { };
+
+    CodeBlock* owner = codeBlock;
+    if (auto* inlineCallFrame = codeOrigin.inlineCallFrame())
+        owner = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
+
+    auto lineColumn = owner->lineColumnForBytecodeIndex(codeOrigin.bytecodeIndex());
+
+    ScriptExecutable* executable = owner->ownerExecutable();
+    if (std::optional<int> overrideLineNumber = executable->overrideLineNumber(owner->vm()))
+        lineColumn.line = overrideLineNumber.value();
+
+    return lineColumn;
+}
+
 LineColumn StackFrame::computeLineAndColumn() const
 {
     if (!m_codeBlock)
         return { };
 
-    auto lineColumn = m_codeBlock->lineColumnForBytecodeIndex(m_bytecodeIndex);
-
-    ScriptExecutable* executable = m_codeBlock->ownerExecutable();
-    if (std::optional<int> overrideLineNumber = executable->overrideLineNumber(m_codeBlock->vm()))
-        lineColumn.line = overrideLineNumber.value();
-
-    return lineColumn;
+    return lineAndColumnForBytecodeIndex(m_codeBlock.get(), CodeOrigin(m_bytecodeIndex));
 }
 
 String StackFrame::toString(VM& vm) const
@@ -172,6 +185,16 @@ String StackFrame::toString(VM& vm) const
 
     auto lineColumn = computeLineAndColumn();
     return makeString(functionName, '@', sourceURL, ':', lineColumn.line, ':', lineColumn.column);
+}
+
+StackFrame::ComputedStackFrame StackFrame::computed(VM& vm) const
+{
+    return ComputedStackFrame {
+        functionName(vm),
+        sourceURL(vm),
+        sourceID(),
+        computeLineAndColumn(),
+    };
 }
 
 } // namespace JSC

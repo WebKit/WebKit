@@ -44,6 +44,7 @@
 #include "DOMAttributeGetterSetterInlines.h"
 #include "Debugger.h"
 #include "DeferredWorkTimer.h"
+#include "DestructibleException.h"
 #include "Disassembler.h"
 #include "DoublePredictionFuzzerAgent.h"
 #include "ErrorInstance.h"
@@ -333,6 +334,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     propertyTableStructure.setWithoutWriteBarrier(PropertyTable::createStructure(*this, nullptr, jsNull()));
     functionRareDataStructure.setWithoutWriteBarrier(FunctionRareData::createStructure(*this, nullptr, jsNull()));
     exceptionStructure.setWithoutWriteBarrier(Exception::createStructure(*this, nullptr, jsNull()));
+    destructibleExceptionStructure.setWithoutWriteBarrier(DestructibleException::createStructure(*this, nullptr, jsNull()));
     programCodeBlockStructure.setWithoutWriteBarrier(ProgramCodeBlock::createStructure(*this, nullptr, jsNull()));
     moduleProgramCodeBlockStructure.setWithoutWriteBarrier(ModuleProgramCodeBlock::createStructure(*this, nullptr, jsNull()));
     evalCodeBlockStructure.setWithoutWriteBarrier(EvalCodeBlock::createStructure(*this, nullptr, jsNull()));
@@ -1687,6 +1689,7 @@ void VM::visitAggregateImpl(Visitor& visitor)
     visitor.append(propertyTableStructure);
     visitor.append(functionRareDataStructure);
     visitor.append(exceptionStructure);
+    visitor.append(destructibleExceptionStructure);
     visitor.append(programCodeBlockStructure);
     visitor.append(moduleProgramCodeBlockStructure);
     visitor.append(evalCodeBlockStructure);

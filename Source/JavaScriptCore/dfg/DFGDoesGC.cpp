@@ -382,6 +382,7 @@ bool doesGC(Graph& graph, Node* node)
     case TailCallVarargs:
     case TailCallVarargsInlinedCaller:
     case Throw:
+    case ThrowWithAdjustment:
     case ToNumber:
     case ToNumeric:
     case ToObject:
@@ -419,6 +420,7 @@ bool doesGC(Graph& graph, Node* node)
     case NewArrayBuffer:
     case NewRegExp:
     case NewRegExpUntyped:
+    case NewError:
     case NewStringObject:
     case NewMap:
     case NewSet:

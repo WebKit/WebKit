@@ -26,6 +26,7 @@
 #include "CodeBlockSetInlines.h"
 #include "CollectingScope.h"
 #include "ConservativeRoots.h"
+#include "DestructibleException.h"
 #include "EdenGCActivityCallback.h"
 #include "Exception.h"
 #include "FastMallocAlignedMemoryAllocator.h"

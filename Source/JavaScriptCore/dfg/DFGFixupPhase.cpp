@@ -3551,6 +3551,8 @@ private:
         case CallCustomAccessorSetter:
         case MultiGetByVal:
         case MultiPutByVal:
+        case NewError:
+        case ThrowWithAdjustment:
             break;
 #else // not ASSERT_ENABLED
         default:
