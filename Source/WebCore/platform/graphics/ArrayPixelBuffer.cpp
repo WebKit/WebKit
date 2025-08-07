@@ -26,6 +26,9 @@
 #include "config.h"
 #include "ArrayPixelBuffer.h"
 
+#include "ByteArrayPixelBuffer.h"
+#include "Float16ArrayPixelBuffer.h"
+
 namespace WebCore {
 
 ArrayPixelBuffer::ArrayPixelBuffer(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::ArrayBufferView>&& data)
@@ -33,6 +36,51 @@ ArrayPixelBuffer::ArrayPixelBuffer(const PixelBufferFormat& format, const IntSiz
     , m_data(WTFMove(data))
 {
     ASSERT(m_data->getType() == JSC::TypeUint8Clamped || m_data->getType() == JSC::TypeFloat16);
+}
+
+std::optional<Ref<ArrayPixelBuffer>> ArrayPixelBuffer::create(const PixelBufferFormat& format, const IntSize& size, std::span<const uint8_t> data)
+{
+    ASSERT(supportedPixelFormat(format.pixelFormat));
+
+    auto computedBufferSize = PixelBuffer::computeBufferSize(format.pixelFormat, size);
+    if (computedBufferSize.hasOverflowed()) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    if (data.size_bytes() != computedBufferSize.value()) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
+    switch (format.pixelFormat) {
+    case PixelFormat::RGBA8:
+    case PixelFormat::BGRA8: {
+        auto buffer = JSC::Uint8ClampedArray::tryCreate(data);
+        if (!buffer) {
+            ASSERT_NOT_REACHED();
+            return std::nullopt;
+        }
+        return ByteArrayPixelBuffer::create(format, size, buffer.releaseNonNull());
+    }
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    case PixelFormat::RGBA16F: {
+        if ((uintptr_t(data.data()) % sizeof(Float16)) || (data.size_bytes() % sizeof(Float16))) {
+            ASSERT_NOT_REACHED();
+            return std::nullopt;
+        }
+        auto buffer = JSC::Float16Array::tryCreate(spanReinterpretCast<const Float16>(data));
+        if (!buffer) {
+            ASSERT_NOT_REACHED();
+            return std::nullopt;
+        }
+        return Float16ArrayPixelBuffer::create(format, size, buffer.releaseNonNull());
+    }
+#endif
+    default:
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
 }
 
 } // namespace WebCore

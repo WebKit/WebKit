@@ -3518,7 +3518,7 @@ using WebCore::Style::RaySize = Variant<WebCore::CSS::Keyword::ClosestCorner, We
 using WebCore::Style::BasicShape = Variant<WebCore::Style::CircleFunction, WebCore::Style::EllipseFunction, WebCore::Style::InsetFunction, WebCore::Style::PathFunction, WebCore::Style::PolygonFunction, WebCore::Style::ShapeFunction>;
 
 [AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::PixelBuffer subclasses {
-    WebCore::ByteArrayPixelBuffer
+    WebCore::ArrayPixelBuffer
 }
 
 header: <WebCore/RenderStyleConstants.h>
@@ -7963,7 +7963,7 @@ enum class WebCore::RepaintRectCalculation : bool;
     Rec2020,
 };
 
-[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ByteArrayPixelBuffer {
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ArrayPixelBuffer {
     WebCore::PixelBufferFormat format();
     WebCore::IntSize size();
     std::span<const uint8_t> span();

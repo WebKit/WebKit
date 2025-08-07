@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBGL)
 
+#include "ByteArrayPixelBuffer.h"
 #include "EventLoop.h"
 #include "GPUBasedCanvasRenderingContext.h"
 #include "GraphicsContextGL.h"
@@ -85,7 +86,6 @@ class AbstractLocker;
 namespace WebCore {
 
 class ANGLEInstancedArrays;
-class ByteArrayPixelBuffer;
 class EXTBlendMinMax;
 class EXTClipControl;
 class EXTColorBufferFloat;

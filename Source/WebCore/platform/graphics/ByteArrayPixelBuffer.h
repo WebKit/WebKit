@@ -30,24 +30,7 @@
 
 namespace WebCore {
 
-class ByteArrayPixelBuffer final : public ArrayPixelBuffer {
-public:
-    WEBCORE_EXPORT static Ref<ByteArrayPixelBuffer> create(const PixelBufferFormat&, const IntSize&, JSC::Uint8ClampedArray&);
-    WEBCORE_EXPORT static std::optional<Ref<ByteArrayPixelBuffer>> create(const PixelBufferFormat&, const IntSize&, std::span<const uint8_t> data);
-
-    WEBCORE_EXPORT static RefPtr<ByteArrayPixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
-    WEBCORE_EXPORT static RefPtr<ByteArrayPixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBuffer>&&);
-
-    JSC::Uint8ClampedArray& data() const LIFETIME_BOUND { return uncheckedDowncast<JSC::Uint8ClampedArray>(ArrayPixelBuffer::data()); }
-    Ref<JSC::Uint8ClampedArray> protectedData() const { return data(); }
-    Ref<JSC::Uint8ClampedArray> takeData() && { return adoptRef(uncheckedDowncast<JSC::Uint8ClampedArray>(WTFMove(*this).ArrayPixelBuffer::takeData().leakRef())); }
-
-    Type type() const override { return Type::ByteArray; }
-    RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const override;
-
-private:
-    ByteArrayPixelBuffer(const PixelBufferFormat&, const IntSize&, Ref<JSC::Uint8ClampedArray>&&);
-};
+using ByteArrayPixelBuffer = TypedArrayPixelBuffer<JSC::Uint8ClampedArray, PixelBuffer::Type::ByteArray, PixelFormat::RGBA8, PixelFormat::BGRA8>;
 
 } // namespace WebCore
 

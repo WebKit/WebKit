@@ -32,24 +32,7 @@
 
 namespace WebCore {
 
-class Float16ArrayPixelBuffer final: public ArrayPixelBuffer {
-public:
-    WEBCORE_EXPORT static Ref<Float16ArrayPixelBuffer> create(const PixelBufferFormat&, const IntSize&, JSC::Float16Array&);
-    WEBCORE_EXPORT static std::optional<Ref<Float16ArrayPixelBuffer>> create(const PixelBufferFormat&, const IntSize&, std::span<const Float16> data);
-
-    WEBCORE_EXPORT static RefPtr<Float16ArrayPixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
-    WEBCORE_EXPORT static RefPtr<Float16ArrayPixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBuffer>&&);
-
-    JSC::Float16Array& data() const LIFETIME_BOUND { return uncheckedDowncast<JSC::Float16Array>(ArrayPixelBuffer::data()); }
-    Ref<JSC::Float16Array> protectedData() const { return data(); }
-    Ref<JSC::Float16Array> takeData() && { return adoptRef(uncheckedDowncast<JSC::Float16Array>(WTFMove(*this).ArrayPixelBuffer::takeData().leakRef())); }
-
-    Type type() const override { return Type::Float16Array; }
-    RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const override;
-
-private:
-    Float16ArrayPixelBuffer(const PixelBufferFormat&, const IntSize&, Ref<JSC::Float16Array>&&);
-};
+using Float16ArrayPixelBuffer = TypedArrayPixelBuffer<JSC::Float16Array, PixelBuffer::Type::Float16Array, PixelFormat::RGBA16F>;
 
 } // namespace WebCore
 
