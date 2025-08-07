@@ -241,4 +241,75 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
         forEachHBRun<RTL>(characters, WTFMove(shapeFunction));
 }
 
+GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer,
+    unsigned beginningGlyphIndex,
+    unsigned beginningStringIndex,
+    bool enableKerning,
+    bool /* requiresShaping */,
+    const AtomString& locale,
+    StringView text,
+    TextDirection textDirection) const
+{
+    auto numOfGlyphs = glyphBuffer.size() - beginningGlyphIndex;
+    glyphBuffer.shrink(beginningGlyphIndex);
+
+    auto substring = text.substring(beginningStringIndex, numOfGlyphs);
+    constexpr unsigned bufferSize = 256;
+    auto characters = substring.upconvertedCharacters<bufferSize>();
+
+    auto* hbFont = platformData().hbFont();
+    RELEASE_ASSERT(hbFont);
+
+    const auto& features = platformData().features();
+    // Kerning is not handled as font features, so only in case it's explicitly disabled
+    // we need to create a new vector to include kern feature.
+    const hb_feature_t* featuresData = features.isEmpty() ? nullptr : features.span().data();
+    unsigned featuresSize = features.size();
+    Vector<hb_feature_t> featuresWithKerning;
+    if (!enableKerning) {
+        featuresWithKerning.reserveInitialCapacity(featuresSize + 1);
+        static hb_feature_t kernFeature { HB_TAG('k', 'e', 'r', 'n'), 0, 0, static_cast<unsigned>(-1) };
+        featuresWithKerning.append(kernFeature);
+        featuresWithKerning.appendVector(features);
+        featuresData = featuresWithKerning.span().data();
+        featuresSize = featuresWithKerning.size();
+    }
+
+    static thread_local HbUniquePtr<hb_buffer_t> buffer(hb_buffer_create());
+
+    // The computed "locale" equals the "lang" attribute. The latter must be a valid BCP 47 language tag,
+    // according to <https://html.spec.whatwg.org/multipage/dom.html#attr-lang>.
+    // This is exactly what hb_language_from_string() expects, so we can pass directly.
+    ASSERT(locale.is8Bit());
+    auto language = hb_language_from_string(reinterpret_cast<const char*>(locale.span8().data()), -1);
+
+    auto shapeFunction = [&](const HBRun& run) {
+        hb_buffer_set_language(buffer.get(), language);
+        hb_buffer_set_script(buffer.get(), hb_icu_script_to_script(run.script));
+        hb_buffer_set_direction(buffer.get(), textDirection == TextDirection::RTL ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
+        hb_buffer_add_utf16(buffer.get(), reinterpret_cast<const uint16_t*>(characters.get()), characters.span().size(), run.startIndex, run.endIndex - run.startIndex);
+        hb_shape(hbFont, buffer.get(), featuresData, featuresSize);
+
+        unsigned glyphCount = hb_buffer_get_length(buffer.get());
+        auto infos = hb_buffer_get_glyph_infos(buffer.get(), nullptr);
+        auto positions = hb_buffer_get_glyph_positions(buffer.get(), nullptr);
+        for (unsigned i = 0; i < glyphCount; ++i) {
+            Glyph glyph = infos[i].codepoint;
+            GlyphBufferAdvance advance = { harfBuzzPositionToFloat(positions[i].x_advance), harfBuzzPositionToFloat(positions[i].y_advance) };
+            GlyphBufferStringOffset offsetsInString = beginningStringIndex + infos[i].cluster;
+            FloatPoint origin = { harfBuzzPositionToFloat(positions[i].x_offset), harfBuzzPositionToFloat(positions[i].y_offset) };
+            glyphBuffer.add(glyph, *this, advance, offsetsInString, origin);
+        }
+
+        hb_buffer_reset(buffer.get());
+    };
+    if (textDirection == TextDirection::RTL) {
+        forEachHBRun<RTL>(characters, WTFMove(shapeFunction));
+        glyphBuffer.reverse(beginningGlyphIndex, glyphBuffer.size() - beginningGlyphIndex);
+    } else
+        forEachHBRun<LTR>(characters, WTFMove(shapeFunction));
+
+    return makeGlyphBufferAdvance();
+}
+
 } // namespace WebCore
