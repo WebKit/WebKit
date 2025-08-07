@@ -54,7 +54,7 @@
 
 namespace WebCore {
 
-class ByteArrayPixelBuffer;
+class ArrayPixelBuffer;
 class CachedImage;
 class CanvasLayerContextSwitcher;
 class CanvasGradient;
@@ -400,9 +400,9 @@ private:
     struct CachedContentsUnknown {
     };
     struct CachedContentsImageData {
-        CachedContentsImageData(CanvasRenderingContext2DBase&, Ref<ByteArrayPixelBuffer>);
+        CachedContentsImageData(CanvasRenderingContext2DBase&, Ref<ArrayPixelBuffer>);
 
-        Ref<ByteArrayPixelBuffer> imageData;
+        Ref<ArrayPixelBuffer> imageData;
         DeferrableOneShotTimer evictionTimer;
     };
 
@@ -489,7 +489,7 @@ private:
 
     FloatPoint textOffset(float width, TextDirection);
 
-    RefPtr<ByteArrayPixelBuffer> cacheImageDataIfPossible(const ImageData&, const IntRect& sourceRect, const IntPoint& destinationPosition);
+    RefPtr<ArrayPixelBuffer> cacheImageDataIfPossible(const ImageData&, const IntRect& sourceRect, const IntPoint& destinationPosition);
     RefPtr<ImageData> makeImageDataIfContentsCached(const IntRect& sourceRect, PredefinedColorSpace) const;
     void evictCachedImageData();
 

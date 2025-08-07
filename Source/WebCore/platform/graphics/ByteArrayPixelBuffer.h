@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "PixelBuffer.h"
+#include "ArrayPixelBuffer.h"
 #include <JavaScriptCore/Uint8ClampedArray.h>
 
 namespace WebCore {
 
-class ByteArrayPixelBuffer : public PixelBuffer {
+class ByteArrayPixelBuffer final : public ArrayPixelBuffer {
 public:
     WEBCORE_EXPORT static Ref<ByteArrayPixelBuffer> create(const PixelBufferFormat&, const IntSize&, JSC::Uint8ClampedArray&);
     WEBCORE_EXPORT static std::optional<Ref<ByteArrayPixelBuffer>> create(const PixelBufferFormat&, const IntSize&, std::span<const uint8_t> data);
@@ -38,18 +38,15 @@ public:
     WEBCORE_EXPORT static RefPtr<ByteArrayPixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
     WEBCORE_EXPORT static RefPtr<ByteArrayPixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBuffer>&&);
 
-    JSC::Uint8ClampedArray& data() const LIFETIME_BOUND { return m_data.get(); }
-    Ref<JSC::Uint8ClampedArray> protectedData() const { return m_data; }
-    Ref<JSC::Uint8ClampedArray>&& takeData() { return WTFMove(m_data); }
-    WEBCORE_EXPORT std::span<const uint8_t> span() const LIFETIME_BOUND;
+    JSC::Uint8ClampedArray& data() const LIFETIME_BOUND { return uncheckedDowncast<JSC::Uint8ClampedArray>(ArrayPixelBuffer::data()); }
+    Ref<JSC::Uint8ClampedArray> protectedData() const { return data(); }
+    Ref<JSC::Uint8ClampedArray> takeData() && { return adoptRef(uncheckedDowncast<JSC::Uint8ClampedArray>(WTFMove(*this).ArrayPixelBuffer::takeData().leakRef())); }
 
     Type type() const override { return Type::ByteArray; }
     RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const override;
 
 private:
     ByteArrayPixelBuffer(const PixelBufferFormat&, const IntSize&, Ref<JSC::Uint8ClampedArray>&&);
-
-    Ref<JSC::Uint8ClampedArray> m_data;
 };
 
 } // namespace WebCore
