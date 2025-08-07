@@ -44,7 +44,7 @@ extern "C" WK_EXPORT void WEBCONTENT_SERVICE_INITIALIZER(xpc_connection_t connec
 void WEBCONTENT_SERVICE_INITIALIZER(xpc_connection_t connection, xpc_object_t initializerMessage)
 {
 #if USE(TZONE_MALLOC)
-    bmalloc::api::TZoneHeapManager::setBucketParams(4);
+    bmalloc::api::TZoneHeapManager::setBucketParams(5);
 #endif
     WTF::initializeMainThread();
 
