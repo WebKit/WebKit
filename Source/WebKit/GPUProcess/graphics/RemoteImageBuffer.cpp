@@ -41,7 +41,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <wtf/StdLibExtras.h>
 
-#define MESSAGE_CHECK(assertion, message) MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, &m_renderingBackend->gpuConnectionToWebProcess().connection(), message)
+#define MESSAGE_CHECK(assertion, message) STREAM_MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, m_renderingBackend->streamConnection(), message)
 
 namespace WebKit {
 

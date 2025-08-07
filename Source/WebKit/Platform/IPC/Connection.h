@@ -200,6 +200,15 @@ extern ASCIILiteral errorAsString(Error);
     } \
 } while (0)
 
+#define STREAM_MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, connection, message) do { \
+    if (!(assertion)) [[unlikely]] { \
+        RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid stream message dispatched %" PUBLIC_LOG_STRING ": " message, WTF_PRETTY_FUNCTION); \
+        connection.markCurrentlyDispatchedMessageAsInvalid(); \
+        CRASH_IF_TESTING \
+        return; \
+    } \
+} while (0)
+
 template<typename AsyncReplyResult> struct AsyncReplyError {
     static AsyncReplyResult create() { return AsyncReplyResult { }; };
 };
