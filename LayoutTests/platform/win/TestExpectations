@@ -1976,6 +1976,9 @@ webkit.org/b/267251 imported/w3c/web-platform-tests/css/selectors/invalidation/u
 # TEMPORARY SKIPS -- these areas still need to be addressed individually
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+# Memory leaks from this test, keeping memory usage at 7GB+ until the WebContent process crashes
+webkit.org/b/297094 fast/dom/normalize-doesnt-check-string-length.html [ Skip ]
+
 imported/w3c/web-platform-tests/event-timing/interaction-count-tap.html [ Crash ]
 imported/w3c/web-platform-tests/event-timing/interaction-count-click.html [ Skip ]
 imported/w3c/web-platform-tests/event-timing/interaction-count-press-key.html [ Skip ]
