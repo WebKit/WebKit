@@ -2495,13 +2495,23 @@ void CanvasRenderingContext2DBase::evictCachedImageData()
     m_cachedContents.emplace<CachedContentsUnknown>();
 }
 
-CanvasRenderingContext2DBase::CachedContentsImageData::CachedContentsImageData(CanvasRenderingContext2DBase& context, Ref<ByteArrayPixelBuffer> imageData)
+CanvasRenderingContext2DBase::CachedContentsImageData::CachedContentsImageData(CanvasRenderingContext2DBase& context, Ref<ArrayPixelBuffer> imageData)
     : imageData(WTFMove(imageData))
     , evictionTimer(context, &CanvasRenderingContext2DBase::evictCachedImageData, 5_s)
 {
 }
 
-RefPtr<ByteArrayPixelBuffer> CanvasRenderingContext2DBase::cacheImageDataIfPossible(const ImageData& imageData, const IntRect& sourceRect, const IntPoint& destinationPosition)
+static constexpr PixelFormat toPixelFormat(CanvasRenderingContext2DSettings::PixelFormat canvasPixelFormat)
+{
+    switch (canvasPixelFormat) {
+    case CanvasRenderingContext2DSettings::PixelFormat::Uint8:
+        return PixelFormat::RGBA8;
+    case CanvasRenderingContext2DSettings::PixelFormat::Float16:
+        return PixelFormat::RGBA16F;
+    }
+}
+
+RefPtr<PixelBuffer> CanvasRenderingContext2DBase::cacheImageDataIfPossible(const ImageData& imageData, const IntRect& sourceRect, const IntPoint& destinationPosition)
 {
     if (!destinationPosition.isZero() || !sourceRect.location().isZero() || sourceRect.size() != imageData.size() || sourceRect.size() != canvasBase().size())
         return nullptr;
@@ -2522,30 +2532,45 @@ RefPtr<ByteArrayPixelBuffer> CanvasRenderingContext2DBase::cacheImageDataIfPossi
     // We're not doing RGBA -> BGRA swizzle here, as that is not needed for cache retrieval and
     // the swizzle copy can be made at the putImageData copy site.
     auto colorSpace = toDestinationColorSpace(imageData.colorSpace());
-    unsigned bytesPerRow = static_cast<unsigned>(size.width()) * 4u;
-    PixelBufferFormat cachedFormat { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, colorSpace };
-    auto cachedBuffer = ByteArrayPixelBuffer::tryCreate(cachedFormat, size);
-    if (!cachedBuffer)
-        return nullptr;
+
+    auto imagePixelFormat = toPixelFormat(imageData.storageFormat());
+    unsigned imageBytesPerRow = static_cast<unsigned>(size.width()) * bytesPerPixel(imagePixelFormat);
     ConstPixelBufferConversionView source {
-        .format = { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, colorSpace },
-        .bytesPerRow = bytesPerRow,
-        .rows = imageData.data().asUint8ClampedArray()->span(),
+        .format = { AlphaPremultiplication::Unpremultiplied, imagePixelFormat, colorSpace },
+        .bytesPerRow = imageBytesPerRow,
+        .rows = imageData.data().span(),
     };
+
+    auto cachePixelFormat = toPixelFormat(m_settings.pixelFormat);
+    unsigned cacheBytesPerRow = static_cast<unsigned>(size.width()) * bytesPerPixel(cachePixelFormat);
+    PixelBufferFormat cacheFormat { AlphaPremultiplication::Premultiplied, cachePixelFormat, colorSpace };
+    RefPtr cacheBuffer = ArrayPixelBuffer::tryCreate(cacheFormat, size);
+    if (!cacheBuffer)
+        return nullptr;
     PixelBufferConversionView destination {
-        .format = cachedFormat,
-        .bytesPerRow = bytesPerRow,
-        .rows = cachedBuffer->data().mutableSpan(),
+        .format = cacheFormat,
+        .bytesPerRow = cacheBytesPerRow,
+        .rows = cacheBuffer->bytes(),
     };
     convertImagePixels(source, destination, size);
-    m_cachedContents.emplace<CachedContentsImageData>(*this, *cachedBuffer);
-    return cachedBuffer;
+    m_cachedContents.emplace<CachedContentsImageData>(*this, *cacheBuffer);
+    return cacheBuffer;
 }
 
-RefPtr<ImageData> CanvasRenderingContext2DBase::makeImageDataIfContentsCached(const IntRect& sourceRect, PredefinedColorSpace colorSpace) const
+static constexpr ImageDataStorageFormat toImageDataStorageFormat(CanvasRenderingContext2DSettings::PixelFormat canvasPixelFormat)
+{
+    switch (canvasPixelFormat) {
+    case CanvasRenderingContext2DSettings::PixelFormat::Uint8:
+        return ImageDataStorageFormat::Uint8;
+    case CanvasRenderingContext2DSettings::PixelFormat::Float16:
+        return ImageDataStorageFormat::Float16;
+    }
+}
+
+RefPtr<ImageData> CanvasRenderingContext2DBase::makeImageDataIfContentsCached(const IntRect& sourceRect, PredefinedColorSpace colorSpace, ImageDataStorageFormat storageFormat) const
 {
     if (std::holds_alternative<CachedContentsTransparent>(m_cachedContents))
-        return ImageData::create(sourceRect.size(), colorSpace);
+        return ImageData::create(sourceRect.size(), colorSpace, toImageDataStorageFormat(m_settings.pixelFormat));
     if (std::holds_alternative<CachedContentsUnknown>(m_cachedContents))
         return nullptr;
     static_assert(WTF::VariantSizeV<decltype(m_cachedContents)> == 3); // Written this way to avoid dangling references during visit.
@@ -2562,16 +2587,20 @@ RefPtr<ImageData> CanvasRenderingContext2DBase::makeImageDataIfContentsCached(co
     if (colorSpace != m_settings.colorSpace)
         return nullptr;
 
+    if (pixelBuffer->format().pixelFormat != toPixelFormat(m_settings.pixelFormat) || storageFormat != toImageDataStorageFormat(m_settings.pixelFormat))
+        return nullptr;
+
+    auto format = pixelBuffer->format();
     auto size = pixelBuffer->size();
-    auto data = pixelBuffer->takeData();
-    unsigned bytesPerRow = static_cast<unsigned>(size.width()) * 4u;
+    auto data = WTFMove(pixelBuffer.get()).takeData();
+    unsigned bytesPerRow = static_cast<unsigned>(size.width()) * bytesPerPixel(format.pixelFormat);
     ConstPixelBufferConversionView source {
-        .format = pixelBuffer->format(),
+        .format = format,
         .bytesPerRow = bytesPerRow,
         .rows = data->span(),
     };
     PixelBufferConversionView destination {
-        .format = { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, pixelBuffer->format().colorSpace },
+        .format = { AlphaPremultiplication::Unpremultiplied, format.pixelFormat, format.colorSpace },
         .bytesPerRow = bytesPerRow,
         .rows = data->mutableSpan(),
     };
@@ -2594,41 +2623,40 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
     if (sw < 0) {
         sx += sw;
         sw = -sw;
-    }    
+    }
     if (sh < 0) {
         sy += sh;
         sh = -sh;
     }
 
     IntRect imageDataRect { sx, sy, sw, sh };
-    auto overridingStorageFormat = settings ? std::optional(settings->storageFormat) : std::optional<ImageDataStorageFormat>();
+    auto outputStorageFormat = settings ? settings->storageFormat : ImageDataStorageFormat::Uint8;
+    auto outputPixelFormat = toPixelFormat(outputStorageFormat);
 
     if (scriptContext && scriptContext->requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::Canvas)) {
         RefPtr buffer = canvasBase().createImageForNoiseInjection();
         if (!buffer)
             return Exception { ExceptionCode::InvalidStateError };
 
-        auto format = PixelBufferFormat { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, buffer->colorSpace() };
+        auto format = PixelBufferFormat { AlphaPremultiplication::Unpremultiplied, outputPixelFormat, buffer->colorSpace() };
         RefPtr pixelBuffer = dynamicDowncast<ByteArrayPixelBuffer>(buffer->getPixelBuffer(format, imageDataRect));
         if (!pixelBuffer)
             return Exception { ExceptionCode::InvalidStateError };
 
-        return { { ImageData::create(pixelBuffer.releaseNonNull(), overridingStorageFormat) } };
+        return { { ImageData::create(pixelBuffer.releaseNonNull(), outputStorageFormat) } };
     }
 
     auto computedColorSpace = ImageData::computeColorSpace(settings, m_settings.colorSpace);
 
-    if (!overridingStorageFormat || *overridingStorageFormat == ImageDataStorageFormat::Uint8) {
-        if (auto imageData = makeImageDataIfContentsCached(imageDataRect, computedColorSpace))
-            return imageData.releaseNonNull();
-    }
+    if (auto imageData = makeImageDataIfContentsCached(imageDataRect, computedColorSpace, outputStorageFormat))
+        return imageData.releaseNonNull();
 
     RefPtr<ImageBuffer> buffer = canvasBase().makeRenderingResultsAvailable();
     if (!buffer)
         return ImageData::create(imageDataRect.width(), imageDataRect.height(), m_settings.colorSpace, settings);
 
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(computedColorSpace) };
-    RefPtr pixelBuffer = dynamicDowncast<ByteArrayPixelBuffer>(buffer->getPixelBuffer(format, imageDataRect));
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, outputPixelFormat, toDestinationColorSpace(computedColorSpace) };
+    RefPtr pixelBuffer = buffer->getPixelBuffer(format, imageDataRect);
     if (!pixelBuffer) {
         scriptContext->addConsoleMessage(MessageSource::Rendering, MessageLevel::Error,
             makeString("Unable to get image data from canvas. Requested size was "_s, imageDataRect.width(), " x "_s, imageDataRect.height()));
@@ -2637,7 +2665,10 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
 
     ASSERT(pixelBuffer->format().colorSpace == toDestinationColorSpace(computedColorSpace));
 
-    return { { ImageData::create(pixelBuffer.releaseNonNull(), overridingStorageFormat) } };
+    if (RefPtr imageData = ImageData::create(pixelBuffer.releaseNonNull(), outputStorageFormat))
+        return { { imageData.releaseNonNull() } };
+
+    return Exception { ExceptionCode::InvalidStateError };
 }
 
 void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy)
@@ -2674,7 +2705,7 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy,
         if (pixelBuffer)
             options.add(DidDrawOption::PreserveCachedContents);
         else
-            pixelBuffer = data.byteArrayPixelBuffer();
+            pixelBuffer = data.pixelBuffer();
         buffer->putPixelBuffer(*pixelBuffer, sourceRect, destOffset);
     }
 

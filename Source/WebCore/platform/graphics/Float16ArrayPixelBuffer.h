@@ -27,12 +27,12 @@
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
 
-#include "PixelBuffer.h"
+#include "ArrayPixelBuffer.h"
 #include <JavaScriptCore/Float16Array.h>
 
 namespace WebCore {
 
-class Float16ArrayPixelBuffer : public PixelBuffer {
+class Float16ArrayPixelBuffer final : public ArrayPixelBuffer {
 public:
     WEBCORE_EXPORT static Ref<Float16ArrayPixelBuffer> create(const PixelBufferFormat&, const IntSize&, JSC::Float16Array&);
     WEBCORE_EXPORT static std::optional<Ref<Float16ArrayPixelBuffer>> create(const PixelBufferFormat&, const IntSize&, std::span<const Float16> data);
@@ -40,23 +40,24 @@ public:
     WEBCORE_EXPORT static RefPtr<Float16ArrayPixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
     WEBCORE_EXPORT static RefPtr<Float16ArrayPixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBuffer>&&);
 
-    JSC::Float16Array& data() const LIFETIME_BOUND { return m_data.get(); }
-    Ref<JSC::Float16Array>&& takeData() { return WTFMove(m_data); }
-    WEBCORE_EXPORT std::span<const uint8_t> span() const LIFETIME_BOUND;
+    JSC::Float16Array& data() const LIFETIME_BOUND { return uncheckedDowncast<JSC::Float16Array>(ArrayPixelBuffer::data()); }
+    Ref<JSC::Float16Array> protectedData() const { return data(); }
+    Ref<JSC::Float16Array> takeData() && { return adoptRef(uncheckedDowncast<JSC::Float16Array>(WTFMove(*this).ArrayPixelBuffer::takeData().leakRef())); }
 
     Type type() const override { return Type::Float16Array; }
     RefPtr<PixelBuffer> createScratchPixelBuffer(const IntSize&) const override;
 
+    static constexpr unsigned bytesPerPixel = 8;
+
 private:
     Float16ArrayPixelBuffer(const PixelBufferFormat&, const IntSize&, Ref<JSC::Float16Array>&&);
-
-    Ref<JSC::Float16Array> m_data;
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Float16ArrayPixelBuffer)
     static bool isType(const WebCore::PixelBuffer& pixelBuffer) { return pixelBuffer.type() == WebCore::PixelBuffer::Type::Float16Array; }
+    static bool isType(const WebCore::ArrayPixelBuffer& pixelBuffer) { return pixelBuffer.type() == WebCore::PixelBuffer::Type::Float16Array; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(PIXEL_FORMAT_RGBA16F)

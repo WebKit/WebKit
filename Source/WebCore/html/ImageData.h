@@ -29,6 +29,7 @@
 #pragma once
 
 #include "ByteArrayPixelBuffer.h"
+#include "Float16ArrayPixelBuffer.h"
 #include "ImageDataArray.h"
 #include "ImageDataSettings.h"
 #include "IntSize.h"
@@ -43,6 +44,8 @@ template<typename> class ExceptionOr;
 class ImageData : public RefCounted<ImageData> {
 public:
     WEBCORE_EXPORT static Ref<ImageData> create(Ref<ByteArrayPixelBuffer>&&, std::optional<ImageDataStorageFormat> = { });
+    WEBCORE_EXPORT static Ref<ImageData> create(Ref<Float16ArrayPixelBuffer>&&, std::optional<ImageDataStorageFormat> = { });
+    WEBCORE_EXPORT static RefPtr<ImageData> create(Ref<PixelBuffer>&&, std::optional<ImageDataStorageFormat> = { });
     WEBCORE_EXPORT static RefPtr<ImageData> create(RefPtr<ByteArrayPixelBuffer>&&, std::optional<ImageDataStorageFormat> = { });
     WEBCORE_EXPORT static RefPtr<ImageData> create(const IntSize&, PredefinedColorSpace, ImageDataStorageFormat = ImageDataStorageFormat::Uint8);
     WEBCORE_EXPORT static RefPtr<ImageData> create(const IntSize&, ImageDataArray&&, PredefinedColorSpace);
@@ -64,6 +67,8 @@ public:
     ImageDataStorageFormat storageFormat() const { return m_data.storageFormat(); }
 
     Ref<ByteArrayPixelBuffer> byteArrayPixelBuffer() const;
+    Ref<Float16ArrayPixelBuffer> float16ArrayPixelBuffer() const;
+    Ref<PixelBuffer> pixelBuffer() const;
 
 private:
     explicit ImageData(const IntSize&, ImageDataArray&&, PredefinedColorSpace);

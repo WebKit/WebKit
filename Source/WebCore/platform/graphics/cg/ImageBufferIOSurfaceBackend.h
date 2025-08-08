@@ -40,7 +40,7 @@ class WEBCORE_EXPORT ImageBufferIOSurfaceBackend : public ImageBufferCGBackend {
     WTF_MAKE_NONCOPYABLE(ImageBufferIOSurfaceBackend);
 public:
     static IntSize calculateSafeBackendSize(const Parameters&);
-    static unsigned calculateBytesPerRow(const IntSize& backendSize);
+    static unsigned calculateBytesPerRow(const IntSize& backendSize, ImageBufferPixelFormat);
     static size_t calculateMemoryCost(const Parameters&);
 
     static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const Parameters&, const ImageBufferCreationContext&);

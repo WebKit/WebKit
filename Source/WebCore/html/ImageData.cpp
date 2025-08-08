@@ -57,7 +57,15 @@ static ImageDataStorageFormat computeStorageFormat(std::optional<ImageDataSettin
 Ref<ImageData> ImageData::create(Ref<ByteArrayPixelBuffer>&& pixelBuffer, std::optional<ImageDataStorageFormat> overridingStorageFormat)
 {
     auto colorSpace = toPredefinedColorSpace(pixelBuffer->format().colorSpace);
-    return adoptRef(*new ImageData(pixelBuffer->size(), pixelBuffer->takeData(), *colorSpace, overridingStorageFormat));
+    auto size = pixelBuffer->size();
+    return adoptRef(*new ImageData(size, WTFMove(pixelBuffer.get()).takeData(), *colorSpace, overridingStorageFormat));
+}
+
+Ref<ImageData> ImageData::create(Ref<Float16ArrayPixelBuffer>&& pixelBuffer, std::optional<ImageDataStorageFormat> overridingStorageFormat)
+{
+    auto colorSpace = toPredefinedColorSpace(pixelBuffer->format().colorSpace);
+    auto size = pixelBuffer->size();
+    return adoptRef(*new ImageData(size, WTFMove(pixelBuffer.get()).takeData(), *colorSpace, overridingStorageFormat));
 }
 
 RefPtr<ImageData> ImageData::create(RefPtr<ByteArrayPixelBuffer>&& pixelBuffer, std::optional<ImageDataStorageFormat> overridingStorageFormat)
@@ -65,6 +73,15 @@ RefPtr<ImageData> ImageData::create(RefPtr<ByteArrayPixelBuffer>&& pixelBuffer, 
     if (!pixelBuffer)
         return nullptr;
     return create(pixelBuffer.releaseNonNull(), overridingStorageFormat);
+}
+
+RefPtr<ImageData> ImageData::create(Ref<PixelBuffer>&& pixelBuffer, std::optional<ImageDataStorageFormat> overridingStorageFormat)
+{
+    if (is<ByteArrayPixelBuffer>(pixelBuffer))
+        return create(uncheckedDowncast<ByteArrayPixelBuffer>(WTFMove(pixelBuffer)), overridingStorageFormat);
+    if (is<Float16ArrayPixelBuffer>(pixelBuffer))
+        return create(uncheckedDowncast<Float16ArrayPixelBuffer>(WTFMove(pixelBuffer)), overridingStorageFormat);
+    return nullptr;
 }
 
 RefPtr<ImageData> ImageData::create(const IntSize& size, PredefinedColorSpace colorSpace, ImageDataStorageFormat imageDataStorageFormat)
@@ -160,6 +177,24 @@ Ref<ByteArrayPixelBuffer> ImageData::byteArrayPixelBuffer() const
     Ref uint8Data = m_data.asUint8ClampedArray();
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(m_colorSpace) };
     return ByteArrayPixelBuffer::create(format, m_size, uint8Data.get());
+}
+
+Ref<Float16ArrayPixelBuffer> ImageData::float16ArrayPixelBuffer() const
+{
+    Ref float16Data = m_data.asFloat16Array();
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA16F, toDestinationColorSpace(m_colorSpace) };
+    return Float16ArrayPixelBuffer::create(format, m_size, float16Data.get());
+}
+
+Ref<PixelBuffer> ImageData::pixelBuffer() const
+{
+    switch (m_data.storageFormat()) {
+    case ImageDataStorageFormat::Uint8:
+        return byteArrayPixelBuffer();
+    case ImageDataStorageFormat::Float16:
+        return float16ArrayPixelBuffer();
+    }
+    RELEASE_ASSERT_NOT_REACHED("Unexpected ImageDataStorageFormat value");
 }
 
 TextStream& operator<<(TextStream& ts, const ImageData& imageData)

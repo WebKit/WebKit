@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ArrayPixelBuffer.h"
 
-#include <wtf/Forward.h>
+#include "ByteArrayPixelBuffer.h"
+#include "Float16ArrayPixelBuffer.h"
 
 namespace WebCore {
 
-enum class PixelFormat : uint8_t {
-    RGBA8,
-    BGRX8,
-    BGRA8,
-#if ENABLE(PIXEL_FORMAT_RGB10)
-    RGB10,
-#endif
-#if ENABLE(PIXEL_FORMAT_RGB10A8)
-    RGB10A8,
-#endif
-#if ENABLE(PIXEL_FORMAT_RGBA16F)
-    RGBA16F,
-#endif
-};
-
-enum class UseLosslessCompression : bool { No, Yes };
-
-inline constexpr unsigned bytesPerPixel(PixelFormat pixelFormat)
+RefPtr<ArrayPixelBuffer> ArrayPixelBuffer::tryCreate(const PixelBufferFormat& pixelBufferFormat, const IntSize& size)
 {
-    switch (pixelFormat) {
+    switch (pixelBufferFormat.pixelFormat) {
     case PixelFormat::RGBA8:
-        return 4;
-    case PixelFormat::BGRX8:
-        return 3;
     case PixelFormat::BGRA8:
-        return 4;
-#if ENABLE(PIXEL_FORMAT_RGB10)
-    case PixelFormat::RGB10:
-        return 4;
-#endif
-#if ENABLE(PIXEL_FORMAT_RGB10A8)
-    case PixelFormat::RGB10A8
-#endif
+        ASSERT(supportedPixelFormat(pixelBufferFormat.pixelFormat));
+        return ByteArrayPixelBuffer::tryCreate(pixelBufferFormat, size);
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     case PixelFormat::RGBA16F:
-        return 8;
+        ASSERT(supportedPixelFormat(pixelBufferFormat.pixelFormat));
+        return Float16ArrayPixelBuffer::tryCreate(pixelBufferFormat, size);
 #endif
+    default:
+        ASSERT(!supportedPixelFormat(pixelBufferFormat.pixelFormat));
+        return nullptr;
     }
 }
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, PixelFormat);
-
+ArrayPixelBuffer::ArrayPixelBuffer(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::ArrayBufferView>&& data)
+    : PixelBuffer(format, size, data->mutableSpan())
+    , m_data(WTFMove(data))
+{
+    ASSERT(m_data->getType() == JSC::TypeUint8Clamped || m_data->getType() == JSC::TypeFloat16);
 }
+
+ArrayPixelBuffer::~ArrayPixelBuffer() = default;
+
+} // namespace WebCore

@@ -36,7 +36,7 @@ namespace WebCore {
 class WEBCORE_EXPORT ImageBufferCGBackend : public ImageBufferBackend {
 public:
     ~ImageBufferCGBackend() override;
-    static unsigned calculateBytesPerRow(const IntSize& backendSize);
+    static unsigned calculateBytesPerRow(const IntSize& backendSize, ImageBufferPixelFormat);
 
 protected:
     ImageBufferCGBackend(const Parameters&, std::unique_ptr<GraphicsContextCG>&& = nullptr);

@@ -98,7 +98,7 @@ GraphicsContext& ImageBufferRemoteIOSurfaceBackend::context()
 
 unsigned ImageBufferRemoteIOSurfaceBackend::bytesPerRow() const
 {
-    return ImageBufferIOSurfaceBackend::calculateBytesPerRow(m_parameters.backendSize);
+    return ImageBufferIOSurfaceBackend::calculateBytesPerRow(m_parameters.backendSize, m_parameters.bufferFormat.pixelFormat);
 }
 
 RefPtr<NativeImage> ImageBufferRemoteIOSurfaceBackend::copyNativeImage()

@@ -118,7 +118,8 @@ void ImageBufferBackend::getPixelBuffer(const IntRect& sourceRect, std::span<con
         sourceBytesPerRow,
         sourceData.subspan(sourceRectClipped.y() * sourceBytesPerRow + sourceRectClipped.x() * 4)
     };
-    unsigned destinationBytesPerRow = static_cast<unsigned>(4u * sourceRect.width());
+    unsigned bytesPerPixel = (destinationPixelBuffer.format().pixelFormat == PixelFormat::RGBA16F) ? 8u : 4u;
+    unsigned destinationBytesPerRow = static_cast<unsigned>(bytesPerPixel * sourceRect.width());
     size_t offset = destinationRect.y() * destinationBytesPerRow + destinationRect.x() * 4;
     if (offset > destinationPixelBuffer.bytes().size())
         return;
@@ -148,7 +149,8 @@ void ImageBufferBackend::putPixelBuffer(const PixelBufferSourceView& sourcePixel
     destinationRect.intersect(backendRect);
     sourceRectClipped.setSize(destinationRect.size());
 
-    unsigned sourceBytesPerRow = static_cast<unsigned>(4u * sourcePixelBuffer.size().width());
+    unsigned bytesPerPixel = (sourcePixelBuffer.format().pixelFormat == PixelFormat::RGBA16F) ? 8u : 4u;
+    unsigned sourceBytesPerRow = static_cast<unsigned>(bytesPerPixel * sourcePixelBuffer.size().width());
     ConstPixelBufferConversionView source {
         sourcePixelBuffer.format(),
         sourceBytesPerRow,

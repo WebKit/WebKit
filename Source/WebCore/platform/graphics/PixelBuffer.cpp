@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PixelBuffer.h"
 
+#include "ByteArrayPixelBuffer.h"
+#include "Float16ArrayPixelBuffer.h"
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/TextStream.h>
