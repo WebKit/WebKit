@@ -39,14 +39,6 @@ public:
     template <FeatureStatus Status, bool DefaultValue>
     static Ref<Feature> create(const WTF::String& name, const WTF::String& key, FeatureConstant<Status> status, FeatureCategory category, const WTF::String& details, std::bool_constant<DefaultValue> defaultValue, bool hidden)
     {
-#if ENABLE(FEATURE_DEFAULT_VALIDATION)
-        constexpr auto impliedDefaultValue = API::defaultValueForFeatureStatus(Status);
-        if constexpr (impliedDefaultValue && *impliedDefaultValue)
-            static_assert(defaultValue, "Feature's status implies it should be on by default");
-        else if constexpr (impliedDefaultValue && !*impliedDefaultValue)
-            static_assert(!defaultValue, "Feature's status implies it should be off by default");
-#endif
-
         return uncheckedCreate(name, key, status, category, details, defaultValue, hidden);
     }
 

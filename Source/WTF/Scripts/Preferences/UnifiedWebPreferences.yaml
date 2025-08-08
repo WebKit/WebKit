@@ -550,13 +550,13 @@ ApplePayEnabled:
   condition: ENABLE(APPLE_PAY)
   defaultValue:
     WebKitLegacy:
-      "ENABLE(APPLE_PAY_REMOTE_UI)": true
+      "ENABLE(APPLE_PAY_REMOTE_UI)": false
       default: false
     WebKit:
-      "ENABLE(APPLE_PAY_REMOTE_UI)": true
+      "ENABLE(APPLE_PAY_REMOTE_UI)": false
       default: false
     WebCore:
-      "ENABLE(APPLE_PAY_REMOTE_UI)": true
+      "ENABLE(APPLE_PAY_REMOTE_UI)": false
       default: false
   sharedPreferenceForWebProcess: true
   richJavaScript: true
@@ -765,6 +765,7 @@ BackgroundFetchAPIEnabled:
     WebKit:
       default: false
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 BackgroundWebContentRunningBoardThrottlingEnabled:
   type: bool
@@ -963,10 +964,11 @@ BroadcastChannelEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
-      default: true
+      default: false
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 BuiltInNotificationsEnabled:
   type: bool
@@ -1614,10 +1616,11 @@ CacheAPIEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
       default: false
   disableInLockdownMode: true
+  richJavaScript: true
 
 CanvasColorSpaceEnabled:
   type: bool
@@ -1906,6 +1909,7 @@ ContactPickerAPIEnabled:
     WebCore:
       default: false
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 ContentChangeObserverEnabled:
   type: bool
@@ -1977,6 +1981,7 @@ CookieConsentAPIEnabled:
     WebKit:
       default: false
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 # FIXME: This is handled via WebView SPI rather than WebPreferences for WebKitLegacy. We should change the SPI to lookup the WebPreferences value instead.
 CookieEnabled:
@@ -2002,10 +2007,11 @@ CookieStoreAPIEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: defaultCookieStoreAPIEnabled()
+      default: false
     WebCore:
-      default: true
+      default: false
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 CookieStoreManagerEnabled:
   type: bool
@@ -2021,6 +2027,7 @@ CookieStoreManagerEnabled:
     WebCore:
       default: false
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 CoreMathMLEnabled:
   type: bool
@@ -2388,11 +2395,11 @@ DeviceOrientationEventEnabled:
   condition: ENABLE(DEVICE_ORIENTATION)
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
-      default: true
+      default: false
   sharedPreferenceForWebProcess: true
   richJavaScript: true
 
@@ -2409,6 +2416,7 @@ DeviceOrientationPermissionAPIEnabled:
     WebCore:
       default: false
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 DeviceWidth:
   type: uint32_t
@@ -2458,7 +2466,7 @@ DigitalCredentialsEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: WebKit::defaultDigitalCredentialsEnabled()
+      default: false
     WebCore:
       default: false
   sharedPreferenceForWebProcess: true
@@ -2861,10 +2869,10 @@ FileSystemEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(COCOA)" : true
+      "PLATFORM(COCOA)" : false
       default: false
     WebCore:
-      "PLATFORM(COCOA)" : true
+      "PLATFORM(COCOA)" : false
       default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
@@ -3127,7 +3135,7 @@ GamepadsEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
       default: false
   disableInLockdownMode: true
@@ -3156,11 +3164,11 @@ GeolocationAPIEnabled:
   humanReadableDescription: "Enable Geolocation API"
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
-      default: true
+      default: false
   sharedPreferenceForWebProcess: true
   richJavaScript: true
 
@@ -3608,13 +3616,14 @@ IndexedDBAPIEnabled:
   humanReadableDescription: "IndexedDB API"
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
-      default: true
+      default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 InlineMediaPlaybackRequiresPlaysInlineAttribute:
   type: bool
@@ -4585,9 +4594,10 @@ ManagedMediaSourceEnabled:
     WebKit:
       default: WebKit::defaultManagedMediaSourceEnabled()
     WebCore:
-      default: true
+      default: false
   sharedPreferenceForWebProcess: true
   mediaPlaybackRelated: true
+  richJavaScript: true
 
 ManagedMediaSourceHighThreshold:
   type: double
@@ -4893,13 +4903,14 @@ MediaRecorderEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(COCOA)": true
-      "USE(GSTREAMER)": true
+      "PLATFORM(COCOA)": false
+      "USE(GSTREAMER)": false
       default: false
     WebCore:
       default: false
   sharedPreferenceForWebProcess: true
   mediaPlaybackRelated: true
+  richJavaScript: true
 
 MediaRecorderEnabledWebM:
   type: bool
@@ -4942,13 +4953,14 @@ MediaSessionCoordinatorEnabled:
   condition: ENABLE(MEDIA_SESSION_COORDINATOR)
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
       default: WebKit::defaultMediaSessionCoordinatorEnabled()
     WebCore:
-      default: true
+      default: false
   sharedPreferenceForWebProcess: true
   mediaPlaybackRelated: true
+  richJavaScript: true
 
 MediaSessionEnabled:
   type: bool
@@ -5415,12 +5427,13 @@ NotificationEventEnabled:
   condition: ENABLE(NOTIFICATION_EVENT)
   defaultValue:
     WebCore:
-      "ENABLE(NOTIFICATION_EVENT) && !PLATFORM(IOS_FAMILY)": true
+      "ENABLE(NOTIFICATION_EVENT) && !PLATFORM(IOS_FAMILY)": false
       default: false
     WebKit:
-      "ENABLE(NOTIFICATION_EVENT) && !PLATFORM(IOS_FAMILY)": true
+      "ENABLE(NOTIFICATION_EVENT) && !PLATFORM(IOS_FAMILY)": false
       default: false
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 NotificationsEnabled:
   type: bool
@@ -5432,13 +5445,13 @@ NotificationsEnabled:
   defaultValue:
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY)": false
-      default: true
+      default: false
     WebKit:
       "PLATFORM(IOS_FAMILY)": false
-      default: true
+      default: false
     WebCore:
       "PLATFORM(IOS_FAMILY)": false
-      default: true
+      default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
   richJavaScript: true
@@ -5713,13 +5726,13 @@ PeerConnectionEnabled:
   condition: ENABLE(WEB_RTC)
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      "USE(LIBWEBRTC)": WebKit::defaultPeerConnectionEnabledAvailable()
-      "USE(GSTREAMER_WEBRTC)": true
+      "USE(LIBWEBRTC)": false
+      "USE(GSTREAMER_WEBRTC)": false
       default: false
     WebCore:
-      default: true
+      default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
   richJavaScript: true
@@ -5764,11 +5777,12 @@ PermissionsAPIEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)" : true
+      "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)" : false
       default: false
     WebCore:
       default: false
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 PhotoPickerPrefersOriginalImageFormat:
   type: bool
@@ -6048,6 +6062,7 @@ PushAPIEnabled:
       default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 ReadableByteStreamAPIEnabled:
   type: bool
@@ -6444,7 +6459,7 @@ ScreenOrientationAPIEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: WebKit::defaultShouldEnableScreenOrientationAPI()
+      default: false
     WebCore:
       default: false
   sharedPreferenceForWebProcess: true
@@ -6770,13 +6785,14 @@ ServiceWorkerNavigationPreloadEnabled:
   humanReadableDescription: "Enable Service Worker Navigation Preload API"
   defaultValue:
     WebCore:
-      default: true
+      default: false
     WebKitLegacy:
       default: false
     WebKit:
-      default: true
+      default: false
   sharedPreferenceForWebProcess: true
   disableInLockdownMode: true
+  richJavaScript: true
 
 ServiceWorkersEnabled:
   type: bool
@@ -6789,11 +6805,12 @@ ServiceWorkersEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
       default: false
   sharedPreferenceForWebProcess: true
   disableInLockdownMode: true
+  richJavaScript: true
 
 ServiceWorkersUserGestureEnabled:
   type: bool
@@ -6883,8 +6900,9 @@ SharedWorkerEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: true
+      default: false
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 ShouldAllowUserInstalledFonts:
   type: bool
@@ -7316,7 +7334,7 @@ SpeechRecognitionEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "HAVE(SPEECHRECOGNIZER) && ENABLE(MEDIA_STREAM)": true
+      "HAVE(SPEECHRECOGNIZER) && ENABLE(MEDIA_STREAM)": false
       default: false
     WebCore:
       default: false
@@ -7331,11 +7349,11 @@ SpeechSynthesisAPIEnabled:
   humanReadableDescription: "SpeechSynthesis API"
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
-      default: true
+      default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
   richJavaScript: true
@@ -8669,9 +8687,9 @@ WebAudioEnabled:
   condition: ENABLE(WEB_AUDIO)
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
       default: false
   sharedPreferenceForWebProcess: true
@@ -8704,10 +8722,11 @@ WebAuthenticationEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
-      default: true
+      default: false
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 WebCodecsAV1Enabled:
   type: bool
@@ -8772,12 +8791,12 @@ WebCodecsVideoEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "USE(LIBWEBRTC) && PLATFORM(COCOA)": WebKit::defaultPeerConnectionEnabledAvailable()
-      "USE(GSTREAMER)": true
+      "USE(LIBWEBRTC) && PLATFORM(COCOA)": false
+      "USE(GSTREAMER)": false
       default: false
     WebCore:
-      "PLATFORM(COCOA)": true
-      "USE(GSTREAMER)": true
+      "PLATFORM(COCOA)": false
+      "USE(GSTREAMER)": false
       default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
@@ -8863,9 +8882,9 @@ WebGLEnabled:
   humanReadableDescription: "Enable WebGL"
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
       default: false
   disableInLockdownMode: true
@@ -8894,13 +8913,13 @@ WebGPUEnabled:
   humanReadableDescription: "Enable WebGPU"
   defaultValue:
     WebKitLegacy:
-      "ENABLE(WEBGPU_BY_DEFAULT)": true
+      "ENABLE(WEBGPU_BY_DEFAULT)": false
       default: false
     WebKit:
-      "ENABLE(WEBGPU_BY_DEFAULT)": true
+      "ENABLE(WEBGPU_BY_DEFAULT)": false
       default: false
     WebCore:
-      "ENABLE(WEBGPU_BY_DEFAULT)": true
+      "ENABLE(WEBGPU_BY_DEFAULT)": false
       default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
@@ -8949,9 +8968,9 @@ WebLocksAPIEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
-      default: true
+      default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
   richJavaScript: true
@@ -9260,7 +9279,7 @@ WebShareEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)": true
+      "PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)": false
       default: false
     WebCore:
       default: false
@@ -9289,15 +9308,15 @@ WebSocketEnabled:
   defaultValue:
     WebKitLegacy:
       "PLATFORM(WATCHOS)": false
-      default: true
+      default: false
     WebKit:
       "PLATFORM(WATCHOS)": false
-      default: true
+      default: false
     WebCore:
       "PLATFORM(WATCHOS)": false
-      default: true
+      default: false
   sharedPreferenceForWebProcess: true
-
+  richJavaScript: true
 
 WebTransportEnabled:
   type: bool
@@ -9314,6 +9333,7 @@ WebTransportEnabled:
       default: false
   sharedPreferenceForWebProcess: true
   disableInLockdownMode: true
+  richJavaScript: true
 
 WebXRAugmentedRealityModuleEnabled:
   type: bool
@@ -9340,13 +9360,14 @@ WebXREnabled:
   condition: ENABLE(WEBXR)
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
-      default: true
+      default: false
   disableInLockdownMode: true
   sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 WebXRGamepadsModuleEnabled:
   type: bool
