@@ -128,6 +128,17 @@ auto ContentExtensionsBackend::actionsFromContentRuleList(const ContentExtension
             return !frameURLActions.contains(actionAndFlags);
         case ActionCondition::UnlessFrameURL:
             return frameURLActions.contains(actionAndFlags);
+        case ActionCondition::IfAncestorSubframeURL:
+            if (frameURLActions.contains(actionAndFlags))
+                return false;
+
+            for (const auto& ancestorURL : resourceLoadInfo.ancestorSubframeURLs) {
+                auto& ancestorURLActions = contentExtension.frameURLActions(ancestorURL);
+                if (ancestorURLActions.contains(actionAndFlags))
+                    return false;
+            }
+
+            return true;
         }
         ASSERT_NOT_REACHED();
         return false;
@@ -245,10 +256,17 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
     URL frameURL;
     bool mainFrameContext = false;
     RequestMethod requestMethod = readRequestMethod(initiatingDocumentLoader.request().httpMethod()).value_or(RequestMethod::None);
+    Vector<URL> ancestorSubframeURLs;
 
-    if (auto* frame = initiatingDocumentLoader.frame()) {
+    if (RefPtr frame = initiatingDocumentLoader.frame()) {
         mainFrameContext = frame->isMainFrame();
         currentDocument = frame->document();
+
+        // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=296294> dNR: allowAllRequests with sub_frame resource type will only work with a URL filter acting on the origin of the URL
+        for (RefPtr<Frame> ancestor = frame; ancestor && !ancestor->isMainFrame(); ancestor = ancestor->tree().parent()) {
+            if (RefPtr origin = ancestor->frameDocumentSecurityOrigin())
+                ancestorSubframeURLs.append(URL { origin->toString() });
+        }
 
         if (initiatingDocumentLoader.isLoadingMainResource()
             && frame->isMainFrame()
@@ -263,7 +281,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
     else
         frameURL = url;
 
-    ResourceLoadInfo resourceLoadInfo { url, mainDocumentURL, frameURL, resourceType, mainFrameContext, requestMethod };
+    ResourceLoadInfo resourceLoadInfo { url, mainDocumentURL, frameURL, resourceType, mainFrameContext, requestMethod, ancestorSubframeURLs };
     auto actions = actionsForResourceLoad(resourceLoadInfo, ruleListFilter);
 
     ContentRuleListResults results;

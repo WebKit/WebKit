@@ -1202,7 +1202,6 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, MainFrameAllowAllRequests)
 
     auto manager = Util::loadExtension(declarativeNetRequestManifest, @{ @"background.js": backgroundScript, @"rules.json": rules  });
 
-    // Grant the declarativeNetRequest permission.
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionDeclarativeNetRequest];
 
     [manager runUntilTestMessage:@"Load Tab"];
@@ -1213,6 +1212,54 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, MainFrameAllowAllRequests)
     NSURL *requestURL = urlRequest.URL;
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:requestURL];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:[requestURL URLByAppendingPathComponent:@"frame.html"]];
+
+    [webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, SubFrameAllowAllRequests)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame2.html'></iframe>"_s } },
+        { "/frame2.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<script>browser.test.notifyPass()</script>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *rules = @"[ { \"id\" : 1, \"priority\": 2, \"action\" : { \"type\" : \"allowAllRequests\" }, \"condition\" : { \"urlFilter\" : \"*\", \"resourceTypes\" : [ \"sub_frame\" ] } }, { \"id\" : 2, \"priority\": 1, \"action\" : { \"type\" : \"block\" }, \"condition\" : { \"urlFilter\" : \"frame\" } } ]";
+
+    auto *declarativeNetRequestManifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"declarativeNetRequest" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"declarative_net_request": @{
+            @"rule_resources": @[
+                @{
+                    @"id": @"blockAndAllowRules",
+                    @"enabled": @YES,
+                    @"path": @"rules.json"
+                }
+            ]
+        }
+    };
+
+    auto manager = Util::loadExtension(declarativeNetRequestManifest, @{ @"background.js": backgroundScript, @"rules.json": rules  });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionDeclarativeNetRequest];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    auto webView = manager.get().defaultTab.webView;
+
+    auto *urlRequest = server.requestWithLocalhost();
+    NSURL *requestURL = urlRequest.URL;
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:requestURL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:[requestURL URLByAppendingPathComponent:@"frame.html"]];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:[requestURL URLByAppendingPathComponent:@"frame2.html"]];
 
     [webView loadRequest:urlRequest];
 
@@ -2622,7 +2669,6 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, NoResourceTypeForAllowAllRequests)
 
 TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithMainFrameAllowAllRequests)
 {
-    // FIXME: rdar://154124673 (Write tests for sub_frame allowAllRequests rules)
     NSDictionary *rule = @{
         @"id": @1,
         @"action": @{ @"type": @"allowAllRequests" },
@@ -2633,20 +2679,87 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithMainFrameAllowAll
     };
 
     _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
-    NSMutableDictionary *convertedRule = [validatedRule.ruleInWebKitFormat.firstObject mutableCopy];
+    NSDictionary *convertedRule = [validatedRule.ruleInWebKitFormat.firstObject mutableCopy];
     EXPECT_NOT_NULL(convertedRule);
 
-    NSMutableDictionary *correctRuleConversion = [@{
+    NSDictionary *correctRuleConversion = @{
         @"action": @{
             @"type": @"ignore-following-rules",
         },
-        @"trigger": [@{
+        @"trigger": @{
             @"url-filter": @".*",
             @"if-top-url": @[ @"apple\\.com" ],
-        } mutableCopy],
-    } mutableCopy];
+        }
+    };
 
     EXPECT_NS_EQUAL(convertedRule, correctRuleConversion);
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithSubFrameAllowAllRequests)
+{
+    NSDictionary *rule = @{
+        @"id": @1,
+        @"action": @{ @"type": @"allowAllRequests" },
+        @"condition": @{
+            @"urlFilter": @"apple.com",
+            @"resourceTypes": @[ @"sub_frame" ]
+        },
+    };
+
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    NSDictionary *convertedRule = [validatedRule.ruleInWebKitFormat.firstObject mutableCopy];
+    EXPECT_NOT_NULL(convertedRule);
+
+    NSDictionary *correctRuleConversion = @{
+        @"action": @{
+            @"type": @"ignore-following-rules",
+        },
+        @"trigger": @{
+            @"url-filter": @".*",
+            @"if-ancestor-subframe-url": @[ @"apple\\.com" ],
+        }
+    };
+
+    EXPECT_NS_EQUAL(convertedRule, correctRuleConversion);
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithMainFrameAndSubFrameAllowAllRequests)
+{
+    NSDictionary *rule = @{
+        @"id": @1,
+        @"action": @{ @"type": @"allowAllRequests" },
+        @"condition": @{
+            @"urlFilter": @"apple.com",
+            @"resourceTypes": @[ @"main_frame", @"sub_frame" ]
+        },
+    };
+
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    NSArray<NSDictionary *> *convertedRules = validatedRule.ruleInWebKitFormat;
+    EXPECT_EQ(convertedRules.count, 2ul);
+
+    NSDictionary *mainFrameRule = @{
+        @"action": @{
+            @"type": @"ignore-following-rules",
+        },
+        @"trigger": @{
+            @"url-filter": @".*",
+            @"if-top-url": @[ @"apple\\.com" ],
+        }
+    };
+
+    NSDictionary *subFrameRule = @{
+        @"action": @{
+            @"type": @"ignore-following-rules",
+        },
+        @"trigger": @{
+            @"url-filter": @".*",
+            @"if-ancestor-subframe-url": @[ @"apple\\.com" ],
+        }
+    };
+
+    EXPECT_NS_EQUAL(convertedRules[0], mainFrameRule);
+    EXPECT_NS_EQUAL(convertedRules[1], subFrameRule);
 }
 
 TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithRedirect)
