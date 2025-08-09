@@ -6392,15 +6392,7 @@ void SpeculativeJIT::compileArithRounding(Node* node)
                 FPRReg scratchFPR = scratch.fpr();
                 GPRReg resultGPR = roundedResultAsInt32.gpr();
                 JumpList failureCases;
-#if CPU(ARM64)
-                if (supportsDoubleToInt32ConversionUsingJavaScriptSemantics()) {
-                    convertDoubleToInt32UsingJavaScriptSemantics(resultFPR, resultGPR);
-                } else {
-                    branchConvertDoubleToInt32(resultFPR, resultGPR, failureCases, scratchFPR, shouldCheckNegativeZero(node->arithRoundingMode()));
-                }
-#else
                 branchConvertDoubleToInt32(resultFPR, resultGPR, failureCases, scratchFPR, shouldCheckNegativeZero(node->arithRoundingMode()));
-#endif
                 speculationCheck(ExitKind::Overflow, JSValueRegs(), node, failureCases);
 
                 strictInt32Result(resultGPR, node);
@@ -6867,15 +6859,7 @@ void SpeculativeJIT::compileArithPow(Node* node)
     GPRTemporary yOperandInteger(this);
     GPRReg yOperandIntegerGpr = yOperandInteger.gpr();
     JumpList failedExponentConversionToInteger;
-#if CPU(ARM64)
-    if (supportsDoubleToInt32ConversionUsingJavaScriptSemantics()) {
-        convertDoubleToInt32UsingJavaScriptSemantics(yOperandfpr, yOperandIntegerGpr);
-    } else {
-        branchConvertDoubleToInt32(yOperandfpr, yOperandIntegerGpr, failedExponentConversionToInteger, scratchFpr, false);
-    }
-#else
     branchConvertDoubleToInt32(yOperandfpr, yOperandIntegerGpr, failedExponentConversionToInteger, scratchFpr, false);
-#endif
 
     moveDouble(xOperandfpr, xOperandCopyFpr);
     Jump skipFallback = compileArithPowIntegerFastPath(*this, xOperandCopyFpr, yOperandInteger.gpr(), resultFpr);
@@ -12584,15 +12568,7 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
 #else
         unboxDouble(valueRegs.tagGPR(), valueRegs.payloadGPR(), scratchFPR3);
 #endif
-#if CPU(ARM64)
-        if (supportsDoubleToInt32ConversionUsingJavaScriptSemantics()) {
-            convertDoubleToInt32UsingJavaScriptSemantics(scratchFPR3, scratchGPR1);
-        } else {
-            branchConvertDoubleToInt32(scratchFPR3, scratchGPR1, failureCases, scratchFPR4, /* negZeroCheck */ false);
-        }
-#else
         branchConvertDoubleToInt32(scratchFPR3, scratchGPR1, failureCases, scratchFPR4, /* negZeroCheck */ false);
-#endif
         addBranch(failureCases, data->fallThrough.block);
         jump().linkTo(dispatch, this);
 
@@ -14097,15 +14073,7 @@ void SpeculativeJIT::compileNormalizeMapKey(Node* node)
 
     notNaN.link(this);
     JumpList failureCases;
-#if CPU(ARM64)
-    if (supportsDoubleToInt32ConversionUsingJavaScriptSemantics()) {
-        convertDoubleToInt32UsingJavaScriptSemantics(doubleValueFPR, scratchGPR);
-    } else {
-        branchConvertDoubleToInt32(doubleValueFPR, scratchGPR, failureCases, tempFPR, /* shouldCheckNegativeZero */ false);
-    }
-#else
     branchConvertDoubleToInt32(doubleValueFPR, scratchGPR, failureCases, tempFPR, /* shouldCheckNegativeZero */ false);
-#endif
     passThroughCases.append(failureCases);
 
     boxInt32(scratchGPR, resultRegs);

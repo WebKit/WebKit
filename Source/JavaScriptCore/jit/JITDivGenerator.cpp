@@ -113,15 +113,7 @@ void JITDivGenerator::generateFastPath(CCallHelpers& jit)
     // ensure that it produces integers whenever possible.
     
     CCallHelpers::JumpList notInt32;
-#if CPU(ARM64)
-    if (jit.supportsDoubleToInt32ConversionUsingJavaScriptSemantics()) {
-        jit.convertDoubleToInt32UsingJavaScriptSemantics(m_leftFPR, m_scratchGPR);
-    } else {
-        jit.branchConvertDoubleToInt32(m_leftFPR, m_scratchGPR, notInt32, m_scratchFPR);
-    }
-#else
     jit.branchConvertDoubleToInt32(m_leftFPR, m_scratchGPR, notInt32, m_scratchFPR);
-#endif
 
     // If we've got an integer, we might as well make that the result of the division.
     jit.boxInt32(m_scratchGPR, m_result);

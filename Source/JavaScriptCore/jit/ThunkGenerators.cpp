@@ -947,15 +947,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> floorThunkGenerator(VM& vm)
     if (jit.supportsFloatingPointRounding()) {
         SpecializedThunkJIT::JumpList doubleResult;
         jit.floorDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
-#if CPU(ARM64)
-        if (jit.supportsDoubleToInt32ConversionUsingJavaScriptSemantics()) {
-            jit.convertDoubleToInt32UsingJavaScriptSemantics(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
-        } else {
-            jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
-        }
-#else
         jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
-#endif
         jit.returnInt32(SpecializedThunkJIT::regT0);
         doubleResult.link(&jit);
         jit.returnDouble(SpecializedThunkJIT::fpRegT0);
@@ -975,15 +967,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> floorThunkGenerator(VM& vm)
         slowPath.link(&jit);
     }
     jit.callDoubleToDoublePreservingReturn(UnaryDoubleOpWrapper(floor));
-#if CPU(ARM64)
-    if (jit.supportsDoubleToInt32ConversionUsingJavaScriptSemantics()) {
-        jit.convertDoubleToInt32UsingJavaScriptSemantics(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
-    } else {
-        jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
-    }
-#else
     jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
-#endif
     if (jit.supportsFloatingPointTruncate())
         intResult.link(&jit);
     jit.returnInt32(SpecializedThunkJIT::regT0);
@@ -1008,15 +992,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> ceilThunkGenerator(VM& vm)
         jit.callDoubleToDoublePreservingReturn(UnaryDoubleOpWrapper(ceil));
 
     SpecializedThunkJIT::JumpList doubleResult;
-#if CPU(ARM64)
-    if (jit.supportsDoubleToInt32ConversionUsingJavaScriptSemantics()) {
-        jit.convertDoubleToInt32UsingJavaScriptSemantics(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
-    } else {
-        jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
-    }
-#else
     jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
-#endif
     jit.returnInt32(SpecializedThunkJIT::regT0);
     doubleResult.link(&jit);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
@@ -1039,15 +1015,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> truncThunkGenerator(VM& vm)
         jit.callDoubleToDoublePreservingReturn(UnaryDoubleOpWrapper(trunc));
 
     SpecializedThunkJIT::JumpList doubleResult;
-#if CPU(ARM64)
-    if (jit.supportsDoubleToInt32ConversionUsingJavaScriptSemantics()) {
-        jit.convertDoubleToInt32UsingJavaScriptSemantics(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
-    } else {
-        jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
-    }
-#else
     jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
-#endif
     jit.returnInt32(SpecializedThunkJIT::regT0);
     doubleResult.link(&jit);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
