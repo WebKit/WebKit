@@ -2125,6 +2125,7 @@ private:
             break;
         }
 
+        case GetClosureVar:
         case GetFromArguments:
         case GetInternalField: {
             fixEdge<KnownCellUse>(node->child1());
