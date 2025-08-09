@@ -2329,7 +2329,7 @@ private:
             break;
 
         case DoubleRepUse:
-            setInt32(doubleToInt32(lowDouble(m_node->child1())));
+            setInt32(m_out.doubleToInt32WithOverflowHandling(lowDouble(m_node->child1())));
             break;
 
         case NumberUse:
@@ -3375,7 +3375,7 @@ private:
             LBasicBlock nanExceptionResultIsNaN = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
-            LValue integerExponent = doubleToInt32(exponent);
+            LValue integerExponent = m_out.doubleToInt32WithOverflowHandling(exponent);
             LValue integerExponentConvertedToDouble = tryDoubleToInt32AsDouble(exponent);
             if (!integerExponentConvertedToDouble)
                 integerExponentConvertedToDouble = m_out.intToDouble(integerExponent);
@@ -6655,7 +6655,7 @@ IGNORE_CLANG_WARNINGS_END
                         }
                     } else if (m_node->hasInt32Result()) {
                         if (result->type() == Double)
-                            finalResult = doubleToInt32(result);
+                            finalResult = m_out.doubleToInt32WithOverflowHandling(result);
                         else {
                             ASSERT(expectedType == ArrayWithInt32);
                             finalResult = unboxInt32(result);
@@ -14204,7 +14204,7 @@ IGNORE_CLANG_WARNINGS_END
 
                 m_out.appendTo(isDouble, innerLastNext);
                 LValue doubleValue = unboxDouble(boxedValue);
-                LValue intValue = doubleToInt32(doubleValue);
+                LValue intValue = m_out.doubleToInt32WithOverflowHandling(doubleValue);
                 LValue intInDouble = tryDoubleToInt32AsDouble(doubleValue);
                 if (!intInDouble)
                     intInDouble = m_out.intToDouble(intValue);
@@ -15076,7 +15076,7 @@ IGNORE_CLANG_WARNINGS_END
         m_out.branch(m_out.doubleNotEqualOrUnordered(doubleValue, doubleValue), unsure(continuation), unsure(notNaNCase));
 
         m_out.appendTo(notNaNCase, convertibleCase);
-        LValue integerValue = doubleToInt32(doubleValue);
+        LValue integerValue = m_out.doubleToInt32WithOverflowHandling(doubleValue);
         LValue integerValueConvertedToDouble = tryDoubleToInt32AsDouble(doubleValue);
         if (!integerValueConvertedToDouble)
             integerValueConvertedToDouble = m_out.intToDouble(integerValue);
@@ -18382,14 +18382,14 @@ IGNORE_CLANG_WARNINGS_END
         if (edge.useKind() == NumberUse) {
             m_out.appendTo(notIntCase, continuation);
             FTL_TYPE_CHECK(jsValueValue(value), edge, SpecBytecodeNumber, isCellOrMiscOrBigInt32(value));
-            results.append(m_out.anchor(doubleToInt32(unboxDouble(value))));
+            results.append(m_out.anchor(m_out.doubleToInt32WithOverflowHandling(unboxDouble(value))));
             m_out.jump(continuation);
         } else {
             m_out.appendTo(notIntCase, doubleCase);
             m_out.branch(isCellOrMiscOrBigInt32(value, provenType(edge)), unsure(notNumberCase), unsure(doubleCase));
 
             m_out.appendTo(doubleCase, notNumberCase);
-            results.append(m_out.anchor(doubleToInt32(unboxDouble(value))));
+            results.append(m_out.anchor(m_out.doubleToInt32WithOverflowHandling(unboxDouble(value))));
             m_out.jump(continuation);
 
             m_out.appendTo(notNumberCase, continuation);
@@ -19867,7 +19867,7 @@ IGNORE_CLANG_WARNINGS_END
             LValue milliseconds = m_out.loadDouble(base, m_heaps.DateInstance_internalNumber);
             LValue msPerSecondConstant = m_out.constDouble(msPerSecond);
             LValue seconds = m_out.doubleFloor(m_out.doubleDiv(milliseconds, msPerSecondConstant));
-            LValue result = doubleToInt32(m_out.doubleSub(milliseconds, m_out.doubleMul(seconds, msPerSecondConstant)));
+            LValue result = m_out.doubleToInt32WithOverflowHandling(m_out.doubleSub(milliseconds, m_out.doubleMul(seconds, msPerSecondConstant)));
             setJSValue(m_out.select(m_out.doubleNotEqualOrUnordered(milliseconds, milliseconds), m_out.constInt64(JSValue::encode(jsNaN())), boxInt32(result)));
             break;
         }
@@ -21867,7 +21867,7 @@ IGNORE_CLANG_WARNINGS_END
             LValue doubleValue = lowDouble(edge);
 
             if (!isClamped)
-                return doubleToInt32(doubleValue);
+                return m_out.doubleToInt32WithOverflowHandling(doubleValue);
 
             LBasicBlock atLeastZero = m_out.newBlock();
             LBasicBlock withinRange = m_out.newBlock();
@@ -21895,7 +21895,7 @@ IGNORE_CLANG_WARNINGS_END
             patchpoint->effects = Effects::none();
             doubleValue = patchpoint;
 
-            intValues.append(m_out.anchor(doubleToInt32(doubleValue)));
+            intValues.append(m_out.anchor(m_out.doubleToInt32WithOverflowHandling(doubleValue)));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -21926,7 +21926,7 @@ IGNORE_CLANG_WARNINGS_END
             LBasicBlock slowPath = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
-            LValue fastResultValue = doubleToInt32(doubleValue);
+            LValue fastResultValue = m_out.doubleToInt32WithOverflowHandling(doubleValue);
             ValueFromBlock fastResult = m_out.anchor(fastResultValue);
             m_out.branch(
                 m_out.equal(fastResultValue, m_out.constInt32(0x80000000)),
@@ -21962,9 +21962,8 @@ IGNORE_CLANG_WARNINGS_END
 
             m_out.appendTo(withinRange, slowPath);
             LValue fastResult;
-            if (isSigned) {
-                fastResult = doubleToInt32(doubleValue);
-            }
+            if (isSigned)
+                fastResult = m_out.doubleToInt32WithOverflowHandling(doubleValue);
             else
                 fastResult = m_out.doubleToUInt32(doubleValue);
             results.append(m_out.anchor(fastResult));
@@ -22842,7 +22841,7 @@ IGNORE_CLANG_WARNINGS_END
 
     LValue convertDoubleToInt32(LValue value, bool shouldCheckNegativeZero)
     {
-        LValue integerValue = doubleToInt32(value);
+        LValue integerValue = m_out.doubleToInt32WithOverflowHandling(value);
         LValue int32InDouble = tryDoubleToInt32AsDouble(value);
         if (!int32InDouble)
             int32InDouble = m_out.intToDouble(integerValue);
