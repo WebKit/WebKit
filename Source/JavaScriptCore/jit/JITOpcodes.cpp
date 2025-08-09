@@ -1303,7 +1303,15 @@ void JIT::emit_op_switch_imm(const JSInstruction* currentInstruction)
 #else
     unboxDouble(jsRegT10.tagGPR(), jsRegT10.payloadGPR(), fpRegT0);
 #endif
+#if CPU(ARM64)
+    if (supportsDoubleToInt32ConversionUsingJavaScriptSemantics()) {
+        convertDoubleToInt32UsingJavaScriptSemantics(fpRegT0, jsRegT10.payloadGPR());
+    } else {
+        branchConvertDoubleToInt32(fpRegT0, jsRegT10.payloadGPR(), failureCases, fpRegT1, /* shouldCheckNegativeZero */ false);
+    }
+#else
     branchConvertDoubleToInt32(fpRegT0, jsRegT10.payloadGPR(), failureCases, fpRegT1, /* shouldCheckNegativeZero */ false);
+#endif
     jump().linkTo(dispatch, this);
     addJump(failureCases, defaultOffset);
 }
