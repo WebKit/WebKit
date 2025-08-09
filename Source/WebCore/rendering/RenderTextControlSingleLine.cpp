@@ -219,8 +219,8 @@ void RenderTextControlSingleLine::layout()
 
     bool innerTextSizeChanged = innerTextRenderer && innerTextRenderer->size() != oldInnerTextSize;
 
-    HTMLElement* placeholderElement = inputElement().placeholderElement();
-    if (RenderBox* placeholderBox = placeholderElement ? placeholderElement->renderBox() : 0) {
+    auto* placeholderElement = inputElement().placeholderElement();
+    if (auto* placeholderBox = placeholderElement ? placeholderElement->renderBox() : 0) {
         auto innerTextWidth = LayoutUnit { };
         if (innerTextRenderer)
             innerTextWidth = innerTextRenderer->logicalWidth();
@@ -232,26 +232,31 @@ void RenderTextControlSingleLine::layout()
             placeholderBox->setChildNeedsLayout(MarkOnlyThis);
         }
         placeholderBox->layoutIfNeeded();
-        auto placeholderTopLeft = containerRenderer ? containerRenderer->location() : LayoutPoint { };
-        auto* innerBlockRenderer = innerBlockElement() ? innerBlockElement()->renderBox() : nullptr;
-        if (innerBlockRenderer)
-            placeholderTopLeft += toLayoutSize(innerBlockRenderer->location());
-        if (innerTextRenderer)
-            placeholderTopLeft += toLayoutSize(innerTextRenderer->location());
-        placeholderBox->setLogicalLeft(placeholderTopLeft.x());
-        // Here the container box indicates the renderer that the placeholder content is aligned with (no parent and/or containing block relationship).
-        auto* containerBox = innerTextRenderer ? innerTextRenderer : innerBlockRenderer ? innerBlockRenderer : containerRenderer;
-        if (containerBox) {
-            auto placeholderHeight = [&] {
-                if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*placeholderBox)) {
-                    if (auto placeholderLineBox = InlineIterator::firstLineBoxFor(*blockFlow))
-                        return LayoutUnit { std::max(placeholderLineBox->logicalHeight(), placeholderLineBox->contentLogicalHeight()) };
-                }
-                return placeholderBox->logicalHeight();
-            };
-            // Center vertical align the placeholder content.
-            auto logicalTop = placeholderTopLeft.y() + (containerBox->logicalHeight() / 2 - placeholderHeight() / 2);
-            placeholderBox->setLogicalTop(logicalTop);
+        if (style().fieldSizing() == FieldSizing::Content) {
+            placeholderBox->setX(borderLeft() + paddingLeft());
+            placeholderBox->setY(borderTop() + paddingTop());
+        } else {
+            auto placeholderTopLeft = containerRenderer ? containerRenderer->location() : LayoutPoint { };
+            auto* innerBlockRenderer = innerBlockElement() ? innerBlockElement()->renderBox() : nullptr;
+            if (innerBlockRenderer)
+                placeholderTopLeft += toLayoutSize(innerBlockRenderer->location());
+            if (innerTextRenderer)
+                placeholderTopLeft += toLayoutSize(innerTextRenderer->location());
+            placeholderBox->setLogicalLeft(placeholderTopLeft.x());
+            // Here the container box indicates the renderer that the placeholder content is aligned with (no parent and/or containing block relationship).
+            auto* containerBox = innerTextRenderer ? innerTextRenderer : innerBlockRenderer ? innerBlockRenderer : containerRenderer;
+            if (containerBox) {
+                auto placeholderHeight = [&] {
+                    if (auto* blockFlow = dynamicDowncast<RenderBlockFlow>(*placeholderBox)) {
+                        if (auto placeholderLineBox = InlineIterator::firstLineBoxFor(*blockFlow))
+                            return LayoutUnit { std::max(placeholderLineBox->logicalHeight(), placeholderLineBox->contentLogicalHeight()) };
+                    }
+                    return placeholderBox->logicalHeight();
+                };
+                // Center vertical align the placeholder content.
+                auto logicalTop = placeholderTopLeft.y() + (containerBox->logicalHeight() / 2 - placeholderHeight() / 2);
+                placeholderBox->setLogicalTop(logicalTop);
+            }
         }
         if (!placeholderBoxHadLayout && placeholderBox->checkForRepaintDuringLayout()) {
             // This assumes a shadow tree without floats. If floats are added, the

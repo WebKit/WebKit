@@ -218,8 +218,11 @@ void RenderTextControl::layoutExcludedChildren(RelayoutChildren relayoutChildren
 {
     RenderBlockFlow::layoutExcludedChildren(relayoutChildren);
 
-    HTMLElement* placeholder = textFormControlElement().placeholderElement();
-    RenderElement* placeholderRenderer = placeholder ? placeholder->renderer() : 0;
+    if (style().fieldSizing() == FieldSizing::Content)
+        return;
+
+    auto* placeholder = textFormControlElement().placeholderElement();
+    auto* placeholderRenderer = placeholder ? placeholder->renderer() : 0;
     if (!placeholderRenderer)
         return;
     placeholderRenderer->setIsExcludedFromNormalLayout(true);
