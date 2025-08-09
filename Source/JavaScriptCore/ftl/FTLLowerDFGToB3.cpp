@@ -21926,26 +21926,14 @@ IGNORE_CLANG_WARNINGS_END
             LBasicBlock slowPath = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
-            PatchpointValue* fastResultPatchpoint = m_out.patchpoint(Int32);
-            fastResultPatchpoint->append(ConstrainedValue(doubleValue, B3::ValueRep::SomeRegister));
-            fastResultPatchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-                jit.branchTruncateDoubleToInt32(params[1].fpr(), params[0].gpr(), CCallHelpers::BranchIfTruncateFailed).linkTo(jit.label(), &jit);
-            });
-            fastResultPatchpoint->effects = Effects::none();
-            LValue fastResultValue = fastResultPatchpoint;
+            LValue fastResultValue = doubleToInt32(doubleValue);
             ValueFromBlock fastResult = m_out.anchor(fastResultValue);
             m_out.branch(
                 m_out.equal(fastResultValue, m_out.constInt32(0x80000000)),
                 rarely(slowPath), usually(continuation));
 
             LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
-            PatchpointValue* slowResultPatchpoint = m_out.patchpoint(Int32);
-            slowResultPatchpoint->append(ConstrainedValue(doubleValue, B3::ValueRep::SomeRegister));
-            slowResultPatchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-                jit.branchTruncateDoubleToInt32(params[1].fpr(), params[0].gpr(), CCallHelpers::BranchIfTruncateFailed).linkTo(jit.label(), &jit);
-            });
-            slowResultPatchpoint->effects = Effects::none();
-            ValueFromBlock slowResult = m_out.anchor(slowResultPatchpoint);
+            ValueFromBlock slowResult = m_out.anchor(m_out.castToInt32(m_out.callWithoutSideEffects(Int64, operationToInt32SensibleSlow, doubleValue)));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -21975,13 +21963,7 @@ IGNORE_CLANG_WARNINGS_END
             m_out.appendTo(withinRange, slowPath);
             LValue fastResult;
             if (isSigned) {
-                PatchpointValue* fastResultPatchpoint = m_out.patchpoint(Int32);
-                fastResultPatchpoint->append(ConstrainedValue(doubleValue, B3::ValueRep::SomeRegister));
-                fastResultPatchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-                    jit.branchTruncateDoubleToInt32(params[1].fpr(), params[0].gpr(), CCallHelpers::BranchIfTruncateFailed).linkTo(jit.label(), &jit);
-                });
-                fastResultPatchpoint->effects = Effects::none();
-                fastResult = fastResultPatchpoint;
+                fastResult = doubleToInt32(doubleValue);
             }
             else
                 fastResult = m_out.doubleToUInt32(doubleValue);
@@ -21989,13 +21971,7 @@ IGNORE_CLANG_WARNINGS_END
             m_out.jump(continuation);
 
             m_out.appendTo(slowPath, continuation);
-            PatchpointValue* slowResultPatchpoint = m_out.patchpoint(Int32);
-            slowResultPatchpoint->append(ConstrainedValue(doubleValue, B3::ValueRep::SomeRegister));
-            slowResultPatchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-                jit.branchTruncateDoubleToInt32(params[1].fpr(), params[0].gpr(), CCallHelpers::BranchIfTruncateFailed).linkTo(jit.label(), &jit);
-            });
-            slowResultPatchpoint->effects = Effects::none();
-            results.append(m_out.anchor(slowResultPatchpoint));
+            results.append(m_out.anchor(m_out.castToInt32(m_out.callWithoutSideEffects(Int64, operationToInt32, doubleValue))));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -22866,13 +22842,7 @@ IGNORE_CLANG_WARNINGS_END
 
     LValue convertDoubleToInt32(LValue value, bool shouldCheckNegativeZero)
     {
-        PatchpointValue* integerValuePatchpoint = m_out.patchpoint(Int32);
-        integerValuePatchpoint->append(ConstrainedValue(value, B3::ValueRep::SomeRegister));
-        integerValuePatchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-            jit.branchTruncateDoubleToInt32(params[1].fpr(), params[0].gpr(), CCallHelpers::BranchIfTruncateFailed).linkTo(jit.label(), &jit);
-        });
-        integerValuePatchpoint->effects = Effects::none();
-        LValue integerValue = integerValuePatchpoint;
+        LValue integerValue = doubleToInt32(value);
         LValue int32InDouble = tryDoubleToInt32AsDouble(value);
         if (!int32InDouble)
             int32InDouble = m_out.intToDouble(integerValue);
