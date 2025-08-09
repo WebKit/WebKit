@@ -29,6 +29,7 @@ namespace WebCore {
 
 class Node;
 
-WEBCORE_EXPORT void revealClosedDetailsAndHiddenUntilFoundAncestors(Node&);
+void revealClosedDetailsAndHiddenUntilFoundAncestors(Node&);
+WEBCORE_EXPORT void queueTaskToRevealClosedDetailsAndHiddenUntilFoundAncestors(Node&);
 
 } // namespace WebCore

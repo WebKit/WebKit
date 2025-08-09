@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "ElementInlines.h"
 #include "EventNames.h"
+#include "GCReachableRef.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLSlotElement.h"
 #include "NodeRenderStyle.h"
@@ -88,6 +89,14 @@ void revealClosedDetailsAndHiddenUntilFoundAncestors(Node& node)
             break;
         }
     }
+}
+
+// https://html.spec.whatwg.org/#interaction-with-details-and-hidden=until-found
+void queueTaskToRevealClosedDetailsAndHiddenUntilFoundAncestors(Node& node)
+{
+    node.document().eventLoop().queueTask(TaskSource::UserInteraction, [node = GCReachableRef { node }] {
+        revealClosedDetailsAndHiddenUntilFoundAncestors(node);
+    });
 }
 
 } // namespace WebCore
