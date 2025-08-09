@@ -353,6 +353,11 @@ LValue Output::doubleToInt32WithOverflowHandling(LValue value)
     return result;
 }
 
+LValue Output::doubleToInt32(LValue value)
+{
+    return m_block->appendNew<B3::Value>(m_proc, B3::Trunc, origin(), value);
+}
+
 LValue Output::doubleToInt64(LValue value)
 {
     PatchpointValue* result = patchpoint(Int64);

@@ -195,6 +195,7 @@ public:
     LValue doubleMin(LValue, LValue);
 
     LValue doubleToInt32WithOverflowHandling(LValue);
+    LValue doubleToInt32(LValue);
     LValue doubleToInt64(LValue);
     LValue doubleToUInt32(LValue);
 
