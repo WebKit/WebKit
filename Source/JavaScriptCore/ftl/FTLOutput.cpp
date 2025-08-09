@@ -343,7 +343,7 @@ LValue Output::doubleToInt32(LValue value)
     result->append(value, ValueRep::SomeRegister);
     result->setGenerator(
         [] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-            jit.truncateDoubleToInt32(params[1].fpr(), params[0].gpr());
+            jit.branchTruncateDoubleToInt32(params[1].fpr(), params[0].gpr(), CCallHelpers::BranchIfTruncateFailed).linkTo(jit.label(), &jit);
         });
     result->effects = Effects::none();
     return result;

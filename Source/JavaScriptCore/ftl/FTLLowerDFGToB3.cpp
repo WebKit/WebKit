@@ -3375,7 +3375,7 @@ private:
             LBasicBlock nanExceptionResultIsNaN = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
-            LValue integerExponent = m_out.doubleToInt32(exponent);
+            LValue integerExponent = doubleToInt32(exponent);
             LValue integerExponentConvertedToDouble = tryDoubleToInt32AsDouble(exponent);
             if (!integerExponentConvertedToDouble)
                 integerExponentConvertedToDouble = m_out.intToDouble(integerExponent);
@@ -14204,7 +14204,7 @@ IGNORE_CLANG_WARNINGS_END
 
                 m_out.appendTo(isDouble, innerLastNext);
                 LValue doubleValue = unboxDouble(boxedValue);
-                LValue intValue = m_out.doubleToInt32(doubleValue);
+                LValue intValue = doubleToInt32(doubleValue);
                 LValue intInDouble = tryDoubleToInt32AsDouble(doubleValue);
                 if (!intInDouble)
                     intInDouble = m_out.intToDouble(intValue);
@@ -15076,7 +15076,7 @@ IGNORE_CLANG_WARNINGS_END
         m_out.branch(m_out.doubleNotEqualOrUnordered(doubleValue, doubleValue), unsure(continuation), unsure(notNaNCase));
 
         m_out.appendTo(notNaNCase, convertibleCase);
-        LValue integerValue = m_out.doubleToInt32(doubleValue);
+        LValue integerValue = doubleToInt32(doubleValue);
         LValue integerValueConvertedToDouble = tryDoubleToInt32AsDouble(doubleValue);
         if (!integerValueConvertedToDouble)
             integerValueConvertedToDouble = m_out.intToDouble(integerValue);
@@ -19867,7 +19867,7 @@ IGNORE_CLANG_WARNINGS_END
             LValue milliseconds = m_out.loadDouble(base, m_heaps.DateInstance_internalNumber);
             LValue msPerSecondConstant = m_out.constDouble(msPerSecond);
             LValue seconds = m_out.doubleFloor(m_out.doubleDiv(milliseconds, msPerSecondConstant));
-            LValue result = m_out.doubleToInt32(m_out.doubleSub(milliseconds, m_out.doubleMul(seconds, msPerSecondConstant)));
+            LValue result = doubleToInt32(m_out.doubleSub(milliseconds, m_out.doubleMul(seconds, msPerSecondConstant)));
             setJSValue(m_out.select(m_out.doubleNotEqualOrUnordered(milliseconds, milliseconds), m_out.constInt64(JSValue::encode(jsNaN())), boxInt32(result)));
             break;
         }
@@ -21895,7 +21895,7 @@ IGNORE_CLANG_WARNINGS_END
             patchpoint->effects = Effects::none();
             doubleValue = patchpoint;
 
-            intValues.append(m_out.anchor(m_out.doubleToInt32(doubleValue)));
+            intValues.append(m_out.anchor(doubleToInt32(doubleValue)));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -21939,7 +21939,13 @@ IGNORE_CLANG_WARNINGS_END
                 rarely(slowPath), usually(continuation));
 
             LBasicBlock lastNext = m_out.appendTo(slowPath, continuation);
-            ValueFromBlock slowResult = m_out.anchor(m_out.castToInt32(m_out.callWithoutSideEffects(Int64, operationToInt32SensibleSlow, doubleValue)));
+            PatchpointValue* slowResultPatchpoint = m_out.patchpoint(Int32);
+            slowResultPatchpoint->append(ConstrainedValue(doubleValue, B3::ValueRep::SomeRegister));
+            slowResultPatchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                jit.branchTruncateDoubleToInt32(params[1].fpr(), params[0].gpr(), CCallHelpers::BranchIfTruncateFailed).linkTo(jit.label(), &jit);
+            });
+            slowResultPatchpoint->effects = Effects::none();
+            ValueFromBlock slowResult = m_out.anchor(slowResultPatchpoint);
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
@@ -21983,7 +21989,13 @@ IGNORE_CLANG_WARNINGS_END
             m_out.jump(continuation);
 
             m_out.appendTo(slowPath, continuation);
-            results.append(m_out.anchor(m_out.castToInt32(m_out.callWithoutSideEffects(Int64, operationToInt32, doubleValue))));
+            PatchpointValue* slowResultPatchpoint = m_out.patchpoint(Int32);
+            slowResultPatchpoint->append(ConstrainedValue(doubleValue, B3::ValueRep::SomeRegister));
+            slowResultPatchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                jit.branchTruncateDoubleToInt32(params[1].fpr(), params[0].gpr(), CCallHelpers::BranchIfTruncateFailed).linkTo(jit.label(), &jit);
+            });
+            slowResultPatchpoint->effects = Effects::none();
+            results.append(m_out.anchor(slowResultPatchpoint));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);
