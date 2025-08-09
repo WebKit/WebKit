@@ -169,8 +169,8 @@ private:
 
     // Constants to avoid the need to round to PerformanceEventTiming::durationResolution
     // when filtering candidate entries:
-    static constexpr Seconds minDurationCutoffBeforeRounding = PerformanceEventTiming::minimumDurationThreshold - (PerformanceEventTiming::durationResolution/2);
-    static constexpr Seconds defaultDurationCutoffBeforeRounding = PerformanceEventTiming::defaultDurationThreshold - (PerformanceEventTiming::durationResolution/2);
+    static constexpr Seconds minDurationCutoffBeforeRounding = PerformanceEventTiming::minimumDurationThreshold - (PerformanceEventTiming::durationResolution / 2);
+    static constexpr Seconds defaultDurationCutoffBeforeRounding = PerformanceEventTiming::defaultDurationThreshold - (PerformanceEventTiming::durationResolution / 2);
 
     // https://w3c.github.io/resource-timing/#dfn-resource-timing-buffer-full-flag
     bool m_resourceTimingBufferFullFlag { false };
