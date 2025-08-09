@@ -951,7 +951,7 @@ ALWAYS_INLINE JSValue JSValue::toBigIntOrInt32(JSGlobalObject* globalObject) con
         // Check for NaN
         if (std::isnan(doubleValue))
             return jsNumber(0);
-        
+
         // Check for overflow (values outside int32 range)
         if (doubleValue < static_cast<double>(INT32_MIN) || doubleValue > static_cast<double>(INT32_MAX)) {
             // For JavaScript semantics, overflow should wrap around
@@ -959,7 +959,7 @@ ALWAYS_INLINE JSValue JSValue::toBigIntOrInt32(JSGlobalObject* globalObject) con
             uint32_t uint32Value = static_cast<uint32_t>(doubleValue);
             return jsNumber(static_cast<int32_t>(uint32Value));
         }
-        
+
         // Normal case - value is in range
         return jsNumber(static_cast<int32_t>(doubleValue));
 #endif

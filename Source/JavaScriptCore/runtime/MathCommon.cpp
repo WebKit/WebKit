@@ -466,7 +466,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationToInt32UsingJavaScriptSemantics, UCPU
     // Check for NaN
     if (std::isnan(value))
         return toUCPUStrictInt32(0);
-    
+
     // Check for overflow (values outside int32 range)
     if (value < static_cast<double>(INT32_MIN) || value > static_cast<double>(INT32_MAX)) {
         // For JavaScript semantics, overflow should wrap around
@@ -474,7 +474,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationToInt32UsingJavaScriptSemantics, UCPU
         uint32_t uint32Value = static_cast<uint32_t>(value);
         return toUCPUStrictInt32(static_cast<int32_t>(uint32Value));
     }
-    
+
     // Normal case - value is in range
     return toUCPUStrictInt32(static_cast<int32_t>(value));
 #else
