@@ -1379,6 +1379,7 @@ imported/w3c/web-platform-tests/resource-timing/fetch-cross-origin-redirect.http
 # webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/retrievability.html [ Skip ]
 
 # Is flaky:
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/click-timing.html [ Pass Failure ]
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/timingconditions.html [ Pass Failure ]
 
 # # Observed flaky on EWS, only timeout:
@@ -1402,7 +1403,6 @@ webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/timingcondition
 # webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/pointerup.html [ Skip ]
 
 # # Flaky on EWS, reasons unknown, various errors:
-# webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/click-timing.html [ Skip ]
 # webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/disconnect-target.html [ Skip ]
 # webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/duration-with-target-low.html [ Skip ]
 # webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/event-click-counts.html [ Skip ]
