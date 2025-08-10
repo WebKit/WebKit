@@ -55,7 +55,7 @@ Node* PerformanceEventTiming::target() const
     if (!m_target || !m_target->isNode())
         return nullptr;
 
-    RefPtr<Node> node = downcast<Node>((m_target));
+    RefPtr<Node> node = downcast<Node>((m_target.get()));
     if (!node)
         return nullptr;
 

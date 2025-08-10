@@ -28,12 +28,12 @@
 
 #include "DOMHighResTimeStamp.h"
 #include "EventNames.h"
+#include "EventTarget.h"
 #include "PerformanceEntry.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class EventTarget;
 class Node;
 
 class PerformanceEventTiming final : public PerformanceEntry {
@@ -44,7 +44,7 @@ public:
         Seconds startTime { 0 };
         Seconds processingStart { 0 };
         Seconds processingEnd { 0 };
-        RefPtr<EventTarget> target { nullptr };
+        WeakPtr<EventTarget, EventTarget::WeakPtrImplType> target { nullptr };
     };
     static Ref<PerformanceEventTiming> create(const Candidate&, Seconds duration, bool isFirst = false);
     ~PerformanceEventTiming();
@@ -68,7 +68,7 @@ private:
     bool m_cancelable;
     Seconds m_processingStart;
     Seconds m_processingEnd;
-    RefPtr<EventTarget> m_target;
+    WeakPtr<EventTarget, EventTarget::WeakPtrImplType> m_target;
 };
 
 } // namespace WebCore

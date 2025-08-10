@@ -2482,7 +2482,7 @@ void LocalDOMWindow::finalizeEventTimingEntry(const PerformanceEventTiming::Cand
 {
     m_performanceEventTimingCandidates.append(entry);
     // FIXME: implement InteractionId logic
-    m_performanceEventTimingCandidates.last().target = event.target();
+    m_performanceEventTimingCandidates.last().target = WeakPtr<EventTarget, EventTarget::WeakPtrImplType>(event.target());
     m_performanceEventTimingCandidates.last().processingEnd = performance().nowInReducedResolutionSeconds();
 }
 
