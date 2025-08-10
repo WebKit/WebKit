@@ -935,13 +935,8 @@ ALWAYS_INLINE JSValue JSValue::toBigIntOrInt32(JSGlobalObject* globalObject) con
 
     if (isInt32() || isBigInt())
         return *this;
-    if (isDouble()) {
-        double doubleValue = asDouble();
-        if (canBeInt32(doubleValue))
-            return jsNumber(static_cast<int32_t>(doubleValue));
-        // For doubles that can't be represented as int32, use JavaScript's ToInt32 semantics
-        return jsNumber(JSC::toInt32(doubleValue));
-    }
+    if (isDouble() && canBeInt32(asDouble()))
+        return jsNumber(static_cast<int32_t>(asDouble()));
 
     JSValue primValue = this->toPrimitive(globalObject, PreferNumber);
     RETURN_IF_EXCEPTION(scope, { });
