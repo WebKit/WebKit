@@ -343,11 +343,7 @@ LValue Output::doubleToInt32WithOverflowHandling(LValue value)
     result->append(value, ValueRep::SomeRegister);
     result->setGenerator(
         [] (CCallHelpers& jit, const StackmapGenerationParams& params) {
-#if CPU(ARM64)
-            jit.convertDoubleToInt32UsingJavaScriptSemantics(params[1].fpr(), params[0].gpr());
-#else
             jit.truncateDoubleToInt32(params[1].fpr(), params[0].gpr());
-#endif
         });
     result->effects = Effects::none();
     return result;

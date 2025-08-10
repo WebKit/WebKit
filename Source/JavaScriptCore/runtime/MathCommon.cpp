@@ -459,6 +459,13 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationToInt32SensibleSlow, UCPUStrictInt32,
     return toUCPUStrictInt32(toIntImpl<int32_t, ToIntMode::Int32AfterSensibleConversionAttempt>(number));
 }
 
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationToInt32ForBitwise, UCPUStrictInt32, (double value))
+{
+    // This operation specifically handles the case where we need JavaScript's ToInt32 semantics
+    // for bitwise operations, particularly with the constant 0x7fffffff.
+    // The key difference is that we need to handle overflow correctly according to JavaScript semantics.
+    return toUCPUStrictInt32(JSC::toInt32(value));
+}
 
 
 #if HAVE(ARM_IDIV_INSTRUCTIONS)

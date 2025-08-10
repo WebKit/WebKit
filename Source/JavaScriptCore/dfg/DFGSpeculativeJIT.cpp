@@ -2803,16 +2803,9 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
         SpeculateDoubleOperand op1(this, node->child1());
         FPRReg fpr = op1.fpr();
         GPRReg gpr = result.gpr();
-#if CPU(ARM64)
-        if (MacroAssemblerARM64::supportsDoubleToInt32ConversionUsingJavaScriptSemantics())
-            convertDoubleToInt32UsingJavaScriptSemantics(fpr, gpr);
-        else
-#endif
-        {
-            Jump notTruncatedToInteger = branchTruncateDoubleToInt32(fpr, gpr, BranchIfTruncateFailed);
-            addSlowPathGenerator(slowPathCall(notTruncatedToInteger, this,
-                hasSensibleDoubleToInt() ? operationToInt32SensibleSlow : operationToInt32, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, gpr, fpr));
-        }
+        Jump notTruncatedToInteger = branchTruncateDoubleToInt32(fpr, gpr, BranchIfTruncateFailed);
+        addSlowPathGenerator(slowPathCall(notTruncatedToInteger, this,
+            hasSensibleDoubleToInt() ? operationToInt32SensibleSlow : operationToInt32, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, gpr, fpr));
         strictInt32Result(gpr, node);
         return;
     }
@@ -2863,16 +2856,9 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
 
             // First, if we get here we have a double encoded as a JSValue
             unboxDouble(gpr, resultGpr, fpr);
-#if CPU(ARM64)
-            if (MacroAssemblerARM64::supportsDoubleToInt32ConversionUsingJavaScriptSemantics())
-                convertDoubleToInt32UsingJavaScriptSemantics(fpr, resultGpr);
-            else
-#endif
-            {
-                Jump notTruncatedToInteger = branchTruncateDoubleToInt32(fpr, resultGpr, BranchIfTruncateFailed);
-                addSlowPathGenerator(slowPathCall(notTruncatedToInteger, this,
-                    hasSensibleDoubleToInt() ? operationToInt32SensibleSlow : operationToInt32, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, resultGpr, fpr));
-            }
+            Jump notTruncatedToInteger = branchTruncateDoubleToInt32(fpr, resultGpr, BranchIfTruncateFailed);
+            addSlowPathGenerator(slowPathCall(notTruncatedToInteger, this,
+                hasSensibleDoubleToInt() ? operationToInt32SensibleSlow : operationToInt32, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, resultGpr, fpr));
 
             converted.append(jump());
 
