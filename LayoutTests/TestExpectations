@@ -1377,7 +1377,9 @@ imported/w3c/web-platform-tests/resource-timing/fetch-cross-origin-redirect.http
 # webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/buffered-and-duration-threshold.html [ Skip ]
 # webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/only-observe-firstInput.html [ Skip ]
 # webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/retrievability.html [ Skip ]
-# webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/timingconditions.html [ Skip ]
+
+# Is flaky:
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/timingconditions.html [ Pass Failure ]
 
 # # Observed flaky on EWS, only timeout:
 # webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/auxclick.html [ Skip ]

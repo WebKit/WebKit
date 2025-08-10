@@ -865,6 +865,9 @@ imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.sharedworke
 imported/w3c/web-platform-tests/fetch/content-encoding/gzip-body.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/webtransport/ [ Skip ]
 
+# Event timing: missing automation
+# webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/contextmenu.html [ Skip ]
+
 # WebKitLegacy doesn't support https-based WPT
 webkit.org/b/246719 imported/w3c/web-platform-tests/reporting/generateTestReport-honors-endpoint.https.sub.html [ Failure ]
 webkit.org/b/246719 imported/w3c/web-platform-tests/reporting/cross-origin-report-no-credentials.https.sub.html [ Failure ]
