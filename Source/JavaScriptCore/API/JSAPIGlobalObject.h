@@ -25,10 +25,15 @@
 
 #pragma once
 
+#include "InspectorAPI.h"
 #include "JSBase.h"
 #include "JSGlobalObject.h"
+#include <inspector/InspectorFrontendChannel.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
+#include <memory>
+
+namespace Inspector { class FrontendChannel; }
 
 OBJC_CLASS JSScript;
 
@@ -60,7 +65,7 @@ public:
 
     static void reportUncaughtExceptionAtEventLoop(JSGlobalObject*, Exception*);
 
-    JSValue loadAndEvaluateJSScriptModule(const JSLockHolder&, JSScript *);
+    JSValue loadAndEvaluateJSScriptModule(const JSLockHolder&, JSScript*);
 
     void registerSyntheticModuleKey(const String& key)
     {
@@ -82,6 +87,16 @@ public:
     bool hasAPIModuleLoaderFetch() const { return !!api_moduleLoader.moduleLoaderFetch; }
     bool hasAPIModuleLoaderCreateImportMetaProperties() const { return !!api_moduleLoader.moduleLoaderCreateImportMetaProperties; }
 
+    void setInspectorCallback(InspectorMessageCallback callback) { m_inspectorCallback = callback; }
+    InspectorMessageCallback inspectorCallback() const { return m_inspectorCallback; }
+
+    void setFrontendChannel(std::unique_ptr<Inspector::FrontendChannel> channel) { m_frontendChannel = std::move(channel); }
+    Inspector::FrontendChannel* frontendChannel() const { return m_frontendChannel.get(); }
+    void clearFrontendChannel() { m_frontendChannel = nullptr; }
+
+    void setPauseEventCallback(InspectorPauseEventCallback callback) { m_pauseEventCallback = callback; }
+    InspectorPauseEventCallback pauseEventCallback() const { return m_pauseEventCallback; }
+
 private:
     static const GlobalObjectMethodTable* globalObjectMethodTable();
     JSAPIGlobalObject(VM&, Structure*);
@@ -91,6 +106,11 @@ private:
     static JSPromise* moduleLoaderFetch(JSGlobalObject*, JSModuleLoader*, JSValue, RefPtr<ScriptFetchParameters>, RefPtr<ScriptFetcher>);
     static JSObject* moduleLoaderCreateImportMetaProperties(JSGlobalObject*, JSModuleLoader*, JSValue, JSModuleRecord*, RefPtr<ScriptFetcher>);
     static JSValue moduleLoaderEvaluate(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, RefPtr<ScriptFetcher>, JSValue, JSValue);
+
+    InspectorMessageCallback m_inspectorCallback { nullptr };
+    std::unique_ptr<Inspector::FrontendChannel> m_frontendChannel;
+
+    InspectorPauseEventCallback m_pauseEventCallback { nullptr };
 };
 
 }

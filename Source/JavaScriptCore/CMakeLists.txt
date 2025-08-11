@@ -583,6 +583,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     API/JSWeakPrivate.h
     API/JSWeakValue.h
     API/OpaqueJSString.h
+    API/InspectorAPI.h
 
     API/glib/JSAPIWrapperGlobalObject.h
     API/glib/JSCAutocleanups.h

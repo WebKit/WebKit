@@ -255,6 +255,15 @@ JS_EXPORT void JSLoadModuleFromSource(JSContextRef ctx, JSStringRef module, JSSt
 JS_EXPORT JSValueRef JSLinkAndEvaluateModule(JSContextRef ctx, JSStringRef moduleKey);
 
 /*!
+@typedef JSModuleEvaluationCallback
+@abstract The callback invoked when a module has been evaluated.
+@param ctx The execution context to use.
+@param moduleNamespaceObject A JSValueRef containing the module namespace object.
+@param exception A JSValueRef containing an exception, if any.
+*/
+typedef void (*JSModuleEvaluationCallback)(JSContextRef ctx, JSValueRef moduleNamespaceObject, JSValueRef exception);
+
+/*!
 @function JSSetSyntheticModuleKeys
 @abstract Sets the synthetic module keys.
 @param ctx The execution context to use.

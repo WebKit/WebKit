@@ -648,7 +648,7 @@ RefPtr<Breakpoint> Debugger::didHitBreakpoint(SourceID sourceID, const TextPosit
 
     unsigned line = position.m_line.zeroBasedInt();
     unsigned column = position.m_column.zeroBasedInt();
-    
+
     auto breakpointsIterator = breakpointsForLineIterator->value.find(line);
     if (breakpointsIterator == breakpointsForLineIterator->value.end())
         return nullptr;
