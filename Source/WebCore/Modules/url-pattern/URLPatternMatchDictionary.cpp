@@ -23,8 +23,15 @@ bool isValidDictionaryPattern(const String& match, const URL& dictionaryURL)
         return false;
 
     auto& pattern = patternOrException.returnValue();
+
+    // IETF compliance: ensure pattern's resolved URL is same-origin
+    URL resolvedURL(match, &dictionaryURL);
+    if (!resolvedURL.protocolHostAndPortAreEqual(dictionaryURL))
+        return false;
+
     return !pattern->hasRegExpGroups();
 }
+
 
 // Check if request matches dictionary rules (origin, match-dest, match pattern)
 bool doesRequestMatchDictionary(const ResourceRequest& request, const CompressionDictionary& dict)
