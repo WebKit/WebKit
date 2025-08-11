@@ -2973,7 +2973,6 @@
 		7A93868618DCC14500B8263D /* VTTScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A93868318DCC14500B8263D /* VTTScanner.h */; };
 		7AA3A69A194A64E7001CBD24 /* TileController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA3A696194A64E7001CBD24 /* TileController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AA3A69C194A64E7001CBD24 /* TileGrid.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA3A698194A64E7001CBD24 /* TileGrid.h */; };
-		7AA3A6A0194B59B6001CBD24 /* LayerPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA3A69E194B59B6001CBD24 /* LayerPool.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AA3A6A4194B5C22001CBD24 /* TileCoverageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA3A6A2194B5C22001CBD24 /* TileCoverageMap.h */; };
 		7AABA25A14BC613300AA9A11 /* DOMEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AABA25814BC613300AA9A11 /* DOMEditor.h */; };
 		7AB978AB28FD5EC3003E2202 /* ScrollingTreeFixedNodeCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AB978A928FD5EB0003E2202 /* ScrollingTreeFixedNodeCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13933,8 +13932,6 @@
 		7AA3A696194A64E7001CBD24 /* TileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileController.h; sourceTree = "<group>"; };
 		7AA3A697194A64E7001CBD24 /* TileGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TileGrid.cpp; sourceTree = "<group>"; };
 		7AA3A698194A64E7001CBD24 /* TileGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileGrid.h; sourceTree = "<group>"; };
-		7AA3A69D194B59B6001CBD24 /* LayerPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayerPool.cpp; sourceTree = "<group>"; };
-		7AA3A69E194B59B6001CBD24 /* LayerPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerPool.h; sourceTree = "<group>"; };
 		7AA3A6A1194B5C22001CBD24 /* TileCoverageMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TileCoverageMap.cpp; sourceTree = "<group>"; };
 		7AA3A6A2194B5C22001CBD24 /* TileCoverageMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileCoverageMap.h; sourceTree = "<group>"; };
 		7AABA25714BC613300AA9A11 /* DOMEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMEditor.cpp; sourceTree = "<group>"; };
@@ -26634,8 +26631,6 @@
 				4958781E12A57DBC007238AC /* cocoa */,
 				499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */,
 				499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */,
-				7AA3A69D194B59B6001CBD24 /* LayerPool.cpp */,
-				7AA3A69E194B59B6001CBD24 /* LayerPool.h */,
 				0FDF45A61BD1C6FD00E4FA8C /* PlatformCAAnimation.cpp */,
 				499B3EDC128DB50100E726C2 /* PlatformCAAnimation.h */,
 				0F13163D16ED0CC80035CC04 /* PlatformCAFilters.h */,
@@ -43851,7 +43846,6 @@
 				0FEC120C22BF2CD2004E9D35 /* LayerAncestorClippingStack.h in Headers */,
 				580371641A66F1D300BAF519 /* LayerFragment.h in Headers */,
 				5C5CD2EB29897A7900D10877 /* LayerHostingContextIdentifier.h in Headers */,
-				7AA3A6A0194B59B6001CBD24 /* LayerPool.h in Headers */,
 				0F4D5D1826CCC4AE00A9DFC1 /* LayerTreeAsTextOptions.h in Headers */,
 				115CFA97208B952B001E6991 /* LayoutBox.h in Headers */,
 				9331BAC329EC916C00137ED2 /* LayoutBoxInlines.h in Headers */,
