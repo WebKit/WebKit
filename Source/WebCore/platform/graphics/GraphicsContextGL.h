@@ -1565,8 +1565,8 @@ public:
     using ExternalSyncSource = GraphicsContextGLExternalSyncSource;
 #if ENABLE(WEBXR)
     virtual GCGLExternalSync createExternalSync(ExternalSyncSource&&) = 0;
-#endif
     virtual void deleteExternalSync(GCGLExternalSync) = 0;
+#endif
 
     // ========== Extension related entry points.
 

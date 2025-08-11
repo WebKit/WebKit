@@ -2972,8 +2972,6 @@ GCGLExternalSync GraphicsContextGLANGLE::createExternalSync(ExternalSyncSource&&
     return { };
 }
 
-#endif
-
 void GraphicsContextGLANGLE::deleteExternalSync(GCGLExternalSync sync)
 {
     if (!sync) [[unlikely]]
@@ -2988,6 +2986,8 @@ void GraphicsContextGLANGLE::deleteExternalSync(GCGLExternalSync sync)
     if (!result) [[unlikely]]
         addError(GCGLErrorCode::InvalidOperation);
 }
+
+#endif
 
 void GraphicsContextGLANGLE::multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts)
 {

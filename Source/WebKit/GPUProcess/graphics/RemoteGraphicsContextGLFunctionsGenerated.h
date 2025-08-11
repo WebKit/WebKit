@@ -25,2073 +25,273 @@
 // This file should be included in the private section of the
 // RemoteGraphicsContextGL implementations.
 #pragma once
-    void activeTexture(uint32_t texture)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->activeTexture(texture);
-    }
-    void attachShader(uint32_t program, uint32_t shader)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(program)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (program)
-            program = m_objectNames.get(program);
-        if (!m_objectNames.isValidKey(shader)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (shader)
-            shader = m_objectNames.get(shader);
-        protectedContext()->attachShader(program, shader);
-    }
-    void bindAttribLocation(uint32_t arg0, uint32_t index, String&& name)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        protectedContext()->bindAttribLocation(arg0, index, name);
-    }
-    void bindBuffer(uint32_t target, uint32_t arg1)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg1)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg1)
-            arg1 = m_objectNames.get(arg1);
-        protectedContext()->bindBuffer(target, arg1);
-    }
-    void bindFramebuffer(uint32_t target, uint32_t arg1)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg1)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg1)
-            arg1 = m_objectNames.get(arg1);
-        protectedContext()->bindFramebuffer(target, arg1);
-    }
-    void bindRenderbuffer(uint32_t target, uint32_t arg1)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg1)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg1)
-            arg1 = m_objectNames.get(arg1);
-        protectedContext()->bindRenderbuffer(target, arg1);
-    }
-    void bindTexture(uint32_t target, uint32_t arg1)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg1)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg1)
-            arg1 = m_objectNames.get(arg1);
-        protectedContext()->bindTexture(target, arg1);
-    }
-    void blendColor(float red, float green, float blue, float alpha)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->blendColor(red, green, blue, alpha);
-    }
-    void blendEquation(uint32_t mode)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->blendEquation(mode);
-    }
-    void blendEquationSeparate(uint32_t modeRGB, uint32_t modeAlpha)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->blendEquationSeparate(modeRGB, modeAlpha);
-    }
-    void blendFunc(uint32_t sfactor, uint32_t dfactor)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->blendFunc(sfactor, dfactor);
-    }
-    void blendFuncSeparate(uint32_t srcRGB, uint32_t dstRGB, uint32_t srcAlpha, uint32_t dstAlpha)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
-    }
-    void checkFramebufferStatus(uint32_t target, CompletionHandler<void(uint32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLenum returnValue = { };
-        returnValue = protectedContext()->checkFramebufferStatus(target);
-        completionHandler(returnValue);
-    }
-    void clear(uint32_t mask)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->clear(mask);
-    }
-    void clearColor(float red, float green, float blue, float alpha)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->clearColor(red, green, blue, alpha);
-    }
-    void clearDepth(float depth)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->clearDepth(depth);
-    }
-    void clearStencil(int32_t s)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->clearStencil(s);
-    }
-    void colorMask(bool red, bool green, bool blue, bool alpha)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->colorMask(static_cast<GCGLboolean>(red), static_cast<GCGLboolean>(green), static_cast<GCGLboolean>(blue), static_cast<GCGLboolean>(alpha));
-    }
-    void compileShader(uint32_t arg0)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        protectedContext()->compileShader(arg0);
-    }
-    void copyTexImage2D(uint32_t target, int32_t level, uint32_t internalformat, int32_t x, int32_t y, int32_t width, int32_t height, int32_t border)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->copyTexImage2D(target, level, internalformat, x, y, width, height, border);
-    }
-    void copyTexSubImage2D(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t x, int32_t y, int32_t width, int32_t height)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
-    }
-    void createBuffer(uint32_t name)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(name)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        auto result = protectedContext()->createBuffer();
-        if (result)
-            m_objectNames.add(name, result);
-    }
-    void createFramebuffer(uint32_t name)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(name)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        auto result = protectedContext()->createFramebuffer();
-        if (result)
-            m_objectNames.add(name, result);
-    }
-    void createProgram(uint32_t name)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(name)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        auto result = protectedContext()->createProgram();
-        if (result)
-            m_objectNames.add(name, result);
-    }
-    void createRenderbuffer(uint32_t name)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(name)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        auto result = protectedContext()->createRenderbuffer();
-        if (result)
-            m_objectNames.add(name, result);
-    }
-    void createShader(uint32_t name, uint32_t arg0)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(name)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        auto result = protectedContext()->createShader(arg0);
-        if (result)
-            m_objectNames.add(name, result);
-    }
-    void createTexture(uint32_t name)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(name)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        auto result = protectedContext()->createTexture();
-        if (result)
-            m_objectNames.add(name, result);
-    }
-    void cullFace(uint32_t mode)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->cullFace(mode);
-    }
-    void deleteBuffer(uint32_t arg0)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (!arg0) [[unlikely]]
-            return;
-        arg0 = m_objectNames.take(arg0);
-        protectedContext()->deleteBuffer(arg0);
-    }
-    void deleteFramebuffer(uint32_t arg0)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (!arg0) [[unlikely]]
-            return;
-        arg0 = m_objectNames.take(arg0);
-        protectedContext()->deleteFramebuffer(arg0);
-    }
-    void deleteProgram(uint32_t arg0)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (!arg0) [[unlikely]]
-            return;
-        arg0 = m_objectNames.take(arg0);
-        protectedContext()->deleteProgram(arg0);
-    }
-    void deleteRenderbuffer(uint32_t arg0)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (!arg0) [[unlikely]]
-            return;
-        arg0 = m_objectNames.take(arg0);
-        protectedContext()->deleteRenderbuffer(arg0);
-    }
-    void deleteShader(uint32_t arg0)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (!arg0) [[unlikely]]
-            return;
-        arg0 = m_objectNames.take(arg0);
-        protectedContext()->deleteShader(arg0);
-    }
-    void deleteTexture(uint32_t arg0)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (!arg0) [[unlikely]]
-            return;
-        arg0 = m_objectNames.take(arg0);
-        protectedContext()->deleteTexture(arg0);
-    }
-    void depthFunc(uint32_t func)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->depthFunc(func);
-    }
-    void depthMask(bool flag)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->depthMask(static_cast<GCGLboolean>(flag));
-    }
-    void depthRange(float zNear, float zFar)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->depthRange(zNear, zFar);
-    }
-    void detachShader(uint32_t arg0, uint32_t arg1)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        if (!m_objectNames.isValidKey(arg1)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg1)
-            arg1 = m_objectNames.get(arg1);
-        protectedContext()->detachShader(arg0, arg1);
-    }
-    void disable(uint32_t cap)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->disable(cap);
-    }
-    void disableVertexAttribArray(uint32_t index)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->disableVertexAttribArray(index);
-    }
-    void drawArrays(uint32_t mode, int32_t first, int32_t count)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->drawArrays(mode, first, count);
-    }
-    void drawElements(uint32_t mode, int32_t count, uint32_t type, uint64_t offset)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->drawElements(mode, count, type, static_cast<GCGLintptr>(offset));
-    }
-    void enable(uint32_t cap)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->enable(cap);
-    }
-    void enableVertexAttribArray(uint32_t index)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->enableVertexAttribArray(index);
-    }
-    void finish()
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->finish();
-    }
-    void flush()
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->flush();
-    }
-    void framebufferRenderbuffer(uint32_t target, uint32_t attachment, uint32_t renderbuffertarget, uint32_t arg3)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg3)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg3)
-            arg3 = m_objectNames.get(arg3);
-        protectedContext()->framebufferRenderbuffer(target, attachment, renderbuffertarget, arg3);
-    }
-    void framebufferTexture2D(uint32_t target, uint32_t attachment, uint32_t textarget, uint32_t arg3, int32_t level)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg3)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg3)
-            arg3 = m_objectNames.get(arg3);
-        protectedContext()->framebufferTexture2D(target, attachment, textarget, arg3, level);
-    }
-    void frontFace(uint32_t mode)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->frontFace(mode);
-    }
-    void generateMipmap(uint32_t target)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->generateMipmap(target);
-    }
-    void getActiveAttrib(uint32_t program, uint32_t index, CompletionHandler<void(bool, struct WebCore::GraphicsContextGLActiveInfo&&)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        bool returnValue = { };
-        if (!m_objectNames.isValidKey(program)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (program)
-            program = m_objectNames.get(program);
-        struct WebCore::GraphicsContextGLActiveInfo arg2 { };
-        returnValue = protectedContext()->getActiveAttrib(program, index, arg2);
-        completionHandler(returnValue, WTFMove(arg2));
-    }
-    void getActiveUniform(uint32_t program, uint32_t index, CompletionHandler<void(bool, struct WebCore::GraphicsContextGLActiveInfo&&)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        bool returnValue = { };
-        if (!m_objectNames.isValidKey(program)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (program)
-            program = m_objectNames.get(program);
-        struct WebCore::GraphicsContextGLActiveInfo arg2 { };
-        returnValue = protectedContext()->getActiveUniform(program, index, arg2);
-        completionHandler(returnValue, WTFMove(arg2));
-    }
-    void getAttribLocation(uint32_t arg0, String&& name, CompletionHandler<void(int32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLint returnValue = { };
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        returnValue = protectedContext()->getAttribLocation(arg0, name);
-        completionHandler(returnValue);
-    }
-    void getBufferParameteri(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLint returnValue = { };
-        returnValue = protectedContext()->getBufferParameteri(target, pname);
-        completionHandler(returnValue);
-    }
-    void getString(uint32_t name, CompletionHandler<void(String&&)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        String returnValue = { };
-        returnValue = protectedContext()->getString(name);
-        completionHandler(WTFMove(returnValue));
-    }
-    void getFloatv(uint32_t pname, uint64_t valueSize, CompletionHandler<void(std::span<const float>)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        if (!WTF::isValidCapacityForVector<GCGLfloat>(valueSize))
-            valueSize = 16;
-        Vector<GCGLfloat, 16> value(valueSize, 0);
-        protectedContext()->getFloatv(pname, value);
-        completionHandler(spanReinterpretCast<const float>(value.span()));
-    }
-    void getIntegerv(uint32_t pname, uint64_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        if (!WTF::isValidCapacityForVector<GCGLint>(valueSize))
-            valueSize = 4;
-        Vector<GCGLint, 4> value(valueSize, 0);
-        protectedContext()->getIntegerv(pname, value);
-        completionHandler(spanReinterpretCast<const int32_t>(value.span()));
-    }
-    void getIntegeri_v(uint32_t pname, uint32_t index, CompletionHandler<void(std::span<const int32_t, 4>)>&& completionHandler) // NOLINT
-    {
-        assertIsCurrent(workQueue());
-        std::array<GCGLint, 4> value { };
-        protectedContext()->getIntegeri_v(pname, index, value);
-        completionHandler(spanReinterpretCast<const int32_t, 4>(std::span<const GCGLint, 4>(value)));
-    }
-    void getInteger64(uint32_t pname, CompletionHandler<void(int64_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLint64 returnValue = { };
-        returnValue = protectedContext()->getInteger64(pname);
-        completionHandler(static_cast<int64_t>(returnValue));
-    }
-    void getInteger64i(uint32_t pname, uint32_t index, CompletionHandler<void(int64_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLint64 returnValue = { };
-        returnValue = protectedContext()->getInteger64i(pname, index);
-        completionHandler(static_cast<int64_t>(returnValue));
-    }
-    void getProgrami(uint32_t program, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLint returnValue = { };
-        if (!m_objectNames.isValidKey(program)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (program)
-            program = m_objectNames.get(program);
-        returnValue = protectedContext()->getProgrami(program, pname);
-        completionHandler(returnValue);
-    }
-    void getBooleanv(uint32_t pname, uint64_t valueSize, CompletionHandler<void(std::span<const bool>)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        if (!WTF::isValidCapacityForVector<GCGLboolean>(valueSize))
-            valueSize = 4;
-        Vector<GCGLboolean, 4> value(valueSize, 0);
-        protectedContext()->getBooleanv(pname, value);
-        completionHandler(spanReinterpretCast<const bool>(value.span()));
-    }
-    void getFramebufferAttachmentParameteri(uint32_t target, uint32_t attachment, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLint returnValue = { };
-        returnValue = protectedContext()->getFramebufferAttachmentParameteri(target, attachment, pname);
-        completionHandler(returnValue);
-    }
-    void getProgramInfoLog(uint32_t arg0, CompletionHandler<void(String&&)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        String returnValue = { };
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        returnValue = protectedContext()->getProgramInfoLog(arg0);
-        completionHandler(WTFMove(returnValue));
-    }
-    void getRenderbufferParameteri(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLint returnValue = { };
-        returnValue = protectedContext()->getRenderbufferParameteri(target, pname);
-        completionHandler(returnValue);
-    }
-    void getShaderi(uint32_t arg0, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLint returnValue = { };
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        returnValue = protectedContext()->getShaderi(arg0, pname);
-        completionHandler(returnValue);
-    }
-    void getShaderInfoLog(uint32_t arg0, CompletionHandler<void(String&&)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        String returnValue = { };
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        returnValue = protectedContext()->getShaderInfoLog(arg0);
-        completionHandler(WTFMove(returnValue));
-    }
-    void getShaderPrecisionFormat(uint32_t shaderType, uint32_t precisionType, CompletionHandler<void(std::span<const int32_t, 2>, int32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        std::array<GCGLint, 2> range { };
-        GCGLint precision = { };
-        protectedContext()->getShaderPrecisionFormat(shaderType, precisionType, range, &precision);
-        completionHandler(spanReinterpretCast<const int32_t, 2>(std::span<const GCGLint, 2>(range)), precision);
-    }
-    void getShaderSource(uint32_t arg0, CompletionHandler<void(String&&)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        String returnValue = { };
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        returnValue = protectedContext()->getShaderSource(arg0);
-        completionHandler(WTFMove(returnValue));
-    }
-    void getTexParameterf(uint32_t target, uint32_t pname, CompletionHandler<void(float)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLfloat returnValue = { };
-        returnValue = protectedContext()->getTexParameterf(target, pname);
-        completionHandler(returnValue);
-    }
-    void getTexParameteri(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLint returnValue = { };
-        returnValue = protectedContext()->getTexParameteri(target, pname);
-        completionHandler(returnValue);
-    }
-    void getUniformfv(uint32_t program, int32_t location, uint64_t valueSize, CompletionHandler<void(std::span<const float>)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(program)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (program)
-            program = m_objectNames.get(program);
-        if (!WTF::isValidCapacityForVector<GCGLfloat>(valueSize))
-            valueSize = 16;
-        Vector<GCGLfloat, 16> value(valueSize, 0);
-        protectedContext()->getUniformfv(program, location, value);
-        completionHandler(spanReinterpretCast<const float>(value.span()));
-    }
-    void getUniformiv(uint32_t program, int32_t location, uint64_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(program)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (program)
-            program = m_objectNames.get(program);
-        if (!WTF::isValidCapacityForVector<GCGLint>(valueSize))
-            valueSize = 4;
-        Vector<GCGLint, 4> value(valueSize, 0);
-        protectedContext()->getUniformiv(program, location, value);
-        completionHandler(spanReinterpretCast<const int32_t>(value.span()));
-    }
-    void getUniformuiv(uint32_t program, int32_t location, uint64_t valueSize, CompletionHandler<void(std::span<const uint32_t>)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(program)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (program)
-            program = m_objectNames.get(program);
-        if (!WTF::isValidCapacityForVector<GCGLuint>(valueSize))
-            valueSize = 4;
-        Vector<GCGLuint, 4> value(valueSize, 0);
-        protectedContext()->getUniformuiv(program, location, value);
-        completionHandler(spanReinterpretCast<const uint32_t>(value.span()));
-    }
-    void getUniformLocation(uint32_t arg0, String&& name, CompletionHandler<void(int32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLint returnValue = { };
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        returnValue = protectedContext()->getUniformLocation(arg0, name);
-        completionHandler(returnValue);
-    }
-    void getVertexAttribOffset(uint32_t index, uint32_t pname, CompletionHandler<void(uint64_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLsizeiptr returnValue = { };
-        returnValue = protectedContext()->getVertexAttribOffset(index, pname);
-        completionHandler(static_cast<uint64_t>(returnValue));
-    }
-    void hint(uint32_t target, uint32_t mode)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->hint(target, mode);
-    }
-    void isBuffer(uint32_t arg0, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLboolean returnValue = { };
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        returnValue = protectedContext()->isBuffer(arg0);
-        completionHandler(static_cast<bool>(returnValue));
-    }
-    void isEnabled(uint32_t cap, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLboolean returnValue = { };
-        returnValue = protectedContext()->isEnabled(cap);
-        completionHandler(static_cast<bool>(returnValue));
-    }
-    void isFramebuffer(uint32_t arg0, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLboolean returnValue = { };
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        returnValue = protectedContext()->isFramebuffer(arg0);
-        completionHandler(static_cast<bool>(returnValue));
-    }
-    void isProgram(uint32_t arg0, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLboolean returnValue = { };
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        returnValue = protectedContext()->isProgram(arg0);
-        completionHandler(static_cast<bool>(returnValue));
-    }
-    void isRenderbuffer(uint32_t arg0, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLboolean returnValue = { };
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        returnValue = protectedContext()->isRenderbuffer(arg0);
-        completionHandler(static_cast<bool>(returnValue));
-    }
-    void isShader(uint32_t arg0, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLboolean returnValue = { };
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        returnValue = protectedContext()->isShader(arg0);
-        completionHandler(static_cast<bool>(returnValue));
-    }
-    void isTexture(uint32_t arg0, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLboolean returnValue = { };
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        returnValue = protectedContext()->isTexture(arg0);
-        completionHandler(static_cast<bool>(returnValue));
-    }
-    void lineWidth(float arg0)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->lineWidth(arg0);
-    }
-    void linkProgram(uint32_t arg0)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        protectedContext()->linkProgram(arg0);
-    }
-    void pixelStorei(uint32_t pname, int32_t param)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->pixelStorei(pname, param);
-    }
-    void polygonOffset(float factor, float units)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->polygonOffset(factor, units);
-    }
-    void renderbufferStorage(uint32_t target, uint32_t internalformat, int32_t width, int32_t height)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->renderbufferStorage(target, internalformat, width, height);
-    }
-    void sampleCoverage(float value, bool invert)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->sampleCoverage(value, static_cast<GCGLboolean>(invert));
-    }
-    void scissor(int32_t x, int32_t y, int32_t width, int32_t height)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->scissor(x, y, width, height);
-    }
-    void shaderSource(uint32_t arg0, String&& arg1)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        protectedContext()->shaderSource(arg0, arg1);
-    }
-    void stencilFunc(uint32_t func, int32_t ref, uint32_t mask)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->stencilFunc(func, ref, mask);
-    }
-    void stencilFuncSeparate(uint32_t face, uint32_t func, int32_t ref, uint32_t mask)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->stencilFuncSeparate(face, func, ref, mask);
-    }
-    void stencilMask(uint32_t mask)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->stencilMask(mask);
-    }
-    void stencilMaskSeparate(uint32_t face, uint32_t mask)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->stencilMaskSeparate(face, mask);
-    }
-    void stencilOp(uint32_t fail, uint32_t zfail, uint32_t zpass)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->stencilOp(fail, zfail, zpass);
-    }
-    void stencilOpSeparate(uint32_t face, uint32_t fail, uint32_t zfail, uint32_t zpass)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->stencilOpSeparate(face, fail, zfail, zpass);
-    }
-    void texParameterf(uint32_t target, uint32_t pname, float param)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->texParameterf(target, pname, param);
-    }
-    void texParameteri(uint32_t target, uint32_t pname, int32_t param)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->texParameteri(target, pname, param);
-    }
-    void uniform1f(int32_t location, float x)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform1f(location, x);
-    }
-    void uniform1fv(int32_t location, std::span<const float>&& v)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform1fv(location, v);
-    }
-    void uniform1i(int32_t location, int32_t x)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform1i(location, x);
-    }
-    void uniform1iv(int32_t location, std::span<const int32_t>&& v)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform1iv(location, v);
-    }
-    void uniform2f(int32_t location, float x, float y)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform2f(location, x, y);
-    }
-    void uniform2fv(int32_t location, std::span<const float>&& v)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform2fv(location, v);
-    }
-    void uniform2i(int32_t location, int32_t x, int32_t y)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform2i(location, x, y);
-    }
-    void uniform2iv(int32_t location, std::span<const int32_t>&& v)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform2iv(location, v);
-    }
-    void uniform3f(int32_t location, float x, float y, float z)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform3f(location, x, y, z);
-    }
-    void uniform3fv(int32_t location, std::span<const float>&& v)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform3fv(location, v);
-    }
-    void uniform3i(int32_t location, int32_t x, int32_t y, int32_t z)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform3i(location, x, y, z);
-    }
-    void uniform3iv(int32_t location, std::span<const int32_t>&& v)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform3iv(location, v);
-    }
-    void uniform4f(int32_t location, float x, float y, float z, float w)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform4f(location, x, y, z, w);
-    }
-    void uniform4fv(int32_t location, std::span<const float>&& v)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform4fv(location, v);
-    }
-    void uniform4i(int32_t location, int32_t x, int32_t y, int32_t z, int32_t w)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform4i(location, x, y, z, w);
-    }
-    void uniform4iv(int32_t location, std::span<const int32_t>&& v)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform4iv(location, v);
-    }
-    void uniformMatrix2fv(int32_t location, bool transpose, std::span<const float>&& value)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniformMatrix2fv(location, static_cast<GCGLboolean>(transpose), value);
-    }
-    void uniformMatrix3fv(int32_t location, bool transpose, std::span<const float>&& value)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniformMatrix3fv(location, static_cast<GCGLboolean>(transpose), value);
-    }
-    void uniformMatrix4fv(int32_t location, bool transpose, std::span<const float>&& value)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniformMatrix4fv(location, static_cast<GCGLboolean>(transpose), value);
-    }
-    void useProgram(uint32_t arg0)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        protectedContext()->useProgram(arg0);
-    }
-    void validateProgram(uint32_t arg0)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        protectedContext()->validateProgram(arg0);
-    }
-    void vertexAttrib1f(uint32_t index, float x)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->vertexAttrib1f(index, x);
-    }
-    void vertexAttrib1fv(uint32_t index, std::span<const float, 1>&& values)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->vertexAttrib1fv(index, values);
-    }
-    void vertexAttrib2f(uint32_t index, float x, float y)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->vertexAttrib2f(index, x, y);
-    }
-    void vertexAttrib2fv(uint32_t index, std::span<const float, 2>&& values)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->vertexAttrib2fv(index, values);
-    }
-    void vertexAttrib3f(uint32_t index, float x, float y, float z)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->vertexAttrib3f(index, x, y, z);
-    }
-    void vertexAttrib3fv(uint32_t index, std::span<const float, 3>&& values)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->vertexAttrib3fv(index, values);
-    }
-    void vertexAttrib4f(uint32_t index, float x, float y, float z, float w)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->vertexAttrib4f(index, x, y, z, w);
-    }
-    void vertexAttrib4fv(uint32_t index, std::span<const float, 4>&& values)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->vertexAttrib4fv(index, values);
-    }
-    void vertexAttribPointer(uint32_t index, int32_t size, uint32_t type, bool normalized, int32_t stride, uint64_t offset)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->vertexAttribPointer(index, size, type, static_cast<GCGLboolean>(normalized), stride, static_cast<GCGLintptr>(offset));
-    }
-    void viewport(int32_t x, int32_t y, int32_t width, int32_t height)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->viewport(x, y, width, height);
-    }
-    void bufferData0(uint32_t target, uint64_t arg1, uint32_t usage)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->bufferData(target, static_cast<GCGLsizeiptr>(arg1), usage);
-    }
-    void bufferData1(uint32_t target, std::span<const uint8_t>&& data, uint32_t usage)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->bufferData(target, data, usage);
-    }
-    void bufferSubData(uint32_t target, uint64_t offset, std::span<const uint8_t>&& data)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->bufferSubData(target, static_cast<GCGLintptr>(offset), data);
-    }
-    void readPixelsBufferObject(WebCore::IntRect&& arg0, uint32_t format, uint32_t type, uint64_t offset, int32_t alignment, int32_t rowLength)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->readPixelsBufferObject(arg0, format, type, static_cast<GCGLintptr>(offset), alignment, rowLength);
-    }
-    void texImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, uint32_t format, uint32_t type, std::span<const uint8_t>&& pixels)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->texImage2D(target, level, internalformat, width, height, border, format, type, pixels);
-    }
-    void texImage2D1(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, uint32_t format, uint32_t type, uint64_t offset)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->texImage2D(target, level, internalformat, width, height, border, format, type, static_cast<GCGLintptr>(offset));
-    }
-    void texSubImage2D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, uint32_t type, std::span<const uint8_t>&& pixels)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
-    }
-    void texSubImage2D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, uint32_t type, uint64_t offset)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, static_cast<GCGLintptr>(offset));
-    }
-    void compressedTexImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, int32_t imageSize, std::span<const uint8_t>&& data)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->compressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
-    }
-    void compressedTexImage2D1(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, int32_t imageSize, uint64_t offset)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->compressedTexImage2D(target, level, internalformat, width, height, border, imageSize, static_cast<GCGLintptr>(offset));
-    }
-    void compressedTexSubImage2D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, int32_t imageSize, std::span<const uint8_t>&& data)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data);
-    }
-    void compressedTexSubImage2D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, int32_t imageSize, uint64_t offset)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->compressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, static_cast<GCGLintptr>(offset));
-    }
-    void drawArraysInstanced(uint32_t mode, int32_t first, int32_t count, int32_t primcount)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->drawArraysInstanced(mode, first, count, primcount);
-    }
-    void drawElementsInstanced(uint32_t mode, int32_t count, uint32_t type, uint64_t offset, int32_t primcount)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->drawElementsInstanced(mode, count, type, static_cast<GCGLintptr>(offset), primcount);
-    }
-    void vertexAttribDivisor(uint32_t index, uint32_t divisor)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->vertexAttribDivisor(index, divisor);
-    }
-    void createVertexArray(uint32_t name)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(name)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        auto result = protectedContext()->createVertexArray();
-        if (result)
-            m_objectNames.add(name, result);
-    }
-    void deleteVertexArray(uint32_t arg0)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (!arg0) [[unlikely]]
-            return;
-        arg0 = m_objectNames.take(arg0);
-        protectedContext()->deleteVertexArray(arg0);
-    }
-    void isVertexArray(uint32_t arg0, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLboolean returnValue = { };
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        returnValue = protectedContext()->isVertexArray(arg0);
-        completionHandler(static_cast<bool>(returnValue));
-    }
-    void bindVertexArray(uint32_t arg0)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        protectedContext()->bindVertexArray(arg0);
-    }
-    void copyBufferSubData(uint32_t readTarget, uint32_t writeTarget, uint64_t readOffset, uint64_t writeOffset, uint64_t arg4)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->copyBufferSubData(readTarget, writeTarget, static_cast<GCGLintptr>(readOffset), static_cast<GCGLintptr>(writeOffset), static_cast<GCGLsizeiptr>(arg4));
-    }
-    void blitFramebuffer(int32_t srcX0, int32_t srcY0, int32_t srcX1, int32_t srcY1, int32_t dstX0, int32_t dstY0, int32_t dstX1, int32_t dstY1, uint32_t mask, uint32_t filter)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->blitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
-    }
-    void framebufferTextureLayer(uint32_t target, uint32_t attachment, uint32_t texture, int32_t level, int32_t layer)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(texture)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (texture)
-            texture = m_objectNames.get(texture);
-        protectedContext()->framebufferTextureLayer(target, attachment, texture, level, layer);
-    }
-    void readBuffer(uint32_t src)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->readBuffer(src);
-    }
-    void renderbufferStorageMultisample(uint32_t target, int32_t samples, uint32_t internalformat, int32_t width, int32_t height)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->renderbufferStorageMultisample(target, samples, internalformat, width, height);
-    }
-    void texStorage2D(uint32_t target, int32_t levels, uint32_t internalformat, int32_t width, int32_t height)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->texStorage2D(target, levels, internalformat, width, height);
-    }
-    void texStorage3D(uint32_t target, int32_t levels, uint32_t internalformat, int32_t width, int32_t height, int32_t depth)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->texStorage3D(target, levels, internalformat, width, height, depth);
-    }
-    void texImage3D0(uint32_t target, int32_t level, int32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, uint32_t format, uint32_t type, std::span<const uint8_t>&& pixels)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->texImage3D(target, level, internalformat, width, height, depth, border, format, type, pixels);
-    }
-    void texImage3D1(uint32_t target, int32_t level, int32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, uint32_t format, uint32_t type, uint64_t offset)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->texImage3D(target, level, internalformat, width, height, depth, border, format, type, static_cast<GCGLintptr>(offset));
-    }
-    void texSubImage3D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, uint32_t type, std::span<const uint8_t>&& pixels)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
-    }
-    void texSubImage3D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, uint32_t type, uint64_t offset)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->texSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, static_cast<GCGLintptr>(offset));
-    }
-    void copyTexSubImage3D(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t x, int32_t y, int32_t width, int32_t height)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->copyTexSubImage3D(target, level, xoffset, yoffset, zoffset, x, y, width, height);
-    }
-    void compressedTexImage3D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, int32_t imageSize, std::span<const uint8_t>&& data)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->compressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, data);
-    }
-    void compressedTexImage3D1(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, int32_t imageSize, uint64_t offset)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->compressedTexImage3D(target, level, internalformat, width, height, depth, border, imageSize, static_cast<GCGLintptr>(offset));
-    }
-    void compressedTexSubImage3D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, int32_t imageSize, std::span<const uint8_t>&& data)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->compressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data);
-    }
-    void compressedTexSubImage3D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, int32_t imageSize, uint64_t offset)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->compressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, static_cast<GCGLintptr>(offset));
-    }
-    void getFragDataLocation(uint32_t program, String&& name, CompletionHandler<void(int32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLint returnValue = { };
-        if (!m_objectNames.isValidKey(program)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (program)
-            program = m_objectNames.get(program);
-        returnValue = protectedContext()->getFragDataLocation(program, name);
-        completionHandler(returnValue);
-    }
-    void uniform1ui(int32_t location, uint32_t v0)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform1ui(location, v0);
-    }
-    void uniform2ui(int32_t location, uint32_t v0, uint32_t v1)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform2ui(location, v0, v1);
-    }
-    void uniform3ui(int32_t location, uint32_t v0, uint32_t v1, uint32_t v2)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform3ui(location, v0, v1, v2);
-    }
-    void uniform4ui(int32_t location, uint32_t v0, uint32_t v1, uint32_t v2, uint32_t v3)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform4ui(location, v0, v1, v2, v3);
-    }
-    void uniform1uiv(int32_t location, std::span<const uint32_t>&& data)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform1uiv(location, data);
-    }
-    void uniform2uiv(int32_t location, std::span<const uint32_t>&& data)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform2uiv(location, data);
-    }
-    void uniform3uiv(int32_t location, std::span<const uint32_t>&& data)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform3uiv(location, data);
-    }
-    void uniform4uiv(int32_t location, std::span<const uint32_t>&& data)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniform4uiv(location, data);
-    }
-    void uniformMatrix2x3fv(int32_t location, bool transpose, std::span<const float>&& data)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniformMatrix2x3fv(location, static_cast<GCGLboolean>(transpose), data);
-    }
-    void uniformMatrix3x2fv(int32_t location, bool transpose, std::span<const float>&& data)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniformMatrix3x2fv(location, static_cast<GCGLboolean>(transpose), data);
-    }
-    void uniformMatrix2x4fv(int32_t location, bool transpose, std::span<const float>&& data)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniformMatrix2x4fv(location, static_cast<GCGLboolean>(transpose), data);
-    }
-    void uniformMatrix4x2fv(int32_t location, bool transpose, std::span<const float>&& data)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniformMatrix4x2fv(location, static_cast<GCGLboolean>(transpose), data);
-    }
-    void uniformMatrix3x4fv(int32_t location, bool transpose, std::span<const float>&& data)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniformMatrix3x4fv(location, static_cast<GCGLboolean>(transpose), data);
-    }
-    void uniformMatrix4x3fv(int32_t location, bool transpose, std::span<const float>&& data)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->uniformMatrix4x3fv(location, static_cast<GCGLboolean>(transpose), data);
-    }
-    void vertexAttribI4i(uint32_t index, int32_t x, int32_t y, int32_t z, int32_t w)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->vertexAttribI4i(index, x, y, z, w);
-    }
-    void vertexAttribI4iv(uint32_t index, std::span<const int32_t, 4>&& values)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->vertexAttribI4iv(index, values);
-    }
-    void vertexAttribI4ui(uint32_t index, uint32_t x, uint32_t y, uint32_t z, uint32_t w)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->vertexAttribI4ui(index, x, y, z, w);
-    }
-    void vertexAttribI4uiv(uint32_t index, std::span<const uint32_t, 4>&& values)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->vertexAttribI4uiv(index, values);
-    }
-    void vertexAttribIPointer(uint32_t index, int32_t size, uint32_t type, int32_t stride, uint64_t offset)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->vertexAttribIPointer(index, size, type, stride, static_cast<GCGLintptr>(offset));
-    }
-    void drawRangeElements(uint32_t mode, uint32_t start, uint32_t end, int32_t count, uint32_t type, uint64_t offset)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->drawRangeElements(mode, start, end, count, type, static_cast<GCGLintptr>(offset));
-    }
-    void clearBufferiv(uint32_t buffer, int32_t drawbuffer, std::span<const int32_t>&& values)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->clearBufferiv(buffer, drawbuffer, values);
-    }
-    void clearBufferuiv(uint32_t buffer, int32_t drawbuffer, std::span<const uint32_t>&& values)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->clearBufferuiv(buffer, drawbuffer, values);
-    }
-    void clearBufferfv(uint32_t buffer, int32_t drawbuffer, std::span<const float>&& values)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->clearBufferfv(buffer, drawbuffer, values);
-    }
-    void clearBufferfi(uint32_t buffer, int32_t drawbuffer, float depth, int32_t stencil)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->clearBufferfi(buffer, drawbuffer, depth, stencil);
-    }
-    void createQuery(uint32_t name)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(name)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        auto result = protectedContext()->createQuery();
-        if (result)
-            m_objectNames.add(name, result);
-    }
-    void deleteQuery(uint32_t query)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(query)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (!query) [[unlikely]]
-            return;
-        query = m_objectNames.take(query);
-        protectedContext()->deleteQuery(query);
-    }
-    void isQuery(uint32_t query, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLboolean returnValue = { };
-        if (!m_objectNames.isValidKey(query)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (query)
-            query = m_objectNames.get(query);
-        returnValue = protectedContext()->isQuery(query);
-        completionHandler(static_cast<bool>(returnValue));
-    }
-    void beginQuery(uint32_t target, uint32_t query)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(query)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (query)
-            query = m_objectNames.get(query);
-        protectedContext()->beginQuery(target, query);
-    }
-    void endQuery(uint32_t target)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->endQuery(target);
-    }
-    void getQuery(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLint returnValue = { };
-        returnValue = protectedContext()->getQuery(target, pname);
-        completionHandler(returnValue);
-    }
-    void getQueryObjectui(uint32_t query, uint32_t pname, CompletionHandler<void(uint32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLuint returnValue = { };
-        if (!m_objectNames.isValidKey(query)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (query)
-            query = m_objectNames.get(query);
-        returnValue = protectedContext()->getQueryObjectui(query, pname);
-        completionHandler(returnValue);
-    }
-    void createSampler(uint32_t name)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(name)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        auto result = protectedContext()->createSampler();
-        if (result)
-            m_objectNames.add(name, result);
-    }
-    void deleteSampler(uint32_t sampler)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(sampler)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (!sampler) [[unlikely]]
-            return;
-        sampler = m_objectNames.take(sampler);
-        protectedContext()->deleteSampler(sampler);
-    }
-    void isSampler(uint32_t sampler, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLboolean returnValue = { };
-        if (!m_objectNames.isValidKey(sampler)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (sampler)
-            sampler = m_objectNames.get(sampler);
-        returnValue = protectedContext()->isSampler(sampler);
-        completionHandler(static_cast<bool>(returnValue));
-    }
-    void bindSampler(uint32_t unit, uint32_t sampler)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(sampler)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (sampler)
-            sampler = m_objectNames.get(sampler);
-        protectedContext()->bindSampler(unit, sampler);
-    }
-    void samplerParameteri(uint32_t sampler, uint32_t pname, int32_t param)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(sampler)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (sampler)
-            sampler = m_objectNames.get(sampler);
-        protectedContext()->samplerParameteri(sampler, pname, param);
-    }
-    void samplerParameterf(uint32_t sampler, uint32_t pname, float param)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(sampler)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (sampler)
-            sampler = m_objectNames.get(sampler);
-        protectedContext()->samplerParameterf(sampler, pname, param);
-    }
-    void getSamplerParameterf(uint32_t sampler, uint32_t pname, CompletionHandler<void(float)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLfloat returnValue = { };
-        if (!m_objectNames.isValidKey(sampler)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (sampler)
-            sampler = m_objectNames.get(sampler);
-        returnValue = protectedContext()->getSamplerParameterf(sampler, pname);
-        completionHandler(returnValue);
-    }
-    void getSamplerParameteri(uint32_t sampler, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLint returnValue = { };
-        if (!m_objectNames.isValidKey(sampler)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (sampler)
-            sampler = m_objectNames.get(sampler);
-        returnValue = protectedContext()->getSamplerParameteri(sampler, pname);
-        completionHandler(returnValue);
-    }
-    void fenceSync(uint32_t condition, uint32_t flags, CompletionHandler<void(uint64_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLsync returnValue = { };
-        returnValue = protectedContext()->fenceSync(condition, flags);
-        completionHandler(static_cast<uint64_t>(reinterpret_cast<intptr_t>(returnValue)));
-    }
-    void isSync(uint64_t arg0, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLboolean returnValue = { };
-        returnValue = protectedContext()->isSync(reinterpret_cast<GCGLsync>(static_cast<intptr_t>(arg0)));
-        completionHandler(static_cast<bool>(returnValue));
-    }
-    void deleteSync(uint64_t arg0)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->deleteSync(reinterpret_cast<GCGLsync>(static_cast<intptr_t>(arg0)));
-    }
-    void clientWaitSync(uint64_t arg0, uint32_t flags, uint64_t timeout, CompletionHandler<void(uint32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLenum returnValue = { };
-        returnValue = protectedContext()->clientWaitSync(reinterpret_cast<GCGLsync>(static_cast<intptr_t>(arg0)), flags, static_cast<GCGLuint64>(timeout));
-        completionHandler(returnValue);
-    }
-    void waitSync(uint64_t arg0, uint32_t flags, int64_t timeout)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->waitSync(reinterpret_cast<GCGLsync>(static_cast<intptr_t>(arg0)), flags, static_cast<GCGLint64>(timeout));
-    }
-    void getSynci(uint64_t arg0, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLint returnValue = { };
-        returnValue = protectedContext()->getSynci(reinterpret_cast<GCGLsync>(static_cast<intptr_t>(arg0)), pname);
-        completionHandler(returnValue);
-    }
-    void createTransformFeedback(uint32_t name)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(name)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        auto result = protectedContext()->createTransformFeedback();
-        if (result)
-            m_objectNames.add(name, result);
-    }
-    void deleteTransformFeedback(uint32_t id)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(id)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (!id) [[unlikely]]
-            return;
-        id = m_objectNames.take(id);
-        protectedContext()->deleteTransformFeedback(id);
-    }
-    void isTransformFeedback(uint32_t id, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLboolean returnValue = { };
-        if (!m_objectNames.isValidKey(id)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (id)
-            id = m_objectNames.get(id);
-        returnValue = protectedContext()->isTransformFeedback(id);
-        completionHandler(static_cast<bool>(returnValue));
-    }
-    void bindTransformFeedback(uint32_t target, uint32_t id)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(id)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (id)
-            id = m_objectNames.get(id);
-        protectedContext()->bindTransformFeedback(target, id);
-    }
-    void beginTransformFeedback(uint32_t primitiveMode)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->beginTransformFeedback(primitiveMode);
-    }
-    void endTransformFeedback()
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->endTransformFeedback();
-    }
-    void transformFeedbackVaryings(uint32_t program, Vector<String>&& varyings, uint32_t bufferMode)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(program)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (program)
-            program = m_objectNames.get(program);
-        protectedContext()->transformFeedbackVaryings(program, varyings, bufferMode);
-    }
-    void getTransformFeedbackVarying(uint32_t program, uint32_t index, CompletionHandler<void(struct WebCore::GraphicsContextGLActiveInfo&&)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(program)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (program)
-            program = m_objectNames.get(program);
-        struct WebCore::GraphicsContextGLActiveInfo arg2 { };
-        protectedContext()->getTransformFeedbackVarying(program, index, arg2);
-        completionHandler(WTFMove(arg2));
-    }
-    void pauseTransformFeedback()
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->pauseTransformFeedback();
-    }
-    void resumeTransformFeedback()
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->resumeTransformFeedback();
-    }
-    void bindBufferBase(uint32_t target, uint32_t index, uint32_t buffer)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(buffer)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (buffer)
-            buffer = m_objectNames.get(buffer);
-        protectedContext()->bindBufferBase(target, index, buffer);
-    }
-    void bindBufferRange(uint32_t target, uint32_t index, uint32_t buffer, uint64_t offset, uint64_t arg4)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(buffer)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (buffer)
-            buffer = m_objectNames.get(buffer);
-        protectedContext()->bindBufferRange(target, index, buffer, static_cast<GCGLintptr>(offset), static_cast<GCGLsizeiptr>(arg4));
-    }
-    void getUniformIndices(uint32_t program, Vector<String>&& uniformNames, CompletionHandler<void(Vector<uint32_t>&&)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        Vector<GCGLuint> returnValue = { };
-        if (!m_objectNames.isValidKey(program)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (program)
-            program = m_objectNames.get(program);
-        returnValue = protectedContext()->getUniformIndices(program, uniformNames);
-        completionHandler(WTFMove(returnValue));
-    }
-    void getActiveUniforms(uint32_t program, Vector<uint32_t>&& uniformIndices, uint32_t pname, CompletionHandler<void(Vector<int32_t>&&)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        Vector<GCGLint> returnValue = { };
-        if (!m_objectNames.isValidKey(program)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (program)
-            program = m_objectNames.get(program);
-        returnValue = protectedContext()->getActiveUniforms(program, uniformIndices, pname);
-        completionHandler(WTFMove(returnValue));
-    }
-    void getUniformBlockIndex(uint32_t program, String&& uniformBlockName, CompletionHandler<void(uint32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLuint returnValue = { };
-        if (!m_objectNames.isValidKey(program)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (program)
-            program = m_objectNames.get(program);
-        returnValue = protectedContext()->getUniformBlockIndex(program, uniformBlockName);
-        completionHandler(returnValue);
-    }
-    void getActiveUniformBlockName(uint32_t program, uint32_t uniformBlockIndex, CompletionHandler<void(String&&)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        String returnValue = { };
-        if (!m_objectNames.isValidKey(program)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (program)
-            program = m_objectNames.get(program);
-        returnValue = protectedContext()->getActiveUniformBlockName(program, uniformBlockIndex);
-        completionHandler(WTFMove(returnValue));
-    }
-    void uniformBlockBinding(uint32_t program, uint32_t uniformBlockIndex, uint32_t uniformBlockBinding)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(program)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (program)
-            program = m_objectNames.get(program);
-        protectedContext()->uniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding);
-    }
-    void getActiveUniformBlockiv(uint32_t program, uint32_t uniformBlockIndex, uint32_t pname, uint64_t paramsSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(program)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (program)
-            program = m_objectNames.get(program);
-        if (!WTF::isValidCapacityForVector<GCGLint>(paramsSize))
-            paramsSize = 4;
-        Vector<GCGLint, 4> params(paramsSize, 0);
-        protectedContext()->getActiveUniformBlockiv(program, uniformBlockIndex, pname, params);
-        completionHandler(spanReinterpretCast<const int32_t>(params.span()));
-    }
-    void getTranslatedShaderSourceANGLE(uint32_t arg0, CompletionHandler<void(String&&)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        String returnValue = { };
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        returnValue = protectedContext()->getTranslatedShaderSourceANGLE(arg0);
-        completionHandler(WTFMove(returnValue));
-    }
-    void createQueryEXT(uint32_t name)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(name)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        auto result = protectedContext()->createQueryEXT();
-        if (result)
-            m_objectNames.add(name, result);
-    }
-    void deleteQueryEXT(uint32_t query)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(query)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (!query) [[unlikely]]
-            return;
-        query = m_objectNames.take(query);
-        protectedContext()->deleteQueryEXT(query);
-    }
-    void isQueryEXT(uint32_t query, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLboolean returnValue = { };
-        if (!m_objectNames.isValidKey(query)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (query)
-            query = m_objectNames.get(query);
-        returnValue = protectedContext()->isQueryEXT(query);
-        completionHandler(static_cast<bool>(returnValue));
-    }
-    void beginQueryEXT(uint32_t target, uint32_t query)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(query)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (query)
-            query = m_objectNames.get(query);
-        protectedContext()->beginQueryEXT(target, query);
-    }
-    void endQueryEXT(uint32_t target)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->endQueryEXT(target);
-    }
-    void queryCounterEXT(uint32_t query, uint32_t target)
-    {
-        assertIsCurrent(workQueue());
-        if (!m_objectNames.isValidKey(query)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (query)
-            query = m_objectNames.get(query);
-        protectedContext()->queryCounterEXT(query, target);
-    }
-    void getQueryiEXT(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLint returnValue = { };
-        returnValue = protectedContext()->getQueryiEXT(target, pname);
-        completionHandler(returnValue);
-    }
-    void getQueryObjectiEXT(uint32_t query, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLint returnValue = { };
-        if (!m_objectNames.isValidKey(query)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (query)
-            query = m_objectNames.get(query);
-        returnValue = protectedContext()->getQueryObjectiEXT(query, pname);
-        completionHandler(returnValue);
-    }
-    void getQueryObjectui64EXT(uint32_t query, uint32_t pname, CompletionHandler<void(uint64_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLuint64 returnValue = { };
-        if (!m_objectNames.isValidKey(query)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (query)
-            query = m_objectNames.get(query);
-        returnValue = protectedContext()->getQueryObjectui64EXT(query, pname);
-        completionHandler(static_cast<uint64_t>(returnValue));
-    }
-    void getInteger64EXT(uint32_t pname, CompletionHandler<void(int64_t)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        GCGLint64 returnValue = { };
-        returnValue = protectedContext()->getInteger64EXT(pname);
-        completionHandler(static_cast<int64_t>(returnValue));
-    }
-    void enableiOES(uint32_t target, uint32_t index)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->enableiOES(target, index);
-    }
-    void disableiOES(uint32_t target, uint32_t index)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->disableiOES(target, index);
-    }
-    void blendEquationiOES(uint32_t buf, uint32_t mode)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->blendEquationiOES(buf, mode);
-    }
-    void blendEquationSeparateiOES(uint32_t buf, uint32_t modeRGB, uint32_t modeAlpha)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->blendEquationSeparateiOES(buf, modeRGB, modeAlpha);
-    }
-    void blendFunciOES(uint32_t buf, uint32_t src, uint32_t dst)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->blendFunciOES(buf, src, dst);
-    }
-    void blendFuncSeparateiOES(uint32_t buf, uint32_t srcRGB, uint32_t dstRGB, uint32_t srcAlpha, uint32_t dstAlpha)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->blendFuncSeparateiOES(buf, srcRGB, dstRGB, srcAlpha, dstAlpha);
-    }
-    void colorMaskiOES(uint32_t buf, bool red, bool green, bool blue, bool alpha)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->colorMaskiOES(buf, static_cast<GCGLboolean>(red), static_cast<GCGLboolean>(green), static_cast<GCGLboolean>(blue), static_cast<GCGLboolean>(alpha));
-    }
-    void drawArraysInstancedBaseInstanceANGLE(uint32_t mode, int32_t first, int32_t count, int32_t instanceCount, uint32_t baseInstance)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->drawArraysInstancedBaseInstanceANGLE(mode, first, count, instanceCount, baseInstance);
-    }
-    void drawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, int32_t count, uint32_t type, uint64_t offset, int32_t instanceCount, int32_t baseVertex, uint32_t baseInstance)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->drawElementsInstancedBaseVertexBaseInstanceANGLE(mode, count, type, static_cast<GCGLintptr>(offset), instanceCount, baseVertex, baseInstance);
-    }
-    void clipControlEXT(uint32_t origin, uint32_t depth)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->clipControlEXT(origin, depth);
-    }
-    void provokingVertexANGLE(uint32_t provokeMode)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->provokingVertexANGLE(provokeMode);
-    }
-    void polygonModeANGLE(uint32_t face, uint32_t mode)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->polygonModeANGLE(face, mode);
-    }
-    void polygonOffsetClampEXT(float factor, float units, float clamp)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->polygonOffsetClampEXT(factor, units, clamp);
-    }
-    void renderbufferStorageMultisampleANGLE(uint32_t target, int32_t samples, uint32_t internalformat, int32_t width, int32_t height)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->renderbufferStorageMultisampleANGLE(target, samples, internalformat, width, height);
-    }
-    void getInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, uint64_t paramsSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        if (!WTF::isValidCapacityForVector<GCGLint>(paramsSize))
-            paramsSize = 4;
-        Vector<GCGLint, 4> params(paramsSize, 0);
-        protectedContext()->getInternalformativ(target, internalformat, pname, params);
-        completionHandler(spanReinterpretCast<const int32_t>(params.span()));
-    }
-    void setDrawingBufferColorSpace(WebCore::DestinationColorSpace&& arg0)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->setDrawingBufferColorSpace(arg0);
-    }
+    void activeTexture(uint32_t texture);
+    void attachShader(uint32_t program, uint32_t shader);
+    void bindAttribLocation(uint32_t arg0, uint32_t index, String&& name);
+    void bindBuffer(uint32_t target, uint32_t arg1);
+    void bindFramebuffer(uint32_t target, uint32_t arg1);
+    void bindRenderbuffer(uint32_t target, uint32_t arg1);
+    void bindTexture(uint32_t target, uint32_t arg1);
+    void blendColor(float red, float green, float blue, float alpha);
+    void blendEquation(uint32_t mode);
+    void blendEquationSeparate(uint32_t modeRGB, uint32_t modeAlpha);
+    void blendFunc(uint32_t sfactor, uint32_t dfactor);
+    void blendFuncSeparate(uint32_t srcRGB, uint32_t dstRGB, uint32_t srcAlpha, uint32_t dstAlpha);
+    void checkFramebufferStatus(uint32_t target, CompletionHandler<void(uint32_t)>&&);
+    void clear(uint32_t mask);
+    void clearColor(float red, float green, float blue, float alpha);
+    void clearDepth(float depth);
+    void clearStencil(int32_t s);
+    void colorMask(bool red, bool green, bool blue, bool alpha);
+    void compileShader(uint32_t arg0);
+    void copyTexImage2D(uint32_t target, int32_t level, uint32_t internalformat, int32_t x, int32_t y, int32_t width, int32_t height, int32_t border);
+    void copyTexSubImage2D(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t x, int32_t y, int32_t width, int32_t height);
+    void createBuffer(uint32_t name);
+    void createFramebuffer(uint32_t name);
+    void createProgram(uint32_t name);
+    void createRenderbuffer(uint32_t name);
+    void createShader(uint32_t name, uint32_t arg0);
+    void createTexture(uint32_t name);
+    void cullFace(uint32_t mode);
+    void deleteBuffer(uint32_t arg0);
+    void deleteFramebuffer(uint32_t arg0);
+    void deleteProgram(uint32_t arg0);
+    void deleteRenderbuffer(uint32_t arg0);
+    void deleteShader(uint32_t arg0);
+    void deleteTexture(uint32_t arg0);
+    void depthFunc(uint32_t func);
+    void depthMask(bool flag);
+    void depthRange(float zNear, float zFar);
+    void detachShader(uint32_t arg0, uint32_t arg1);
+    void disable(uint32_t cap);
+    void disableVertexAttribArray(uint32_t index);
+    void drawArrays(uint32_t mode, int32_t first, int32_t count);
+    void drawElements(uint32_t mode, int32_t count, uint32_t type, uint64_t offset);
+    void enable(uint32_t cap);
+    void enableVertexAttribArray(uint32_t index);
+    void finish();
+    void flush();
+    void framebufferRenderbuffer(uint32_t target, uint32_t attachment, uint32_t renderbuffertarget, uint32_t arg3);
+    void framebufferTexture2D(uint32_t target, uint32_t attachment, uint32_t textarget, uint32_t arg3, int32_t level);
+    void frontFace(uint32_t mode);
+    void generateMipmap(uint32_t target);
+    void getActiveAttrib(uint32_t program, uint32_t index, CompletionHandler<void(bool, struct WebCore::GraphicsContextGLActiveInfo&&)>&&);
+    void getActiveUniform(uint32_t program, uint32_t index, CompletionHandler<void(bool, struct WebCore::GraphicsContextGLActiveInfo&&)>&&);
+    void getAttribLocation(uint32_t arg0, String&& name, CompletionHandler<void(int32_t)>&&);
+    void getBufferParameteri(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&&);
+    void getString(uint32_t name, CompletionHandler<void(String&&)>&&);
+    void getFloatv(uint32_t pname, uint64_t valueSize, CompletionHandler<void(std::span<const float>)>&&);
+    void getIntegerv(uint32_t pname, uint64_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&&);
+    void getIntegeri_v(uint32_t pname, uint32_t index, CompletionHandler<void(std::span<const int32_t, 4>)>&&); // NOLINT
+    void getInteger64(uint32_t pname, CompletionHandler<void(int64_t)>&&);
+    void getInteger64i(uint32_t pname, uint32_t index, CompletionHandler<void(int64_t)>&&);
+    void getProgrami(uint32_t program, uint32_t pname, CompletionHandler<void(int32_t)>&&);
+    void getBooleanv(uint32_t pname, uint64_t valueSize, CompletionHandler<void(std::span<const bool>)>&&);
+    void getFramebufferAttachmentParameteri(uint32_t target, uint32_t attachment, uint32_t pname, CompletionHandler<void(int32_t)>&&);
+    void getProgramInfoLog(uint32_t arg0, CompletionHandler<void(String&&)>&&);
+    void getRenderbufferParameteri(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&&);
+    void getShaderi(uint32_t arg0, uint32_t pname, CompletionHandler<void(int32_t)>&&);
+    void getShaderInfoLog(uint32_t arg0, CompletionHandler<void(String&&)>&&);
+    void getShaderPrecisionFormat(uint32_t shaderType, uint32_t precisionType, CompletionHandler<void(std::span<const int32_t, 2>, int32_t)>&&);
+    void getShaderSource(uint32_t arg0, CompletionHandler<void(String&&)>&&);
+    void getTexParameterf(uint32_t target, uint32_t pname, CompletionHandler<void(float)>&&);
+    void getTexParameteri(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&&);
+    void getUniformfv(uint32_t program, int32_t location, uint64_t valueSize, CompletionHandler<void(std::span<const float>)>&&);
+    void getUniformiv(uint32_t program, int32_t location, uint64_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&&);
+    void getUniformuiv(uint32_t program, int32_t location, uint64_t valueSize, CompletionHandler<void(std::span<const uint32_t>)>&&);
+    void getUniformLocation(uint32_t arg0, String&& name, CompletionHandler<void(int32_t)>&&);
+    void getVertexAttribOffset(uint32_t index, uint32_t pname, CompletionHandler<void(uint64_t)>&&);
+    void hint(uint32_t target, uint32_t mode);
+    void isBuffer(uint32_t arg0, CompletionHandler<void(bool)>&&);
+    void isEnabled(uint32_t cap, CompletionHandler<void(bool)>&&);
+    void isFramebuffer(uint32_t arg0, CompletionHandler<void(bool)>&&);
+    void isProgram(uint32_t arg0, CompletionHandler<void(bool)>&&);
+    void isRenderbuffer(uint32_t arg0, CompletionHandler<void(bool)>&&);
+    void isShader(uint32_t arg0, CompletionHandler<void(bool)>&&);
+    void isTexture(uint32_t arg0, CompletionHandler<void(bool)>&&);
+    void lineWidth(float arg0);
+    void linkProgram(uint32_t arg0);
+    void pixelStorei(uint32_t pname, int32_t param);
+    void polygonOffset(float factor, float units);
+    void renderbufferStorage(uint32_t target, uint32_t internalformat, int32_t width, int32_t height);
+    void sampleCoverage(float value, bool invert);
+    void scissor(int32_t x, int32_t y, int32_t width, int32_t height);
+    void shaderSource(uint32_t arg0, String&& arg1);
+    void stencilFunc(uint32_t func, int32_t ref, uint32_t mask);
+    void stencilFuncSeparate(uint32_t face, uint32_t func, int32_t ref, uint32_t mask);
+    void stencilMask(uint32_t mask);
+    void stencilMaskSeparate(uint32_t face, uint32_t mask);
+    void stencilOp(uint32_t fail, uint32_t zfail, uint32_t zpass);
+    void stencilOpSeparate(uint32_t face, uint32_t fail, uint32_t zfail, uint32_t zpass);
+    void texParameterf(uint32_t target, uint32_t pname, float param);
+    void texParameteri(uint32_t target, uint32_t pname, int32_t param);
+    void uniform1f(int32_t location, float x);
+    void uniform1fv(int32_t location, std::span<const float>&& v);
+    void uniform1i(int32_t location, int32_t x);
+    void uniform1iv(int32_t location, std::span<const int32_t>&& v);
+    void uniform2f(int32_t location, float x, float y);
+    void uniform2fv(int32_t location, std::span<const float>&& v);
+    void uniform2i(int32_t location, int32_t x, int32_t y);
+    void uniform2iv(int32_t location, std::span<const int32_t>&& v);
+    void uniform3f(int32_t location, float x, float y, float z);
+    void uniform3fv(int32_t location, std::span<const float>&& v);
+    void uniform3i(int32_t location, int32_t x, int32_t y, int32_t z);
+    void uniform3iv(int32_t location, std::span<const int32_t>&& v);
+    void uniform4f(int32_t location, float x, float y, float z, float w);
+    void uniform4fv(int32_t location, std::span<const float>&& v);
+    void uniform4i(int32_t location, int32_t x, int32_t y, int32_t z, int32_t w);
+    void uniform4iv(int32_t location, std::span<const int32_t>&& v);
+    void uniformMatrix2fv(int32_t location, bool transpose, std::span<const float>&& value);
+    void uniformMatrix3fv(int32_t location, bool transpose, std::span<const float>&& value);
+    void uniformMatrix4fv(int32_t location, bool transpose, std::span<const float>&& value);
+    void useProgram(uint32_t arg0);
+    void validateProgram(uint32_t arg0);
+    void vertexAttrib1f(uint32_t index, float x);
+    void vertexAttrib1fv(uint32_t index, std::span<const float, 1>&& values);
+    void vertexAttrib2f(uint32_t index, float x, float y);
+    void vertexAttrib2fv(uint32_t index, std::span<const float, 2>&& values);
+    void vertexAttrib3f(uint32_t index, float x, float y, float z);
+    void vertexAttrib3fv(uint32_t index, std::span<const float, 3>&& values);
+    void vertexAttrib4f(uint32_t index, float x, float y, float z, float w);
+    void vertexAttrib4fv(uint32_t index, std::span<const float, 4>&& values);
+    void vertexAttribPointer(uint32_t index, int32_t size, uint32_t type, bool normalized, int32_t stride, uint64_t offset);
+    void viewport(int32_t x, int32_t y, int32_t width, int32_t height);
+    void bufferData0(uint32_t target, uint64_t arg1, uint32_t usage);
+    void bufferData1(uint32_t target, std::span<const uint8_t>&& data, uint32_t usage);
+    void bufferSubData(uint32_t target, uint64_t offset, std::span<const uint8_t>&& data);
+    void readPixelsBufferObject(WebCore::IntRect&& arg0, uint32_t format, uint32_t type, uint64_t offset, int32_t alignment, int32_t rowLength);
+    void texImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, uint32_t format, uint32_t type, std::span<const uint8_t>&& pixels);
+    void texImage2D1(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, uint32_t format, uint32_t type, uint64_t offset);
+    void texSubImage2D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, uint32_t type, std::span<const uint8_t>&& pixels);
+    void texSubImage2D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, uint32_t type, uint64_t offset);
+    void compressedTexImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, int32_t imageSize, std::span<const uint8_t>&& data);
+    void compressedTexImage2D1(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, int32_t imageSize, uint64_t offset);
+    void compressedTexSubImage2D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, int32_t imageSize, std::span<const uint8_t>&& data);
+    void compressedTexSubImage2D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, int32_t imageSize, uint64_t offset);
+    void drawArraysInstanced(uint32_t mode, int32_t first, int32_t count, int32_t primcount);
+    void drawElementsInstanced(uint32_t mode, int32_t count, uint32_t type, uint64_t offset, int32_t primcount);
+    void vertexAttribDivisor(uint32_t index, uint32_t divisor);
+    void createVertexArray(uint32_t name);
+    void deleteVertexArray(uint32_t arg0);
+    void isVertexArray(uint32_t arg0, CompletionHandler<void(bool)>&&);
+    void bindVertexArray(uint32_t arg0);
+    void copyBufferSubData(uint32_t readTarget, uint32_t writeTarget, uint64_t readOffset, uint64_t writeOffset, uint64_t arg4);
+    void blitFramebuffer(int32_t srcX0, int32_t srcY0, int32_t srcX1, int32_t srcY1, int32_t dstX0, int32_t dstY0, int32_t dstX1, int32_t dstY1, uint32_t mask, uint32_t filter);
+    void framebufferTextureLayer(uint32_t target, uint32_t attachment, uint32_t texture, int32_t level, int32_t layer);
+    void readBuffer(uint32_t src);
+    void renderbufferStorageMultisample(uint32_t target, int32_t samples, uint32_t internalformat, int32_t width, int32_t height);
+    void texStorage2D(uint32_t target, int32_t levels, uint32_t internalformat, int32_t width, int32_t height);
+    void texStorage3D(uint32_t target, int32_t levels, uint32_t internalformat, int32_t width, int32_t height, int32_t depth);
+    void texImage3D0(uint32_t target, int32_t level, int32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, uint32_t format, uint32_t type, std::span<const uint8_t>&& pixels);
+    void texImage3D1(uint32_t target, int32_t level, int32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, uint32_t format, uint32_t type, uint64_t offset);
+    void texSubImage3D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, uint32_t type, std::span<const uint8_t>&& pixels);
+    void texSubImage3D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, uint32_t type, uint64_t offset);
+    void copyTexSubImage3D(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t x, int32_t y, int32_t width, int32_t height);
+    void compressedTexImage3D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, int32_t imageSize, std::span<const uint8_t>&& data);
+    void compressedTexImage3D1(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t depth, int32_t border, int32_t imageSize, uint64_t offset);
+    void compressedTexSubImage3D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, int32_t imageSize, std::span<const uint8_t>&& data);
+    void compressedTexSubImage3D1(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t zoffset, int32_t width, int32_t height, int32_t depth, uint32_t format, int32_t imageSize, uint64_t offset);
+    void getFragDataLocation(uint32_t program, String&& name, CompletionHandler<void(int32_t)>&&);
+    void uniform1ui(int32_t location, uint32_t v0);
+    void uniform2ui(int32_t location, uint32_t v0, uint32_t v1);
+    void uniform3ui(int32_t location, uint32_t v0, uint32_t v1, uint32_t v2);
+    void uniform4ui(int32_t location, uint32_t v0, uint32_t v1, uint32_t v2, uint32_t v3);
+    void uniform1uiv(int32_t location, std::span<const uint32_t>&& data);
+    void uniform2uiv(int32_t location, std::span<const uint32_t>&& data);
+    void uniform3uiv(int32_t location, std::span<const uint32_t>&& data);
+    void uniform4uiv(int32_t location, std::span<const uint32_t>&& data);
+    void uniformMatrix2x3fv(int32_t location, bool transpose, std::span<const float>&& data);
+    void uniformMatrix3x2fv(int32_t location, bool transpose, std::span<const float>&& data);
+    void uniformMatrix2x4fv(int32_t location, bool transpose, std::span<const float>&& data);
+    void uniformMatrix4x2fv(int32_t location, bool transpose, std::span<const float>&& data);
+    void uniformMatrix3x4fv(int32_t location, bool transpose, std::span<const float>&& data);
+    void uniformMatrix4x3fv(int32_t location, bool transpose, std::span<const float>&& data);
+    void vertexAttribI4i(uint32_t index, int32_t x, int32_t y, int32_t z, int32_t w);
+    void vertexAttribI4iv(uint32_t index, std::span<const int32_t, 4>&& values);
+    void vertexAttribI4ui(uint32_t index, uint32_t x, uint32_t y, uint32_t z, uint32_t w);
+    void vertexAttribI4uiv(uint32_t index, std::span<const uint32_t, 4>&& values);
+    void vertexAttribIPointer(uint32_t index, int32_t size, uint32_t type, int32_t stride, uint64_t offset);
+    void drawRangeElements(uint32_t mode, uint32_t start, uint32_t end, int32_t count, uint32_t type, uint64_t offset);
+    void clearBufferiv(uint32_t buffer, int32_t drawbuffer, std::span<const int32_t>&& values);
+    void clearBufferuiv(uint32_t buffer, int32_t drawbuffer, std::span<const uint32_t>&& values);
+    void clearBufferfv(uint32_t buffer, int32_t drawbuffer, std::span<const float>&& values);
+    void clearBufferfi(uint32_t buffer, int32_t drawbuffer, float depth, int32_t stencil);
+    void createQuery(uint32_t name);
+    void deleteQuery(uint32_t query);
+    void isQuery(uint32_t query, CompletionHandler<void(bool)>&&);
+    void beginQuery(uint32_t target, uint32_t query);
+    void endQuery(uint32_t target);
+    void getQuery(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&&);
+    void getQueryObjectui(uint32_t query, uint32_t pname, CompletionHandler<void(uint32_t)>&&);
+    void createSampler(uint32_t name);
+    void deleteSampler(uint32_t sampler);
+    void isSampler(uint32_t sampler, CompletionHandler<void(bool)>&&);
+    void bindSampler(uint32_t unit, uint32_t sampler);
+    void samplerParameteri(uint32_t sampler, uint32_t pname, int32_t param);
+    void samplerParameterf(uint32_t sampler, uint32_t pname, float param);
+    void getSamplerParameterf(uint32_t sampler, uint32_t pname, CompletionHandler<void(float)>&&);
+    void getSamplerParameteri(uint32_t sampler, uint32_t pname, CompletionHandler<void(int32_t)>&&);
+    void fenceSync(uint32_t condition, uint32_t flags, CompletionHandler<void(uint64_t)>&&);
+    void isSync(uint64_t arg0, CompletionHandler<void(bool)>&&);
+    void deleteSync(uint64_t arg0);
+    void clientWaitSync(uint64_t arg0, uint32_t flags, uint64_t timeout, CompletionHandler<void(uint32_t)>&&);
+    void waitSync(uint64_t arg0, uint32_t flags, int64_t timeout);
+    void getSynci(uint64_t arg0, uint32_t pname, CompletionHandler<void(int32_t)>&&);
+    void createTransformFeedback(uint32_t name);
+    void deleteTransformFeedback(uint32_t id);
+    void isTransformFeedback(uint32_t id, CompletionHandler<void(bool)>&&);
+    void bindTransformFeedback(uint32_t target, uint32_t id);
+    void beginTransformFeedback(uint32_t primitiveMode);
+    void endTransformFeedback();
+    void transformFeedbackVaryings(uint32_t program, Vector<String>&& varyings, uint32_t bufferMode);
+    void getTransformFeedbackVarying(uint32_t program, uint32_t index, CompletionHandler<void(struct WebCore::GraphicsContextGLActiveInfo&&)>&&);
+    void pauseTransformFeedback();
+    void resumeTransformFeedback();
+    void bindBufferBase(uint32_t target, uint32_t index, uint32_t buffer);
+    void bindBufferRange(uint32_t target, uint32_t index, uint32_t buffer, uint64_t offset, uint64_t arg4);
+    void getUniformIndices(uint32_t program, Vector<String>&& uniformNames, CompletionHandler<void(Vector<uint32_t>&&)>&&);
+    void getActiveUniforms(uint32_t program, Vector<uint32_t>&& uniformIndices, uint32_t pname, CompletionHandler<void(Vector<int32_t>&&)>&&);
+    void getUniformBlockIndex(uint32_t program, String&& uniformBlockName, CompletionHandler<void(uint32_t)>&&);
+    void getActiveUniformBlockName(uint32_t program, uint32_t uniformBlockIndex, CompletionHandler<void(String&&)>&&);
+    void uniformBlockBinding(uint32_t program, uint32_t uniformBlockIndex, uint32_t uniformBlockBinding);
+    void getActiveUniformBlockiv(uint32_t program, uint32_t uniformBlockIndex, uint32_t pname, uint64_t paramsSize, CompletionHandler<void(std::span<const int32_t>)>&&);
+    void getTranslatedShaderSourceANGLE(uint32_t arg0, CompletionHandler<void(String&&)>&&);
+    void createQueryEXT(uint32_t name);
+    void deleteQueryEXT(uint32_t query);
+    void isQueryEXT(uint32_t query, CompletionHandler<void(bool)>&&);
+    void beginQueryEXT(uint32_t target, uint32_t query);
+    void endQueryEXT(uint32_t target);
+    void queryCounterEXT(uint32_t query, uint32_t target);
+    void getQueryiEXT(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&&);
+    void getQueryObjectiEXT(uint32_t query, uint32_t pname, CompletionHandler<void(int32_t)>&&);
+    void getQueryObjectui64EXT(uint32_t query, uint32_t pname, CompletionHandler<void(uint64_t)>&&);
+    void getInteger64EXT(uint32_t pname, CompletionHandler<void(int64_t)>&&);
+    void enableiOES(uint32_t target, uint32_t index);
+    void disableiOES(uint32_t target, uint32_t index);
+    void blendEquationiOES(uint32_t buf, uint32_t mode);
+    void blendEquationSeparateiOES(uint32_t buf, uint32_t modeRGB, uint32_t modeAlpha);
+    void blendFunciOES(uint32_t buf, uint32_t src, uint32_t dst);
+    void blendFuncSeparateiOES(uint32_t buf, uint32_t srcRGB, uint32_t dstRGB, uint32_t srcAlpha, uint32_t dstAlpha);
+    void colorMaskiOES(uint32_t buf, bool red, bool green, bool blue, bool alpha);
+    void drawArraysInstancedBaseInstanceANGLE(uint32_t mode, int32_t first, int32_t count, int32_t instanceCount, uint32_t baseInstance);
+    void drawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, int32_t count, uint32_t type, uint64_t offset, int32_t instanceCount, int32_t baseVertex, uint32_t baseInstance);
+    void clipControlEXT(uint32_t origin, uint32_t depth);
+    void provokingVertexANGLE(uint32_t provokeMode);
+    void polygonModeANGLE(uint32_t face, uint32_t mode);
+    void polygonOffsetClampEXT(float factor, float units, float clamp);
+    void renderbufferStorageMultisampleANGLE(uint32_t target, int32_t samples, uint32_t internalformat, int32_t width, int32_t height);
+    void getInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, uint64_t paramsSize, CompletionHandler<void(std::span<const int32_t>)>&&);
+    void setDrawingBufferColorSpace(WebCore::DestinationColorSpace&& arg0);
 #if ENABLE(WEBXR)
-    void createExternalImage(uint32_t name, WebCore::GraphicsContextGL::ExternalImageSource&& arg0, uint32_t internalFormat, int32_t layer)
-    {
-        assertIsCurrent(workQueue());
-        messageCheck(webXRPromptAccepted());
-        if (!m_objectNames.isValidKey(name)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        auto result = protectedContext()->createExternalImage(WTFMove(arg0), internalFormat, layer);
-        if (result)
-            m_objectNames.add(name, result);
-    }
-    void deleteExternalImage(uint32_t handle)
-    {
-        assertIsCurrent(workQueue());
-        messageCheck(webXRPromptAccepted());
-        if (!m_objectNames.isValidKey(handle)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (!handle) [[unlikely]]
-            return;
-        handle = m_objectNames.take(handle);
-        protectedContext()->deleteExternalImage(handle);
-    }
-    void bindExternalImage(uint32_t target, uint32_t arg1)
-    {
-        assertIsCurrent(workQueue());
-        messageCheck(webXRPromptAccepted());
-        if (!m_objectNames.isValidKey(arg1)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg1)
-            arg1 = m_objectNames.get(arg1);
-        protectedContext()->bindExternalImage(target, arg1);
-    }
-    void createExternalSync(uint32_t name, WebCore::GraphicsContextGL::ExternalSyncSource&& arg0)
-    {
-        assertIsCurrent(workQueue());
-        messageCheck(webXRPromptAccepted());
-        if (!m_objectNames.isValidKey(name)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        auto result = protectedContext()->createExternalSync(WTFMove(arg0));
-        if (result)
-            m_objectNames.add(name, result);
-    }
-#endif
-    void deleteExternalSync(uint32_t arg0)
-    {
-        assertIsCurrent(workQueue());
-        messageCheck(webXRPromptAccepted());
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (!arg0) [[unlikely]]
-            return;
-        arg0 = m_objectNames.take(arg0);
-        protectedContext()->deleteExternalSync(arg0);
-    }
-#if ENABLE(WEBXR)
-    void enableRequiredWebXRExtensions(CompletionHandler<void(bool)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        messageCheck(webXREnabled());
-        bool returnValue = { };
-        returnValue = protectedContext()->enableRequiredWebXRExtensions();
-        completionHandler(returnValue);
-    }
-    void addFoveation(WebCore::IntSize&& physicalSizeLeft, WebCore::IntSize&& physicalSizeRight, WebCore::IntSize&& screenSize, std::span<const float>&& horizontalSamplesLeft, std::span<const float>&& verticalSamples, std::span<const float>&& horizontalSamplesRight, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        assertIsCurrent(workQueue());
-        messageCheck(webXRPromptAccepted());
-        bool returnValue = { };
-        returnValue = protectedContext()->addFoveation(physicalSizeLeft, physicalSizeRight, screenSize, horizontalSamplesLeft, verticalSamples, horizontalSamplesRight);
-        completionHandler(returnValue);
-    }
-    void enableFoveation(uint32_t arg0)
-    {
-        assertIsCurrent(workQueue());
-        messageCheck(webXRPromptAccepted());
-        if (!m_objectNames.isValidKey(arg0)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg0)
-            arg0 = m_objectNames.get(arg0);
-        protectedContext()->enableFoveation(arg0);
-    }
-    void disableFoveation()
-    {
-        assertIsCurrent(workQueue());
-        messageCheck(webXRPromptAccepted());
-        protectedContext()->disableFoveation();
-    }
-    void framebufferResolveRenderbuffer(uint32_t target, uint32_t attachment, uint32_t renderbuffertarget, uint32_t arg3)
-    {
-        assertIsCurrent(workQueue());
-        messageCheck(webXRPromptAccepted());
-        if (!m_objectNames.isValidKey(arg3)) [[unlikely]] {
-            ASSERT_IS_TESTING_IPC();
-            return;
-        }
-        if (arg3)
-            arg3 = m_objectNames.get(arg3);
-        protectedContext()->framebufferResolveRenderbuffer(target, attachment, renderbuffertarget, arg3);
-    }
+    void createExternalImage(uint32_t name, WebCore::GraphicsContextGL::ExternalImageSource&& arg0, uint32_t internalFormat, int32_t layer);
+    void deleteExternalImage(uint32_t handle);
+    void bindExternalImage(uint32_t target, uint32_t arg1);
+    void createExternalSync(uint32_t name, WebCore::GraphicsContextGL::ExternalSyncSource&& arg0);
+    void deleteExternalSync(uint32_t arg0);
+    void enableRequiredWebXRExtensions(CompletionHandler<void(bool)>&&);
+    void addFoveation(WebCore::IntSize&& physicalSizeLeft, WebCore::IntSize&& physicalSizeRight, WebCore::IntSize&& screenSize, std::span<const float>&& horizontalSamplesLeft, std::span<const float>&& verticalSamples, std::span<const float>&& horizontalSamplesRight, CompletionHandler<void(bool)>&&);
+    void enableFoveation(uint32_t arg0);
+    void disableFoveation();
+    void framebufferResolveRenderbuffer(uint32_t target, uint32_t attachment, uint32_t renderbuffertarget, uint32_t arg3);
 #endif
 

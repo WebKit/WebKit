@@ -32,6 +32,7 @@ GPUProcess/ShapeDetection/ShapeDetectionObjectHeap.cpp
 GPUProcess/graphics/ImageBufferShareableAllocator.cpp
 GPUProcess/graphics/RemoteDisplayListRecorder.cpp
 GPUProcess/graphics/RemoteGraphicsContextGL.cpp
+GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.cpp
 GPUProcess/graphics/RemoteImageBuffer.cpp
 GPUProcess/graphics/RemoteImageBufferSet.cpp
 GPUProcess/graphics/RemoteRenderingBackend.cpp

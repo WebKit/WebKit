@@ -92,7 +92,7 @@ void RemoteObjectRegistry::callReplyBlock(IPC::Connection& connection, uint64_t 
         [m_remoteObjectRegistry _callReplyWithID:replyID blockInvocation:blockInvocation];
     } @catch (NSException *exception) {
         NSLog(@"Warning: Exception caught during handling of received message, marking message invalid .\nException: %@", exception);
-        IPC::Connection::markCurrentlyDispatchedMessageAsInvalid(&connection);
+        IPC::markCurrentlyDispatchedMessageAsInvalid(connection);
     }
 }
 

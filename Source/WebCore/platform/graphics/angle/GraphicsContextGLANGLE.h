@@ -294,8 +294,8 @@ public:
     void deleteExternalImage(GCGLExternalImage) final;
     void bindExternalImage(GCGLenum target, GCGLExternalImage) override;
     GCGLExternalSync createExternalSync(ExternalSyncSource&&) override;
-#endif
     void deleteExternalSync(GCGLExternalSync) final;
+#endif
     void multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts) final;
     void multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei> firstsCountsAndInstanceCounts) final;
     void multiDrawElementsANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei> countsAndOffsets, GCGLenum type) final;

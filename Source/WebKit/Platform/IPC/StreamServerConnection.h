@@ -191,4 +191,15 @@ void StreamServerConnection::sendAsyncReply(AsyncReplyID asyncReplyID, Arguments
     m_connection->sendAsyncReply<T>(asyncReplyID, std::forward<Arguments>(arguments)...);
 }
 
+inline void markCurrentlyDispatchedMessageAsInvalid(StreamServerConnection& connection)
+{
+    connection.markCurrentlyDispatchedMessageAsInvalid();
+}
+
+inline void markCurrentlyDispatchedMessageAsInvalid(const RefPtr<StreamServerConnection>& connection)
+{
+    if (connection)
+        connection->markCurrentlyDispatchedMessageAsInvalid();
+}
+
 }

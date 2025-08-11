@@ -47,6 +47,8 @@
 #include "RemoteVideoFrameObjectHeap.h"
 #endif
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_streamConnection);
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -472,7 +474,7 @@ void RemoteGraphicsContextGL::invalidateSubFramebuffer(uint32_t target, std::spa
 void RemoteGraphicsContextGL::framebufferDiscard(uint32_t target, std::span<const uint32_t> attachments)
 {
     assertIsCurrent(workQueue());
-    messageCheck(webXRPromptAccepted());
+    MESSAGE_CHECK(webXRPromptAccepted());
     protectedContext()->framebufferDiscard(target, Vector(attachments));
 }
 
@@ -491,14 +493,8 @@ Ref<RemoteVideoFrameObjectHeap> RemoteGraphicsContextGL::protectedVideoFrameObje
 }
 #endif
 
-void RemoteGraphicsContextGL::messageCheck(bool assertion)
-{
-    if (!assertion) {
-        if (RefPtr connection = m_streamConnection.get())
-            connection->markCurrentlyDispatchedMessageAsInvalid();
-    }
-}
-
 } // namespace WebKit
+
+#undef MESSAGE_CHECK
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(WEBGL)

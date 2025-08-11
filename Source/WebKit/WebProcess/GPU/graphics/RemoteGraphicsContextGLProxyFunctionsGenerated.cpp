@@ -3053,7 +3053,6 @@ GCGLExternalSync RemoteGraphicsContextGLProxy::createExternalSync(WebCore::Graph
     }
     return name;
 }
-#endif
 
 void RemoteGraphicsContextGLProxy::deleteExternalSync(GCGLExternalSync arg0)
 {
@@ -3066,7 +3065,6 @@ void RemoteGraphicsContextGLProxy::deleteExternalSync(GCGLExternalSync arg0)
     }
 }
 
-#if ENABLE(WEBXR)
 bool RemoteGraphicsContextGLProxy::enableRequiredWebXRExtensions()
 {
     if (isContextLost())

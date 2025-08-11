@@ -153,7 +153,7 @@ extern ASCIILiteral errorAsString(Error);
 #define MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, connection, message) do { \
     if (!(assertion)) [[unlikely]] { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING ": " message, WTF_PRETTY_FUNCTION); \
-        IPC::Connection::markCurrentlyDispatchedMessageAsInvalid(connection); \
+        IPC::markCurrentlyDispatchedMessageAsInvalid(connection); \
         CRASH_IF_TESTING \
         return; \
     } \
@@ -165,7 +165,7 @@ extern ASCIILiteral errorAsString(Error);
 #define MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection) do { \
     if (!(assertion)) [[unlikely]] { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
-        IPC::Connection::markCurrentlyDispatchedMessageAsInvalid(connection); \
+        IPC::markCurrentlyDispatchedMessageAsInvalid(connection); \
         CRASH_IF_TESTING \
         return; \
     } \
@@ -174,7 +174,7 @@ extern ASCIILiteral errorAsString(Error);
 #define MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion) do { \
     if (!(assertion)) [[unlikely]] { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
-        IPC::Connection::markCurrentlyDispatchedMessageAsInvalid(connection); \
+        IPC::markCurrentlyDispatchedMessageAsInvalid(connection); \
         CRASH_IF_TESTING \
         { completion; } \
         return; \
@@ -184,7 +184,7 @@ extern ASCIILiteral errorAsString(Error);
 #define MESSAGE_CHECK_COMPLETION_BASE_COROUTINE(assertion, connection, completion) do { \
     if (!(assertion)) [[unlikely]] { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
-        IPC::Connection::markCurrentlyDispatchedMessageAsInvalid(connection); \
+        IPC::markCurrentlyDispatchedMessageAsInvalid(connection); \
         CRASH_IF_TESTING \
         { completion; } \
         co_return { }; \
@@ -194,7 +194,7 @@ extern ASCIILiteral errorAsString(Error);
 #define MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, connection, returnValue) do { \
     if (!(assertion)) [[unlikely]] { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
-        IPC::Connection::markCurrentlyDispatchedMessageAsInvalid(connection); \
+        IPC::markCurrentlyDispatchedMessageAsInvalid(connection); \
         CRASH_IF_TESTING \
         return (returnValue); \
     } \
@@ -400,13 +400,6 @@ public:
     // Ensures that messages sent prior to the call are not affected by invalidate() or crash done after the call returns.
     Error flushSentMessages(Timeout);
     void invalidate();
-    static void markCurrentlyDispatchedMessageAsInvalid(Connection* connection)
-    {
-        if (connection)
-            markCurrentlyDispatchedMessageAsInvalid(*connection);
-    }
-    static void markCurrentlyDispatchedMessageAsInvalid(const RefPtr<Connection>& connection) { markCurrentlyDispatchedMessageAsInvalid(connection.get()); }
-    static void markCurrentlyDispatchedMessageAsInvalid(Connection& connection) { connection.markCurrentlyDispatchedMessageAsInvalid(); }
 
     template<typename PC, typename BasePromise>
     struct ConvertedPromise {
@@ -538,6 +531,8 @@ public:
     template<typename T, typename C> static void callReply(Connection*, Decoder&, C&&);
     template<typename T, typename C> static void cancelReply(C&&);
 
+    void markCurrentlyDispatchedMessageAsInvalid();
+
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     static void* generateSignpostIdentifier();
 #endif
@@ -569,7 +564,6 @@ private:
     template<typename T> static CompletionHandler<void(Decoder*)> makeAsyncReplyCompletionHandler(typename T::Promise::Producer&&, ThreadLikeAssertion);
 
     bool isIncomingMessagesThrottlingEnabled() const { return m_incomingMessagesThrottlingLevel.has_value(); }
-    inline void markCurrentlyDispatchedMessageAsInvalid();
 
     DecoderOrError waitForMessage(MessageName, uint64_t destinationID, Timeout, OptionSet<WaitForOption>);
 
@@ -1075,5 +1069,17 @@ public:
 private:
     static std::atomic<unsigned> unboundedSynchronousIPCCount;
 };
+
+inline void markCurrentlyDispatchedMessageAsInvalid(Connection& connection)
+{
+    connection.markCurrentlyDispatchedMessageAsInvalid();
+}
+
+inline void markCurrentlyDispatchedMessageAsInvalid(const RefPtr<Connection>& connection)
+{
+    if (connection)
+        connection->markCurrentlyDispatchedMessageAsInvalid();
+}
+
 
 } // namespace IPC

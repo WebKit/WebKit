@@ -99,10 +99,6 @@ public:
 
     RetainPtr<id> newSharedEventWithMachPort(mach_port_t);
     GCGLExternalSync createExternalSync(ExternalSyncSource&&) final;
-#endif
-    GCGLExternalSync createExternalSync(id, uint64_t);
-
-#if ENABLE(WEBXR)
     bool enableRequiredWebXRExtensions() final;
 
     // GL_EXT_discard_framebuffer
@@ -156,6 +152,7 @@ protected:
 #if ENABLE(VIDEO)
     GraphicsContextGLCV* cvContext();
 #endif
+    void* createMetalSharedEventEGLSync(id, uint64_t);
 
     ProcessIdentity m_resourceOwner;
     DestinationColorSpace m_drawingBufferColorSpace;

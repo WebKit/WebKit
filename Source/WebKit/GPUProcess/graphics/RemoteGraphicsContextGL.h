@@ -176,7 +176,6 @@ private:
     bool webXRPromptAccepted() const;
     Ref<IPC::StreamConnectionWorkQueue> protectedWorkQueue() const { return m_workQueue; }
     RefPtr<GCGLContext> protectedContext();
-    void messageCheck(bool);
 
 protected:
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
