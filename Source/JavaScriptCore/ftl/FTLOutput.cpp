@@ -38,6 +38,7 @@
 #include "B3StackmapGenerationParams.h"
 #include "B3UpsilonValue.h"
 #include "B3ValueInlines.h"
+#include "MathCommon.h"
 #include "ProbeContext.h"
 #include "SuperSampler.h"
 
