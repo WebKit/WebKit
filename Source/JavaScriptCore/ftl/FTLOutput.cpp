@@ -349,6 +349,20 @@ LValue Output::doubleToInt32(LValue value)
     return result;
 }
 
+LValue Output::doubleToInt32WithOverflowHandling(LValue value)
+{
+    PatchpointValue* result = patchpoint(Int32);
+    result->append(value, ValueRep::SomeRegister);
+    result->setGenerator(
+        [] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            Jump notTruncatedToInteger = jit.branchTruncateDoubleToInt32(params[1].fpr(), params[0].gpr(), MacroAssembler::BranchIfTruncateFailed);
+            jit.callOperation(operationToInt32, params[0].gpr(), params[1].fpr());
+            notTruncatedToInteger.link(&jit);
+        });
+    result->effects = Effects::none();
+    return result;
+}
+
 LValue Output::doubleToInt64(LValue value)
 {
     PatchpointValue* result = patchpoint(Int64);

@@ -2329,7 +2329,7 @@ private:
             break;
 
         case DoubleRepUse:
-            setInt32(doubleToInt32(lowDouble(m_node->child1())));
+            setInt32(doubleToInt32WithOverflowHandling(lowDouble(m_node->child1())));
             break;
 
         case NumberUse:
