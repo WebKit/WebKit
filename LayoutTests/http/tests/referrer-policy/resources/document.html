@@ -2,7 +2,13 @@
 <html>
 <body>
 <script>
+// If loaded in cross origin frame with site isolation, then this will run in another WCP
+// and need to have the tracking prevention adjusted as well.
+if (window.internals)
+    internals.setTrackingPreventionEnabled(false);
 parent.postMessage({ referrer: document.referrer }, "*");
+if (window.internals)
+    internals.setTrackingPreventionEnabled(true);
 </script>
 </body>
 </html>
