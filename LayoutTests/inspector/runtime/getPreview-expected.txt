@@ -49,7 +49,7 @@ PASS: RemoteObject.updatePreview should return null for a null RemoteObject.
 {"type":"object","description":"Foo","lossless":false,"properties":[{"name":"#value","type":"number","value":"42","isPrivate":true}]}
 
 -- Running test case: Runtime.getPreview.Internal
-{"type":"object","description":"EventTarget","lossless":false,"properties":[{"name":"listeners","type":"object","value":"Object","internal":true},{"name":"addEventListener","type":"function","value":""},{"name":"removeEventListener","type":"function","value":""},{"name":"dispatchEvent","type":"function","value":""}]}
+{"type":"object","description":"EventTarget","lossless":false,"properties":[{"name":"listeners","type":"object","value":"Object","internal":true},{"name":"addEventListener","type":"function","value":""},{"name":"removeEventListener","type":"function","value":""},{"name":"dispatchEvent","type":"function","value":""},{"name":"when","type":"function","value":""}]}
 
 -- Running test case: Runtime.getPreview.InvalidObjectId
 PASS: Should produce an error.

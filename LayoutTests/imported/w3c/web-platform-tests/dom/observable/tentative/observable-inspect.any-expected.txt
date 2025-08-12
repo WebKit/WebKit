@@ -1,4 +1,5 @@
 CONSOLE MESSAGE: Error: error from source
+CONSOLE MESSAGE: Error: error from inspect() subscribe handler
 
 PASS inspect(): Provides a pre-subscription subscribe callback
 PASS inspect(): Provides a way to tap into the values and completions of the source observable using an observer
@@ -12,5 +13,5 @@ PASS inspect(): Throwing an error in the next handler function in do should be c
 PASS inspect(): Errors thrown in subscribe() Inspector handler subscribe handler are caught and sent to error callback
 PASS inspect(): Provides a way to tap into the moment a source observable is unsubscribed from
 PASS inspect(): Inspector abort() handler is not called if the source completes before the result is unsubscribed from
-FAIL inspect(): Errors thrown from inspect()'s abort() handler are caught and reported to the global, because the subscription is already closed by the time the handler runs self.when is not a function. (In 'self.when("error")', 'self.when' is undefined)
+PASS inspect(): Errors thrown from inspect()'s abort() handler are caught and reported to the global, because the subscription is already closed by the time the handler runs
 

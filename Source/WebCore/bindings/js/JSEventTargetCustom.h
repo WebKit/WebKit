@@ -48,6 +48,8 @@ public:
 
     operator JSC::JSObject&() { ASSERT(m_wrapper); return *m_wrapper; }
 
+    JSDOMGlobalObject* globalObject() const { ASSERT(m_wrapper); return static_cast<JSDOMGlobalObject*>(m_wrapper->globalObject()); }
+
 private:
     EventTarget* m_wrapped { nullptr };
     JSC::JSObject* m_wrapper { nullptr };

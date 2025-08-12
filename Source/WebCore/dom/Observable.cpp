@@ -28,6 +28,7 @@
 #include "AbortSignal.h"
 #include "CallbackResult.h"
 #include "Document.h"
+#include "EventTarget.h"
 #include "Exception.h"
 #include "ExceptionCode.h"
 #include "InternalObserverDrop.h"
@@ -46,6 +47,8 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSSubscriptionObserverCallback.h"
 #include "MapperCallback.h"
+#include "ObservableEventListenerOptions.h"
+#include "ObservableEventTarget.h"
 #include "ObservableInspector.h"
 #include "PredicateCallback.h"
 #include "ReducerCallback.h"
@@ -124,6 +127,11 @@ Ref<Observable> Observable::take(ScriptExecutionContext& context, uint64_t amoun
 Ref<Observable> Observable::drop(ScriptExecutionContext& context, uint64_t amount)
 {
     return create(createSubscriberCallbackDrop(context, *this, amount));
+}
+
+Ref<Observable> Observable::when(EventTarget& eventTarget, ScriptExecutionContext& context, const AtomString& eventType, const ObservableEventListenerOptions& options)
+{
+    return create(createSubscriberCallbackEventTarget(context, eventTarget, eventType, options));
 }
 
 Ref<Observable> Observable::inspect(ScriptExecutionContext& context, std::optional<InspectorUnion>&& inspectorUnion)

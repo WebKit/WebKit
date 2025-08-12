@@ -29,10 +29,12 @@
 #include "SubscriberCallback.h"
 #include "VoidCallback.h"
 #include <wtf/RefCounted.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
 class DeferredPromise;
+class EventTarget;
 class InternalObserver;
 class JSSubscriptionObserverCallback;
 class MapperCallback;
@@ -40,6 +42,7 @@ class PredicateCallback;
 class ReducerCallback;
 class ScriptExecutionContext;
 class VisitorCallback;
+struct ObservableEventListenerOptions;
 struct ObservableInspector;
 struct SubscribeOptions;
 struct SubscriptionObserver;
@@ -73,6 +76,10 @@ public:
     void every(ScriptExecutionContext&, Ref<PredicateCallback>&&, const SubscribeOptions&, Ref<DeferredPromise>&&);
     void some(ScriptExecutionContext&, Ref<PredicateCallback>&&, const SubscribeOptions&, Ref<DeferredPromise>&&);
     void reduce(ScriptExecutionContext&, Ref<ReducerCallback>&&, JSC::JSValue, const SubscribeOptions&, Ref<DeferredPromise>&&);
+
+    // EventTarget integration.
+
+    static Ref<Observable> when(EventTarget&, ScriptExecutionContext&, const AtomString&, const ObservableEventListenerOptions&);
 
 private:
     const Ref<SubscriberCallback> m_subscriberCallback;

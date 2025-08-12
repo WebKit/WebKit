@@ -655,6 +655,7 @@ ALL PROPERTIES:
     addEventListener
     removeEventListener
     dispatchEvent
+    when
     Symbol(Symbol.toStringTag)
     toString
     toLocaleString

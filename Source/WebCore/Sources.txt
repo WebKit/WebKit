@@ -1315,6 +1315,7 @@ dom/NodeRareData.cpp
 dom/NodeTraversal.cpp
 dom/Observable.cpp
 dom/OverflowEvent.cpp
+dom/ObservableEventTarget.cpp
 dom/PageRevealEvent.cpp
 dom/PageSwapEvent.cpp
 dom/PageTransitionEvent.cpp
@@ -4402,6 +4403,7 @@ JSOESTextureHalfFloat.cpp
 JSOESTextureHalfFloatLinear.cpp
 JSOESVertexArrayObject.cpp
 JSObservable.cpp
+JSObservableEventListenerOptions.cpp
 JSObservableInspector.cpp
 JSObservableInspectorAbortCallback.cpp
 JSOfflineAudioCompletionEvent.cpp
