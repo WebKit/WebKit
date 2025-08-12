@@ -817,7 +817,7 @@ private:
     void emitExceptionCheck(CCallHelpers&, Origin, ExceptionType);
 
     void emitWriteBarrierForJSWrapper();
-    void emitWriteBarrier(Value* cell, Value* instanceCell);
+    void emitWriteBarrier(Value* cell);
     Value* emitCheckAndPreparePointer(Value* pointer, uint32_t offset, uint32_t sizeOfOp);
     B3::Kind memoryKind(B3::Opcode memoryOp);
     Value* emitLoadOp(LoadOpType, Value* pointer, uint32_t offset);
@@ -1003,6 +1003,7 @@ private:
     Value* m_instanceValue { nullptr };
     Value* m_baseMemoryValue { nullptr };
     Value* m_boundsCheckingSizeValue { nullptr };
+    Value* m_vmValue { nullptr };
 
     Value* instanceValue()
     {
@@ -1017,6 +1018,11 @@ private:
     Value* boundsCheckingSizeValue()
     {
         return m_boundsCheckingSizeValue;
+    }
+
+    Value* vmValue()
+    {
+        return m_vmValue;
     }
 
     uint32_t m_maxNumJSCallArguments { 0 };
@@ -1127,6 +1133,7 @@ OMGIRGenerator::OMGIRGenerator(CompilationContext& context, OMGIRGenerator& pare
     m_rootBlocks.append({ m_proc.addBlock(), m_info.usesSIMD(m_functionIndex) });
     m_currentBlock = m_rootBlocks[0].block;
     m_instanceValue = rootCaller.m_instanceValue;
+    m_vmValue = rootCaller.m_vmValue;
     m_baseMemoryValue = rootCaller.m_baseMemoryValue;
     m_boundsCheckingSizeValue = rootCaller.m_boundsCheckingSizeValue;
     if (parentCaller.m_hasExceptionHandlers && *parentCaller.m_hasExceptionHandlers)
@@ -1188,6 +1195,7 @@ OMGIRGenerator::OMGIRGenerator(CompilationContext& context, CalleeGroup& calleeG
         getInstance->resultConstraints = { ValueRep::reg(GPRInfo::wasmContextInstancePointer) };
         getInstance->setGenerator([=] (CCallHelpers&, const B3::StackmapGenerationParams&) { });
         m_instanceValue = getInstance;
+        m_vmValue = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), Origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfVM()));
 
         if (!!m_info.memory) {
             if (useSignalingMemory() || m_info.memory.isShared()) {
@@ -2111,8 +2119,7 @@ auto OMGIRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
         if (isRefType(global.type)) {
             Value* cell = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), pointer, Wasm::Global::offsetOfOwner() - Wasm::Global::offsetOfValue());
             Value* cellState = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), cell, safeCast<int32_t>(JSCell::cellStateOffset()));
-            Value* vm = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfVM()));
-            Value* threshold = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), vm, safeCast<int32_t>(VM::offsetOfHeapBarrierThreshold()));
+            Value* threshold = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), vmValue(), safeCast<int32_t>(VM::offsetOfHeapBarrierThreshold()));
 
             BasicBlock* fenceCheckPath = m_proc.addBlock();
             BasicBlock* fencePath = m_proc.addBlock();
@@ -2126,7 +2133,7 @@ auto OMGIRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
             continuation->addPredecessor(m_currentBlock);
             m_currentBlock = fenceCheckPath;
 
-            Value* shouldFence = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), vm, safeCast<int32_t>(VM::offsetOfHeapMutatorShouldBeFenced()));
+            Value* shouldFence = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), vmValue(), safeCast<int32_t>(VM::offsetOfHeapMutatorShouldBeFenced()));
             m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
                 shouldFence,
                 FrequentedBlock(fencePath), FrequentedBlock(doSlowPath));
@@ -2147,7 +2154,7 @@ auto OMGIRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
             continuation->addPredecessor(m_currentBlock);
             m_currentBlock = doSlowPath;
 
-            callWasmOperation(m_currentBlock, B3::Void, operationWasmWriteBarrierSlowPath, cell, vm);
+            callWasmOperation(m_currentBlock, B3::Void, operationWasmWriteBarrierSlowPath, cell, vmValue());
             m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
 
             continuation->addPredecessor(m_currentBlock);
@@ -2161,14 +2168,13 @@ auto OMGIRGenerator::setGlobal(uint32_t index, ExpressionType value) -> PartialR
 
 inline void OMGIRGenerator::emitWriteBarrierForJSWrapper()
 {
-    emitWriteBarrier(instanceValue(), instanceValue());
+    emitWriteBarrier(instanceValue());
 }
 
-inline void OMGIRGenerator::emitWriteBarrier(Value* cell, Value* instanceCell)
+inline void OMGIRGenerator::emitWriteBarrier(Value* cell)
 {
     Value* cellState = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), cell, safeCast<int32_t>(JSCell::cellStateOffset()));
-    Value* vm = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceCell, safeCast<int32_t>(JSWebAssemblyInstance::offsetOfVM()));
-    Value* threshold = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), vm, safeCast<int32_t>(VM::offsetOfHeapBarrierThreshold()));
+    Value* threshold = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), vmValue(), safeCast<int32_t>(VM::offsetOfHeapBarrierThreshold()));
 
     BasicBlock* fenceCheckPath = m_proc.addBlock();
     BasicBlock* fencePath = m_proc.addBlock();
@@ -2182,7 +2188,7 @@ inline void OMGIRGenerator::emitWriteBarrier(Value* cell, Value* instanceCell)
     continuation->addPredecessor(m_currentBlock);
     m_currentBlock = fenceCheckPath;
 
-    Value* shouldFence = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), vm, safeCast<int32_t>(VM::offsetOfHeapMutatorShouldBeFenced()));
+    Value* shouldFence = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), vmValue(), safeCast<int32_t>(VM::offsetOfHeapMutatorShouldBeFenced()));
     m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(),
         shouldFence,
         FrequentedBlock(fencePath), FrequentedBlock(doSlowPath));
@@ -2203,7 +2209,7 @@ inline void OMGIRGenerator::emitWriteBarrier(Value* cell, Value* instanceCell)
     continuation->addPredecessor(m_currentBlock);
     m_currentBlock = doSlowPath;
 
-    callWasmOperation(m_currentBlock, B3::Void, operationWasmWriteBarrierSlowPath, cell, vm);
+    callWasmOperation(m_currentBlock, B3::Void, operationWasmWriteBarrierSlowPath, cell, vmValue());
     m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
 
     continuation->addPredecessor(m_currentBlock);
@@ -3343,7 +3349,7 @@ void OMGIRGenerator::emitArraySetUnchecked(uint32_t typeIndex, Value* arrayref, 
     StorageType elementType;
     getArrayElementType(typeIndex, elementType);
     if (isRefType(elementType.unpacked()))
-        emitWriteBarrier(arrayref, instanceValue());
+        emitWriteBarrier(arrayref);
 }
 
 
@@ -3586,7 +3592,7 @@ auto OMGIRGenerator::addStructSet(ExpressionType structReference, const StructTy
     Value* structValue = get(structReference);
     bool needsWriteBarrier = emitStructSet(structValue, fieldIndex, structType, get(value));
     if (needsWriteBarrier)
-        emitWriteBarrier(structValue, instanceValue());
+        emitWriteBarrier(structValue);
     return { };
 }
 
@@ -3993,8 +3999,7 @@ void OMGIRGenerator::mutatorFence()
     auto* slowPath = m_proc.addBlock();
     auto* continuation = m_proc.addBlock();
 
-    Value* vm = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfVM()));
-    Value* shouldFence = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), vm, safeCast<int32_t>(VM::offsetOfHeapMutatorShouldBeFenced()));
+    Value* shouldFence = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), vmValue(), safeCast<int32_t>(VM::offsetOfHeapMutatorShouldBeFenced()));
     m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), shouldFence, FrequentedBlock(slowPath, FrequencyClass::Rare), FrequentedBlock(continuation));
     slowPath->addPredecessor(m_currentBlock);
     continuation->addPredecessor(m_currentBlock);
