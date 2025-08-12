@@ -388,6 +388,14 @@ void CookieStore::set(String&& name, String&& value, Ref<DeferredPromise>&& prom
     set(CookieInit { WTFMove(name), WTFMove(value) }, WTFMove(promise));
 }
 
+static String cookieStringToLatin1(const String input)
+{
+    if (input.containsOnlyASCII())
+        return input;
+
+    return String::fromLatin1(input.utf8().data());
+}
+
 void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
 {
     RefPtr context = scriptExecutionContext();
@@ -453,6 +461,11 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
             return;
         }
     }
+
+    cookie.name = cookieStringToLatin1(cookie.name);
+    cookie.value = cookieStringToLatin1(cookie.value);
+
+    // FIXME: implement length check.
 
     cookie.domain = options.domain.isNull() ? domain : options.domain;
     if (!cookie.domain.isNull()) {
