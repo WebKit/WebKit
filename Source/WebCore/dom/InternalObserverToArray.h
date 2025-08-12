@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Keith Cirkel <webkit@keithcirkel.co.uk>. All rights reserved.
+ * Copyright (C) 2025 Marais Rossouw <me@marais.co>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,54 +25,15 @@
 
 #pragma once
 
-#include "ActiveDOMObject.h"
-#include "ScriptExecutionContext.h"
-#include <JavaScriptCore/JSGlobalObject.h>
-#include <wtf/RefCounted.h>
-
-namespace JSC {
-class AbstractSlotVisitor;
-class JSValue;
-class VM;
-} // namespace JSC
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-class InternalObserver : public ActiveDOMObject, public RefCounted<InternalObserver> {
-public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
+class DeferredPromise;
+class Observable;
+class ScriptExecutionContext;
+struct SubscribeOptions;
 
-    virtual ~InternalObserver() = default;
-
-    virtual void next(JSC::JSValue) = 0;
-    virtual void complete()
-    {
-        m_active = false;
-    }
-
-    virtual void error(JSC::JSValue);
-
-    virtual void visitAdditionalChildren(JSC::AbstractSlotVisitor&) const = 0;
-
-protected:
-    JSC::VM& globalVM() const
-    {
-        auto* globalObject = protectedScriptExecutionContext()->globalObject();
-        ASSERT(globalObject);
-        return globalObject->vm();
-    }
-
-    // ActiveDOMObject
-    void stop() override { }
-    bool virtualHasPendingActivity() const override { return m_active; }
-
-    InternalObserver(ScriptExecutionContext& context)
-        : ActiveDOMObject(&context)
-    {
-    }
-
-    bool m_active { true };
-};
+void createInternalObserverOperatorToArray(ScriptExecutionContext&, Observable&, const SubscribeOptions&, Ref<DeferredPromise>&&);
 
 } // namespace WebCore

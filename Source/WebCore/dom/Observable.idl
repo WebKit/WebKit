@@ -45,6 +45,7 @@ interface Observable {
 
   // Promise-returning operators.
 
+  [CallWith=CurrentScriptExecutionContext] Promise<sequence<any>> toArray(optional SubscribeOptions options = {});
   [CallWith=CurrentScriptExecutionContext] Promise<any> first(optional SubscribeOptions options = {});
   [CallWith=CurrentScriptExecutionContext] Promise<undefined> forEach(VisitorCallback callback, optional SubscribeOptions options = {});
   [CallWith=CurrentScriptExecutionContext] Promise<any> last(optional SubscribeOptions options = {});

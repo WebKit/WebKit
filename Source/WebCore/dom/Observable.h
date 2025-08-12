@@ -66,6 +66,7 @@ public:
 
     // Promise-returning operators.
 
+    void toArray(ScriptExecutionContext&, const SubscribeOptions&, Ref<DeferredPromise>&&);
     void first(ScriptExecutionContext&, const SubscribeOptions&, Ref<DeferredPromise>&&);
     void forEach(ScriptExecutionContext&, Ref<VisitorCallback>&&, const SubscribeOptions&, Ref<DeferredPromise>&&);
     void last(ScriptExecutionContext&, const SubscribeOptions&, Ref<DeferredPromise>&&);
