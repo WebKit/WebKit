@@ -88,8 +88,16 @@ const String CachedCSSStyleSheet::sheetText(MIMETypeCheckHint mimeTypeCheckHint,
     if (!data || data->isEmpty())
         return String();
 
+#if ENABLE(PARKABLE_STRINGS)
+    if (!m_decodedSheetText.isNull()) {
+        // This should already be unparked due to checkNotify() pre-decompression
+        String result = m_decodedSheetText.toString();
+        return result;
+    }
+#else
     if (!m_decodedSheetText.isNull())
         return m_decodedSheetText;
+#endif
 
     // Don't cache the decoded text, regenerating is cheap and it can use quite a bit of memory.
     return protectedDecoder()->decodeAndFlush(data->makeContiguous()->span());
@@ -114,7 +122,12 @@ void CachedCSSStyleSheet::finishLoading(const FragmentedSharedBuffer* data, cons
         Ref contiguousData = data->makeContiguous();
         setEncodedSize(data->size());
         // Decode the data to find out the encoding and keep the sheet text around during checkNotify()
+#if ENABLE(PARKABLE_STRINGS)
+        String decodedText = protectedDecoder()->decodeAndFlush(contiguousData->span());
+        m_decodedSheetText = ParkableString(decodedText.impl());
+#else
         m_decodedSheetText = protectedDecoder()->decodeAndFlush(contiguousData->span());
+#endif
         m_data = WTFMove(contiguousData);
     } else {
         m_data = nullptr;
@@ -123,7 +136,11 @@ void CachedCSSStyleSheet::finishLoading(const FragmentedSharedBuffer* data, cons
     setLoading(false);
     checkNotify(metrics);
     // Clear the decoded text as it is unlikely to be needed immediately again and is cheap to regenerate.
+#if ENABLE(PARKABLE_STRINGS)
+    m_decodedSheetText = ParkableString();
+#else
     m_decodedSheetText = String();
+#endif
 }
 
 Ref<TextResourceDecoder> CachedCSSStyleSheet::protectedDecoder() const
@@ -135,6 +152,14 @@ void CachedCSSStyleSheet::checkNotify(const NetworkLoadMetrics&, LoadWillContinu
 {
     if (isLoading())
         return;
+
+#if ENABLE(PARKABLE_STRINGS)
+    // Ensure CSS is unparked before notifying clients to prevent timing issues during style parsing.
+    // This forces any decompression to happen now rather than during the style system's access to sheetText().
+    if (!m_decodedSheetText.isNull()) {
+        m_decodedSheetText.toString(); // Force decompression if parked
+    }
+#endif
 
     CachedResourceClientWalker<CachedStyleSheetClient> walker(*this);
     while (CachedStyleSheetClient* c = walker.next())
