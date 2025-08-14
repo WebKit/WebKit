@@ -92,7 +92,11 @@ StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
         return { contiguousData->span() };
 
     bool shouldForceRedecoding = m_wasForceDecodedAsUTF8 != (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes);
+#if ENABLE(PARKABLE_STRINGS)
+    if (m_script.isNull() || shouldForceRedecoding) {
+#else
     if (!m_script || shouldForceRedecoding) {
+#endif
         ASSERT(contiguousData->span().size() == encodedSize());
         String result;
         if (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes) {
@@ -109,7 +113,11 @@ StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
 
         {
             Locker locker { m_lock };
+#if ENABLE(PARKABLE_STRINGS)
+            m_script = ParkableString(result.impl());
+#else
             m_script = WTFMove(result);
+#endif
             m_decodingState = DataAndDecodedStringHaveDifferentBytes;
             m_wasForceDecodedAsUTF8 = shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes;
         }
@@ -117,7 +125,11 @@ StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
     }
 
     restartDecodedDataDeletionTimer();
+#if ENABLE(PARKABLE_STRINGS)
+    return m_script.toString();
+#else
     return m_script;
+#endif
 }
 
 JSC::CodeBlockHash CachedScript::codeBlockHashConcurrently(int startOffset, int endOffset, JSC::CodeSpecializationKind kind, ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
@@ -159,7 +171,11 @@ JSC::CodeBlockHash CachedScript::codeBlockHashConcurrently(int startOffset, int 
     }
 
     case DataAndDecodedStringHaveDifferentBytes: {
+#if ENABLE(PARKABLE_STRINGS)
+        StringView entireSource { m_script.toString() };
+#else
         StringView entireSource { m_script };
+#endif
         return JSC::CodeBlockHash { entireSource.substring(startOffset, endOffset - startOffset), entireSource, kind };
     }
     }
@@ -189,7 +205,11 @@ void CachedScript::destroyDecodedData()
 {
     {
         Locker locker { m_lock };
+#if ENABLE(PARKABLE_STRINGS)
+        m_script = ParkableString();
+#else
         m_script = String();
+#endif
     }
     setDecodedSize(0);
 }

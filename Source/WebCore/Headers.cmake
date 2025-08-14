@@ -2968,6 +2968,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/text/BidiRunList.h
     platform/text/DateTimeFormat.h
     platform/text/LocaleToScriptMapping.h
+    platform/text/ParkableString.h
+    platform/text/ParkableStringManager.h
     platform/text/PlatformLocale.h
     platform/text/SegmentedString.h
     platform/text/StringWithDirection.h

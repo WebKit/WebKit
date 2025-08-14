@@ -24,6 +24,9 @@
 
 #include "CachedResource.h"
 #include "FrameLoaderTypes.h"
+#if ENABLE(PARKABLE_STRINGS)
+#include "ParkableString.h"
+#endif
 
 namespace WebCore {
 
@@ -65,7 +68,11 @@ private:
     void checkNotify(const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess = LoadWillContinueInAnotherProcess::No) final;
 
     Ref<TextResourceDecoder> m_decoder;
+#if ENABLE(PARKABLE_STRINGS)
+    ParkableString m_decodedSheetText;
+#else
     String m_decodedSheetText;
+#endif
 
     RefPtr<StyleSheetContents> m_parsedStyleSheetCache;
 };
