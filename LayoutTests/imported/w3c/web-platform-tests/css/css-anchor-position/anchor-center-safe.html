@@ -1,0 +1,33 @@
+<!doctype html>
+<title>Tests whether safe alignment works correctly on the anchor element.</title>
+<link rel="match" href="anchor-center-safe-ref.html">
+<link rel="help" href="https://drafts.csswg.org/css-anchor-position-1/#anchor-center">
+<div class="anchor">Anchor</div>
+<div class="infobox">
+  <p>Anchored element</p>
+</div>
+<style>
+.anchor {
+  position: fixed; 
+  left: 0px;
+  top: 0px; 
+  height: 30px;
+  font-size: 1.8rem;
+  color: white;
+  background-color: green;
+  anchor-name: --myAnchor;
+}
+.infobox {
+  color: darkblue;
+  background-color: azure;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 1rem;
+  position: fixed;
+  position-anchor: --myAnchor;
+  top: calc(anchor(bottom) + 5px);
+  left: 0px;
+  justify-self: safe anchor-center;
+}
+</style>
