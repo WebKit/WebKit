@@ -91,6 +91,8 @@ public:
 
     bool hasExplicitNestingParent() const;
     bool hasExplicitPseudoClassScope() const;
+    void replaceNestingByParentSelector(const CSSSelectorList& parent);
+    void replaceNestingByPseudoClassScope();
 
     // FIXME-NEWPARSER: "slotted" was removed here for now, since it leads to a combinator
     // connection of ShadowDescendant, and the current shadow DOM code doesn't expect this. When

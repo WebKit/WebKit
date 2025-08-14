@@ -1306,20 +1306,17 @@ bool CSSSelectorParser::containsUnknownWebKitPseudoElements(const CSSSelector& c
 CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& nestedSelectorList, const CSSSelectorList* parentResolvedSelectorList)
 {
     MutableCSSSelectorList result;
-    CSSSelectorList copiedSelectorList { nestedSelectorList };
-    for (auto& selector : copiedSelectorList) {
+    for (auto& originalSelector : nestedSelectorList) {
+        auto selector = makeUnique<MutableCSSSelector>(originalSelector);
         if (parentResolvedSelectorList) {
-            // FIXME: We should build a new MutableCSSSelector from this selector and resolve it
-            const_cast<CSSSelector&>(selector).resolveNestingParentSelectors(*parentResolvedSelectorList);
+            selector->replaceNestingByParentSelector(*parentResolvedSelectorList);
         } else {
             // It's top-level, the nesting parent selector should be replaced by :scope
-            const_cast<CSSSelector&>(selector).replaceNestingParentByPseudoClassScope();
+            selector->replaceNestingByPseudoClassScope();
         }
-        result.append(makeUnique<MutableCSSSelector>(selector));
+        result.append(WTFMove(selector));
     }
-
-    auto final = CSSSelectorList { WTFMove(result) };
-    return final;
+    return CSSSelectorList { WTFMove(result) };
 }
 
 static std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifierFor(CSSSelectorPseudoElement type)

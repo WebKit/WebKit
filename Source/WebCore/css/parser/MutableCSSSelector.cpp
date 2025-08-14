@@ -289,4 +289,36 @@ bool MutableCSSSelector::startsWithExplicitCombinator() const
     return relation != CSSSelector::Relation::Subselector && relation != CSSSelector::Relation::DescendantSpace;
 }
 
+void MutableCSSSelector::replaceNestingByParentSelector(const CSSSelectorList& parent)
+{
+    auto replaceParentSelector = [&parent] (CSSSelector& selector) {
+        if (selector.match() == CSSSelector::Match::NestingParent) {
+            // FIXME: Optimize cases where we can include the parent selector directly instead of wrapping it in a ":is" pseudo class.
+            selector.setMatch(CSSSelector::Match::PseudoClass);
+            selector.setPseudoClass(CSSSelector::PseudoClass::Is);
+            selector.setSelectorList(makeUnique<CSSSelectorList>(parent));
+        }
+        return false;
+    };
+
+    selector()->visitSimpleSelectors(WTFMove(replaceParentSelector), CSSSelector::VisitFunctionalPseudoClasses::Yes);
+}
+
+void MutableCSSSelector::replaceNestingByPseudoClassScope()
+{
+    auto replaceParentSelector = [] (CSSSelector& selector) {
+        if (selector.match() == CSSSelector::Match::NestingParent) {
+            // Replace by :scope
+            selector.setMatch(CSSSelector::Match::PseudoClass);
+            selector.setPseudoClass(CSSSelector::PseudoClass::Scope);
+            // Top-level nesting parent selector acts like :scope with zero specificity.
+            // https://github.com/w3c/csswg-drafts/issues/10196#issuecomment-2161119978
+            selector.setImplicit();
+        }
+        return false;
+    };
+
+    selector()->visitSimpleSelectors(WTFMove(replaceParentSelector), CSSSelector::VisitFunctionalPseudoClasses::Yes);
+}
+
 }

@@ -850,38 +850,6 @@ bool CSSSelector::visitSimpleSelectors(VisitFunctor&& functor, VisitFunctionalPs
     return false;
 }
 
-void CSSSelector::resolveNestingParentSelectors(const CSSSelectorList& parent)
-{
-    auto replaceParentSelector = [&parent] (CSSSelector& selector) {
-        if (selector.match() == CSSSelector::Match::NestingParent) {
-            // FIXME: Optimize cases where we can include the parent selector directly instead of wrapping it in a ":is" pseudo class.
-            selector.setMatch(Match::PseudoClass);
-            selector.setPseudoClass(PseudoClass::Is);
-            selector.setSelectorList(makeUnique<CSSSelectorList>(parent));
-        }
-        return false;
-    };
-
-    visitSimpleSelectors(WTFMove(replaceParentSelector), VisitFunctionalPseudoClasses::Yes);
-}
-
-void CSSSelector::replaceNestingParentByPseudoClassScope()
-{
-    auto replaceParentSelector = [] (CSSSelector& selector) {
-        if (selector.match() == Match::NestingParent) {
-            // Replace by :scope
-            selector.setMatch(Match::PseudoClass);
-            selector.setPseudoClass(PseudoClass::Scope);
-            // Top-level nesting parent selector acts like :scope with zero specificity.
-            // https://github.com/w3c/csswg-drafts/issues/10196#issuecomment-2161119978
-            selector.setImplicit();
-        }
-        return false;
-    };
-
-    visitSimpleSelectors(WTFMove(replaceParentSelector), VisitFunctionalPseudoClasses::Yes);
-}
-
 bool CSSSelector::hasExplicitNestingParent() const
 {
     return visitSimpleSelectors([](const CSSSelector& selector) {
