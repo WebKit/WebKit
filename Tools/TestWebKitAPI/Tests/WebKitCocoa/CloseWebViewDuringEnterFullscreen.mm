@@ -31,6 +31,7 @@
 #import "Test.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFullscreenDelegate.h>
 #import <wtf/RetainPtr.h>
@@ -61,6 +62,7 @@ TEST(CloseWebViewDuringEnterFullscreen, VideoFullscreen)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration preferences].elementFullscreenEnabled = YES;
+    [configuration _setAllowTestOnlyIPC:YES];
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
     RetainPtr<CloseWebViewDuringEnterFullscreenUIDelegate> handler = adoptNS([[CloseWebViewDuringEnterFullscreenUIDelegate alloc] init]);
     [webView _setFullscreenDelegate:handler.get()];

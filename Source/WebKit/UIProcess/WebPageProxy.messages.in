@@ -476,13 +476,13 @@ messages -> WebPageProxy {
     RemovePlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier contextId)
     ShowPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier contextId, WebCore::FloatRect pickerLocation, bool hasVideo)
     PlaybackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier contextId, OptionSet<WebCore::MediaProducerMediaState> mediaState)
-    SetMockMediaPlaybackTargetPickerEnabled(bool enabled)
-    SetMockMediaPlaybackTargetPickerState(String name, enum:uint8_t WebCore::MediaPlaybackTargetContextMockState pickerState)
-    MockMediaPlaybackTargetPickerDismissPopup()
+    [EnabledBy=AllowTestOnlyIPC] SetMockMediaPlaybackTargetPickerEnabled(bool enabled)
+    [EnabledBy=AllowTestOnlyIPC] SetMockMediaPlaybackTargetPickerState(String name, enum:uint8_t WebCore::MediaPlaybackTargetContextMockState pickerState)
+    [EnabledBy=AllowTestOnlyIPC] MockMediaPlaybackTargetPickerDismissPopup()
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    [EnabledBy=VideoPresentationManagerEnabled || VideoPresentationModeAPIEnabled] SetMockVideoPresentationModeEnabled(bool enabled)
+    [EnabledBy=AllowTestOnlyIPC] SetMockVideoPresentationModeEnabled(bool enabled)
 #endif
 
 #if ENABLE(POINTER_LOCK)

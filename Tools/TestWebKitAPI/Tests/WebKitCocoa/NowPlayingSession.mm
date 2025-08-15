@@ -28,6 +28,7 @@
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
 
@@ -58,6 +59,7 @@ static RetainPtr<TestWKWebView> createWebView()
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
+    [configuration _setAllowTestOnlyIPC:YES];
 #if PLATFORM(IOS_FAMILY)
     [configuration setAllowsInlineMediaPlayback:YES];
 #endif

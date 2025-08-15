@@ -145,6 +145,7 @@ static RetainPtr<WKWebViewConfiguration> createConfigurationWithNotificationsEna
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration preferences] _setNotificationsEnabled:YES];
     [[configuration preferences] _setNotificationEventEnabled:YES];
+    [configuration _setAllowTestOnlyIPC:YES];
     return configuration;
 }
 

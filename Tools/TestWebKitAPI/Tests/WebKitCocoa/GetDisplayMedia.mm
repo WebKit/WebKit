@@ -159,6 +159,7 @@ protected:
         m_configuration.get()._mediaCaptureEnabled = YES;
         preferences._mockCaptureDevicesEnabled = YES;
         preferences._screenCaptureEnabled = YES;
+        [m_configuration _setAllowTestOnlyIPC:YES];
 
         m_webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:m_configuration.get() addToWindow:YES]);
 

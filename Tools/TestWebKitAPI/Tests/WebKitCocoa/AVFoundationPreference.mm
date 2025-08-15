@@ -72,6 +72,7 @@ public:
         m_configuration.get().allowsInlineMediaPlayback = YES;
         m_configuration.get()._inlineMediaPlaybackRequiresPlaysInlineAttribute = NO;
 #endif
+        [m_configuration _setAllowTestOnlyIPC:YES];
 
         auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:m_configuration.get()]);
         [webView synchronouslyLoadTestPageNamed:@"video"];

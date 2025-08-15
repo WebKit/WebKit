@@ -358,6 +358,7 @@ TEST(GPUProcess, LegacyCDM)
 TEST(GPUProcess, CrashWhilePlayingVideo)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowTestOnlyIPC:YES];
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
@@ -418,6 +419,7 @@ TEST(GPUProcess, CrashWhilePlayingVideo)
 TEST(GPUProcess, CrashWhilePlayingAudioViaCreateMediaElementSource)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowTestOnlyIPC:YES];
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
@@ -701,6 +703,8 @@ TEST(GPUProcess, ExitsUnderMemoryPressureVideoCase)
             done = true;
         }];
         TestWebKitAPI::Util::run(&done);
+    }, [](WKWebViewConfiguration *configuration) {
+        [configuration _setAllowTestOnlyIPC:YES];
     });
 }
 

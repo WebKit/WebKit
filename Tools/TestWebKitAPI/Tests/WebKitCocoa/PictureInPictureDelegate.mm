@@ -104,6 +104,7 @@ namespace TestWebKitAPI {
 TEST(PictureInPicture, WKUIDelegate)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowTestOnlyIPC:YES];
     [configuration preferences].elementFullscreenEnabled = YES;
     [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;
     RetainPtr<PictureInPictureUIDelegate> handler = adoptNS([[PictureInPictureUIDelegate alloc] init]);
@@ -169,6 +170,7 @@ TEST(PictureInPicture, WKUIDelegate)
 TEST(PictureInPicture, AudioCannotTogglePictureInPicture)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowTestOnlyIPC:YES];
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 54) configuration:configuration.get()]);
     [configuration preferences].elementFullscreenEnabled = YES;
     [configuration preferences]._allowsPictureInPictureMediaPlayback = YES;

@@ -85,6 +85,7 @@ public:
     {
         _configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
         [_configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeAudio];
+        [_configuration _setAllowTestOnlyIPC:YES];
 
         _webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:_configuration.get() addToWindow:YES]);
 

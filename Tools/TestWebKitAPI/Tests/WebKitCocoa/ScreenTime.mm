@@ -56,8 +56,10 @@ static bool hasVideoInPictureInPictureCalled = false;
 
 static RetainPtr<TestWKWebView> webViewForScreenTimeTests(WKWebViewConfiguration *configuration = nil, BOOL addToWindow = YES)
 {
-    if (!configuration)
+    if (!configuration) {
         configuration = adoptNS([[WKWebViewConfiguration alloc] init]).autorelease();
+        [configuration _setAllowTestOnlyIPC:YES];
+    }
 
     auto preferences = [configuration preferences];
     for (_WKFeature *feature in [WKPreferences _features]) {

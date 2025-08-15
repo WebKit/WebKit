@@ -55,6 +55,7 @@ public:
     {
         handler = adoptNS([[RequiresUserActionForPlaybackMessageHandler alloc] init]);
         configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [configuration _setAllowTestOnlyIPC:YES];
         [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
         configuration.get()._mediaDataLoadsAutomatically = YES;
 #if TARGET_OS_IPHONE

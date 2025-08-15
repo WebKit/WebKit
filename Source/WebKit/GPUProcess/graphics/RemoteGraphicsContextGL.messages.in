@@ -54,7 +54,7 @@ messages -> RemoteGraphicsContextGL Stream {
     void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
     void SetSharedVideoFrameMemory(WebCore::SharedMemory::Handle storageHandle) NotStreamEncodable
 #endif
-    void SimulateEventForTesting(enum:uint8_t WebCore::GraphicsContextGLSimulatedEventForTesting event)
+    [EnabledBy=AllowTestOnlyIPC] void SimulateEventForTesting(enum:uint8_t WebCore::GraphicsContextGLSimulatedEventForTesting event)
     void GetBufferSubDataInline(uint32_t target, uint64_t offset, uint64_t dataSize) -> (std::span<const uint8_t> data) Synchronous
     void GetBufferSubDataSharedMemory(uint32_t target, uint64_t offset, uint64_t dataSize, WebCore::SharedMemory::Handle handle) -> (bool valid) Synchronous NotStreamEncodable
     void ReadPixelsInline(WebCore::IntRect rect, uint32_t format, uint32_t type, bool packReverseRowOrder) -> (std::optional<WebCore::IntSize> readArea, std::span<const uint8_t> data) Synchronous

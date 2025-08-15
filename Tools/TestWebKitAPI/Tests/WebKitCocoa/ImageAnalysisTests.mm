@@ -114,6 +114,7 @@ static Vector<RetainPtr<VKImageAnalyzerRequest>>& processedRequests()
 static RetainPtr<TestWKWebView> createWebViewWithTextRecognitionEnhancements()
 {
     RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration _setAllowTestOnlyIPC:YES];
     for (_WKFeature *feature in WKPreferences._features) {
         NSString *key = feature.key;
         if ([key isEqualToString:@"TextRecognitionInVideosEnabled"] || [key isEqualToString:@"VisualTranslationEnabled"] || [key isEqualToString:@"RemoveBackgroundEnabled"])

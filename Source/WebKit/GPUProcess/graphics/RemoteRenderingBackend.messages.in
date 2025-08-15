@@ -33,7 +33,7 @@ messages -> RemoteRenderingBackend Stream {
     CreateDisplayListRecorder(WebKit::RemoteDisplayListRecorderIdentifier identifier)
     SinkDisplayListRecorderIntoDisplayList(WebKit::RemoteDisplayListRecorderIdentifier identifier, WebKit::RemoteDisplayListIdentifier displayListIdentifier)
     ReleaseDisplayList(WebKit::RemoteDisplayListIdentifier identifier)
-    GetImageBufferResourceLimitsForTesting() -> (struct WebCore::ImageBufferResourceLimits limits) Async
+    [EnabledBy=AllowTestOnlyIPC] GetImageBufferResourceLimitsForTesting() -> (struct WebCore::ImageBufferResourceLimits limits) Async
     DestroyGetPixelBufferSharedMemory()
     CacheNativeImage(WebCore::ShareableBitmapHandle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
     ReleaseNativeImage(WebCore::RenderingResourceIdentifier identifier)

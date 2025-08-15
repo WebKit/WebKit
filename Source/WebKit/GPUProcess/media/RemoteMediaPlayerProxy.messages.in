@@ -96,8 +96,8 @@ messages -> RemoteMediaPlayerProxy {
     [EnabledBy=LegacyEncryptedMediaAPIEnabled] SetShouldContinueAfterKeyNeeded(bool should)
 #endif
 
-    BeginSimulatedHDCPError()
-    EndSimulatedHDCPError()
+    [EnabledBy=AllowTestOnlyIPC] BeginSimulatedHDCPError()
+    [EnabledBy=AllowTestOnlyIPC] EndSimulatedHDCPError()
 
     NotifyActiveSourceBuffersChanged()
 
@@ -163,7 +163,7 @@ messages -> RemoteMediaPlayerProxy {
     IsInFullscreenOrPictureInPictureChanged(bool value)
     SetSoundStageSize(enum:uint8_t WebCore::MediaPlayerSoundStageSize value)
 
-    SetHasMessageClientForTesting(bool value)
+    [EnabledBy=AllowTestOnlyIPC] SetHasMessageClientForTesting(bool value)
 }
 
 #endif

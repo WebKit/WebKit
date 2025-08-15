@@ -156,6 +156,7 @@ static RetainPtr<TestWKWebView> setUpWebViewForFingerprintingTests(NSString *pag
     NSString *referrer = @"https://webkit.org", _WKWebsiteNetworkConnectionIntegrityPolicy policies = _WKWebsiteNetworkConnectionIntegrityPolicyNone)
 {
     RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration _setAllowTestOnlyIPC:YES];
     for (_WKFeature *feature in WKPreferences._features) {
         if ([feature.key isEqualToString:@"ScriptTrackingPrivacyProtectionsEnabled"])
             [[configuration preferences] _setEnabled:YES forFeature:feature];

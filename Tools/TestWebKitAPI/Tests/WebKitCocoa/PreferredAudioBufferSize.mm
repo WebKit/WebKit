@@ -42,6 +42,7 @@ public:
     void SetUp() override
     {
         configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [configuration _setAllowTestOnlyIPC:YES];
         WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
         configuration.get().processPool = (WKProcessPool *)context.get();
         configuration.get().preferences._lowPowerVideoAudioBufferSizeEnabled = YES;

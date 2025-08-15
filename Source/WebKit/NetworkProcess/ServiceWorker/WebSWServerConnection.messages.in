@@ -47,11 +47,11 @@ messages -> WebSWServerConnection {
     [EnabledBy=ServiceWorkersEnabled] RegisterServiceWorkerClient(struct WebCore::ClientOrigin clientOrigin, struct WebCore::ServiceWorkerClientData data, std::optional<WebCore::ServiceWorkerRegistrationIdentifier> controllingServiceWorkerRegistrationIdentifier, String userAgent)
     [EnabledBy=ServiceWorkersEnabled] UnregisterServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier identifier)
 
-    [EnabledBy=ServiceWorkersEnabled] TerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier workerIdentifier) -> ()
-    [EnabledBy=ServiceWorkersEnabled] WhenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier workerIdentifier) -> ()
+    [EnabledBy=AllowTestOnlyIPC] TerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier workerIdentifier) -> ()
+    [EnabledBy=AllowTestOnlyIPC] WhenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier workerIdentifier) -> ()
 
     [EnabledBy=ServiceWorkersEnabled] SetThrottleState(bool isThrottleable)
-    [EnabledBy=ServiceWorkersEnabled] StoreRegistrationsOnDisk() -> ()
+    [EnabledBy=AllowTestOnlyIPC] StoreRegistrationsOnDisk() -> ()
 
     [EnabledBy=PushAPIEnabled] SubscribeToPushService(WebCore::ServiceWorkerRegistrationIdentifier identifier, Vector<uint8_t> applicationServerKey) -> (Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData> result)
     [EnabledBy=PushAPIEnabled] UnsubscribeFromPushService(WebCore::ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier, WebCore::PushSubscriptionIdentifier pushSubscriptionIdentifier) -> (Expected<bool, WebCore::ExceptionData> result)

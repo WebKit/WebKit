@@ -29,7 +29,7 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
 
     ScheduleResourceLoad(struct WebKit::NetworkResourceLoadParameters resourceLoadParameters, std::optional<WebKit::NetworkResourceLoadIdentifier> existingLoaderToResume)
     PerformSynchronousLoad(struct WebKit::NetworkResourceLoadParameters resourceLoadParameters) -> (WebCore::ResourceError error, WebCore::ResourceResponse response, Vector<uint8_t> data) Synchronous
-    TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebKit::WebPageProxyIdentifier pageID) -> (bool handled) Synchronous
+    [EnabledBy=AllowTestOnlyIPC] TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebKit::WebPageProxyIdentifier pageID) -> (bool handled) Synchronous
     LoadPing(struct WebKit::NetworkResourceLoadParameters resourceLoadParameters)
     RemoveLoadIdentifier(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier)
     PageLoadCompleted(WebCore::PageIdentifier webPageID)
@@ -75,7 +75,7 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     WriteBlobsToTemporaryFilesForIndexedDB(Vector<String> blobURLs) -> (Vector<String> fileNames)
     RegisterBlobURLHandle(URL url, std::optional<WebCore::SecurityOriginData> topOrigin);
     UnregisterBlobURLHandle(URL url, std::optional<WebCore::SecurityOriginData> topOrigin);
-    RegisterBlobPathForTesting(String path) -> ();
+    [EnabledBy=AllowTestOnlyIPC] RegisterBlobPathForTesting(String path) -> ();
 
     SetCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 
@@ -132,7 +132,7 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     PrioritizeResourceLoads(Vector<WebCore::ResourceLoaderIdentifier> loadIdentifiers)
 
 #if ENABLE(CONTENT_FILTERING)
-    InstallMockContentFilter(WebCore::MockContentFilterSettings settings)
+    [EnabledBy=AllowTestOnlyIPC] InstallMockContentFilter(WebCore::MockContentFilterSettings settings)
 #endif
 
     UseRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier, WebCore::ResourceResponse response)
