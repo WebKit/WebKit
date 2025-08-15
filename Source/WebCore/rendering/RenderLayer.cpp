@@ -578,7 +578,7 @@ void RenderLayer::removeOnlyThisLayer()
         removeChild(*reflectionLayer);
 
     // Now walk our kids and reattach them to our parent.
-    RenderLayer* current = m_first;
+    RenderLayer* current = m_first.get();
     while (current) {
         RenderLayer* next = current->nextSibling();
         removeChild(*current);
