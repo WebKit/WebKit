@@ -3399,6 +3399,9 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
         if (UIPeripheralHost.sharedInstance.isUndocked)
             return CGRectZero;
 
+        if (_perProcessState.viewportMetaTagInteractiveWidget == WebCore::InteractiveWidget::OverlaysContent)
+            return _inputViewBoundsInWindow;
+
         auto keyboardFrameInScreen = endFrameValue.CGRectValue;
         // The keyboard rect is always in screen coordinates. In the view services case the window does not
         // have the interface orientation rotation transformation; its host does. So, it makes no sense to

@@ -1,0 +1,18 @@
+Scrolled to 40, 1048
+PASS document.scrollingElement.scrollTop is 1048
+PASS document.scrollingElement.scrollLeft is 40
+PASS window.visualViewport.pageTop is not 0
+PASS window.visualViewport.scale is 1
+PASS window.visualViewport.width is 390
+PASS window.visualViewport.height is 797
+Scrolled to 0, 0
+PASS document.scrollingElement.scrollTop is 0
+PASS document.scrollingElement.scrollLeft is 0
+PASS window.visualViewport.pageTop is 0
+PASS window.visualViewport.scale is 1
+PASS window.visualViewport.width is 390
+PASS window.visualViewport.height is 797
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

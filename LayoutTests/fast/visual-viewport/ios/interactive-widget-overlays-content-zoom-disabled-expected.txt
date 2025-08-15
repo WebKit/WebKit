@@ -1,0 +1,10 @@
+layoutViewport: {"x":0,"y":0,"width":390,"height":797,"top":0,"right":390,"bottom":797,"left":0}
+visualViewportRect: {"x":0,"y":0,"width":390,"height":797,"top":0,"right":390,"bottom":797,"left":0}
+PASS window.visualViewport.pageTop is 0
+PASS window.visualViewport.scale is 1
+PASS window.visualViewport.width is 390
+PASS window.visualViewport.height is 797
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
