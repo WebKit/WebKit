@@ -98,9 +98,13 @@ void RemoteImageBufferSet::endPrepareForDisplay(RenderingUpdateID renderingUpdat
 {
     m_context.reset();
 
+    // Instead of a flush, we do a prepareForDisplay. This will create the resources needed to
+    // draw the front buffer to front buffer of the next frame for incremental rendering.
     RefPtr frontBuffer = m_frontBuffer;
-    if (frontBuffer)
+    if (frontBuffer) {
+        frontBuffer->prepareForDisplay();
         frontBuffer->flushDrawingContext();
+    }
 
 #if PLATFORM(COCOA)
     auto bufferIdentifier = [](RefPtr<WebCore::ImageBuffer> buffer) -> std::optional<WebCore::RenderingResourceIdentifier> {

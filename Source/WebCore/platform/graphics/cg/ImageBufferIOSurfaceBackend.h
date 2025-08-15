@@ -80,6 +80,7 @@ protected:
     void transferToNewContext(const ImageBufferCreationContext&) final;
 
     unsigned bytesPerRow() const override;
+    void prepareForDisplay() final;
 
     // Returns true if this invalidation requires a flush to complete
     bool invalidateCachedNativeImage();

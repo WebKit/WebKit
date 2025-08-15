@@ -75,6 +75,7 @@ private:
     void transformToColorSpace(const WebCore::DestinationColorSpace&);
     void flushContext();
     void flushContextSync(CompletionHandler<void()>&&);
+    void prepareForDisplay();
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     void dynamicContentScalingDisplayList(CompletionHandler<void(std::optional<WebCore::DynamicContentScalingDisplayList>&&)>&&);

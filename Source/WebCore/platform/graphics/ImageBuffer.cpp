@@ -313,7 +313,6 @@ bool ImageBuffer::flushDrawingContextAsync()
 
 void ImageBuffer::prepareForDisplay()
 {
-    flushDrawingContextAsync();
     if (auto* backend = ensureBackend())
         backend->prepareForDisplay();
 }
