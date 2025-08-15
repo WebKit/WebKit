@@ -679,7 +679,7 @@ public:
             : m_enclosedHeight(0)
         { }
 
-        ControlData(BBQJIT& generator, BlockType, BlockSignature, LocalOrTempIndex enclosedHeight, RegisterSet liveScratchGPRs, RegisterSet liveScratchFPRs);
+        ControlData(BBQJIT& generator, BlockType, RefPtr<const FunctionSignature>, LocalOrTempIndex enclosedHeight, RegisterSet liveScratchGPRs, RegisterSet liveScratchFPRs);
 
         // Re-use the argument layout of another block (eg. else will re-use the argument/result locations from if)
         enum BranchCallingConventionReuseTag { UseBlockCallingConventionOfOtherBranch };
@@ -848,7 +848,7 @@ public:
         const Vector<Location, 2>& resultLocations() const;
 
         BlockType blockType() const;
-        BlockSignature signature() const;
+        RefPtr<const FunctionSignature> signature() const;
 
         FunctionArgCount branchTargetArity() const;
 
@@ -871,7 +871,7 @@ public:
         struct TryTableTarget {
             CatchKind type;
             uint32_t tag;
-            const TypeDefinition* exceptionSignature;
+            const FunctionSignature* exceptionSignature;
             ControlRef target;
         };
         using TargetList = Vector<TryTableTarget>;
@@ -891,7 +891,7 @@ public:
 
         void fillLabels(CCallHelpers::Label label);
 
-        BlockSignature m_signature;
+        RefPtr<const FunctionSignature> m_signature;
         BlockType m_blockType;
         CatchKind m_catchKind { CatchKind::Catch };
         Vector<Location, 2> m_argumentLocations; // List of input locations to write values into when entering this block.
@@ -1906,13 +1906,13 @@ public:
     void emitEntryTierUpCheck();
 
     // Control flow
-    ControlData WARN_UNUSED_RETURN addTopLevel(BlockSignature signature);
+    ControlData WARN_UNUSED_RETURN addTopLevel(RefPtr<const FunctionSignature> signature);
 
     bool hasLoops() const;
 
     MacroAssembler::Label addLoopOSREntrypoint();
 
-    PartialResult WARN_UNUSED_RETURN addBlock(BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack);
+    PartialResult WARN_UNUSED_RETURN addBlock(RefPtr<const FunctionSignature> signature, Stack& enclosingStack, ControlType& result, Stack& newStack);
 
     B3::Type toB3Type(Type type);
 
@@ -1924,27 +1924,27 @@ public:
 
     void emitLoopTierUpCheckAndOSREntryData(const ControlData&, Stack& enclosingStack, unsigned loopIndex);
 
-    PartialResult WARN_UNUSED_RETURN addLoop(BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack, uint32_t loopIndex);
+    PartialResult WARN_UNUSED_RETURN addLoop(RefPtr<const FunctionSignature> signature, Stack& enclosingStack, ControlType& result, Stack& newStack, uint32_t loopIndex);
 
-    PartialResult WARN_UNUSED_RETURN addIf(Value condition, BlockSignature signature, Stack& enclosingStack, ControlData& result, Stack& newStack);
+    PartialResult WARN_UNUSED_RETURN addIf(Value condition, RefPtr<const FunctionSignature> signature, Stack& enclosingStack, ControlData& result, Stack& newStack);
 
     PartialResult WARN_UNUSED_RETURN addElse(ControlData& data, Stack& expressionStack);
 
     PartialResult WARN_UNUSED_RETURN addElseToUnreachable(ControlData& data);
 
-    PartialResult WARN_UNUSED_RETURN addTry(BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack);
-    PartialResult WARN_UNUSED_RETURN addTryTable(BlockSignature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack);
+    PartialResult WARN_UNUSED_RETURN addTry(RefPtr<const FunctionSignature> signature, Stack& enclosingStack, ControlType& result, Stack& newStack);
+    PartialResult WARN_UNUSED_RETURN addTryTable(RefPtr<const FunctionSignature>, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack);
 
     void emitCatchPrologue();
 
     void emitCatchAllImpl(ControlData& dataCatch);
 
-    void emitCatchImpl(ControlData& dataCatch, const TypeDefinition& exceptionSignature, ResultList& results);
+    void emitCatchImpl(ControlData& dataCatch, const FunctionSignature& exceptionSignature, ResultList& results);
     void emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTarget&);
 
-    PartialResult WARN_UNUSED_RETURN addCatch(unsigned exceptionIndex, const TypeDefinition& exceptionSignature, Stack& expressionStack, ControlType& data, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCatch(unsigned exceptionIndex, const FunctionSignature& exceptionSignature, Stack& expressionStack, ControlType& data, ResultList& results);
 
-    PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition& exceptionSignature, ControlType& data, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned exceptionIndex, const FunctionSignature& exceptionSignature, ControlType& data, ResultList& results);
 
     PartialResult WARN_UNUSED_RETURN addCatchAll(Stack& expressionStack, ControlType& data);
 
@@ -1978,7 +1978,7 @@ public:
 
     int alignedFrameSize(int frameSize) const;
 
-    PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&);
+    PartialResult WARN_UNUSED_RETURN endTopLevel(RefPtr<const FunctionSignature>, const Stack&);
 
     enum BranchFoldResult {
         BranchAlwaysTaken,
@@ -1993,8 +1993,8 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType& target, ExpressionType, Stack&);
     PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType& target, ExpressionType, ExpressionType, Stack&);
-    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&);
-    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&);
+    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, RefPtr<const FunctionSignature>, Stack&, ControlType&, Stack&);
+    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, ExpressionType, RefPtr<const FunctionSignature>, Stack&, ControlType&, Stack&);
 
     // Flush a value to its canonical slot.
     void flushValue(Value value);
@@ -2012,7 +2012,7 @@ public:
     void flushRegisters();
 
     template<size_t N>
-    void saveValuesAcrossCallAndPassArguments(const Vector<Value, N>& arguments, const CallInformation& callInfo, const TypeDefinition& signature);
+    void saveValuesAcrossCallAndPassArguments(const Vector<Value, N>& arguments, const CallInformation& callInfo, const FunctionSignature&);
 
     void slowPathSpillBindings(const RegisterBindings& bindings);
     void slowPathRestoreBindings(const RegisterBindings&);
@@ -2027,17 +2027,17 @@ public:
     template<typename Func, size_t N>
     void emitCCall(Func function, const Vector<Value, N>& arguments, Value& result);
 
-    void emitTailCall(FunctionSpaceIndex functionIndex, const TypeDefinition& signature, ArgumentList& arguments);
-    PartialResult WARN_UNUSED_RETURN addCall(FunctionSpaceIndex functionIndex, const TypeDefinition& signature, ArgumentList& arguments, ResultList& results, CallType = CallType::Call);
+    void emitTailCall(FunctionSpaceIndex functionIndex, const FunctionSignature&, ArgumentList& arguments);
+    PartialResult WARN_UNUSED_RETURN addCall(FunctionSpaceIndex functionIndex, const FunctionSignature&, ArgumentList& arguments, ResultList& results, CallType = CallType::Call);
 
-    void emitIndirectCall(const char* opcode, const Value& callee, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, ArgumentList& arguments, ResultList& results);
-    void emitIndirectTailCall(const char* opcode, const Value& callee, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, ArgumentList& arguments);
+    void emitIndirectCall(const char* opcode, const Value& callee, GPRReg calleeInstance, GPRReg calleeCode, const FunctionSignature&, ArgumentList& arguments, ResultList& results);
+    void emitIndirectTailCall(const char* opcode, const Value& callee, GPRReg calleeInstance, GPRReg calleeCode, const FunctionSignature&, ArgumentList& arguments);
     void addRTTSlowPathJump(TypeIndex, GPRReg);
     void emitSlowPathRTTCheck(MacroAssembler::Label, TypeIndex, GPRReg);
 
-    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const FunctionSignature&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
 
-    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCallRef(const FunctionSignature&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
 
     PartialResult WARN_UNUSED_RETURN addUnreachable();
 

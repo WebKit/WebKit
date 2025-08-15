@@ -3015,7 +3015,7 @@ void BBQJIT::emitCatchAllImpl(ControlData& dataCatch)
     dataCatch.startBlock(*this, emptyStack);
 }
 
-void BBQJIT::emitCatchImpl(ControlData& dataCatch, const TypeDefinition& exceptionSignature, ResultList& results)
+void BBQJIT::emitCatchImpl(ControlData& dataCatch, const FunctionSignature& exceptionSignature, ResultList& results)
 {
     m_catchEntrypoints.append(m_jit.label());
     emitCatchPrologue();
@@ -3023,11 +3023,11 @@ void BBQJIT::emitCatchImpl(ControlData& dataCatch, const TypeDefinition& excepti
     Stack emptyStack { };
     dataCatch.startBlock(*this, emptyStack);
 
-    if (exceptionSignature.as<FunctionSignature>()->argumentCount()) {
+    if (exceptionSignature.argumentCount()) {
         m_jit.loadPtr(Address(GPRInfo::returnValueGPR, JSWebAssemblyException::offsetOfPayload() + JSWebAssemblyException::Payload::offsetOfStorage()), wasmScratchGPR);
         unsigned offset = 0;
-        for (unsigned i = 0; i < exceptionSignature.as<FunctionSignature>()->argumentCount(); ++i) {
-            Type type = exceptionSignature.as<FunctionSignature>()->argumentType(i);
+        for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i) {
+            Type type = exceptionSignature.argumentType(i);
             Value result = Value::fromTemp(type.kind, dataCatch.enclosedHeight() + dataCatch.implicitSlots() + i);
             Location slot = canonicalSlot(result);
             switch (type.kind) {
@@ -3109,7 +3109,7 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
     }
 
     if (target.type == CatchKind::Catch || target.type == CatchKind::CatchRef) {
-        auto signature = target.exceptionSignature->template as<FunctionSignature>();
+        auto signature = target.exceptionSignature;
         if (signature->argumentCount()) {
             m_jit.loadPtr(Address(GPRInfo::returnValueGPR, JSWebAssemblyException::offsetOfPayload() + JSWebAssemblyException::Payload::offsetOfStorage()), wasmScratchGPR);
             unsigned offset = 0;
@@ -3286,7 +3286,7 @@ PartialResult BBQJIT::addFusedBranchCompare(OpType opType, ControlType& target, 
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addFusedIfCompare(OpType op, ExpressionType operand, BlockSignature signature, Stack& enclosingStack, ControlData& result, Stack& newStack)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addFusedIfCompare(OpType op, ExpressionType operand, RefPtr<const FunctionSignature> signature, Stack& enclosingStack, ControlData& result, Stack& newStack)
 {
     BranchFoldResult foldResult = tryFoldFusedBranchCompare(op, operand);
 
@@ -3311,12 +3311,12 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addFusedIfCompare(OpType op, Expression
 
     consume(operand);
 
-    result = ControlData(*this, BlockType::If, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature.m_signature->argumentCount(), liveScratchGPRs, liveScratchFPRs);
+    result = ControlData(*this, BlockType::If, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->argumentCount(), liveScratchGPRs, liveScratchFPRs);
 
     // Despite being conditional, if doesn't need to worry about diverging expression stacks at block boundaries, so it doesn't need multiple exits.
     currentControlData().flushAndSingleExit(*this, result, enclosingStack, true, false);
 
-    LOG_INSTRUCTION("IfCompare", makeString(op).characters(), *signature.m_signature, operand, operandLocation);
+    LOG_INSTRUCTION("IfCompare", makeString(op).characters(), *signature, operand, operandLocation);
     LOG_INDENT();
     splitStack(signature, enclosingStack, newStack);
 
@@ -3544,7 +3544,7 @@ PartialResult BBQJIT::addFusedBranchCompare(OpType opType, ControlType& target, 
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addFusedIfCompare(OpType op, ExpressionType left, ExpressionType right, BlockSignature signature, Stack& enclosingStack, ControlData& result, Stack& newStack)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addFusedIfCompare(OpType op, ExpressionType left, ExpressionType right, RefPtr<const FunctionSignature> signature, Stack& enclosingStack, ControlData& result, Stack& newStack)
 {
     BranchFoldResult foldResult = tryFoldFusedBranchCompare(op, left, right);
 
@@ -3578,12 +3578,12 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addFusedIfCompare(OpType op, Expression
     consume(right);
 
 
-    result = ControlData(*this, BlockType::If, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature.m_signature->argumentCount(), liveScratchGPRs, liveScratchFPRs);
+    result = ControlData(*this, BlockType::If, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->argumentCount(), liveScratchGPRs, liveScratchFPRs);
 
     // Despite being conditional, if doesn't need to worry about diverging expression stacks at block boundaries, so it doesn't need multiple exits.
     currentControlData().flushAndSingleExit(*this, result, enclosingStack, true, false);
 
-    LOG_INSTRUCTION("IfCompare", makeString(op).characters(), *signature.m_signature, left, leftLocation, right, rightLocation);
+    LOG_INSTRUCTION("IfCompare", makeString(op).characters(), *signature, left, leftLocation, right, rightLocation);
     LOG_INDENT();
     splitStack(signature, enclosingStack, newStack);
 
@@ -5298,11 +5298,10 @@ void BBQJIT::emitMove(StorageType type, Value src, Address dst)
         emitStore(type, srcLocation, dst);
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results, CallType callType)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const FunctionSignature& signature, ArgumentList& args, ResultList& results, CallType callType)
 {
     Value callee = args.takeLast();
-    const TypeDefinition& signature = originalSignature.expand();
-    ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
+    ASSERT(signature.argumentCount() == args.size());
 
     CallInformation callInfo = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
     Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callInfo.headerAndArgumentStackSizeInBytes);

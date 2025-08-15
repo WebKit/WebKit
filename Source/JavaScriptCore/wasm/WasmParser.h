@@ -96,8 +96,8 @@ protected:
     bool WARN_UNUSED_RETURN parseVarInt32(int32_t&);
     bool WARN_UNUSED_RETURN parseVarInt64(int64_t&);
 
-    PartialResult WARN_UNUSED_RETURN parseBlockSignature(const ModuleInformation&, BlockSignature&);
-    PartialResult WARN_UNUSED_RETURN parseReftypeSignature(const ModuleInformation&, BlockSignature&);
+    PartialResult WARN_UNUSED_RETURN parseBlockSignature(const ModuleInformation&, RefPtr<const FunctionSignature>&);
+    PartialResult WARN_UNUSED_RETURN parseReftypeSignature(const ModuleInformation&, RefPtr<const FunctionSignature>&);
     bool WARN_UNUSED_RETURN parseValueType(const ModuleInformation&, Type&);
     bool WARN_UNUSED_RETURN parseRefType(const ModuleInformation&, Type&);
     bool WARN_UNUSED_RETURN parseExternalKind(ExternalKind&);
@@ -309,7 +309,7 @@ ALWAYS_INLINE bool ParserBase::parseVarUInt1(uint8_t& result)
     return true;
 }
 
-ALWAYS_INLINE typename ParserBase::PartialResult ParserBase::parseBlockSignature(const ModuleInformation& info, BlockSignature& result)
+ALWAYS_INLINE typename ParserBase::PartialResult ParserBase::parseBlockSignature(const ModuleInformation& info, RefPtr<const FunctionSignature>& result)
 {
     int8_t kindByte;
     if (peekInt7(kindByte) && isValidTypeKind(kindByte)) {
@@ -320,7 +320,7 @@ ALWAYS_INLINE typename ParserBase::PartialResult ParserBase::parseBlockSignature
 
         Type type = { typeKind, TypeDefinition::invalidIndex };
         WASM_PARSER_FAIL_IF(!(isValueType(type) || type.isVoid()), "result type of block: "_s, makeString(type.kind), " is not a value type or Void"_s);
-        result = { m_typeInformation.thunkFor(type), nullptr };
+        result = m_typeInformation.thunkFor(type);
         m_offset++;
         return { };
     }
@@ -333,17 +333,17 @@ ALWAYS_INLINE typename ParserBase::PartialResult ParserBase::parseBlockSignature
     const auto& signature = info.typeSignatures[index].get().expand();
     WASM_PARSER_FAIL_IF(!signature.is<FunctionSignature>(), "Block-like instruction signature index does not refer to a function type definition"_s);
 
-    result = { signature.as<FunctionSignature>(), nullptr };
+    result = signature.as<FunctionSignature>();
     return { };
 }
 
-inline typename ParserBase::PartialResult ParserBase::parseReftypeSignature(const ModuleInformation& info, BlockSignature& result)
+inline typename ParserBase::PartialResult ParserBase::parseReftypeSignature(const ModuleInformation& info, RefPtr<const FunctionSignature>& result)
 {
     Type resultType;
     WASM_PARSER_FAIL_IF(!parseValueType(info, resultType), "result type of block is not a valid ref type"_s);
     Vector<Type, 16> returnTypes { resultType };
     auto typeDefinition = TypeInformation::typeDefinitionForFunction(returnTypes, { });
-    result = { &TypeInformation::getFunctionSignature(typeDefinition->index()), typeDefinition };
+    result = &TypeInformation::getFunctionSignature(typeDefinition->index());
 
     return { };
 }

@@ -155,15 +155,15 @@ public:
 
         ControlData()
         { }
-        ControlData(BlockSignature signature)
+        ControlData(RefPtr<const FunctionSignature> signature)
             : m_signature(signature)
         { }
 
-        BlockSignature signature() const { return m_signature; }
+        RefPtr<const FunctionSignature> signature() const { return m_signature; }
         FunctionArgCount branchTargetArity() const { return 0; }
         Type branchTargetType(unsigned) const { return Types::Void; }
     private:
-        BlockSignature m_signature;
+        RefPtr<const FunctionSignature> m_signature;
     };
 
     using ControlType = ControlData;
@@ -624,20 +624,20 @@ public:
         return { };
     }
 
-    ControlData addTopLevel(BlockSignature signature)
+    ControlData addTopLevel(RefPtr<const FunctionSignature> signature)
     {
         return ControlData(signature);
     }
 
-    PartialResult WARN_UNUSED_RETURN addBlock(BlockSignature, Stack&, ControlType&, Stack&) CONST_EXPR_STUB
-    PartialResult WARN_UNUSED_RETURN addLoop(BlockSignature, Stack&, ControlType&, Stack&, uint32_t) CONST_EXPR_STUB
-    PartialResult WARN_UNUSED_RETURN addIf(ExpressionType, BlockSignature, Stack&, ControlData&, Stack&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addBlock(RefPtr<const FunctionSignature>, Stack&, ControlType&, Stack&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addLoop(RefPtr<const FunctionSignature>, Stack&, ControlType&, Stack&, uint32_t) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addIf(ExpressionType, RefPtr<const FunctionSignature>, Stack&, ControlData&, Stack&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addElse(ControlData&, Stack&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addElseToUnreachable(ControlData&) CONST_EXPR_STUB
-    PartialResult WARN_UNUSED_RETURN addTry(BlockSignature, Stack&, ControlType&, Stack&) CONST_EXPR_STUB
-    PartialResult WARN_UNUSED_RETURN addTryTable(BlockSignature, Stack&, const Vector<CatchHandler>&, ControlType&, Stack&) CONST_EXPR_STUB
-    PartialResult WARN_UNUSED_RETURN addCatch(unsigned, const TypeDefinition&, Stack&, ControlType&, ResultList&) CONST_EXPR_STUB
-    PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned, const TypeDefinition&, ControlType&, ResultList&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addTry(RefPtr<const FunctionSignature>, Stack&, ControlType&, Stack&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addTryTable(RefPtr<const FunctionSignature>, Stack&, const Vector<CatchHandler>&, ControlType&, Stack&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addCatch(unsigned, const FunctionSignature&, Stack&, ControlType&, ResultList&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned, const FunctionSignature&, ControlType&, ResultList&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addCatchAll(Stack&, ControlType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addCatchAllToUnreachable(ControlType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addDelegate(ControlType&, ControlType&) CONST_EXPR_STUB
@@ -652,8 +652,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addSwitch(ExpressionType, const Vector<ControlData*>&, ControlData&, Stack&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType&, ExpressionType, const Stack&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType&, ExpressionType, ExpressionType, const Stack&) CONST_EXPR_STUB
-    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&) CONST_EXPR_STUB
-    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, RefPtr<const FunctionSignature>, Stack&, ControlType&, Stack&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, ExpressionType, RefPtr<const FunctionSignature>, Stack&, ControlType&, Stack&) CONST_EXPR_STUB
 
     PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry& entry, Stack& expressionStack)
     {
@@ -665,7 +665,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&, Stack&, bool = true) CONST_EXPR_STUB
 
-    PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&)
+    PartialResult WARN_UNUSED_RETURN endTopLevel(RefPtr<const FunctionSignature>, const Stack&)
     {
         // Some opcodes like "nop" are not detectable by an error stub because the context
         // doesn't get called by the parser. This flag is set by didParseOpcode() to signal
@@ -674,9 +674,9 @@ public:
         return { };
     }
 
-    PartialResult WARN_UNUSED_RETURN addCall(unsigned, const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call) CONST_EXPR_STUB
-    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned, const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call) CONST_EXPR_STUB
-    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addCall(unsigned, const FunctionSignature&, ArgumentList&, ResultList&, CallType = CallType::Call) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned, const FunctionSignature&, ArgumentList&, ResultList&, CallType = CallType::Call) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addCallRef(const FunctionSignature&, ArgumentList&, ResultList&, CallType = CallType::Call) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addUnreachable() CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addCrash() CONST_EXPR_STUB
     bool usesSIMD() { return false; }

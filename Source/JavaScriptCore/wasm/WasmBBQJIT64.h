@@ -490,7 +490,7 @@ void BBQJIT::emitCCall(Func function, const Vector<Value, N>& arguments)
     auto argumentTypes = WTF::map<16>(arguments, [](auto& value) {
         return Type { value.type(), 0u };
     });
-    RefPtr<TypeDefinition> functionType = TypeInformation::typeDefinitionForFunction(resultTypes, argumentTypes);
+    RefPtr functionType = TypeInformation::typeDefinitionForFunction(resultTypes, argumentTypes);
     CallInformation callInfo = wasmCallingConvention().callInformationFor(*functionType, CallRole::Caller);
     Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callInfo.headerAndArgumentStackSizeInBytes);
     m_maxCalleeStackSize = std::max<int>(calleeStackSize, m_maxCalleeStackSize);
@@ -519,7 +519,7 @@ void BBQJIT::emitCCall(Func function, const Vector<Value, N>& arguments, Value& 
         return Type { value.type(), 0u };
     });
 
-    RefPtr<TypeDefinition> functionType = TypeInformation::typeDefinitionForFunction(resultTypes, argumentTypes);
+    RefPtr functionType = TypeInformation::typeDefinitionForFunction(resultTypes, argumentTypes);
     CallInformation callInfo = wasmCallingConvention().callInformationFor(*functionType, CallRole::Caller);
     Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callInfo.headerAndArgumentStackSizeInBytes);
     m_maxCalleeStackSize = std::max<int>(calleeStackSize, m_maxCalleeStackSize);
