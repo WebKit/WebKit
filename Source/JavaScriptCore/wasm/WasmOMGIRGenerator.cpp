@@ -127,7 +127,7 @@ public:
     static constexpr bool validateFunctionBodySize = true;
 
     struct ControlData {
-        ControlData(Procedure& proc, Origin origin, BlockSignature signature, BlockType type, unsigned stackSize, BasicBlock* continuation, BasicBlock* special = nullptr)
+        ControlData(Procedure& proc, Origin origin, RefPtr<const FunctionSignature> signature, BlockType type, unsigned stackSize, BasicBlock* continuation, BasicBlock* special = nullptr)
             : controlBlockType(type)
             , m_signature(signature)
             , m_stackSize(stackSize)
@@ -136,18 +136,18 @@ public:
         {
             ASSERT(type != BlockType::Try && type != BlockType::Catch);
             if (type != BlockType::TopLevel)
-                m_stackSize -= signature.m_signature->argumentCount();
+                m_stackSize -= signature->argumentCount();
 
             if (type == BlockType::Loop) {
-                for (unsigned i = 0; i < signature.m_signature->argumentCount(); ++i)
-                    phis.append(proc.add<Value>(Phi, toB3Type(signature.m_signature->argumentType(i)), origin));
+                for (unsigned i = 0; i < signature->argumentCount(); ++i)
+                    phis.append(proc.add<Value>(Phi, toB3Type(signature->argumentType(i)), origin));
             } else {
-                for (unsigned i = 0; i < signature.m_signature->returnCount(); ++i)
-                    phis.append(proc.add<Value>(Phi, toB3Type(signature.m_signature->returnType(i)), origin));
+                for (unsigned i = 0; i < signature->returnCount(); ++i)
+                    phis.append(proc.add<Value>(Phi, toB3Type(signature->returnType(i)), origin));
             }
         }
 
-        ControlData(Procedure& proc, Origin origin, BlockSignature signature, BlockType type, unsigned stackSize, BasicBlock* continuation, unsigned tryStart, unsigned tryDepth)
+        ControlData(Procedure& proc, Origin origin, RefPtr<const FunctionSignature> signature, BlockType type, unsigned stackSize, BasicBlock* continuation, unsigned tryStart, unsigned tryDepth)
             : controlBlockType(type)
             , m_signature(signature)
             , m_stackSize(stackSize)
@@ -157,9 +157,9 @@ public:
             , m_tryCatchDepth(tryDepth)
         {
             ASSERT(type == BlockType::Try || type == BlockType::TryTable);
-            m_stackSize -= signature.m_signature->argumentCount();
-            for (unsigned i = 0; i < signature.m_signature->returnCount(); ++i)
-                phis.append(proc.add<Value>(Phi, toB3Type(signature.m_signature->returnType(i)), origin));
+            m_stackSize -= signature->argumentCount();
+            for (unsigned i = 0; i < signature->returnCount(); ++i)
+                phis.append(proc.add<Value>(Phi, toB3Type(signature->returnType(i)), origin));
         }
 
         ControlData()
@@ -214,9 +214,9 @@ public:
 
         BlockType blockType() const { return controlBlockType; }
 
-        BlockSignature signature() const { return m_signature; }
+        RefPtr<const FunctionSignature> signature() const { return m_signature; }
 
-        bool hasNonVoidresult() const { return m_signature.m_signature->returnsVoid(); }
+        bool hasNonVoidresult() const { return m_signature->returnsVoid(); }
 
         BasicBlock* targetBlockForBranch()
         {
@@ -253,7 +253,7 @@ public:
         struct TryTableTarget {
             CatchKind type;
             uint32_t tag;
-            const TypeDefinition* exceptionSignature;
+            const FunctionSignature* exceptionSignature;
             ControlRef target;
         };
         using TargetList = Vector<TryTableTarget>;
@@ -272,16 +272,16 @@ public:
         FunctionArgCount branchTargetArity() const
         {
             if (blockType() == BlockType::Loop)
-                return m_signature.m_signature->argumentCount();
-            return m_signature.m_signature->returnCount();
+                return m_signature->argumentCount();
+            return m_signature->returnCount();
         }
 
         Type branchTargetType(unsigned i) const
         {
             ASSERT(i < branchTargetArity());
             if (blockType() == BlockType::Loop)
-                return m_signature.m_signature->argumentType(i);
-            return m_signature.m_signature->returnType(i);
+                return m_signature->argumentType(i);
+            return m_signature->returnType(i);
         }
 
         unsigned tryStart() const
@@ -321,7 +321,7 @@ public:
         // https://bugs.webkit.org/show_bug.cgi?id=231212
         friend class OMGIRGenerator;
         BlockType controlBlockType;
-        BlockSignature m_signature;
+        RefPtr<const FunctionSignature> m_signature;
         unsigned m_stackSize;
         BasicBlock* continuation;
         BasicBlock* special;
@@ -697,17 +697,17 @@ public:
     PartialResult WARN_UNUSED_RETURN addSelect(ExpressionType condition, ExpressionType nonZero, ExpressionType zero, ExpressionType& result);
 
     // Control flow
-    ControlData WARN_UNUSED_RETURN addTopLevel(BlockSignature);
-    PartialResult WARN_UNUSED_RETURN addBlock(BlockSignature, Stack& enclosingStack, ControlType& newBlock, Stack& newStack);
-    PartialResult WARN_UNUSED_RETURN addLoop(BlockSignature, Stack& enclosingStack, ControlType& block, Stack& newStack, uint32_t loopIndex);
-    PartialResult WARN_UNUSED_RETURN addIf(ExpressionType condition, BlockSignature, Stack& enclosingStack, ControlType& result, Stack& newStack);
+    ControlData WARN_UNUSED_RETURN addTopLevel(RefPtr<const FunctionSignature>);
+    PartialResult WARN_UNUSED_RETURN addBlock(RefPtr<const FunctionSignature>, Stack& enclosingStack, ControlType& newBlock, Stack& newStack);
+    PartialResult WARN_UNUSED_RETURN addLoop(RefPtr<const FunctionSignature>, Stack& enclosingStack, ControlType& block, Stack& newStack, uint32_t loopIndex);
+    PartialResult WARN_UNUSED_RETURN addIf(ExpressionType condition, RefPtr<const FunctionSignature>, Stack& enclosingStack, ControlType& result, Stack& newStack);
     PartialResult WARN_UNUSED_RETURN addElse(ControlData&, const Stack&);
     PartialResult WARN_UNUSED_RETURN addElseToUnreachable(ControlData&);
 
-    PartialResult WARN_UNUSED_RETURN addTry(BlockSignature, Stack& enclosingStack, ControlType& result, Stack& newStack);
-    PartialResult WARN_UNUSED_RETURN addTryTable(BlockSignature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack);
-    PartialResult WARN_UNUSED_RETURN addCatch(unsigned exceptionIndex, const TypeDefinition&, Stack&, ControlType&, ResultList&);
-    PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition&, ControlType&, ResultList&);
+    PartialResult WARN_UNUSED_RETURN addTry(RefPtr<const FunctionSignature>, Stack& enclosingStack, ControlType& result, Stack& newStack);
+    PartialResult WARN_UNUSED_RETURN addTryTable(RefPtr<const FunctionSignature>, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack);
+    PartialResult WARN_UNUSED_RETURN addCatch(unsigned exceptionIndex, const FunctionSignature&, Stack&, ControlType&, ResultList&);
+    PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned exceptionIndex, const FunctionSignature&, ControlType&, ResultList&);
     PartialResult WARN_UNUSED_RETURN addCatchAll(Stack&, ControlType&);
     PartialResult WARN_UNUSED_RETURN addCatchAllToUnreachable(ControlType&);
     PartialResult WARN_UNUSED_RETURN addDelegate(ControlType&, ControlType&);
@@ -725,29 +725,29 @@ public:
     PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry&, Stack& expressionStack);
     PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&, const Stack& = { });
 
-    PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&) { return { }; }
+    PartialResult WARN_UNUSED_RETURN endTopLevel(RefPtr<const FunctionSignature>, const Stack&) { return { }; }
 
     // Fused comparison stubs (B3 will do this for us later).
     PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType&, ExpressionType, const Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
     PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType&, ExpressionType, ExpressionType, const Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
-    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
-    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
+    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, RefPtr<const FunctionSignature>, Stack&, ControlType&, Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
+    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, ExpressionType, RefPtr<const FunctionSignature>, Stack&, ControlType&, Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
 
     // Calls
-    PartialResult WARN_UNUSED_RETURN addCall(FunctionSpaceIndex functionIndexSpace, const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
-    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
-    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCall(FunctionSpaceIndex functionIndexSpace, const FunctionSignature&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const FunctionSignature&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCallRef(const FunctionSignature&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
-    void fillCallResults(Value* callResult, const TypeDefinition& signature, ResultList& results);
-    PartialResult WARN_UNUSED_RETURN emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* boxedCalleeCallee, const TypeDefinition&, const ArgumentList& args, ResultList&, CallType = CallType::Call);
+    void fillCallResults(Value* callResult, const FunctionSignature& signature, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* boxedCalleeCallee, const FunctionSignature&, const ArgumentList& args, ResultList&, CallType = CallType::Call);
 
     Vector<ConstrainedValue> createCallConstrainedArgs(BasicBlock*, const CallInformation& wasmCalleeInfo, const ArgumentList&);
-    auto createCallPatchpoint(BasicBlock*, const TypeDefinition&, const CallInformation&, const ArgumentList& tmpArgs) -> CallPatchpointData;
-    auto createTailCallPatchpoint(BasicBlock*, const TypeDefinition&, const CallInformation& wasmCallerInfoAsCallee, const CallInformation& wasmCalleeInfoAsCallee, const ArgumentList& tmpArgSourceLocations, Vector<B3::ConstrainedValue> patchArgs) -> CallPatchpointData;
+    auto createCallPatchpoint(BasicBlock*, const FunctionSignature&, const CallInformation&, const ArgumentList& tmpArgs) -> CallPatchpointData;
+    auto createTailCallPatchpoint(BasicBlock*, const FunctionSignature&, const CallInformation& wasmCallerInfoAsCallee, const CallInformation& wasmCalleeInfoAsCallee, const ArgumentList& tmpArgSourceLocations, Vector<B3::ConstrainedValue> patchArgs) -> CallPatchpointData;
 
     bool canInline(FunctionSpaceIndex functionIndexSpace) const;
-    PartialResult WARN_UNUSED_RETURN emitInlineDirectCall(FunctionCodeIndex calleeIndex, const TypeDefinition&, ArgumentList& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN emitInlineDirectCall(FunctionCodeIndex calleeIndex, const FunctionSignature&, ArgumentList& args, ResultList& results);
 
     void dump(const ControlStack&, const Stack* expressionStack);
     void setParser(FunctionParser<OMGIRGenerator>* parser) { m_parser = parser; };
@@ -771,7 +771,7 @@ public:
     void insertEntrySwitch();
     void insertConstants();
 
-    B3::Type toB3ResultType(const TypeDefinition*);
+    B3::Type toB3ResultType(const FunctionSignature&);
 
     void addStackMap(unsigned callSiteIndex, StackMap&& stackmap)
     {
@@ -989,7 +989,7 @@ private:
     FixedBitVector& m_directCallees; // Note this includes call targets from functions we inline.
     unsigned* m_osrEntryScratchBufferSize;
     UncheckedKeyHashMap<ValueKey, Value*> m_constantPool;
-    UncheckedKeyHashMap<const TypeDefinition*, B3::Type> m_tupleMap;
+    UncheckedKeyHashMap<const FunctionSignature*, B3::Type> m_tupleMap;
     InsertionSet m_constantInsertionValues;
     Value* m_framePointer { nullptr };
     bool m_makesCalls { false };
@@ -1406,18 +1406,18 @@ void OMGIRGenerator::insertConstants()
     m_constantInsertionValues.execute(block);
 }
 
-B3::Type OMGIRGenerator::toB3ResultType(const TypeDefinition* returnType)
+B3::Type OMGIRGenerator::toB3ResultType(const FunctionSignature& returnType)
 {
-    if (returnType->as<FunctionSignature>()->returnsVoid())
+    if (returnType.returnsVoid())
         return B3::Void;
 
-    if (returnType->as<FunctionSignature>()->returnCount() == 1)
-        return toB3Type(returnType->as<FunctionSignature>()->returnType(0));
+    if (returnType.returnCount() == 1)
+        return toB3Type(returnType.returnType(0));
 
-    auto result = m_tupleMap.ensure(returnType, [&] {
+    auto result = m_tupleMap.ensure(&returnType, [&] {
         Vector<B3::Type> result;
-        for (unsigned i = 0; i < returnType->as<FunctionSignature>()->returnCount(); ++i)
-            result.append(toB3Type(returnType->as<FunctionSignature>()->returnType(i)));
+        for (unsigned i = 0; i < returnType.returnCount(); ++i)
+            result.append(toB3Type(returnType.returnType(i)));
         return m_proc.addTuple(WTFMove(result));
     });
     return result.iterator->value;
@@ -1727,7 +1727,7 @@ auto OMGIRGenerator::addCrash() -> PartialResult
     return { };
 }
 
-auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* boxedCalleeCallee, const TypeDefinition& signature, const ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
+auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* boxedCalleeCallee, const FunctionSignature& signature, const ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
 {
     const bool isTailCallInlineCaller = callType == CallType::TailCall && m_inlineParent;
     const bool isTailCall = callType == CallType::TailCall && !isTailCallInlineCaller;
@@ -1802,7 +1802,7 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
         return { };
     }
 
-    B3::Type returnType = toB3ResultType(&signature);
+    B3::Type returnType = toB3ResultType(signature);
     auto [patchpoint, handle, prepareForCall] = createCallPatchpoint(m_currentBlock, signature, wasmCalleeInfo, args);
     // We need to clobber all potential pinned registers since we might be leaving the instance.
     // We pessimistically assume we're always calling something that is bounds checking so
@@ -1835,7 +1835,7 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
     }
     case B3::Tuple: {
         const Vector<B3::Type>& tuple = m_proc.tupleForType(returnType);
-        for (unsigned i = 0; i < signature.as<FunctionSignature>()->returnCount(); ++i)
+        for (unsigned i = 0; i < signature.returnCount(); ++i)
             results.append(push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), tuple[i], callResult, i)));
         break;
     }
@@ -1852,7 +1852,7 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
         Stack typedResults;
         typedResults.reserveInitialCapacity(results.size());
         for (unsigned i = 0; i < results.size(); ++i)
-            typedResults.append(TypedExpression { signature.as<FunctionSignature>()->returnType(i), results[i] });
+            typedResults.append(TypedExpression { signature.returnType(i), results[i] });
         ASSERT(m_returnContinuation);
         return addInlinedReturn(WTFMove(typedResults));
     }
@@ -4348,16 +4348,16 @@ void OMGIRGenerator::connectValuesAtEntrypoint(unsigned& indexInBuffer, Value* p
     }
 };
 
-auto OMGIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, ControlType& block, Stack& newStack, uint32_t loopIndex) -> PartialResult
+auto OMGIRGenerator::addLoop(RefPtr<const FunctionSignature> signature, Stack& enclosingStack, ControlType& block, Stack& newStack, uint32_t loopIndex) -> PartialResult
 {
-    TRACE_CF("LOOP: entering loop index: ", loopIndex, " signature: ", *signature.m_signature);
+    TRACE_CF("LOOP: entering loop index: ", loopIndex, " signature: ", *signature);
     BasicBlock* body = m_proc.addBlock();
     BasicBlock* continuation = m_proc.addBlock();
 
     block = ControlData(m_proc, origin(), signature, BlockType::Loop, m_stackSize, continuation, body);
 
-    unsigned offset = enclosingStack.size() - signature.m_signature->argumentCount();
-    for (unsigned i = 0; i < signature.m_signature->argumentCount(); ++i) {
+    unsigned offset = enclosingStack.size() - signature->argumentCount();
+    for (unsigned i = 0; i < signature->argumentCount(); ++i) {
         TypedExpression value = enclosingStack.at(offset + i);
         Value* phi = block.phis[i];
         m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), get(value), phi);
@@ -4406,15 +4406,15 @@ auto OMGIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
     return { };
 }
 
-OMGIRGenerator::ControlData OMGIRGenerator::addTopLevel(BlockSignature signature)
+OMGIRGenerator::ControlData OMGIRGenerator::addTopLevel(RefPtr<const FunctionSignature> signature)
 {
-    TRACE_CF("TopLevel: ", *signature.m_signature);
+    TRACE_CF("TopLevel: ", *signature);
     return ControlData(m_proc, Origin(), signature, BlockType::TopLevel, m_stackSize, m_proc.addBlock());
 }
 
-auto OMGIRGenerator::addBlock(BlockSignature signature, Stack& enclosingStack, ControlType& newBlock, Stack& newStack) -> PartialResult
+auto OMGIRGenerator::addBlock(RefPtr<const FunctionSignature> signature, Stack& enclosingStack, ControlType& newBlock, Stack& newStack) -> PartialResult
 {
-    TRACE_CF("Block: ", *signature.m_signature);
+    TRACE_CF("Block: ", *signature);
     BasicBlock* continuation = m_proc.addBlock();
 
     splitStack(signature, enclosingStack, newStack);
@@ -4422,7 +4422,7 @@ auto OMGIRGenerator::addBlock(BlockSignature signature, Stack& enclosingStack, C
     return { };
 }
 
-auto OMGIRGenerator::addIf(ExpressionType condition, BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack) -> PartialResult
+auto OMGIRGenerator::addIf(ExpressionType condition, RefPtr<const FunctionSignature> signature, Stack& enclosingStack, ControlType& result, Stack& newStack) -> PartialResult
 {
     // FIXME: This needs to do some kind of stack passing.
 
@@ -4466,14 +4466,14 @@ auto OMGIRGenerator::addElse(ControlData& data, const Stack& currentStack) -> Pa
 auto OMGIRGenerator::addElseToUnreachable(ControlData& data) -> PartialResult
 {
     ASSERT(data.blockType() == BlockType::If);
-    m_stackSize = data.stackSize() + data.m_signature.m_signature->argumentCount();
+    m_stackSize = data.stackSize() + data.signature()->argumentCount();
     m_currentBlock = data.special;
     data.convertIfToBlock();
     TRACE_CF("ELSE");
     return { };
 }
 
-auto OMGIRGenerator::addTry(BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack) -> PartialResult
+auto OMGIRGenerator::addTry(RefPtr<const FunctionSignature> signature, Stack& enclosingStack, ControlType& result, Stack& newStack) -> PartialResult
 {
     ++m_tryCatchDepth;
     TRACE_CF("TRY");
@@ -4484,7 +4484,7 @@ auto OMGIRGenerator::addTry(BlockSignature signature, Stack& enclosingStack, Con
     return { };
 }
 
-auto OMGIRGenerator::addTryTable(BlockSignature signature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack) -> PartialResult
+auto OMGIRGenerator::addTryTable(RefPtr<const FunctionSignature> signature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack) -> PartialResult
 {
     ++m_tryCatchDepth;
     TRACE_CF("TRY");
@@ -4508,7 +4508,7 @@ auto OMGIRGenerator::addTryTable(BlockSignature signature, Stack& enclosingStack
     return { };
 }
 
-auto OMGIRGenerator::addCatch(unsigned exceptionIndex, const TypeDefinition& signature, Stack& currentStack, ControlType& data, ResultList& results) -> PartialResult
+auto OMGIRGenerator::addCatch(unsigned exceptionIndex, const FunctionSignature& signature, Stack& currentStack, ControlType& data, ResultList& results) -> PartialResult
 {
     TRACE_CF("CATCH: ", signature);
     unifyValuesWithBlock(currentStack, data);
@@ -4592,12 +4592,12 @@ void OMGIRGenerator::connectValuesForCatchEntrypoint(ControlData& catchData, Val
     }
 }
 
-auto OMGIRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition& signature, ControlType& data, ResultList& results) -> PartialResult
+auto OMGIRGenerator::addCatchToUnreachable(unsigned exceptionIndex, const FunctionSignature& signature, ControlType& data, ResultList& results) -> PartialResult
 {
     Value* payload = emitCatchImpl(CatchKind::Catch, data, exceptionIndex);
     unsigned offset = 0;
-    for (unsigned i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i) {
-        Type type = signature.as<FunctionSignature>()->argumentType(i);
+    for (unsigned i = 0; i < signature.argumentCount(); ++i) {
+        Type type = signature.argumentType(i);
         Value* value = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, toB3Type(type), origin(), payload, offset * sizeof(uint64_t));
         results.append(push(value));
         offset += type.kind == TypeKind::V128 ? 2 : 1;
@@ -4957,7 +4957,7 @@ auto OMGIRGenerator::endBlock(ControlEntry& entry, Stack& expressionStack) -> Pa
 {
     ControlData& data = entry.controlData;
 
-    ASSERT(expressionStack.size() == data.signature().m_signature->returnCount());
+    ASSERT(expressionStack.size() == data.signature()->returnCount());
     if (data.blockType() != BlockType::Loop)
         unifyValuesWithBlock(expressionStack, data);
 
@@ -4989,18 +4989,18 @@ auto OMGIRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expre
 
     auto blockSignature = data.signature();
     if (data.blockType() != BlockType::Loop) {
-        for (unsigned i = 0; i < blockSignature.m_signature->returnCount(); ++i) {
+        for (unsigned i = 0; i < blockSignature->returnCount(); ++i) {
             Value* result = data.phis[i];
             m_currentBlock->append(result);
-            entry.enclosedExpressionStack.constructAndAppend(blockSignature.m_signature->returnType(i), push(result));
+            entry.enclosedExpressionStack.constructAndAppend(blockSignature->returnType(i), push(result));
         }
     } else {
-        for (unsigned i = 0; i < blockSignature.m_signature->returnCount(); ++i) {
+        for (unsigned i = 0; i < blockSignature->returnCount(); ++i) {
             if (i < expressionStack.size()) {
                 ++m_stackSize;
                 entry.enclosedExpressionStack.append(expressionStack[i]);
             } else {
-                Type returnType = blockSignature.m_signature->returnType(i);
+                Type returnType = blockSignature->returnType(i);
                 entry.enclosedExpressionStack.constructAndAppend(returnType, push(constant(toB3Type(returnType), 0xbbadbeef)));
             }
         }
@@ -5008,7 +5008,7 @@ auto OMGIRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expre
 
     if constexpr (WasmOMGIRGeneratorInternal::traceStackValues) {
         m_parser->expressionStack().swap(entry.enclosedExpressionStack);
-        TRACE_CF("END: ", *blockSignature.m_signature, " block type ", (int) data.blockType());
+        TRACE_CF("END: ", *blockSignature, " block type ", (int) data.blockType());
         m_parser->expressionStack().swap(entry.enclosedExpressionStack);
     }
 
@@ -5032,9 +5032,9 @@ Vector<ConstrainedValue> OMGIRGenerator::createCallConstrainedArgs(BasicBlock* b
 }
 
 
-auto OMGIRGenerator::createCallPatchpoint(BasicBlock* block, const TypeDefinition& signature, const CallInformation& wasmCalleeInfo, const ArgumentList& tmpArgs) -> CallPatchpointData
+auto OMGIRGenerator::createCallPatchpoint(BasicBlock* block, const FunctionSignature& signature, const CallInformation& wasmCalleeInfo, const ArgumentList& tmpArgs) -> CallPatchpointData
 {
-    auto returnType = toB3ResultType(&signature);
+    auto returnType = toB3ResultType(signature);
 
     auto constrainedPatchArgs = createCallConstrainedArgs(block, wasmCalleeInfo, tmpArgs);
 
@@ -5061,9 +5061,8 @@ auto OMGIRGenerator::createCallPatchpoint(BasicBlock* block, const TypeDefinitio
 }
 
 // See createTailCallPatchpoint for the setup before this.
-static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& jit, const B3::StackmapGenerationParams& params, const TypeDefinition& signature, const CallInformation& wasmCallerInfoAsCallee, const CallInformation& wasmCalleeInfoAsCallee, unsigned firstPatchArg, unsigned lastPatchArg, int32_t newFPOffsetFromFP)
+static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& jit, const B3::StackmapGenerationParams& params, const FunctionSignature& signature, const CallInformation& wasmCallerInfoAsCallee, const CallInformation& wasmCalleeInfoAsCallee, unsigned firstPatchArg, unsigned lastPatchArg, int32_t newFPOffsetFromFP)
 {
-    auto& functionSignature = *signature.as<FunctionSignature>();
     const Checked<int32_t> offsetOfFirstSlotFromFP = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCallerInfoAsCallee.headerAndArgumentStackSizeInBytes);
     JIT_COMMENT(jit, "Set up tail call, new FP offset from FP: ", newFPOffsetFromFP);
     AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -5113,8 +5112,7 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
 
     JIT_COMMENT(jit, "Let's use the caller's frame, so that we always have a valid frame.");
     if (WasmOMGIRGeneratorInternal::verboseTailCalls) {
-        jit.probeDebugSIMD([frameSize, fpOffsetToSPOffset, newFPOffsetFromFP, signature = Ref<const TypeDefinition>(signature), wasmCalleeInfoAsCallee, firstPatchArg, lastPatchArg, params, functionIndex] (Probe::Context& context) {
-            auto& functionSignature = *signature->as<FunctionSignature>();
+        jit.probeDebugSIMD([frameSize, fpOffsetToSPOffset, newFPOffsetFromFP, signature = Ref { signature }, wasmCalleeInfoAsCallee, firstPatchArg, lastPatchArg, params, functionIndex] (Probe::Context& context) {
             auto sp = context.gpr<uintptr_t>(MacroAssembler::stackPointerRegister);
             auto fp = context.gpr<uintptr_t>(GPRInfo::callFrameRegister);
             dataLogLn("Before tail call in function ", functionIndex, " before changing anything: FP: ", RawHex(fp), " SP: ", RawHex(sp));
@@ -5147,8 +5145,8 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
                     dataLog(fpl[src.offsetFromFP() / sizeof(*fpl)], " / ", fpi[src.offsetFromFP() / sizeof(*fpi)], " / ", std::bit_cast<double>(fpl[src.offsetFromFP() / sizeof(*fpl)]), " at ", RawPointer(&fpp[src.offsetFromFP() / sizeof(*fpp)]));
             };
 
-            for (unsigned i = 0; i < functionSignature.argumentCount(); ++i) {
-                auto width = functionSignature.argumentType(i).width();
+            for (unsigned i = 0; i < signature->argumentCount(); ++i) {
+                auto width = signature->argumentType(i).width();
                 ASSERT(wasmCalleeInfoAsCallee.params[i].width >= width);
                 dataLog("Arg source ", i, " located at ");
                 ASSERT_UNUSED(lastPatchArg, currentPatchArg < lastPatchArg);
@@ -5242,9 +5240,9 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
     // We will complete those moves who's source is closest to the danger frontier first.
     // That will move the danger frontier.
     unsigned currentPatchArg = firstPatchArg;
-    for (unsigned i = 0; i < functionSignature.argumentCount(); ++i) {
+    for (unsigned i = 0; i < signature.argumentCount(); ++i) {
         auto dst = wasmCalleeInfoAsCallee.params[i];
-        auto dstType = functionSignature.argumentType(i);
+        auto dstType = signature.argumentType(i);
         ASSERT(dst.width <= Width::Width64 || is64Bit());
         ASSERT(dst.width >= dstType.width());
         if (dst.location.isGPR()) {
@@ -5437,7 +5435,7 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
 }
 
 // See also: https://leaningtech.com/fantastic-tail-calls-and-how-to-implement-them/, a blog post about contributing this feature.
-auto OMGIRGenerator::createTailCallPatchpoint(BasicBlock* block, const TypeDefinition& signature, const CallInformation& wasmCallerInfoAsCallee, const CallInformation& wasmCalleeInfoAsCallee, const ArgumentList& tmpArgSourceLocations, Vector<B3::ConstrainedValue> patchArgs) -> CallPatchpointData
+auto OMGIRGenerator::createTailCallPatchpoint(BasicBlock* block, const FunctionSignature& signature, const CallInformation& wasmCallerInfoAsCallee, const CallInformation& wasmCalleeInfoAsCallee, const ArgumentList& tmpArgSourceLocations, Vector<B3::ConstrainedValue> patchArgs) -> CallPatchpointData
 {
     m_makesTailCalls = true;
     // Our args are placed in argument registers or locals.
@@ -5541,7 +5539,7 @@ auto OMGIRGenerator::createTailCallPatchpoint(BasicBlock* block, const TypeDefin
     firstPatchArg += m_proc.resultCount(patchpoint->type());
     lastPatchArg += m_proc.resultCount(patchpoint->type());
 
-    auto prepareForCall = createSharedTask<B3::StackmapGeneratorFunction>([signature = Ref<const TypeDefinition>(signature), wasmCalleeInfoAsCallee, wasmCallerInfoAsCallee, newFPOffsetFromFP, firstPatchArg, lastPatchArg, functionIndex = m_functionIndex](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+    auto prepareForCall = createSharedTask<B3::StackmapGeneratorFunction>([signature = Ref { signature }, wasmCalleeInfoAsCallee, wasmCallerInfoAsCallee, newFPOffsetFromFP, firstPatchArg, lastPatchArg, functionIndex = m_functionIndex](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         ASSERT(newFPOffsetFromFP >= 0 || params.code().frameSize() >= static_cast<uint32_t>(-newFPOffsetFromFP));
         prepareForTailCallImpl(functionIndex, jit, params, signature, wasmCallerInfoAsCallee, wasmCalleeInfoAsCallee, firstPatchArg, lastPatchArg, newFPOffsetFromFP);
     });
@@ -5586,7 +5584,7 @@ bool OMGIRGenerator::canInline(FunctionSpaceIndex functionIndexSpace) const
     return true;
 }
 
-auto OMGIRGenerator::emitInlineDirectCall(FunctionCodeIndex calleeFunctionIndex, const TypeDefinition& calleeSignature, ArgumentList& args, ResultList& resultList) -> PartialResult
+auto OMGIRGenerator::emitInlineDirectCall(FunctionCodeIndex calleeFunctionIndex, const FunctionSignature& calleeSignature, ArgumentList& args, ResultList& resultList) -> PartialResult
 {
     Vector<Value*> getArgs;
 
@@ -5630,7 +5628,7 @@ auto OMGIRGenerator::emitInlineDirectCall(FunctionCodeIndex calleeFunctionIndex,
     m_currentBlock->appendNewControlValue(m_proc, B3::Jump, origin(), FrequentedBlock(irGenerator.m_topLevelBlock));
     m_currentBlock = continuation;
 
-    for (unsigned i = 0; i < calleeSignature.as<FunctionSignature>()->returnCount(); ++i)
+    for (unsigned i = 0; i < calleeSignature.returnCount(); ++i)
         resultList.append(push(m_currentBlock->appendNew<VariableValue>(m_proc, B3::Get, origin(), irGenerator.m_inlinedResults[i])));
 
     auto lastInlineCallSiteIndex = advanceCallSiteIndex();
@@ -5642,7 +5640,7 @@ auto OMGIRGenerator::emitInlineDirectCall(FunctionCodeIndex calleeFunctionIndex,
     return { };
 }
 
-auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndexSpace, const TypeDefinition& signature, ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
+auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndexSpace, const FunctionSignature& signature, ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
 {
     if (!m_info.isImportedFunctionFromFunctionIndexSpace(functionIndexSpace)) {
         // Record the callee so the callee knows to look for it in updateCallsitesToCallUs.
@@ -5655,7 +5653,7 @@ auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndexSpace, const TypeDe
     const bool isTailCall = callType == CallType::TailCall && !isTailCallInlineCaller;
 
     ASSERT(callType == CallType::Call || isTailCall || isTailCallInlineCaller);
-    ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
+    ASSERT(signature.argumentCount() == args.size());
 
     TRACE_CF("Call: entered with ", signature);
 
@@ -5670,7 +5668,7 @@ auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndexSpace, const TypeDe
     const TypeDefinition& callerTypeDefinition = TypeInformation::get(callerTypeIndex).expand();
     CallInformation wasmCallerInfoAsCallee = callingConvention.callInformationFor(callerTypeDefinition, CallRole::Callee);
 
-    B3::Type returnType = toB3ResultType(&signature);
+    B3::Type returnType = toB3ResultType(signature);
     Value* jumpDestination = nullptr;
 
     m_makesCalls = true;
@@ -5686,8 +5684,8 @@ auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndexSpace, const TypeDe
         }
         case B3::Tuple: {
             const Vector<B3::Type>& tuple = m_proc.tupleForType(returnType);
-            ASSERT(signature.as<FunctionSignature>()->returnCount() == tuple.size());
-            for (unsigned i = 0; i < signature.as<FunctionSignature>()->returnCount(); ++i)
+            ASSERT(signature.returnCount() == tuple.size());
+            for (unsigned i = 0; i < signature.returnCount(); ++i)
                 results.append(push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), tuple[i], callResult, i)));
             break;
         }
@@ -5753,7 +5751,7 @@ auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndexSpace, const TypeDe
             Stack typedResults;
             typedResults.reserveInitialCapacity(results.size());
             for (unsigned i = 0; i < results.size(); ++i)
-                typedResults.append(TypedExpression { signature.as<FunctionSignature>()->returnType(i), results[i] });
+                typedResults.append(TypedExpression { signature.returnType(i), results[i] });
             ASSERT(m_returnContinuation);
             return addInlinedReturn(WTFMove(typedResults));
         }
@@ -5816,7 +5814,7 @@ auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndexSpace, const TypeDe
         Stack typedResults;
         typedResults.reserveInitialCapacity(results.size());
         for (unsigned i = 0; i < results.size(); ++i)
-            typedResults.append(TypedExpression { signature.as<FunctionSignature>()->returnType(i), results[i] });
+            typedResults.append(TypedExpression { signature.returnType(i), results[i] });
         ASSERT(m_returnContinuation);
         return addInlinedReturn(WTFMove(typedResults));
     }
@@ -5824,13 +5822,12 @@ auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndexSpace, const TypeDe
     return { };
 }
 
-auto OMGIRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
+auto OMGIRGenerator::addCallIndirect(unsigned tableIndex, const FunctionSignature& signature, ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
 {
     Value* calleeIndex = get(args.takeLast());
-    const TypeDefinition& signature = originalSignature.expand();
-    ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
+    ASSERT(signature.argumentCount() == args.size());
 
-    TRACE_CF("Call_indirect: entered with table index: ", tableIndex, " ", originalSignature);
+    TRACE_CF("Call_indirect: entered with table index: ", tableIndex, " ", signature);
 
     // Note: call indirect can call either WebAssemblyFunction or WebAssemblyWrapperFunction. Because
     // WebAssemblyWrapperFunction is like calling into the js, we conservatively assume all call indirects
@@ -5883,7 +5880,7 @@ auto OMGIRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& 
 
     BasicBlock* continuation = m_proc.addBlock();
     BasicBlock* moreChecks = m_proc.addBlock();
-    Value* expectedSignatureIndex = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), TypeInformation::get(originalSignature));
+    Value* expectedSignatureIndex = m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), TypeInformation::get(signature));
     Value* hasEqualSignatures = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), calleeSignatureIndex, expectedSignatureIndex);
     m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), hasEqualSignatures,
         FrequentedBlock(continuation), FrequentedBlock(moreChecks, FrequencyClass::Rare));
@@ -5901,12 +5898,12 @@ auto OMGIRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& 
 
     BasicBlock* throwBlock = m_proc.addBlock();
     // The subtype check can be omitted as an optimization for final types, but is needed otherwise if GC is on.
-    if (!originalSignature.isFinalType()) {
+    if (!signature.isFinalType()) {
         // We don't need to check the RTT kind because by validation both RTTs must be for functions.
         Value* rttSize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), calleeRTT, safeCast<uint32_t>(RTT::offsetOfDisplaySize()));
         Value* rttSizeAsPointerType = m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), rttSize);
         Value* rttPayloadPointer = m_currentBlock->appendNew<Value>(m_proc, Add, pointerType(), origin(), calleeRTT, constant(pointerType(), RTT::offsetOfPayload()));
-        auto signatureRTT = TypeInformation::getCanonicalRTT(originalSignature.index());
+        auto signatureRTT = TypeInformation::getCanonicalRTT(signature.index());
 
         // Emit RTT:isStrictSubRTT code
         BasicBlock* checkIfSupertypeIsInDisplay = m_proc.addBlock();
@@ -5939,12 +5936,11 @@ auto OMGIRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& 
     return emitIndirectCall(calleeInstance, calleeCode, calleeCallee, signature, args, results, callType);
 }
 
-auto OMGIRGenerator::addCallRef(const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
+auto OMGIRGenerator::addCallRef(const FunctionSignature& signature, ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
 {
     Value* callee = get(args.takeLast());
-    TRACE_VALUE(Wasm::Types::Void, callee, "call_ref: ", originalSignature);
-    const TypeDefinition& signature = originalSignature.expand();
-    ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
+    TRACE_VALUE(Wasm::Types::Void, callee, "call_ref: ", signature);
+    ASSERT(signature.argumentCount() == args.size());
     m_makesCalls = true;
 
     TRACE_CF("CallRef: entered with ", signature);

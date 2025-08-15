@@ -444,18 +444,18 @@ unsigned RegisterBinding::hash() const
     return pairIntHash(static_cast<unsigned>(m_kind), m_index);
 }
 
-ControlData::ControlData(BBQJIT& generator, BlockType blockType, BlockSignature signature, LocalOrTempIndex enclosedHeight, RegisterSet liveScratchGPRs = { }, RegisterSet liveScratchFPRs = { })
+ControlData::ControlData(BBQJIT& generator, BlockType blockType, RefPtr<const FunctionSignature> signature, LocalOrTempIndex enclosedHeight, RegisterSet liveScratchGPRs = { }, RegisterSet liveScratchFPRs = { })
     : m_signature(signature)
     , m_blockType(blockType)
     , m_enclosedHeight(enclosedHeight)
 {
     if (blockType == BlockType::TopLevel) {
         // Abide by calling convention instead.
-        CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(*signature.m_signature, CallRole::Callee);
-        for (unsigned i = 0; i < signature.m_signature->argumentCount(); ++i)
-            m_argumentLocations.append(Location::fromArgumentLocation(wasmCallInfo.params[i], signature.m_signature->argumentType(i).kind));
-        for (unsigned i = 0; i < signature.m_signature->returnCount(); ++i)
-            m_resultLocations.append(Location::fromArgumentLocation(wasmCallInfo.results[i], signature.m_signature->returnType(i).kind));
+        CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(*signature, CallRole::Callee);
+        for (unsigned i = 0; i < signature->argumentCount(); ++i)
+            m_argumentLocations.append(Location::fromArgumentLocation(wasmCallInfo.params[i], signature->argumentType(i).kind));
+        for (unsigned i = 0; i < signature->returnCount(); ++i)
+            m_resultLocations.append(Location::fromArgumentLocation(wasmCallInfo.results[i], signature->returnType(i).kind));
         return;
     }
 
@@ -465,14 +465,14 @@ ControlData::ControlData(BBQJIT& generator, BlockType blockType, BlockSignature 
         liveScratchGPRs.forEach([&] (auto r) { gprSetCopy.remove(r); });
         liveScratchFPRs.forEach([&] (auto r) { fprSetCopy.remove(r); });
 
-        for (unsigned i = 0; i < signature.m_signature->argumentCount(); ++i)
-            m_argumentLocations.append(allocateArgumentOrResult(generator, signature.m_signature->argumentType(i).kind, i, gprSetCopy, fprSetCopy));
+        for (unsigned i = 0; i < signature->argumentCount(); ++i)
+            m_argumentLocations.append(allocateArgumentOrResult(generator, signature->argumentType(i).kind, i, gprSetCopy, fprSetCopy));
     }
 
     auto gprSetCopy = generator.validGPRs();
     auto fprSetCopy = generator.validFPRs();
-    for (unsigned i = 0; i < signature.m_signature->returnCount(); ++i)
-        m_resultLocations.append(allocateArgumentOrResult(generator, signature.m_signature->returnType(i).kind, i, gprSetCopy, fprSetCopy));
+    for (unsigned i = 0; i < signature->returnCount(); ++i)
+        m_resultLocations.append(allocateArgumentOrResult(generator, signature->returnType(i).kind, i, gprSetCopy, fprSetCopy));
 }
 
 // This function is intentionally not using implicitSlots since arguments and results should not include implicit slot.
@@ -557,27 +557,27 @@ const Vector<Location, 2>& ControlData::resultLocations() const
 }
 
 BlockType ControlData::blockType() const { return m_blockType; }
-BlockSignature ControlData::signature() const { return m_signature; }
+RefPtr<const FunctionSignature> ControlData::signature() const { return m_signature; }
 
 FunctionArgCount ControlData::branchTargetArity() const
 {
     if (blockType() == BlockType::Loop)
-        return m_signature.m_signature->argumentCount();
-    return m_signature.m_signature->returnCount();
+        return m_signature->argumentCount();
+    return m_signature->returnCount();
 }
 
 Type ControlData::branchTargetType(unsigned i) const
 {
     ASSERT(i < branchTargetArity());
     if (m_blockType == BlockType::Loop)
-        return m_signature.m_signature->argumentType(i);
-    return m_signature.m_signature->returnType(i);
+        return m_signature->argumentType(i);
+    return m_signature->returnType(i);
 }
 
 Type ControlData::argumentType(unsigned i) const
 {
-    ASSERT(i < m_signature.m_signature->argumentCount());
-    return m_signature.m_signature->argumentType(i);
+    ASSERT(i < m_signature->argumentCount());
+    return m_signature->argumentType(i);
 }
 
 CatchKind ControlData::catchKind() const
@@ -2974,7 +2974,7 @@ void BBQJIT::emitEntryTierUpCheck()
 }
 
 // Control flow
-ControlData WARN_UNUSED_RETURN BBQJIT::addTopLevel(BlockSignature signature)
+ControlData WARN_UNUSED_RETURN BBQJIT::addTopLevel(RefPtr<const FunctionSignature> signature)
 {
     if (Options::verboseBBQJITInstructions()) [[unlikely]] {
         auto nameSection = m_info.nameSection;
@@ -3198,12 +3198,12 @@ MacroAssembler::Label BBQJIT::addLoopOSREntrypoint()
     return label;
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addBlock(BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addBlock(RefPtr<const FunctionSignature> signature, Stack& enclosingStack, ControlType& result, Stack& newStack)
 {
-    result = ControlData(*this, BlockType::Block, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature.m_signature->argumentCount());
+    result = ControlData(*this, BlockType::Block, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->argumentCount());
     currentControlData().flushAndSingleExit(*this, result, enclosingStack, true, false);
 
-    LOG_INSTRUCTION("Block", *signature.m_signature);
+    LOG_INSTRUCTION("Block", *signature);
     LOG_INDENT();
     splitStack(signature, enclosingStack, newStack);
     result.startBlock(*this, newStack);
@@ -3368,12 +3368,12 @@ void BBQJIT::emitLoopTierUpCheckAndOSREntryData(const ControlData& data, Stack& 
 #endif
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addLoop(BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack, uint32_t loopIndex)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addLoop(RefPtr<const FunctionSignature> signature, Stack& enclosingStack, ControlType& result, Stack& newStack, uint32_t loopIndex)
 {
-    result = ControlData(*this, BlockType::Loop, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature.m_signature->argumentCount());
+    result = ControlData(*this, BlockType::Loop, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->argumentCount());
     currentControlData().flushAndSingleExit(*this, result, enclosingStack, true, false);
 
-    LOG_INSTRUCTION("Loop", *signature.m_signature);
+    LOG_INSTRUCTION("Loop", *signature);
     LOG_INDENT();
     splitStack(signature, enclosingStack, newStack);
     result.startBlock(*this, newStack);
@@ -3386,7 +3386,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addLoop(BlockSignature signature, Stack
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addIf(Value condition, BlockSignature signature, Stack& enclosingStack, ControlData& result, Stack& newStack)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addIf(Value condition, RefPtr<const FunctionSignature> signature, Stack& enclosingStack, ControlData& result, Stack& newStack)
 {
     RegisterSet liveScratchGPRs;
     Location conditionLocation;
@@ -3396,12 +3396,12 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addIf(Value condition, BlockSignature s
     }
     consume(condition);
 
-    result = ControlData(*this, BlockType::If, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature.m_signature->argumentCount(), liveScratchGPRs);
+    result = ControlData(*this, BlockType::If, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->argumentCount(), liveScratchGPRs);
 
     // Despite being conditional, if doesn't need to worry about diverging expression stacks at block boundaries, so it doesn't need multiple exits.
     currentControlData().flushAndSingleExit(*this, result, enclosingStack, true, false);
 
-    LOG_INSTRUCTION("If", *signature.m_signature, condition, conditionLocation);
+    LOG_INSTRUCTION("If", *signature, condition, conditionLocation);
     LOG_INDENT();
     splitStack(signature, enclosingStack, newStack);
 
@@ -3428,8 +3428,8 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addElse(ControlData& data, Stack& expre
     // we just need the right number of temps for our arguments on the top of the stack.
     expressionStack.clear();
     auto blockSignature = data.signature();
-    while (expressionStack.size() < blockSignature.m_signature->argumentCount()) {
-        Type type = blockSignature.m_signature->argumentType(expressionStack.size());
+    while (expressionStack.size() < blockSignature->argumentCount()) {
+        Type type = blockSignature->argumentType(expressionStack.size());
         expressionStack.constructAndAppend(type, Value::fromTemp(type.kind, dataElse.enclosedHeight() + dataElse.implicitSlots() + expressionStack.size()));
     }
 
@@ -3456,30 +3456,30 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addElseToUnreachable(ControlData& data)
     // so we construct a local stack just to set up temp bindings as we enter the else.
     Stack expressionStack;
     auto functionSignature = dataElse.signature();
-    for (unsigned i = 0; i < functionSignature.m_signature->argumentCount(); i ++)
-        expressionStack.constructAndAppend(functionSignature.m_signature->argumentType(i), Value::fromTemp(functionSignature.m_signature->argumentType(i).kind, dataElse.enclosedHeight() + dataElse.implicitSlots() + i));
+    for (unsigned i = 0; i < functionSignature->argumentCount(); i ++)
+        expressionStack.constructAndAppend(functionSignature->argumentType(i), Value::fromTemp(functionSignature->argumentType(i).kind, dataElse.enclosedHeight() + dataElse.implicitSlots() + i));
     dataElse.startBlock(*this, expressionStack);
     data = dataElse;
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addTry(BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addTry(RefPtr<const FunctionSignature> signature, Stack& enclosingStack, ControlType& result, Stack& newStack)
 {
     m_usesExceptions = true;
     ++m_tryCatchDepth;
     ++m_callSiteIndex;
-    result = ControlData(*this, BlockType::Try, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature.m_signature->argumentCount());
+    result = ControlData(*this, BlockType::Try, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->argumentCount());
     result.setTryInfo(m_callSiteIndex, m_callSiteIndex, m_tryCatchDepth);
     currentControlData().flushAndSingleExit(*this, result, enclosingStack, true, false);
 
-    LOG_INSTRUCTION("Try", *signature.m_signature);
+    LOG_INSTRUCTION("Try", *signature);
     LOG_INDENT();
     splitStack(signature, enclosingStack, newStack);
     result.startBlock(*this, newStack);
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addTryTable(BlockSignature signature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addTryTable(RefPtr<const FunctionSignature> signature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack)
 {
     m_usesExceptions = true;
     ++m_tryCatchDepth;
@@ -3496,19 +3496,19 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addTryTable(BlockSignature signature, S
         }
     );
 
-    result = ControlData(*this, BlockType::TryTable, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature.m_signature->argumentCount());
+    result = ControlData(*this, BlockType::TryTable, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->argumentCount());
     result.setTryInfo(m_callSiteIndex, m_callSiteIndex, m_tryCatchDepth);
     result.setTryTableTargets(WTFMove(targetList));
     currentControlData().flushAndSingleExit(*this, result, enclosingStack, true, false);
 
-    LOG_INSTRUCTION("TryTable", *signature.m_signature);
+    LOG_INSTRUCTION("TryTable", *signature);
     LOG_INDENT();
     splitStack(signature, enclosingStack, newStack);
     result.startBlock(*this, newStack);
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addCatch(unsigned exceptionIndex, const TypeDefinition& exceptionSignature, Stack& expressionStack, ControlType& data, ResultList& results)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addCatch(unsigned exceptionIndex, const FunctionSignature& exceptionSignature, Stack& expressionStack, ControlType& data, ResultList& results)
 {
     m_usesExceptions = true;
     data.flushAndSingleExit(*this, data, expressionStack, false, true);
@@ -3532,7 +3532,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCatch(unsigned exceptionIndex, const
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition& exceptionSignature, ControlType& data, ResultList& results)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addCatchToUnreachable(unsigned exceptionIndex, const FunctionSignature& exceptionSignature, ControlType& data, ResultList& results)
 {
     m_usesExceptions = true;
     unbindAllRegisters();
@@ -3658,7 +3658,7 @@ void BBQJIT::prepareForExceptions()
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addReturn(const ControlData& data, const Stack& returnValues)
 {
-    CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(*data.signature().m_signature, CallRole::Callee);
+    CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(*data.signature(), CallRole::Callee);
 
     if (!wasmCallInfo.results.isEmpty()) {
         ASSERT(returnValues.size() >= wasmCallInfo.results.size());
@@ -3819,10 +3819,10 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addEndToUnreachable(ControlEntry& entry
     ControlData& entryData = entry.controlData;
 
     auto blockSignature = entryData.signature();
-    unsigned returnCount = blockSignature.m_signature->returnCount();
+    unsigned returnCount = blockSignature->returnCount();
     if (unreachable) {
         for (unsigned i = 0; i < returnCount; ++i) {
-            Type type = blockSignature.m_signature->returnType(i);
+            Type type = blockSignature->returnType(i);
             entry.enclosedExpressionStack.constructAndAppend(type, Value::fromTemp(type.kind, entryData.enclosedHeight() + entryData.implicitSlots() + i));
         }
         unbindAllRegisters();
@@ -3893,7 +3893,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addEndToUnreachable(ControlEntry& entry
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::endTopLevel(BlockSignature, const Stack&)
+PartialResult WARN_UNUSED_RETURN BBQJIT::endTopLevel(RefPtr<const FunctionSignature>, const Stack&)
 {
     int frameSize = stackCheckSize();
     CCallHelpers& jit = m_jit;
@@ -4042,7 +4042,7 @@ void BBQJIT::slowPathRestoreBindings(const RegisterBindings& bindings)
 }
 
 template<size_t N>
-void BBQJIT::saveValuesAcrossCallAndPassArguments(const Vector<Value, N>& arguments, const CallInformation& callInfo, const TypeDefinition& signature)
+void BBQJIT::saveValuesAcrossCallAndPassArguments(const Vector<Value, N>& arguments, const CallInformation& callInfo, const FunctionSignature& signature)
 {
     // First, we resolve all the locations of the passed arguments, before any spillage occurs. For constants,
     // we store their normal values; for all other values, we store pinned values with their current location.
@@ -4073,7 +4073,7 @@ void BBQJIT::saveValuesAcrossCallAndPassArguments(const Vector<Value, N>& argume
     // think these will be handled by the caller-save logic without additional effort, but it doesn't hurt to be
     // careful.
     for (size_t i = 0; i < callInfo.params.size(); ++i) {
-        auto type = signature.as<FunctionSignature>()->argumentType(i);
+        auto type = signature.argumentType(i);
         Location paramLocation = Location::fromArgumentLocation(callInfo.params[i], type.kind);
         if (paramLocation.isRegister()) {
             RegisterBinding binding;
@@ -4092,7 +4092,7 @@ void BBQJIT::saveValuesAcrossCallAndPassArguments(const Vector<Value, N>& argume
     WTF::Vector<Location, N> parameterLocations;
     parameterLocations.reserveInitialCapacity(callInfo.params.size());
     for (unsigned i = 0; i < callInfo.params.size(); i++) {
-        auto type = signature.as<FunctionSignature>()->argumentType(i);
+        auto type = signature.argumentType(i);
         auto parameterLocation = Location::fromArgumentLocation(callInfo.params[i], type.kind);
         parameterLocations.append(parameterLocation);
     }
@@ -4148,7 +4148,7 @@ void BBQJIT::returnValuesFromCall(Vector<Value, N>& results, const FunctionSigna
     }
 }
 
-void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndex, const TypeDefinition& signature, ArgumentList& arguments)
+void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndex, const FunctionSignature& signature, ArgumentList& arguments)
 {
     const auto& callingConvention = wasmCallingConvention();
     CallInformation callInfo = callingConvention.callInformationFor(signature, CallRole::Callee);
@@ -4203,7 +4203,7 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndex, const TypeDefinition
         switch (param.location.kind()) {
         case ValueLocation::Kind::GPRRegister:
         case ValueLocation::Kind::FPRRegister: {
-            auto type = signature.as<FunctionSignature>()->argumentType(i);
+            auto type = signature.argumentType(i);
             parameterLocations.append(Location::fromArgumentLocation(param, type.kind));
             break;
         }
@@ -4259,7 +4259,7 @@ void BBQJIT::emitTailCall(FunctionSpaceIndex functionIndex, const TypeDefinition
 }
 
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addCall(FunctionSpaceIndex functionIndex, const TypeDefinition& signature, ArgumentList& arguments, ResultList& results, CallType callType)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addCall(FunctionSpaceIndex functionIndex, const FunctionSignature& signature, ArgumentList& arguments, ResultList& results, CallType callType)
 {
     JIT_COMMENT(m_jit, "calling functionIndexSpace: ", functionIndex, ConditionalDump(!m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex), " functionIndex: ", functionIndex - m_info.importFunctionCount()));
 
@@ -4268,7 +4268,6 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCall(FunctionSpaceIndex functionInde
         return { };
     }
 
-    const FunctionSignature& functionType = *signature.as<FunctionSignature>();
     CallInformation callInfo = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
     Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callInfo.headerAndArgumentStackSizeInBytes);
     m_maxCalleeStackSize = std::max<int>(calleeStackSize, m_maxCalleeStackSize);
@@ -4305,7 +4304,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCall(FunctionSpaceIndex functionInde
 #endif
 
     // Push return value(s) onto the expression stack
-    returnValuesFromCall(results, functionType, callInfo);
+    returnValuesFromCall(results, signature, callInfo);
 
     if (m_info.callCanClobberInstance(functionIndex) || m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex))
         restoreWebAssemblyGlobalStateAfterWasmCall();
@@ -4315,7 +4314,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCall(FunctionSpaceIndex functionInde
     return { };
 }
 
-void BBQJIT::emitIndirectCall(const char* opcode, const Value& callee, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, ArgumentList& arguments, ResultList& results)
+void BBQJIT::emitIndirectCall(const char* opcode, const Value& callee, GPRReg calleeInstance, GPRReg calleeCode, const FunctionSignature& signature, ArgumentList& arguments, ResultList& results)
 {
     ASSERT(!RegisterSetBuilder::argumentGPRs().contains(calleeCode, IgnoreVectors));
 
@@ -4348,14 +4347,14 @@ void BBQJIT::emitIndirectCall(const char* opcode, const Value& callee, GPRReg ca
     m_jit.subPtr(GPRInfo::callFrameRegister, wasmScratchGPR, MacroAssembler::stackPointerRegister);
 #endif
 
-    returnValuesFromCall(results, *signature.as<FunctionSignature>(), wasmCalleeInfo);
+    returnValuesFromCall(results, signature, wasmCalleeInfo);
 
     restoreWebAssemblyGlobalStateAfterWasmCall();
 
     LOG_INSTRUCTION(opcode, callee, arguments, "=> ", results);
 }
 
-void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRReg calleeInstance, GPRReg calleeCode, const TypeDefinition& signature, ArgumentList& arguments)
+void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRReg calleeInstance, GPRReg calleeCode, const FunctionSignature& signature, ArgumentList& arguments)
 {
     ASSERT(!RegisterSetBuilder::argumentGPRs().contains(calleeCode, IgnoreVectors));
     m_jit.loadPtr(Address(calleeCode), calleeCode);
@@ -4430,7 +4429,7 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
         switch (param.location.kind()) {
         case ValueLocation::Kind::GPRRegister:
         case ValueLocation::Kind::FPRRegister: {
-            auto type = signature.as<FunctionSignature>()->argumentType(i);
+            auto type = signature.argumentType(i);
             parameterLocations.append(Location::fromArgumentLocation(param, type.kind));
             break;
         }
@@ -4509,11 +4508,10 @@ void BBQJIT::emitSlowPathRTTCheck(MacroAssembler::Label returnLabel, TypeIndex t
     emitThrowException(ExceptionType::BadSignature);
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addCallIndirect(unsigned tableIndex, const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results, CallType callType)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addCallIndirect(unsigned tableIndex, const FunctionSignature& signature, ArgumentList& args, ResultList& results, CallType callType)
 {
     Value calleeIndex = args.takeLast();
-    const TypeDefinition& signature = originalSignature.expand();
-    ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
+    ASSERT(signature.argumentCount() == args.size());
     ASSERT(m_info.tableCount() > tableIndex);
     ASSERT(m_info.tables[tableIndex].type() == TableElementType::Funcref);
 
@@ -4598,7 +4596,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallIndirect(unsigned tableIndex, co
             // error to use in the exception handler.
 
             // Save the table entry in calleeRTT if needed for the subtype check.
-            bool needsSubtypeCheck = !originalSignature.isFinalType();
+            bool needsSubtypeCheck = !signature.isFinalType();
             if (needsSubtypeCheck)
                 m_jit.move(calleeSignatureIndex, calleeRTT);
 
@@ -4616,10 +4614,10 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallIndirect(unsigned tableIndex, co
 
             m_jit.loadPtr(Address(calleeSignatureIndex, FuncRefTable::Function::offsetOfInstance()), calleeInstance);
 
-            auto indexEqual = m_jit.branchPtr(CCallHelpers::Equal, calleeSignatureIndexTmp, TrustedImmPtr(TypeInformation::get(originalSignature)));
+            auto indexEqual = m_jit.branchPtr(CCallHelpers::Equal, calleeSignatureIndexTmp, TrustedImmPtr(TypeInformation::get(signature)));
 
             if (needsSubtypeCheck)
-                addRTTSlowPathJump(originalSignature.index(), calleeRTT);
+                addRTTSlowPathJump(signature.index(), calleeRTT);
             else
                 emitThrowException(ExceptionType::BadSignature);
 

@@ -115,7 +115,7 @@ struct IPIntControlType {
     {
     }
 
-    IPIntControlType(BlockSignature signature, uint32_t stackSize, BlockType blockType, CatchKind catchKind = CatchKind::Catch)
+    IPIntControlType(RefPtr<const FunctionSignature> signature, uint32_t stackSize, BlockType blockType, CatchKind catchKind = CatchKind::Catch)
         : m_signature(signature)
         , m_blockType(blockType)
         , m_catchKind(catchKind)
@@ -141,26 +141,26 @@ struct IPIntControlType {
 
     BlockType blockType() const { return m_blockType; }
     CatchKind catchKind() const { return m_catchKind; }
-    BlockSignature signature() const { return m_signature; }
+    RefPtr<const FunctionSignature> signature() const { return m_signature; }
     unsigned stackSize() const { return m_stackSize; }
 
     Type branchTargetType(unsigned i) const
     {
         ASSERT(i < branchTargetArity());
         if (blockType() == BlockType::Loop)
-            return m_signature.m_signature->argumentType(i);
-        return m_signature.m_signature->returnType(i);
+            return m_signature->argumentType(i);
+        return m_signature->returnType(i);
     }
 
     unsigned branchTargetArity() const
     {
         return isLoop(*this)
-            ? m_signature.m_signature->argumentCount()
-            : m_signature.m_signature->returnCount();
+            ? m_signature->argumentCount()
+            : m_signature->returnCount();
     }
 
 private:
-    BlockSignature m_signature;
+    RefPtr<const FunctionSignature> m_signature;
     BlockType m_blockType;
     CatchKind m_catchKind;
 
@@ -181,7 +181,7 @@ private:
     struct TryTableTarget {
         CatchKind type;
         uint32_t tag;
-        const TypeDefinition* exceptionSignature;
+        const FunctionSignature* exceptionSignature;
         ControlRef target;
     };
     Vector<TryTableTarget> m_tryTableTargets;
@@ -472,17 +472,17 @@ public:
 
     // Control flow
 
-    ControlType WARN_UNUSED_RETURN addTopLevel(BlockSignature);
-    PartialResult WARN_UNUSED_RETURN addBlock(BlockSignature, Stack&, ControlType&, Stack&);
-    PartialResult WARN_UNUSED_RETURN addLoop(BlockSignature, Stack&, ControlType&, Stack&, uint32_t);
-    PartialResult WARN_UNUSED_RETURN addIf(ExpressionType, BlockSignature, Stack&, ControlType&, Stack&);
+    ControlType WARN_UNUSED_RETURN addTopLevel(RefPtr<const FunctionSignature>);
+    PartialResult WARN_UNUSED_RETURN addBlock(RefPtr<const FunctionSignature>, Stack&, ControlType&, Stack&);
+    PartialResult WARN_UNUSED_RETURN addLoop(RefPtr<const FunctionSignature>, Stack&, ControlType&, Stack&, uint32_t);
+    PartialResult WARN_UNUSED_RETURN addIf(ExpressionType, RefPtr<const FunctionSignature>, Stack&, ControlType&, Stack&);
     PartialResult WARN_UNUSED_RETURN addElse(ControlType&, Stack&);
     PartialResult WARN_UNUSED_RETURN addElseToUnreachable(ControlType&);
 
-    PartialResult WARN_UNUSED_RETURN addTry(BlockSignature, Stack&, ControlType&, Stack&);
-    PartialResult WARN_UNUSED_RETURN addTryTable(BlockSignature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack);
-    PartialResult WARN_UNUSED_RETURN addCatch(unsigned, const TypeDefinition&, Stack&, ControlType&, ResultList&);
-    PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned, const TypeDefinition&, ControlType&, ResultList&);
+    PartialResult WARN_UNUSED_RETURN addTry(RefPtr<const FunctionSignature>, Stack&, ControlType&, Stack&);
+    PartialResult WARN_UNUSED_RETURN addTryTable(RefPtr<const FunctionSignature>, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack);
+    PartialResult WARN_UNUSED_RETURN addCatch(unsigned, const FunctionSignature&, Stack&, ControlType&, ResultList&);
+    PartialResult WARN_UNUSED_RETURN addCatchToUnreachable(unsigned, const FunctionSignature&, ControlType&, ResultList&);
     PartialResult WARN_UNUSED_RETURN addCatchAll(Stack&, ControlType&);
     PartialResult WARN_UNUSED_RETURN addCatchAllToUnreachable(ControlType&);
     PartialResult WARN_UNUSED_RETURN addDelegate(ControlType&, ControlType&);
@@ -500,19 +500,19 @@ public:
     void endTryTable(ControlType& data);
     PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&, Stack&);
 
-    PartialResult WARN_UNUSED_RETURN endTopLevel(BlockSignature, const Stack&);
+    PartialResult WARN_UNUSED_RETURN endTopLevel(RefPtr<const FunctionSignature>, const Stack&);
 
     // Fused comparison stubs (TODO: make use of these for better codegen)
     PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType&, ExpressionType, const Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
     PartialResult WARN_UNUSED_RETURN addFusedBranchCompare(OpType, ControlType&, ExpressionType, ExpressionType, const Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
-    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
-    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
+    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, RefPtr<const FunctionSignature>, Stack&, ControlType&, Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
+    PartialResult WARN_UNUSED_RETURN addFusedIfCompare(OpType, ExpressionType, ExpressionType, RefPtr<const FunctionSignature>, Stack&, ControlType&, Stack&) { RELEASE_ASSERT_NOT_REACHED(); }
 
     // Calls
 
-    PartialResult WARN_UNUSED_RETURN addCall(FunctionSpaceIndex, const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call);
-    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned, const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call);
-    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, ArgumentList&, ResultList&, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCall(FunctionSpaceIndex, const FunctionSignature&, ArgumentList&, ResultList&, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned, const FunctionSignature&, ArgumentList&, ResultList&, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN addCallRef(const FunctionSignature&, ArgumentList&, ResultList&, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
 
@@ -2044,7 +2044,7 @@ void IPIntGenerator::resolveExitTarget(unsigned index, IPIntLocation loc)
     control.m_exitTarget = loc;
 }
 
-IPIntGenerator::ControlType WARN_UNUSED_RETURN IPIntGenerator::addTopLevel(BlockSignature signature)
+IPIntGenerator::ControlType WARN_UNUSED_RETURN IPIntGenerator::addTopLevel(RefPtr<const FunctionSignature> signature)
 {
     return ControlType(signature, 0, BlockType::TopLevel);
 }
@@ -2056,7 +2056,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSelect(ExpressionType, Expre
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBlock(BlockSignature signature, Stack& oldStack, ControlType& block, Stack& newStack)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBlock(RefPtr<const FunctionSignature> signature, Stack& oldStack, ControlType& block, Stack& newStack)
 {
     splitStack(signature, oldStack, newStack);
     block = ControlType(signature, m_stackSize.value() - newStack.size(), BlockType::Block);
@@ -2083,7 +2083,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBlock(BlockSignature signatu
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addLoop(BlockSignature signature, Stack& oldStack, ControlType& block, Stack& newStack, uint32_t loopIndex)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addLoop(RefPtr<const FunctionSignature> signature, Stack& oldStack, ControlType& block, Stack& newStack, uint32_t loopIndex)
 {
     splitStack(signature, oldStack, newStack);
     block = ControlType(signature, m_stackSize.value() - newStack.size(), BlockType::Loop);
@@ -2113,7 +2113,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addLoop(BlockSignature signatur
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addIf(ExpressionType, BlockSignature signature, Stack& oldStack, ControlType& block, Stack& newStack)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addIf(ExpressionType, RefPtr<const FunctionSignature> signature, Stack& oldStack, ControlType& block, Stack& newStack)
 {
     splitStack(signature, oldStack, newStack);
     changeStackSize(-1);
@@ -2147,9 +2147,8 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addElse(ControlType& block, Sta
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addElseToUnreachable(ControlType& block)
 {
     auto blockSignature = block.signature();
-    const FunctionSignature& signature = *blockSignature.m_signature;
     m_stackSize = block.stackSize();
-    changeStackSize(signature.argumentCount());
+    changeStackSize(blockSignature->argumentCount());
     auto ifIndex = block.m_index;
 
     auto mdIf = reinterpret_cast<IPInt::IfMetadata*>(m_metadata->m_metadata.mutableSpan().data() + block.m_pendingOffset);
@@ -2161,7 +2160,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addElseToUnreachable(ControlTyp
     if (m_parser->currentOpcode() == OpType::End) {
         // Edge case: if ... end with no else
         mdIf->elseDeltaMC = curMC() - block.m_mc;
-        block = ControlType(block.signature(), block.stackSize(), BlockType::Block);
+        block = ControlType(blockSignature, block.stackSize(), BlockType::Block);
         block.m_index = ifIndex;
         block.m_pendingOffset = -1;
         block.isElse = true;
@@ -2170,7 +2169,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addElseToUnreachable(ControlTyp
 
     // New MC, normal case
     mdIf->elseDeltaMC = safeCast<uint32_t>(curMC() + sizeof(IPInt::BlockMetadata)) - block.m_mc;
-    block = ControlType(block.signature(), block.stackSize(), BlockType::Block);
+    block = ControlType(blockSignature, block.stackSize(), BlockType::Block);
     block.m_index = ifIndex;
     block.m_pc = curPC();
     block.m_mc = curMC();
@@ -2183,7 +2182,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addElseToUnreachable(ControlTyp
 
 // Exception Handling
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTry(BlockSignature signature, Stack& oldStack, ControlType& block, Stack& newStack)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTry(RefPtr<const FunctionSignature> signature, Stack& oldStack, ControlType& block, Stack& newStack)
 {
     m_tryDepth++;
     m_maxTryDepth = std::max(m_maxTryDepth, m_tryDepth.value());
@@ -2213,7 +2212,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTry(BlockSignature signature
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTryTable(BlockSignature signature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addTryTable(RefPtr<const FunctionSignature> signature, Stack& enclosingStack, const Vector<CatchHandler>& targets, ControlType& result, Stack& newStack)
 {
     splitStack(signature, enclosingStack, newStack);
     result = ControlType(signature, m_stackSize.value() - newStack.size(), BlockType::TryTable);
@@ -2280,18 +2279,17 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     tryBlock = WTFMove(catchBlock);
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCatch(unsigned exceptionIndex, const TypeDefinition& exceptionSignature, Stack&, ControlType& block, ResultList& results)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCatch(unsigned exceptionIndex, const FunctionSignature& signature, Stack&, ControlType& block, ResultList& results)
 {
 
-    return addCatchToUnreachable(exceptionIndex, exceptionSignature, block, results);
+    return addCatchToUnreachable(exceptionIndex, signature, block, results);
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDefinition& exceptionSignature, ControlType& block, ResultList& results)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCatchToUnreachable(unsigned exceptionIndex, const FunctionSignature& signature, ControlType& block, ResultList& results)
 {
     if (ControlType::isTry(block))
         convertTryToCatch(block, CatchKind::Catch);
 
-    const FunctionSignature& signature = *exceptionSignature.as<FunctionSignature>();
     for (unsigned i = 0; i < signature.argumentCount(); i++)
         results.append(Value { });
 
@@ -2578,12 +2576,11 @@ void IPIntGenerator::endTryTable(ControlType& data)
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addEndToUnreachable(ControlEntry& entry, Stack&)
 {
     auto blockSignature = entry.controlData.signature();
-    const auto& signature = *blockSignature.m_signature;
-    for (unsigned i = 0; i < signature.returnCount(); i ++)
-        entry.enclosedExpressionStack.constructAndAppend(signature.returnType(i), Value { });
+    for (unsigned i = 0; i < blockSignature->returnCount(); i ++)
+        entry.enclosedExpressionStack.constructAndAppend(blockSignature->returnType(i), Value { });
     auto block = entry.controlData;
     m_stackSize = block.stackSize();
-    changeStackSize(signature.returnCount());
+    changeStackSize(blockSignature->returnCount());
 
     if (ControlType::isTry(block) || ControlType::isAnyCatch(block)) {
         --m_tryDepth;
@@ -2636,11 +2633,11 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addEndToUnreachable(ControlEntr
     return { };
 }
 
-auto IPIntGenerator::endTopLevel(BlockSignature signature, const Stack& expressionStack) -> PartialResult
+auto IPIntGenerator::endTopLevel(RefPtr<const FunctionSignature> signature, const Stack& expressionStack) -> PartialResult
 {
     if (m_usesSIMD)
         m_info.markUsesSIMD(m_metadata->functionIndex());
-    RELEASE_ASSERT(expressionStack.size() == signature.m_signature->returnCount());
+    RELEASE_ASSERT(expressionStack.size() == signature->returnCount());
     m_info.doneSeeingFunction(m_metadata->m_functionIndex);
     return { };
 }
@@ -2825,9 +2822,8 @@ void IPIntGenerator::addTailCallCommonData(const FunctionSignature& signature)
     m_metadata->appendMetadata(numStackValues);
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCall(FunctionSpaceIndex index, const TypeDefinition& type, ArgumentList&, ResultList& results, CallType callType)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCall(FunctionSpaceIndex index, const FunctionSignature& signature, ArgumentList&, ResultList& results, CallType callType)
 {
-    const FunctionSignature& signature = *type.as<FunctionSignature>();
     if (callType == CallType::TailCall) {
         // on a tail call, we need to:
         // roll back to old SP, shift SP to accommodate arguments
@@ -2871,9 +2867,8 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCall(FunctionSpaceIndex inde
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& originalSignature, ArgumentList&, ResultList& results, CallType callType)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallIndirect(unsigned tableIndex, const FunctionSignature& signature, ArgumentList&, ResultList& results, CallType callType)
 {
-    const FunctionSignature& signature = *originalSignature.expand().as<FunctionSignature>();
     if (callType == CallType::TailCall) {
         const unsigned callIndex = 1;
         changeStackSize(-signature.argumentCount() - callIndex);
@@ -2892,7 +2887,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallIndirect(unsigned tableI
         IPInt::TailCallIndirectMetadata functionIndexMetadata {
             .length = safeCast<uint8_t>(getCurrentInstructionLength()),
             .tableIndex = tableIndex,
-            .typeIndex = m_metadata->addSignature(originalSignature),
+            .typeIndex = m_metadata->addSignature(signature),
             .callerStackArgSize = static_cast<int32_t>(callerStackArgs * sizeof(Register)),
             .argumentBytecode = { }
         };
@@ -2909,7 +2904,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallIndirect(unsigned tableI
     IPInt::CallIndirectMetadata functionIndexMetadata {
         .length = safeCast<uint8_t>(getCurrentInstructionLength()),
         .tableIndex = tableIndex,
-        .typeIndex = m_metadata->addSignature(originalSignature),
+        .typeIndex = m_metadata->addSignature(signature),
         .signature = {
             static_cast<uint32_t>(callConvention.headerAndArgumentStackSizeInBytes),
             static_cast<uint16_t>(signature.returnCount() > signature.argumentCount() ? signature.returnCount() - signature.argumentCount() : 0),
@@ -2923,9 +2918,8 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallIndirect(unsigned tableI
     return { };
 }
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallRef(const TypeDefinition& originalSignature, ArgumentList&, ResultList& results, CallType callType)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallRef(const FunctionSignature& signature, ArgumentList&, ResultList& results, CallType callType)
 {
-    const FunctionSignature& signature = *originalSignature.expand().as<FunctionSignature>();
     if (callType == CallType::TailCall) {
         const unsigned callIndex = 1;
         changeStackSize(-signature.argumentCount() - callIndex);
@@ -2943,7 +2937,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallRef(const TypeDefinition
 
         IPInt::TailCallRefMetadata callMetadata {
             .length = safeCast<uint8_t>(getCurrentInstructionLength()),
-            .typeIndex = m_metadata->addSignature(originalSignature),
+            .typeIndex = m_metadata->addSignature(signature),
             .callerStackArgSize = static_cast<int32_t>(callerStackArgs * sizeof(Register)),
             .argumentBytecode = { }
         };
@@ -2959,7 +2953,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallRef(const TypeDefinition
 
     IPInt::CallRefMetadata callMetadata {
         .length = safeCast<uint8_t>(getCurrentInstructionLength()),
-        .typeIndex = m_metadata->addSignature(originalSignature),
+        .typeIndex = m_metadata->addSignature(signature),
         .signature = {
             static_cast<uint32_t>(callConvention.headerAndArgumentStackSizeInBytes),
             static_cast<uint16_t>(signature.returnCount() > signature.argumentCount() ? signature.returnCount() - signature.argumentCount() : 0),

@@ -2927,7 +2927,7 @@ void BBQJIT::emitCatchAllImpl(ControlData& dataCatch)
     dataCatch.startBlock(*this, emptyStack);
 }
 
-void BBQJIT::emitCatchImpl(ControlData& dataCatch, const TypeDefinition& exceptionSignature, ResultList& results)
+void BBQJIT::emitCatchImpl(ControlData& dataCatch, const FunctionSignature& exceptionSignature, ResultList& results)
 {
     m_catchEntrypoints.append(m_jit.label());
     emitCatchPrologue();
@@ -2935,13 +2935,13 @@ void BBQJIT::emitCatchImpl(ControlData& dataCatch, const TypeDefinition& excepti
     Stack emptyStack { };
     dataCatch.startBlock(*this, emptyStack);
 
-    if (exceptionSignature.as<FunctionSignature>()->argumentCount()) {
+    if (exceptionSignature.argumentCount()) {
         ScratchScope<1, 0> scratches(*this);
         GPRReg bufferGPR = scratches.gpr(0);
         m_jit.loadPtr(Address(GPRInfo::returnValueGPR, JSWebAssemblyException::offsetOfPayload() + JSWebAssemblyException::Payload::offsetOfStorage()), bufferGPR);
         unsigned offset = 0;
-        for (unsigned i = 0; i < exceptionSignature.as<FunctionSignature>()->argumentCount(); ++i) {
-            Type type = exceptionSignature.as<FunctionSignature>()->argumentType(i);
+        for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i) {
+            Type type = exceptionSignature.argumentType(i);
             Value result = Value::fromTemp(type.kind, dataCatch.enclosedHeight() + dataCatch.implicitSlots() + i);
             Location slot = canonicalSlot(result);
             switch (type.kind) {
@@ -3032,7 +3032,7 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
     }
 
     if (target.type == CatchKind::Catch || target.type == CatchKind::CatchRef) {
-        auto signature = target.exceptionSignature->template as<FunctionSignature>();
+        auto signature = target.exceptionSignature;
         if (signature->argumentCount()) {
             ScratchScope<1, 0> scratches(*this);
             GPRReg bufferGPR = scratches.gpr(0);
@@ -3182,12 +3182,12 @@ PartialResult BBQJIT::addFusedBranchCompare(OpType, ControlType&, ExpressionType
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-PartialResult BBQJIT::addFusedIfCompare(OpType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&)
+PartialResult BBQJIT::addFusedIfCompare(OpType, ExpressionType, RefPtr<const FunctionSignature>, Stack&, ControlType&, Stack&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-PartialResult BBQJIT::addFusedIfCompare(OpType, ExpressionType, ExpressionType, BlockSignature, Stack&, ControlType&, Stack&)
+PartialResult BBQJIT::addFusedIfCompare(OpType, ExpressionType, ExpressionType, RefPtr<const FunctionSignature>, Stack&, ControlType&, Stack&)
 {
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -3712,11 +3712,10 @@ void BBQJIT::emitLoad(TypeKind type, Location src, Location dst)
     }
 }
 
-PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& originalSignature, ArgumentList& args, ResultList& results, CallType callType)
+PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const FunctionSignature& signature, ArgumentList& args, ResultList& results, CallType callType)
 {
     Value callee = args.takeLast();
-    const TypeDefinition& signature = originalSignature.expand();
-    ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
+    ASSERT(signature.argumentCount() == args.size());
 
     CallInformation callInfo = wasmCallingConvention().callInformationFor(signature, CallRole::Caller);
     Checked<int32_t> calleeStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callInfo.headerAndArgumentStackSizeInBytes);

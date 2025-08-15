@@ -36,37 +36,36 @@ class Tag final : public ThreadSafeRefCounted<Tag> {
     WTF_MAKE_TZONE_ALLOCATED(Tag);
     WTF_MAKE_NONCOPYABLE(Tag);
 public:
-    static Ref<Tag> create(Ref<const TypeDefinition>&& type) { return adoptRef(*new Tag(WTFMove(type))); }
+    static Ref<Tag> create(Ref<const FunctionSignature>&& type) { return adoptRef(*new Tag(WTFMove(type))); }
 
-    FunctionArgCount parameterCount() const { return m_type->as<FunctionSignature>()->argumentCount(); }
+    FunctionArgCount parameterCount() const { return m_type->argumentCount(); }
 
     size_t parameterBufferSize() const
     {
         size_t result = 0;
         for (size_t i = 0; i < parameterCount(); i ++)
-            result += m_type->as<FunctionSignature>()->argumentType(i).kind == TypeKind::V128 ? 2 : 1;
+            result += m_type->argumentType(i).kind == TypeKind::V128 ? 2 : 1;
         return result;
     }
 
-    Type parameter(FunctionArgCount i) const { return m_type->as<FunctionSignature>()->argumentType(i); }
+    Type parameter(FunctionArgCount i) const { return m_type->argumentType(i); }
     TypeIndex typeIndex() const { return m_type->index(); }
 
     // Since (1) we do not copy Wasm::Tag and (2) we always allocate Wasm::Tag from heap, we can use
     // pointer comparison for identity check.
     bool operator==(const Tag& other) const { return this == &other; }
 
-    const FunctionSignature& type() const { return *m_type->as<FunctionSignature>(); }
+    const FunctionSignature& type() const { return m_type.get(); }
 
     static Tag& jsExceptionTag();
 
 private:
-    Tag(Ref<const TypeDefinition>&& type)
+    Tag(Ref<const FunctionSignature>&& type)
         : m_type(WTFMove(type))
     {
-        ASSERT(m_type->is<FunctionSignature>());
     }
 
-    Ref<const TypeDefinition> m_type;
+    const Ref<const FunctionSignature> m_type;
 };
 
 } } // namespace JSC::Wasm

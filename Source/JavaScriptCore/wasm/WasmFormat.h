@@ -60,11 +60,6 @@ struct CompilationContext;
 struct ModuleInformation;
 struct UnlinkedHandlerInfo;
 
-struct BlockSignature {
-    const FunctionSignature* m_signature;
-    RefPtr<TypeDefinition> m_generatedUnderlyingType;
-};
-
 enum class TableElementType : uint8_t {
     Externref,
     Funcref
