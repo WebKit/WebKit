@@ -3737,7 +3737,7 @@ class RunJavaScriptCoreTests(shell.Test, AddToLogMixin, ShellMixin):
             self.command.extend(['--memory-limited', '--verbose'])
 
         if self.getProperty('architecture') in ["armv7"]:
-            self.command = ["linux32"] ++ self.command
+            self.command = ["linux32"] + self.command
 
         self.setCommand(self.command + customBuildFlag(self.getProperty('platform'), self.getProperty('fullPlatform')))
         self.command.extend(self.command_extra)
