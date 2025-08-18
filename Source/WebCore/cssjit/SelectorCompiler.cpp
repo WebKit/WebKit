@@ -151,6 +151,7 @@ using PseudoClassesSet = UncheckedKeyHashSet<CSSSelector::PseudoClass, IntHash<C
     v(operationSynchronizeAllAnimatedSVGAttribute) \
     v(operationEqualIgnoringASCIICaseNonNull) \
     v(operationElementIsTarget) \
+    v(operationElementIsLocalLink) \
 
 enum class SelectorIndex {
 #define DEFINE_SELECTOR_ENUM(selector) selector,
@@ -295,7 +296,7 @@ static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttribut
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueMatchHyphenRuleCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueSpaceSeparatedListContainsCaseSensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationAttributeValueSpaceSeparatedListContainsCaseInsensitive, bool, (const Attribute* attribute, AtomStringImpl* expectedString));
-
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationElementIsLocalLink, bool, (const Element*));
 } // extern "C"
 
 #define CSS_SELECTOR_JIT_DEBUGGING 0
@@ -556,6 +557,7 @@ private:
     void generateElementMatchesAnyPseudoClass(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementMatchesMatchesPseudoClass(Assembler::JumpList& failureCases, const SelectorFragment&);
     void generateElementHasPseudoElement(Assembler::JumpList& failureCases, const SelectorFragment&);
+    void generateElementIsLocalLink(Assembler::JumpList& failureCases);
     void generateElementIsRoot(Assembler::JumpList& failureCases);
     void generateElementIsScopeRoot(Assembler::JumpList& failureCases);
     void generateElementIsTarget(Assembler::JumpList& failureCases);
@@ -1229,6 +1231,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClass::Link:
     case CSSSelector::PseudoClass::PlaceholderShown:
     case CSSSelector::PseudoClass::Root:
+    case CSSSelector::PseudoClass::LocalLink:
         fragment.pseudoClasses.add(type);
         return FunctionType::SimpleSelectorChecker;
 
@@ -3136,6 +3139,8 @@ void SelectorCodeGenerator::generateElementMatching(Assembler::JumpList& matchin
         generateElementIsFirstChild(matchingPostTagNameFailureCases);
     if (fragment.pseudoClasses.contains(CSSSelector::PseudoClass::LastChild))
         generateElementIsLastChild(matchingPostTagNameFailureCases);
+    if (fragment.pseudoClasses.contains(CSSSelector::PseudoClass::LocalLink))
+        generateElementIsLocalLink(matchingPostTagNameFailureCases);
     if (!fragment.nthChildFilters.isEmpty())
         generateElementIsNthChild(matchingPostTagNameFailureCases, fragment);
     if (!fragment.nthLastChildFilters.isEmpty())
@@ -4371,6 +4376,20 @@ void SelectorCodeGenerator::generateRequestedPseudoElementEqualsToSelectorPseudo
             skip.link(&m_assembler);
         }
     }
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationElementIsLocalLink, bool, (const Element* element))
+{
+    COUNT_SELECTOR_OPERATION(operationElementIsLocalLink);
+    return element && element->getAttribute(WebCore::HTMLNames::hrefAttr).startsWith('#');
+}
+
+void SelectorCodeGenerator::generateElementIsLocalLink(Assembler::JumpList& failureCases)
+{
+    FunctionCall functionCall(m_assembler, m_registerAllocator, m_stackAllocator, m_functionCalls);
+    functionCall.setFunctionAddress(operationElementIsLocalLink);
+    functionCall.setOneArgument(elementAddressRegister);
+    failureCases.append(functionCall.callAndBranchOnBooleanReturnValue(Assembler::Zero));
 }
 
 void SelectorCodeGenerator::generateElementIsRoot(Assembler::JumpList& failureCases)

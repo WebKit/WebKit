@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<style>
+* {
+    background-color:white;
+}
+:local-link {
+    background-color: red;
+}
+</style>
+
+</head>
+<body>
+    <div style="display:none">
+        <div data-description="Anchors basics.">
+            <a id="target-tag-1" href="#target-tag-3">Link1</a>
+            <a id="target-tag-2" href="#target-tag-4">Link2</a>
+            <a id="target-tag-3" href="http://www.webkit.org">Link3</a>
+            <a id="target-tag-4" href="http://www.webkit.org">Link4</a>
+        </div>
+    </div>
+</body>
+<script>
+
+description('Test the basic matching of the :local-link selector.');
+
+
+
+// Styling.
+var expectedStyles = [['target-tag-1', 'rgb(255, 0, 0)'],
+                      ['target-tag-2', 'rgb(255, 0, 0)'],
+                      ['target-tag-3',  'rgb(255, 255, 255)'],
+                      ['target-tag-4',  'rgb(255, 255, 255)'],];
+
+for (var i = 0; i < expectedStyles.length; ++i)
+    shouldBeEqualToString('getComputedStyle(document.getElementById("' + expectedStyles[i][0] + '")).backgroundColor', "" + expectedStyles[i][1]);
+
+</script>
