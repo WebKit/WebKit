@@ -8402,7 +8402,7 @@ IGNORE_CLANG_WARNINGS_END
             };
 
             if (isCopyOnWriteArrayWithContiguous()) {
-                operation = operationCopyOnWriteArrayIndexOfString;
+                operation = isArrayIncludes ? operationCopyOnWriteArrayIncludesString : operationCopyOnWriteArrayIndexOfString;
                 LValue targetStructureID = encodeStructureID(weakPointer(vm().immutableButterflyOnlyAtomStringsStructure.get()));
                 LValue butterflyStructureID = m_out.load32(m_out.add(storage, m_out.constIntPtr(-JSImmutableButterfly::offsetOfData())), m_heaps.JSCell_structureID);
                 m_out.branch(m_out.equal(butterflyStructureID, targetStructureID), unsure(slowCase), unsure(checkSearchRopeString));
@@ -8484,7 +8484,7 @@ IGNORE_CLANG_WARNINGS_END
             m_out.jump(continuation);
 
             m_out.appendTo(slowCase, continuation);
-            ValueFromBlock slowCaseResult = isArrayIncludes ? m_out.anchor(vmCall(Int32, operationArrayIncludesString, weakPointer(globalObject), storage, searchElement, startIndex)) : m_out.anchor(vmCall(Int64, operation, weakPointer(globalObject), storage, searchElement, startIndex));
+            ValueFromBlock slowCaseResult = m_out.anchor(vmCall(isArrayIncludes ? Int32 : Int64, operation, weakPointer(globalObject), storage, searchElement, startIndex));
             m_out.jump(continuation);
 
             m_out.appendTo(continuation, lastNext);

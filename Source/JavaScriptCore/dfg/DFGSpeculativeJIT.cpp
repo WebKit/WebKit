@@ -9799,7 +9799,7 @@ void SpeculativeJIT::compileArrayIndexOfOrArrayIncludes(Node* node)
 
         JumpList slowCase;
 
-        auto operation = operationArrayIndexOfString;
+        auto operation = isArrayIncludes ? operationArrayIncludesString : operationArrayIndexOfString;
 
         auto isCopyOnWriteArrayWithContiguous = [&]() {
             Edge& baseEdge = m_graph.varArgChild(node, 0);
@@ -9815,7 +9815,7 @@ void SpeculativeJIT::compileArrayIndexOfOrArrayIncludes(Node* node)
         };
 
         if (isCopyOnWriteArrayWithContiguous()) {
-            operation = operationCopyOnWriteArrayIndexOfString;
+            operation = isArrayIncludes ? operationCopyOnWriteArrayIncludesString : operationCopyOnWriteArrayIndexOfString;
             loadLinkableConstant(LinkableConstant(*this, vm().immutableButterflyOnlyAtomStringsStructure.get()), compareLengthGPR);
             emitEncodeStructureID(compareLengthGPR, compareLengthGPR);
             addPtr(TrustedImm32(-static_cast<ptrdiff_t>(JSImmutableButterfly::offsetOfData())), storageGPR, leftStringGPR);
@@ -9910,21 +9910,15 @@ void SpeculativeJIT::compileArrayIndexOfOrArrayIncludes(Node* node)
 
         emitLoop(emitCompare);
 
-        if (isArrayIncludes) {
-            addSlowPathGenerator(slowPathCall(
-                slowCase, this, operationArrayIncludesString,
-                indexGPR, LinkableConstant::globalObject(*this, node),
-                storageGPR, searchElementGPR, indexGPR
-            ));
+        addSlowPathGenerator(slowPathCall(
+            slowCase, this, operation,
+            indexGPR, LinkableConstant::globalObject(*this, node),
+            storageGPR, searchElementGPR, indexGPR
+        ));
+        if (isArrayIncludes)
             unblessedBooleanResult(indexGPR, node);
-        } else {
-            addSlowPathGenerator(slowPathCall(
-                slowCase, this, operation,
-                indexGPR, LinkableConstant::globalObject(*this, node),
-                storageGPR, searchElementGPR, indexGPR
-            ));
+        else
             strictInt32Result(indexGPR, node);
-        }
 
         return;
 #endif

@@ -1982,7 +1982,6 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncWith, (JSGlobalObject* globalObject, Call
     return JSValue::encode(result);
 }
 
-// FIXME: We can optimize `Array.prototype.includes` for atom string arrays too. https://bugs.webkit.org/show_bug.cgi?id=288695
 JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncIncludes, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
@@ -2013,6 +2012,32 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncIncludes, (JSGlobalObject* globalObject, 
 
     if (isJSArray(thisObject)) [[likely]] {
         JSArray* thisArray = jsCast<JSArray*>(thisObject);
+        Butterfly* butterfly = thisArray->butterfly();
+        if (isCopyOnWrite(thisArray->indexingMode()) && JSImmutableButterfly::isOnlyAtomStringsStructure(vm, butterfly) && searchElement.isString()) {
+            AtomString search = asString(searchElement)->toAtomString(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
+
+            JSValue result = jsBoolean(false);
+            if (vm.atomStringToJSStringMap.contains(search.impl())) {
+                auto data = butterfly->contiguous().data();
+                for (unsigned i = index; i < length; ++i) {
+                    JSValue value = data[i].get();
+                    if (asString(value)->getValueImpl() == search.impl()) {
+                        result = jsBoolean(true);
+                        break;
+                    }
+                }
+            }
+
+#if ASSERT_ENABLED
+            auto expected = thisArray->fastIncludes(globalObject, searchElement, index, length);
+            RETURN_IF_EXCEPTION(scope, { });
+            ASSERT(expected.value() == result.asBoolean());
+#endif
+            return JSValue::encode(result);
+        }
+
+
         auto fastResult = thisArray->fastIncludes(globalObject, searchElement, index, length);
         RETURN_IF_EXCEPTION(scope, { });
         if (fastResult)
