@@ -1,0 +1,16 @@
+
+PASS '0%' should be a valid keyframe selector
+PASS '10%' should be a valid keyframe selector
+PASS '100%' should be a valid keyframe selector
+PASS 'from' should be a valid keyframe selector
+PASS 'to' should be a valid keyframe selector
+PASS 'entry 10%' should be a valid keyframe selector
+PASS 'exit 60%' should be a valid keyframe selector
+PASS '-10%' should not be a valid keyframe selector
+PASS '120%' should not be a valid keyframe selector
+FAIL 'calc(10%)' should not be a valid keyframe selector assert_false: expected false got true
+PASS 'calc(10% * sibling-index())' should not be a valid keyframe selector
+FAIL 'calc(10% * sign(1em - 1px))' should not be a valid keyframe selector assert_false: expected false got true
+FAIL 'entry calc(10%)' should not be a valid keyframe selector assert_false: expected false got true
+FAIL 'exit calc(60%)' should not be a valid keyframe selector assert_false: expected false got true
+

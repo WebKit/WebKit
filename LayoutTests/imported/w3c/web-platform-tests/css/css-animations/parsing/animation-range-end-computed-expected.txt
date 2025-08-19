@@ -8,6 +8,8 @@ PASS Property animation-range-end value 'COVER 100%'
 PASS Property animation-range-end value 'cover 120%'
 PASS Property animation-range-end value '0'
 PASS Property animation-range-end value '120%'
+PASS Property animation-range-end value '0%'
+FAIL Property animation-range-end value '100%' assert_equals: expected "100%" but got ""
 PASS Property animation-range-end value '120px'
 PASS Property animation-range-end value 'cover 42%'
 PASS Property animation-range-end value 'cover -42%'

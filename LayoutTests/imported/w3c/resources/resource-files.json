@@ -1712,6 +1712,7 @@
         "web-platform-tests/css/css-anchor-position/reference/anchor-size-css-zoom-ref.html",
         "web-platform-tests/css/css-anchor-position/reference/position-area-visibility-change-ref.html",
         "web-platform-tests/css/css-anchor-position/reference/sticky-anchor-position-invalid-ref.html",
+        "web-platform-tests/css/css-animations/animate-with-background-color-oklch-001-ref.html",
         "web-platform-tests/css/css-animations/animation-common-ref.html",
         "web-platform-tests/css/css-animations/animation-important-002-ref.html",
         "web-platform-tests/css/css-animations/animation-offscreen-to-onscreen-ref.html",

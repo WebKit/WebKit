@@ -9,12 +9,15 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-None
+text-size-adjust
 Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/add-pseudo-while-animating-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/cancel-update.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/chrome-bug-404743651.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/chrome-bug-405795970.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/chrome-bug-415627003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/pseudo-element-animation-with-marker.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/replace-keyframes-animating-filter-001.html

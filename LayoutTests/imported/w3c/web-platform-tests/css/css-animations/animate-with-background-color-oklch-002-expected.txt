@@ -1,0 +1,4 @@
+
+FAIL Animate from legacy rgb to oklch assert_equals: Background color at 0% animation progress expected "rgb(255, 0, 0)" but got "oklab(0.627955 0.224863 0.125846)"
+FAIL Animate from legacy rgb to color-mix oklch assert_equals: Background color at 0% animation progress expected "rgb(255, 0, 0)" but got "oklab(0.627955 0.224863 0.125846)"
+

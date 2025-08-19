@@ -1,6 +1,0 @@
-
-PASS e.style['animation-trigger-type'] = "auto" should not set the property value
-PASS e.style['animation-trigger-type'] = "once repeat" should not set the property value
-PASS e.style['animation-trigger-type'] = "once, initial" should not set the property value
-PASS e.style['animation-trigger-type'] = "initial, once" should not set the property value
-
