@@ -114,7 +114,6 @@ class PowerSourceNotifier;
 namespace WebKit {
 
 class ExtensionCapabilityGranter;
-class LockdownModeObserver;
 class PerActivityStateCPUUsageSampler;
 class SuspendedPageProxy;
 class UIGamepad;
@@ -141,8 +140,6 @@ int networkProcessThroughputQOS();
 int webProcessLatencyQOS();
 int webProcessThroughputQOS();
 #endif
-void addLockdownModeObserver(LockdownModeObserver&);
-void removeLockdownModeObserver(LockdownModeObserver&);
 bool lockdownModeEnabledBySystem();
 void setLockdownModeEnabledGloballyForTesting(std::optional<bool>);
 

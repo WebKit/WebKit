@@ -35,7 +35,6 @@
 #import "DefaultWebBrowserChecks.h"
 #import "ExtensionCapabilityGranter.h"
 #import "LegacyCustomProtocolManagerClient.h"
-#import "LockdownModeObserver.h"
 #import "Logging.h"
 #import "MediaCapability.h"
 #import "NetworkProcessCreationParameters.h"
@@ -670,14 +669,6 @@ void WebProcessPool::remoteWebInspectorEnabledCallback(CFNotificationCenterRef, 
 }
 #endif
 
-#if PLATFORM(COCOA)
-void WebProcessPool::lockdownModeConfigurationUpdateCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
-{
-    if (auto pool = extractWebProcessPool(observer))
-        pool->lockdownModeStateChanged();
-}
-#endif
-
 #if HAVE(POWERLOG_TASK_MODE_QUERY) && ENABLE(GPU_PROCESS)
 void WebProcessPool::powerLogTaskModeStartedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
 {
@@ -960,10 +951,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             webProcessPool->sendToAllProcesses(Messages::WebProcess::PowerSourceDidChange(hasAC));
     });
 
-#if PLATFORM(COCOA)
-    addCFNotificationObserver(lockdownModeConfigurationUpdateCallback, (__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification);
-#endif
-
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSReduceMotionChangedNotification);
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSIncreaseButtonLegibilityNotification);
@@ -1038,10 +1025,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     m_powerSourceNotifier = nullptr;
 
     [[NSNotificationCenter defaultCenter] removeObserver:m_finishedMobileAssetFontDownloadObserver.get()];
-
-#if PLATFORM(COCOA)
-    removeCFNotificationObserver((__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification);
-#endif
 
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
     removeCFNotificationObserver(kAXSReduceMotionChangedNotification);
@@ -1119,13 +1102,6 @@ int webProcessThroughputQOS()
     return qos;
 }
 
-static WeakHashSet<LockdownModeObserver>& lockdownModeObservers()
-{
-    RELEASE_ASSERT(isMainRunLoop());
-    static NeverDestroyed<WeakHashSet<LockdownModeObserver>> observers;
-    return observers;
-}
-
 static std::optional<bool>& isLockdownModeEnabledGloballyForTesting()
 {
     static NeverDestroyed<std::optional<bool>> enabledForTesting;
@@ -1156,11 +1132,8 @@ static bool isLockdownModeEnabledBySystemIgnoringCaching()
 void WebProcessPool::lockdownModeStateChanged()
 {
     auto isNowEnabled = isLockdownModeEnabledBySystemIgnoringCaching();
-    if (cachedLockdownModeEnabledGlobally() != isNowEnabled) {
-        lockdownModeObservers().forEach([](Ref<LockdownModeObserver> observer) { observer->willChangeLockdownMode(); });
+    if (cachedLockdownModeEnabledGlobally() != isNowEnabled)
         cachedLockdownModeEnabledGlobally() = isNowEnabled;
-        lockdownModeObservers().forEach([](Ref<LockdownModeObserver> observer) { observer->didChangeLockdownMode(); });
-    }
 
     WEBPROCESSPOOL_RELEASE_LOG(Loading, "WebProcessPool::lockdownModeStateChanged() isNowEnabled=%d", isNowEnabled);
 
@@ -1179,21 +1152,6 @@ void WebProcessPool::lockdownModeStateChanged()
             page->reload({ });
         }
     }
-}
-
-void addLockdownModeObserver(LockdownModeObserver& observer)
-{
-    // Make sure cachedLockdownModeEnabledGlobally() gets initialized so lockdownModeStateChanged() can track changes.
-    auto& cachedState = cachedLockdownModeEnabledGlobally();
-    if (!cachedState)
-        cachedState = isLockdownModeEnabledBySystemIgnoringCaching();
-
-    lockdownModeObservers().add(observer);
-}
-
-void removeLockdownModeObserver(LockdownModeObserver& observer)
-{
-    lockdownModeObservers().remove(observer);
 }
 
 bool lockdownModeEnabledBySystem()
