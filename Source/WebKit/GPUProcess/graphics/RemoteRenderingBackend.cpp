@@ -117,6 +117,8 @@ RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuCon
     , m_shapeDetectionObjectHeap(ShapeDetection::ObjectHeap::create())
 {
     ASSERT(RunLoop::isMain());
+
+    weakPtrFactory().prepareForUseOnlyOnNonMainThread();
 }
 
 RemoteRenderingBackend::~RemoteRenderingBackend() = default;
