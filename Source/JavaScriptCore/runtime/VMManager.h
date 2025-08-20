@@ -57,17 +57,17 @@ public:
 
     static VM* findMatchingVM(const Invocable<TestCallback> auto& test)
     {
-        SUPPRESS_FORWARD_DECL_ARG return findMatchingVMImpl(scopedLambda<TestCallback>(test));
+        /* mlam */ SUPPRESS_FORWARD_DECL_ARG return findMatchingVMImpl(scopedLambda<TestCallback>(test));
     }
 
     static void forEachVM(const Invocable<IteratorCallback> auto& functor)
     {
-        SUPPRESS_FORWARD_DECL_ARG forEachVMImpl(scopedLambda<IteratorCallback>(functor));
+        /* mlam */ SUPPRESS_FORWARD_DECL_ARG forEachVMImpl(scopedLambda<IteratorCallback>(functor));
     }
 
     static Error forEachVMWithTimeout(Seconds timeout, const Invocable<IteratorCallback> auto& functor)
     {
-        SUPPRESS_FORWARD_DECL_ARG return forEachVMWithTimeoutImpl(timeout, scopedLambda<IteratorCallback>(functor));
+        /* mlam */ SUPPRESS_FORWARD_DECL_ARG return forEachVMWithTimeoutImpl(timeout, scopedLambda<IteratorCallback>(functor));
     }
 
     JS_EXPORT_PRIVATE static void dumpVMs();
