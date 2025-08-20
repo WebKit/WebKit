@@ -84,15 +84,10 @@ inline Structure* Structure::create(VM& vm, Structure* previous, DeferredStructu
         result->finishCreation(vm, previous, deferred);
         return result;
     }
-    case StructureVariant::WebAssemblyGC: {
-#if ENABLE(WEBASSEMBLY)
-        auto* result = new (NotNull, allocateCell<WebAssemblyGCStructure>(vm)) WebAssemblyGCStructure(vm, jsCast<WebAssemblyGCStructure*>(previous));
-        result->finishCreation(vm, previous, deferred);
-        return result;
-#else
+    case StructureVariant::WebAssemblyGC:
+        RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
-#endif
-    }
+
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;

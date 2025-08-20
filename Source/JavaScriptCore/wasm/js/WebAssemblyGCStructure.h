@@ -60,7 +60,6 @@ public:
 
 private:
     WebAssemblyGCStructure(VM&, JSGlobalObject*, const TypeInfo&, const ClassInfo*, Ref<const Wasm::TypeDefinition>&&, Ref<const Wasm::RTT>&&);
-    WebAssemblyGCStructure(VM&, WebAssemblyGCStructure* previous);
 
     Ref<const Wasm::RTT> m_rtt;
     Ref<const Wasm::TypeDefinition> m_type;

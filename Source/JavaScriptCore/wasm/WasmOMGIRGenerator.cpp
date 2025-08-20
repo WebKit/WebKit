@@ -3729,12 +3729,8 @@ void OMGIRGenerator::emitRefTestOrCast(CastKind castKind, TypedExpression refere
         }
     } else {
         Wasm::TypeDefinition& signature = m_info.typeSignatures[toHeapType];
-        BasicBlock* slowPath = m_proc.addBlock();
-
-        Value* rtt;
-        if (signature.expand().is<Wasm::FunctionSignature>())
-            rtt = emitLoadRTTFromFuncref(value);
-        else {
+        auto& expanded = signature.expand();
+        if (!expanded.is<Wasm::FunctionSignature>()) {
             // The cell check is only needed for non-functions, as the typechecker does not allow non-Cell values for funcref casts.
             if (!reference.type().definitelyIsCellOrNull())
                 emitCheckOrBranchForCast(castKind, m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), value, constant(Int64, JSValue::NotCellMask)), castFailure, falseBlock);
@@ -3742,29 +3738,41 @@ void OMGIRGenerator::emitRefTestOrCast(CastKind castKind, TypedExpression refere
                 Value* jsType = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), value, safeCast<int32_t>(JSCell::typeInfoTypeOffset()));
                 emitCheckOrBranchForCast(castKind, m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), jsType, constant(Int32, JSType::WebAssemblyGCObjectType)), castFailure, falseBlock);
             }
-            rtt = emitLoadRTTFromObject(value);
         }
 
-        Ref targetRTT = m_info.rtts[toHeapType];
-        auto* targetRTTPointer = constant(pointerType(), std::bit_cast<uintptr_t>(targetRTT.ptr()));
-        BasicBlock* equalBlock;
-        if (castKind == CastKind::Cast)
-            equalBlock = continuation;
-        else
-            equalBlock = trueBlock;
-        m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), rtt, targetRTTPointer), FrequentedBlock(equalBlock), FrequentedBlock(slowPath));
-        equalBlock->addPredecessor(m_currentBlock);
-        slowPath->addPredecessor(m_currentBlock);
-
-        m_currentBlock = slowPath;
-        if (signature.isFinalType()) {
-            // If signature is final type and pointer equality failed, this value must not be a subtype.
-            emitCheckOrBranchForCast(castKind, constant(Int32, 1), castFailure, falseBlock);
+        if (!expanded.is<Wasm::FunctionSignature>() && signature.isFinalType()) {
+            auto* structureID = m_currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, Int32, origin(), value, safeCast<int32_t>(JSCell::structureIDOffset()));
+            auto* targetStructureID = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfGCObjectStructureID(m_info.importFunctionCount(), m_info.tableCount(), m_info.globalCount(), toHeapType)));
+            emitCheckOrBranchForCast(castKind, m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), structureID, targetStructureID), castFailure, falseBlock);
         } else {
-            auto* displaySizeExcludingThis = m_currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, Int32, origin(), rtt, safeCast<int32_t>(RTT::offsetOfDisplaySizeExcludingThis()));
-            emitCheckOrBranchForCast(castKind, m_currentBlock->appendNew<Value>(m_proc, BelowEqual, origin(), displaySizeExcludingThis, constant(Int32, targetRTT->displaySizeExcludingThis())), castFailure, falseBlock);
-            auto* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, pointerType(), origin(), rtt, safeCast<uint32_t>(RTT::offsetOfData() + targetRTT->displaySizeExcludingThis() * sizeof(const RTT*)));
-            emitCheckOrBranchForCast(castKind, m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), pointer, targetRTTPointer), castFailure, falseBlock);
+            BasicBlock* slowPath = m_proc.addBlock();
+            Value* rtt;
+            if (expanded.is<Wasm::FunctionSignature>())
+                rtt = emitLoadRTTFromFuncref(value);
+            else
+                rtt = emitLoadRTTFromObject(value);
+
+            Ref targetRTT = m_info.rtts[toHeapType];
+            auto* targetRTTPointer = constant(pointerType(), std::bit_cast<uintptr_t>(targetRTT.ptr()));
+            BasicBlock* equalBlock;
+            if (castKind == CastKind::Cast)
+                equalBlock = continuation;
+            else
+                equalBlock = trueBlock;
+            m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), rtt, targetRTTPointer), FrequentedBlock(equalBlock), FrequentedBlock(slowPath));
+            equalBlock->addPredecessor(m_currentBlock);
+            slowPath->addPredecessor(m_currentBlock);
+
+            m_currentBlock = slowPath;
+            if (signature.isFinalType()) {
+                // If signature is final type and pointer equality failed, this value must not be a subtype.
+                emitCheckOrBranchForCast(castKind, constant(Int32, 1), castFailure, falseBlock);
+            } else {
+                auto* displaySizeExcludingThis = m_currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, Int32, origin(), rtt, safeCast<int32_t>(RTT::offsetOfDisplaySizeExcludingThis()));
+                emitCheckOrBranchForCast(castKind, m_currentBlock->appendNew<Value>(m_proc, BelowEqual, origin(), displaySizeExcludingThis, constant(Int32, targetRTT->displaySizeExcludingThis())), castFailure, falseBlock);
+                auto* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, pointerType(), origin(), rtt, safeCast<uint32_t>(RTT::offsetOfData() + targetRTT->displaySizeExcludingThis() * sizeof(const RTT*)));
+                emitCheckOrBranchForCast(castKind, m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), pointer, targetRTTPointer), castFailure, falseBlock);
+            }
         }
     }
 

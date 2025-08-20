@@ -2432,26 +2432,35 @@ void BBQJIT::emitRefTestOrCast(const TypedExpression& typedValue, GPRReg valueGP
         }
     } else {
         Wasm::TypeDefinition& signature = m_info.typeSignatures[toHeapType];
-        if (signature.expand().is<Wasm::FunctionSignature>())
-            m_jit.loadPtr(Address(valueGPR, WebAssemblyFunctionBase::offsetOfRTT()), wasmScratchGPR);
-        else {
+        auto& expanded = signature.expand();
+        if (!expanded.is<Wasm::FunctionSignature>()) {
             // The cell check is only needed for non-functions, as the typechecker does not allow non-Cell values for funcref casts.
             if (!typedValue.type().definitelyIsCellOrNull())
                 failureCases.append(m_jit.branchIfNotCell(valueGPR, DoNotHaveTagRegisters));
             if (!typedValue.type().definitelyIsWasmGCObjectOrNull())
                 failureCases.append(m_jit.branchIfNotType(valueGPR, JSType::WebAssemblyGCObjectType));
-            m_jit.emitLoadStructure(valueGPR, wasmScratchGPR);
-            m_jit.loadPtr(Address(wasmScratchGPR, WebAssemblyGCStructure::offsetOfRTT()), wasmScratchGPR);
         }
 
-        Ref targetRTT = m_info.rtts[toHeapType];
-        if (signature.isFinalType()) {
-            // If signature is final type and pointer equality failed, this value must not be a subtype.
-            failureCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, wasmScratchGPR, TrustedImmPtr(targetRTT.ptr())));
+        if (!expanded.is<Wasm::FunctionSignature>() && signature.isFinalType()) {
+            m_jit.load32(MacroAssembler::Address(valueGPR, JSCell::structureIDOffset()), wasmScratchGPR);
+            failureCases.append(m_jit.branch32(CCallHelpers::NotEqual, wasmScratchGPR, Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfGCObjectStructureID(m_info.importFunctionCount(), m_info.tableCount(), m_info.globalCount(), toHeapType))));
         } else {
-            doneCases.append(m_jit.branchPtr(CCallHelpers::Equal, wasmScratchGPR, TrustedImmPtr(targetRTT.ptr())));
-            failureCases.append(m_jit.branch32(CCallHelpers::BelowOrEqual, Address(wasmScratchGPR, RTT::offsetOfDisplaySizeExcludingThis()), TrustedImm32(targetRTT->displaySizeExcludingThis())));
-            failureCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, Address(wasmScratchGPR, (RTT::offsetOfData() + targetRTT->displaySizeExcludingThis() * sizeof(const RTT*))), TrustedImmPtr(targetRTT.ptr())));
+            if (expanded.is<Wasm::FunctionSignature>())
+                m_jit.loadPtr(Address(valueGPR, WebAssemblyFunctionBase::offsetOfRTT()), wasmScratchGPR);
+            else {
+                m_jit.emitLoadStructure(valueGPR, wasmScratchGPR);
+                m_jit.loadPtr(Address(wasmScratchGPR, WebAssemblyGCStructure::offsetOfRTT()), wasmScratchGPR);
+            }
+
+            Ref targetRTT = m_info.rtts[toHeapType];
+            if (signature.isFinalType()) {
+                // If signature is final type and pointer equality failed, this value must not be a subtype.
+                failureCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, wasmScratchGPR, TrustedImmPtr(targetRTT.ptr())));
+            } else {
+                doneCases.append(m_jit.branchPtr(CCallHelpers::Equal, wasmScratchGPR, TrustedImmPtr(targetRTT.ptr())));
+                failureCases.append(m_jit.branch32(CCallHelpers::BelowOrEqual, Address(wasmScratchGPR, RTT::offsetOfDisplaySizeExcludingThis()), TrustedImm32(targetRTT->displaySizeExcludingThis())));
+                failureCases.append(m_jit.branchPtr(CCallHelpers::NotEqual, Address(wasmScratchGPR, (RTT::offsetOfData() + targetRTT->displaySizeExcludingThis() * sizeof(const RTT*))), TrustedImmPtr(targetRTT.ptr())));
+            }
         }
     }
 
