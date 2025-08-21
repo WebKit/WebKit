@@ -2742,9 +2742,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     }
                     ASSERT(isCopyOnWrite(structure->indexingMode()));
 
-                    JSCellButterfly* immutableButterfly = JSCellButterfly::fromButterfly(butterfly);
-                    if (index < immutableButterfly->length()) {
-                        JSValue value = immutableButterfly->get(index);
+                    JSCellButterfly* cellButterfly = JSCellButterfly::fromButterfly(butterfly);
+                    if (index < cellButterfly->length()) {
+                        JSValue value = cellButterfly->get(index);
                         ASSERT(value);
                         if (value.isCell())
                             setConstant(node, *m_graph.freeze(value.asCell()));

@@ -2233,16 +2233,16 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayWithSizeAndHint, char*, (JSGlobalObjec
     OPERATION_RETURN(scope, std::bit_cast<char*>(result));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationNewArrayBuffer, JSCell*, (VM* vmPointer, Structure* arrayStructure, JSCell* immutableButterflyCell))
+JSC_DEFINE_JIT_OPERATION(operationNewArrayBuffer, JSCell*, (VM* vmPointer, Structure* arrayStructure, JSCell* cellButterflyCell))
 {
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(!arrayStructure->outOfLineCapacity());
-    auto* immutableButterfly = jsCast<JSCellButterfly*>(immutableButterflyCell);
-    ASSERT(arrayStructure->indexingMode() == immutableButterfly->indexingMode() || hasAnyArrayStorage(arrayStructure->indexingMode()));
-    auto* result = CommonSlowPaths::allocateNewArrayBuffer(vm, arrayStructure, immutableButterfly);
+    auto* cellButterfly = jsCast<JSCellButterfly*>(cellButterflyCell);
+    ASSERT(arrayStructure->indexingMode() == cellButterfly->indexingMode() || hasAnyArrayStorage(arrayStructure->indexingMode()));
+    auto* result = CommonSlowPaths::allocateNewArrayBuffer(vm, arrayStructure, cellButterfly);
     ASSERT(result->indexingMode() == result->structure()->indexingMode());
     ASSERT(result->structure() == arrayStructure);
     OPERATION_RETURN(scope, result);
@@ -4441,7 +4441,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayWithSpreadSlow, JSCell*, (JSGlobalObje
     OPERATION_RETURN(scope, result);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationCreateImmutableButterfly, JSCell*, (JSGlobalObject* globalObject, unsigned length))
+JSC_DEFINE_JIT_OPERATION(operationCreateCellButterfly, JSCell*, (JSGlobalObject* globalObject, unsigned length))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);

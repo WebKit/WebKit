@@ -1276,9 +1276,9 @@ JSArray* ownPropertyKeys(JSGlobalObject* globalObject, JSObject* object, Propert
 
     // We attempt to look up own property keys cache in Object.keys / Object.getOwnPropertyNames cases.
     if (!globalObject->isHavingABadTime()) [[likely]] {
-        if (auto* immutableButterfly = object->structure()->cachedPropertyNames(kind)) {
-            Structure* arrayStructure = globalObject->originalArrayStructureForIndexingType(immutableButterfly->indexingMode());
-            return JSArray::createWithButterfly(vm, nullptr, arrayStructure, immutableButterfly->toButterfly());
+        if (auto* cellButterfly = object->structure()->cachedPropertyNames(kind)) {
+            Structure* arrayStructure = globalObject->originalArrayStructureForIndexingType(cellButterfly->indexingMode());
+            return JSArray::createWithButterfly(vm, nullptr, arrayStructure, cellButterfly->toButterfly());
         }
     }
 

@@ -1261,31 +1261,31 @@ private:
 };
 
 class CachedJSValue;
-class CachedImmutableButterfly : public CachedObject<JSCellButterfly> {
+class CachedCellButterfly : public CachedObject<JSCellButterfly> {
 public:
-    CachedImmutableButterfly()
+    CachedCellButterfly()
         : m_cachedDoubles()
     {
     }
 
-    void encode(Encoder& encoder, JSCellButterfly& immutableButterfly)
+    void encode(Encoder& encoder, JSCellButterfly& cellButterfly)
     {
-        m_length = immutableButterfly.length();
-        m_indexingType = immutableButterfly.indexingTypeAndMisc();
+        m_length = cellButterfly.length();
+        m_indexingType = cellButterfly.indexingTypeAndMisc();
         if (hasDouble(m_indexingType))
-            m_cachedDoubles.encode(encoder, immutableButterfly.toButterfly()->contiguousDouble().data(), m_length);
+            m_cachedDoubles.encode(encoder, cellButterfly.toButterfly()->contiguousDouble().data(), m_length);
         else
-            m_cachedValues.encode(encoder, immutableButterfly.toButterfly()->contiguous().data(), m_length);
+            m_cachedValues.encode(encoder, cellButterfly.toButterfly()->contiguous().data(), m_length);
     }
 
     JSCellButterfly* decode(Decoder& decoder) const
     {
-        JSCellButterfly* immutableButterfly = JSCellButterfly::create(decoder.vm(), m_indexingType, m_length);
+        JSCellButterfly* cellButterfly = JSCellButterfly::create(decoder.vm(), m_indexingType, m_length);
         if (hasDouble(m_indexingType))
-            m_cachedDoubles.decode(decoder, immutableButterfly->toButterfly()->contiguousDouble().data(), m_length, immutableButterfly);
+            m_cachedDoubles.decode(decoder, cellButterfly->toButterfly()->contiguousDouble().data(), m_length, cellButterfly);
         else
-            m_cachedValues.decode(decoder, immutableButterfly->toButterfly()->contiguous().data(), m_length, immutableButterfly);
-        return immutableButterfly;
+            m_cachedValues.decode(decoder, cellButterfly->toButterfly()->contiguous().data(), m_length, cellButterfly);
+        return cellButterfly;
     }
 
 private:
@@ -1398,9 +1398,9 @@ public:
             return;
         }
 
-        if (auto* immutableButterfly = jsDynamicCast<JSCellButterfly*>(cell)) {
-            m_type = EncodedType::ImmutableButterfly;
-            this->allocate<CachedImmutableButterfly>(encoder)->encode(encoder, *immutableButterfly);
+        if (auto* cellButterfly = jsDynamicCast<JSCellButterfly*>(cell)) {
+            m_type = EncodedType::CellButterfly;
+            this->allocate<CachedCellButterfly>(encoder)->encode(encoder, *cellButterfly);
             return;
         }
 
@@ -1440,8 +1440,8 @@ public:
             v = jsString(decoder.vm(), adoptRef(*impl));
             break;
         }
-        case EncodedType::ImmutableButterfly:
-            v = this->buffer<CachedImmutableButterfly>()->decode(decoder);
+        case EncodedType::CellButterfly:
+            v = this->buffer<CachedCellButterfly>()->decode(decoder);
             break;
         case EncodedType::RegExp:
             v = this->buffer<CachedRegExp>()->decode(decoder);
@@ -1463,7 +1463,7 @@ private:
         JSValue,
         SymbolTable,
         String,
-        ImmutableButterfly,
+        CellButterfly,
         RegExp,
         TemplateObjectDescriptor,
         BigInt,

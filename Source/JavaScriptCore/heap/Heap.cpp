@@ -350,7 +350,7 @@ Heap::Heap(VM& vm, HeapType heapType)
 
     // HeapCellTypes
     , auxiliaryHeapCellType(CellAttributes(DoesNotNeedDestruction, HeapCell::Auxiliary))
-    , immutableButterflyHeapCellType(CellAttributes(DoesNotNeedDestruction, HeapCell::JSCellWithIndexingHeader))
+    , cellButterflyHeapCellType(CellAttributes(DoesNotNeedDestruction, HeapCell::JSCellWithIndexingHeader))
     , cellHeapCellType(CellAttributes(DoesNotNeedDestruction, HeapCell::JSCell))
     , destructibleCellHeapCellType(CellAttributes(NeedsDestruction, HeapCell::JSCell))
     , apiGlobalObjectHeapCellType(IsoHeapCellType::Args<JSAPIGlobalObject>())
@@ -414,7 +414,7 @@ Heap::Heap(VM& vm, HeapType heapType)
     // Subspaces
     , primitiveGigacageAuxiliarySpace("Primitive Gigacage Auxiliary"_s, *this, auxiliaryHeapCellType, primitiveGigacageAllocator.get()) // Hash:0x3e7cd762
     , auxiliarySpace("Auxiliary"_s, *this, auxiliaryHeapCellType, fastMallocAllocator.get()) // Hash:0x96255ba1
-    , immutableButterflyAuxiliarySpace("ImmutableButterfly JSCellWithIndexingHeader"_s, *this, immutableButterflyHeapCellType, fastMallocAllocator.get()) // Hash:0xaadcb3c1
+    , cellButterflyAuxiliarySpace("CellButterfly JSCellWithIndexingHeader"_s, *this, cellButterflyHeapCellType, fastMallocAllocator.get()) // Hash:0xaadcb3c1
     , cellSpace("JSCell"_s, *this, cellHeapCellType, fastMallocAllocator.get()) // Hash:0xadfb5a79
     , destructibleObjectSpace("JSDestructibleObject"_s, *this, destructibleObjectHeapCellType, fastMallocAllocator.get()) // Hash:0x4f5ed7a9
     FOR_EACH_JSC_COMMON_ISO_SUBSPACE(INIT_SERVER_ISO_SUBSPACE)
@@ -2288,7 +2288,7 @@ void Heap::finalize()
 
     m_possiblyAccessedStringsFromConcurrentThreads.clear();
 
-    immutableButterflyToStringCache.clear();
+    cellButterflyToStringCache.clear();
     
     for (const HeapFinalizerCallback& callback : m_heapFinalizerCallbacks)
         callback.run(vm());

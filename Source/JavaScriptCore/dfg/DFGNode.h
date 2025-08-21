@@ -914,7 +914,7 @@ public:
         m_opInfo2 = OpInfoWrapper();
     }
 
-    void convertToNewArrayBuffer(FrozenValue* immutableButterfly);
+    void convertToNewArrayBuffer(FrozenValue* cellButterfly);
     void convertToNewArrayWithSize();
     void convertToNewArrayWithConstantSize(Graph&, uint32_t);
     void convertToNewArrayWithSizeAndStructure(Graph&, RegisteredStructure);

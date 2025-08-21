@@ -388,7 +388,7 @@ op :new_array_with_size,
 op :new_array_buffer,
     args: {
         dst: VirtualRegister,
-        immutableButterfly: VirtualRegister,
+        cellButterfly: VirtualRegister,
         recommendedIndexingType: IndexingType
     },
     metadata: {

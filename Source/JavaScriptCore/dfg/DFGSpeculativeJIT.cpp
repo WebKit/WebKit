@@ -9223,13 +9223,13 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
 
         if (node->numChildren() == 1 && bitVector->get(0)) {
             Edge use = m_graph.varArgChild(node, 0);
-            SpeculateCellOperand immutableButterfly(this, use);
+            SpeculateCellOperand cellButterfly(this, use);
             GPRTemporary result(this);
             GPRTemporary butterfly(this);
             GPRTemporary scratch1(this);
             GPRTemporary scratch2(this);
 
-            GPRReg immutableButterflyGPR = immutableButterfly.gpr();
+            GPRReg cellButterflyGPR = cellButterfly.gpr();
             GPRReg resultGPR = result.gpr();
             GPRReg butterflyGPR = butterfly.gpr();
             GPRReg scratch1GPR = scratch1.gpr();
@@ -9239,12 +9239,12 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
 
             JumpList slowCases;
 
-            move(immutableButterflyGPR, butterflyGPR);
+            move(cellButterflyGPR, butterflyGPR);
             addPtr(TrustedImm32(JSCellButterfly::offsetOfData()), butterflyGPR);
 
             emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), butterflyGPR, scratch1GPR, scratch2GPR, slowCases, SlowAllocationResult::UndefinedBehavior);
 
-            addSlowPathGenerator(slowPathCall(slowCases, this, operationNewArrayBuffer, resultGPR, TrustedImmPtr(&vm()), structure, immutableButterflyGPR));
+            addSlowPathGenerator(slowPathCall(slowCases, this, operationNewArrayBuffer, resultGPR, TrustedImmPtr(&vm()), structure, cellButterflyGPR));
 
             cellResult(resultGPR, node);
             return;
@@ -9264,9 +9264,9 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
             for (unsigned i = 0; i < node->numChildren(); ++i) {
                 if (bitVector->get(i)) {
                     Edge use = m_graph.varArgChild(node, i);
-                    SpeculateCellOperand immutableButterfly(this, use);
-                    GPRReg immutableButterflyGPR = immutableButterfly.gpr();
-                    speculationCheck(ExitKind::Overflow, JSValueRegs(), nullptr, branchAdd32(Overflow, Address(immutableButterflyGPR, JSCellButterfly::offsetOfPublicLength()), lengthGPR));
+                    SpeculateCellOperand cellButterfly(this, use);
+                    GPRReg cellButterflyGPR = cellButterfly.gpr();
+                    speculationCheck(ExitKind::Overflow, JSValueRegs(), nullptr, branchAdd32(Overflow, Address(cellButterflyGPR, JSCellButterfly::offsetOfPublicLength()), lengthGPR));
                 }
             }
 
@@ -9292,30 +9292,30 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
         for (unsigned i = 0; i < node->numChildren(); ++i) {
             Edge use = m_graph.varArgChild(node, i);
             if (bitVector->get(i)) {
-                SpeculateCellOperand immutableButterfly(this, use);
-                GPRReg immutableButterflyGPR = immutableButterfly.gpr();
+                SpeculateCellOperand cellButterfly(this, use);
+                GPRReg cellButterflyGPR = cellButterfly.gpr();
 
-                GPRTemporary immutableButterflyIndex(this);
-                GPRReg immutableButterflyIndexGPR = immutableButterflyIndex.gpr();
+                GPRTemporary cellButterflyIndex(this);
+                GPRReg cellButterflyIndexGPR = cellButterflyIndex.gpr();
 
                 GPRTemporary item(this);
                 GPRReg itemGPR = item.gpr();
 
-                GPRTemporary immutableButterflyLength(this);
-                GPRReg immutableButterflyLengthGPR = immutableButterflyLength.gpr();
+                GPRTemporary cellButterflyLength(this);
+                GPRReg cellButterflyLengthGPR = cellButterflyLength.gpr();
 
-                load32(Address(immutableButterflyGPR, JSCellButterfly::offsetOfPublicLength()), immutableButterflyLengthGPR);
-                move(TrustedImm32(0), immutableButterflyIndexGPR);
-                auto done = branchPtr(AboveOrEqual, immutableButterflyIndexGPR, immutableButterflyLengthGPR);
+                load32(Address(cellButterflyGPR, JSCellButterfly::offsetOfPublicLength()), cellButterflyLengthGPR);
+                move(TrustedImm32(0), cellButterflyIndexGPR);
+                auto done = branchPtr(AboveOrEqual, cellButterflyIndexGPR, cellButterflyLengthGPR);
                 auto loopStart = label();
                 load64(
-                    BaseIndex(immutableButterflyGPR, immutableButterflyIndexGPR, TimesEight, JSCellButterfly::offsetOfData()),
+                    BaseIndex(cellButterflyGPR, cellButterflyIndexGPR, TimesEight, JSCellButterfly::offsetOfData()),
                     itemGPR);
 
                 store64(itemGPR, BaseIndex(storageGPR, indexGPR, TimesEight));
-                addPtr(TrustedImm32(1), immutableButterflyIndexGPR);
+                addPtr(TrustedImm32(1), cellButterflyIndexGPR);
                 addPtr(TrustedImm32(1), indexGPR);
-                branchPtr(Below, immutableButterflyIndexGPR, immutableButterflyLengthGPR).linkTo(loopStart, this);
+                branchPtr(Below, cellButterflyIndexGPR, cellButterflyLengthGPR).linkTo(loopStart, this);
 
                 done.link(this);
             } else {
@@ -9340,9 +9340,9 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
     for (unsigned i = 0; i < node->numChildren(); ++i) {
         Edge use = m_graph.m_varArgChildren[node->firstChild() + i];
         if (bitVector->get(i)) {
-            SpeculateCellOperand immutableButterfly(this, use);
-            GPRReg immutableButterflyGPR = immutableButterfly.gpr();
-            storeCell(immutableButterflyGPR, &buffer[i]);
+            SpeculateCellOperand cellButterfly(this, use);
+            GPRReg cellButterflyGPR = cellButterfly.gpr();
+            storeCell(cellButterflyGPR, &buffer[i]);
         } else {
             JSValueOperand input(this, use);
             JSValueRegs inputRegs = input.jsValueRegs();

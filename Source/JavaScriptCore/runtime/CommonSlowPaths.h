@@ -229,22 +229,22 @@ static ALWAYS_INLINE void putDirectAccessorWithReify(VM& vm, JSGlobalObject* glo
     baseObject->putDirectAccessor(globalObject, propertyName, accessor, attribute);
 }
 
-inline JSArray* allocateNewArrayBuffer(VM& vm, Structure* structure, JSCellButterfly* immutableButterfly)
+inline JSArray* allocateNewArrayBuffer(VM& vm, Structure* structure, JSCellButterfly* cellButterfly)
 {
     JSGlobalObject* globalObject = structure->globalObject();
-    Structure* originalStructure = globalObject->originalArrayStructureForIndexingType(immutableButterfly->indexingMode());
-    ASSERT(originalStructure->indexingMode() == immutableButterfly->indexingMode());
-    ASSERT(isCopyOnWrite(immutableButterfly->indexingMode()));
+    Structure* originalStructure = globalObject->originalArrayStructureForIndexingType(cellButterfly->indexingMode());
+    ASSERT(originalStructure->indexingMode() == cellButterfly->indexingMode());
+    ASSERT(isCopyOnWrite(cellButterfly->indexingMode()));
     ASSERT(!structure->outOfLineCapacity());
 
-    JSArray* result = JSArray::createWithButterfly(vm, nullptr, originalStructure, immutableButterfly->toButterfly());
+    JSArray* result = JSArray::createWithButterfly(vm, nullptr, originalStructure, cellButterfly->toButterfly());
     // FIXME: This works but it's slow. If we cared enough about the perf when having a bad time then we could fix it.
     if (originalStructure != structure) [[unlikely]] {
         ASSERT(hasSlowPutArrayStorage(structure->indexingMode()));
         ASSERT(globalObject->isHavingABadTime());
 
         result->switchToSlowPutArrayStorage(vm);
-        ASSERT(result->butterfly() != immutableButterfly->toButterfly());
+        ASSERT(result->butterfly() != cellButterfly->toButterfly());
         ASSERT(!result->butterfly()->arrayStorage()->m_sparseMap.get());
         ASSERT(result->structureID() == structure->id());
     }

@@ -7005,17 +7005,17 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpNewArrayBuffer>();
             // Unfortunately, we can't allocate a new JSCellButterfly if the profile tells us new information because we
             // cannot allocate from compilation threads.
-            FrozenValue* frozen = get(VirtualRegister(bytecode.m_immutableButterfly))->constant();
+            FrozenValue* frozen = get(VirtualRegister(bytecode.m_cellButterfly))->constant();
             WTF::dependentLoadLoadFence();
 
-            JSCellButterfly* immutableButterfly = frozen->cast<JSCellButterfly*>();
+            JSCellButterfly* cellButterfly = frozen->cast<JSCellButterfly*>();
             NewArrayBufferData data { };
-            unsigned vectorLengthHint = immutableButterfly->toButterfly()->vectorLength();
+            unsigned vectorLengthHint = cellButterfly->toButterfly()->vectorLength();
 
             // If it is an empty array and there is larger vectorLengthHint, it is very likely that this array will be extended later and just initially starting with an empty array.
             // Let's use non CoW array in this case.
-            if (!immutableButterfly->length() && vectorLengthHint) {
-                IndexingType indexingType = immutableButterfly->indexingType();
+            if (!cellButterfly->length() && vectorLengthHint) {
+                IndexingType indexingType = cellButterfly->indexingType();
                 switch (indexingType) {
                 case CopyOnWriteArrayWithInt32:
                     indexingType = ArrayWithInt32;
@@ -7027,14 +7027,14 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     indexingType = ArrayWithContiguous;
                     break;
                 default:
-                    RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("immutableButterfly indexing type should be CoW");
+                    RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("cellButterfly indexing type should be CoW");
                     break;
                 }
                 set(bytecode.m_dst, addToGraph(Node::VarArg, NewArray, OpInfo(indexingType), OpInfo(vectorLengthHint)));
                 NEXT_OPCODE(op_new_array_buffer);
             }
 
-            data.indexingMode = immutableButterfly->indexingMode();
+            data.indexingMode = cellButterfly->indexingMode();
             data.vectorLengthHint = vectorLengthHint;
             set(VirtualRegister(bytecode.m_dst), addToGraph(NewArrayBuffer, OpInfo(frozen), OpInfo(data.asQuadWord)));
             NEXT_OPCODE(op_new_array_buffer);
