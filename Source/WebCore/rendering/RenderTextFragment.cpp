@@ -77,6 +77,12 @@ void RenderTextFragment::setTextInternal(const String& newText, bool force)
 
     m_start = 0;
     m_end = text().length();
+
+    if (text() == newText) {
+        ASSERT(!textNode() || textNode()->renderer() == this);
+        return;
+    }
+
     if (!m_firstLetter)
         return;
     if (RenderTreeBuilder::current())

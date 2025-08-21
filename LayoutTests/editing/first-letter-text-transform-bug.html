@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title>Text Transform Bug Safari</title>
+      <style type="text/css">
+         .test {
+         text-transform: uppercase;
+         }
+         .test::first-letter {
+         text-transform: uppercase;
+         }
+      </style>
+      <script type="text/javascript">
+         if (window.testRunner){
+            testRunner.waitUntilDone();
+            testRunner.dumpAsText();
+         }
+         function runTest() {
+            let testElement = document.querySelector('.test');
+            testElement.style.textTransform = "lowercase";
+            if (window.testRunner)
+               testRunner.notifyDone();
+         }
+      </script>
+   </head>
+   <body onload="setTimeout(runTest, 0);">
+      <div class="test">SAMPLE TEXT</div>
+   </body>
+</html>
