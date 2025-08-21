@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/runner.js"></script>
+<script src="utility.js"></script>
+<script>
+var video;
+var url;
+
+const PlayingPeriodDurationMS = 500;
+
+function start() {
+    PerfTestRunner.prepareToMeasureValuesAsync({
+        unit: 'ms',
+        done: function () {
+            if (video) {
+                video.src = null;
+                video.load();
+            }
+        }
+    });
+
+    runTest();
+};
+
+async function runTest() {   
+    video = document.createElement('video');
+    video.muted = true;
+
+    video.src = 'test-with-audio.mp4';
+    await waitFor(video, 'canplaythrough');
+
+    let track = video.addTextTrack('metadata');
+    track.mode = 'showing';
+
+    // Add a cue that will pause playback after a specified amount of playback time
+    let cue = new VTTCue(0, PlayingPeriodDurationMS / 1000, '');
+    cue.pauseOnExit = true;
+    track.addCue(cue);
+
+    var startTime = PerfTestRunner.now();
+    video.play();
+    await waitFor(video, 'pause');
+    var endTime = PerfTestRunner.now();
+
+    // Record the excess amount of wall clock time requried to play PlayingPeriodDurationMS
+    if (!PerfTestRunner.measureValueAsync(endTime - startTime - video.currentTime * 1000))
+        return;
+
+    video = null;
+
+    PerfTestRunner.gc();
+    setTimeout(runTest, 0);
+}
+
+</script>
+</head>
+<body>
+    <button onclick="start()">start</button><br>
+</body>
+</html>
