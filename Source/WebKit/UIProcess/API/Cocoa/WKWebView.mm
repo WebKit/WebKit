@@ -1469,10 +1469,16 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 
         return;
     }
-    
+
     std::optional<WebCore::FrameIdentifier> frameID;
-    if (frame && frame._handle && frame._handle->_frameHandle->frameID())
-        frameID = frame._handle->_frameHandle->frameID();
+    std::optional<WebCore::ScriptExecutionContextIdentifier> documentID;
+    if (frame) {
+        if (frame._handle && frame._handle->_frameHandle->frameID())
+            frameID = frame._handle->_frameHandle->frameID();
+
+        if (frame->_frameInfo->frameInfoData().documentID)
+            documentID = frame->_frameInfo->frameInfoData().documentID.value();
+    }
 
     auto removeTransientActivation = !_dontResetTransientActivationAfterRunJavaScript && WebKit::shouldEvaluateJavaScriptWithoutTransientActivation() ? WebCore::RemoveTransientActivation::Yes : WebCore::RemoveTransientActivation::No;
     _page->runJavaScriptInFrameInScriptWorld(WebKit::RunJavaScriptParameters {
@@ -1482,7 +1488,8 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         asAsyncFunction ? WebCore::RunAsAsyncFunction::Yes : WebCore::RunAsAsyncFunction::No,
         WTFMove(argumentsMap),
         forceUserGesture ? WebCore::ForceUserGesture::Yes : WebCore::ForceUserGesture::No,
-        removeTransientActivation
+        removeTransientActivation,
+        documentID
     }, frameID, Ref { *world->_contentWorld }, !!handler, [handler] (auto&& result) {
         if (!handler)
             return;

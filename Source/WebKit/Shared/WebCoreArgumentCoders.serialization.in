@@ -4386,6 +4386,7 @@ struct WebKit::RunJavaScriptParameters {
     std::optional<Vector<std::pair<String, WebKit::JavaScriptEvaluationResult>>> arguments;
     WebCore::ForceUserGesture forceUserGesture;
     WebCore::RemoveTransientActivation removeTransientActivation;
+    std::optional<WebCore::ScriptExecutionContextIdentifier> targetScriptExecutionContext;
 }
 
 header: <WebCore/FontAttributes.h>

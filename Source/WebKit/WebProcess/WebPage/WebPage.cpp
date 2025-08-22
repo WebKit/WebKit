@@ -4489,6 +4489,7 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
         WTFMove(parameters.sourceURL),
         parameters.runAsAsyncFunction == WebCore::RunAsAsyncFunction::Yes,
         mapArguments(WTFMove(parameters.arguments)),
+        WTFMove(parameters.targetScriptExecutionContext),
         parameters.forceUserGesture == WebCore::ForceUserGesture::Yes,
         parameters.removeTransientActivation
     };

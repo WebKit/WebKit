@@ -613,12 +613,22 @@ JSC::JSValue ScriptController::executeScriptIgnoringException(const String& scri
 
 JSC::JSValue ScriptController::executeScriptInWorldIgnoringException(DOMWrapperWorld& world, const String& script, JSC::SourceTaintedOrigin taintedness, bool forceUserGesture)
 {
-    auto result = executeScriptInWorld(world, { script, taintedness, URL { }, false, std::nullopt, forceUserGesture, RemoveTransientActivation::Yes });
+    auto result = executeScriptInWorld(world, { script, taintedness, URL { }, false, std::nullopt, std::nullopt, forceUserGesture, RemoveTransientActivation::Yes });
     return result ? result.value() : JSC::JSValue { };
 }
 
 ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters)
 {
+#if PLATFORM(COCOA)
+    if (parameters.targetScriptExecutionContext) {
+        if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::EvaluateJavaScriptFromWebKitAPITargetsSpecificDocument)) {
+            RefPtr document = m_frame->document();
+            if (!document || document->identifier() != *parameters.targetScriptExecutionContext)
+                return makeUnexpected(ExceptionDetails { "Attempting to execute JavaScript in a specific document, but this frame's document has changed"_s });
+        }
+    }
+#endif
+
 #if ENABLE(APP_BOUND_DOMAINS)
     if (m_frame->loader().client().shouldEnableInAppBrowserPrivacyProtections()) {
         if (RefPtr document = m_frame->document())
@@ -750,7 +760,7 @@ JSC::JSValue ScriptController::executeUserAgentScriptInWorldIgnoringException(DO
 }
 ValueOrException ScriptController::executeUserAgentScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
-    return executeScriptInWorld(world, { script, JSC::SourceTaintedOrigin::Untainted, URL { }, false, std::nullopt, forceUserGesture, RemoveTransientActivation::No });
+    return executeScriptInWorld(world, { script, JSC::SourceTaintedOrigin::Untainted, URL { }, false, std::nullopt, std::nullopt, forceUserGesture, RemoveTransientActivation::No });
 }
 
 void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters, ResolveFunction&& resolveCompletionHandler)
