@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/ScriptWrappable.h>
+#include <WebCore/ScriptWrappableInlines.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 

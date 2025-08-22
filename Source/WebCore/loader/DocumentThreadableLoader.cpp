@@ -612,8 +612,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     RefPtr frame = m_document->frame();
     if (!frame)
         return;
-
-    if (MixedContentChecker::shouldBlockRequest(*frame, requestURL))
+    if (MixedContentChecker::shouldBlockRequestWithTarget(*frame, requestURL, request.targetAddressSpace()))
         return;
 
     RefPtr<SharedBuffer> data;

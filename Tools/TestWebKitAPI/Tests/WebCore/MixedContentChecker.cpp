@@ -37,64 +37,74 @@ TEST(MixedContentChecker, CanModifyRequest)
     URL url { "http://example.com/cat.jpg"_s };
     FetchOptions::Destination destination = FetchOptions::Destination::Image;
     Initiator initiator = Initiator::EmptyString;
+    IPAddressSpace targetAddressSpace = IPAddressSpace::Public;
 
     ASSERT_TRUE(MixedContentChecker::canModifyRequest(
         url,
         destination,
-        initiator
+        initiator,
+        targetAddressSpace
     ));
 
     // 4.1.1 request’s URL is a potentially trustworthy URL.
     ASSERT_FALSE(MixedContentChecker::canModifyRequest(
         URL { "https://example.com/cat.jpg"_s },
         destination,
-        initiator
+        initiator,
+        targetAddressSpace
     ));
 
     // 4.1.2 request’s URL’s host is an IP address.
     ASSERT_FALSE(MixedContentChecker::canModifyRequest(
         URL { "http://192.0.1.36"_s },
         destination,
-        initiator
+        initiator,
+        targetAddressSpace
     ));
 
     // Exception for 4.1.2 potentially truthworthy address
     ASSERT_TRUE(MixedContentChecker::canModifyRequest(
         URL { "http://127.0.0.1"_s },
         destination,
-        initiator
+        initiator,
+        targetAddressSpace
     ));
 
     ASSERT_TRUE(MixedContentChecker::canModifyRequest(
         URL { "http://localhost"_s },
         destination,
-        initiator
+        initiator,
+        targetAddressSpace
     ));
 
     // 4.1.4 request’s destination is not "image", "audio", or "video".
     ASSERT_TRUE(MixedContentChecker::canModifyRequest(
         url,
         FetchOptions::Destination::Audio,
-        initiator
+        initiator,
+        targetAddressSpace
     ));
 
     ASSERT_TRUE(MixedContentChecker::canModifyRequest(
         url,
         FetchOptions::Destination::Video,
-        initiator
+        initiator,
+        targetAddressSpace
     ));
 
     ASSERT_FALSE(MixedContentChecker::canModifyRequest(
         url,
         FetchOptions::Destination::Font,
-        initiator
+        initiator,
+        targetAddressSpace
     ));
 
     // 4.1.5 request’s destination is "image" and request’s initiator is "imageset".
     ASSERT_FALSE(MixedContentChecker::canModifyRequest(
         url,
         destination,
-        Initiator::Imageset
+        Initiator::Imageset,
+        targetAddressSpace
     ));
 
     // But if the scheme is handled by the handler, it is modifiable even if the initiator is "imageset".
@@ -105,7 +115,8 @@ TEST(MixedContentChecker, CanModifyRequest)
     ASSERT_TRUE(MixedContentChecker::canModifyRequest(
         URL { "custom://example.com/cat.jpg"_s },
         destination,
-        Initiator::Imageset
+        Initiator::Imageset,
+        targetAddressSpace
     ));
 
     // This exception won't apply if the cheme is not registered.
@@ -114,7 +125,15 @@ TEST(MixedContentChecker, CanModifyRequest)
     ASSERT_FALSE(MixedContentChecker::canModifyRequest(
         URL { "custom2://example.com/cat.jpg"_s },
         destination,
-        Initiator::Imageset
+        Initiator::Imageset,
+        targetAddressSpace
+    ));
+
+    ASSERT_FALSE(MixedContentChecker::canModifyRequest(
+        url,
+        destination,
+        initiator,
+        IPAddressSpace::Local
     ));
 }
 

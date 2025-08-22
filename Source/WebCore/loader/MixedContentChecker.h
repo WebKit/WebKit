@@ -37,17 +37,19 @@ namespace WebCore {
 class LocalFrame;
 class SecurityOrigin;
 enum class Initiator : uint8_t;
+enum class IPAddressSpace : bool;
 
 namespace MixedContentChecker {
 
 enum class IsUpgradable : bool { No, Yes, };
 
-bool shouldUpgradeInsecureContent(LocalFrame&, IsUpgradable, const URL&, FetchOptions::Destination, Initiator);
+bool shouldUpgradeInsecureContent(LocalFrame&, IsUpgradable, const URL&, FetchOptions::Destination, Initiator, IPAddressSpace);
 
 bool shouldBlockRequest(LocalFrame&, const URL&, IsUpgradable = IsUpgradable::No);
+bool shouldBlockRequestWithTarget(LocalFrame&, const URL&, IPAddressSpace, IsUpgradable = IsUpgradable::No);
 void checkFormForMixedContent(LocalFrame&, const URL&);
 
-WEBCORE_EXPORT bool canModifyRequest(const URL&, FetchOptions::Destination, Initiator);
+WEBCORE_EXPORT bool canModifyRequest(const URL&, FetchOptions::Destination, Initiator, IPAddressSpace);
 
 } // namespace MixedContentChecker
 } // namespace WebCore

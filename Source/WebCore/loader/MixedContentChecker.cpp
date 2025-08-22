@@ -31,6 +31,7 @@
 #include "MixedContentChecker.h"
 
 #include "Document.h"
+#include "IPAddressSpace.h"
 #include "LegacySchemeRegistry.h"
 #include "LocalFrame.h"
 #include "SecurityOrigin.h"
@@ -107,7 +108,7 @@ static bool destinationIsImageAndInitiatorIsImageset(FetchOptions::Destination d
     return destination == FetchOptions::Destination::Image && initiator == Initiator::Imageset;
 }
 
-bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgradable isUpgradable, const URL& url, FetchOptions::Destination destination, Initiator initiator)
+bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgradable isUpgradable, const URL& url, FetchOptions::Destination destination, Initiator initiator, IPAddressSpace targetAddressSpace)
 {
     RefPtr document = frame.document();
     if (!document || isUpgradable != IsUpgradable::Yes)
@@ -122,14 +123,14 @@ bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgr
     auto shouldUpgradeIPAddressAndLocalhostForTesting = document->settings().iPAddressAndLocalhostMixedContentUpgradeTestingEnabled();
 
     // 4.1 The request's URL is not upgraded in the following cases.
-    if (!canModifyRequest(url, destination, initiator))
+    if (!canModifyRequest(url, destination, initiator, targetAddressSpace))
         return false;
 
     logConsoleWarning(frame, /* blocked */ false, url, shouldUpgradeIPAddressAndLocalhostForTesting);
     return true;
 }
 
-bool MixedContentChecker::canModifyRequest(const URL& url, FetchOptions::Destination destination, Initiator initiator)
+bool MixedContentChecker::canModifyRequest(const URL& url, FetchOptions::Destination destination, Initiator initiator, IPAddressSpace targetAddressSpace)
 {
     // 4.1.1 request’s URL is a potentially trustworthy URL.
     if (url.protocolIs("https"_s))
@@ -143,6 +144,8 @@ bool MixedContentChecker::canModifyRequest(const URL& url, FetchOptions::Destina
     // 4.1.5 request’s destination is "image" and request’s initiator is "imageset".
     auto schemeIsHandledBySchemeHandler = LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol());
     if (!schemeIsHandledBySchemeHandler && destinationIsImageAndInitiatorIsImageset(destination, initiator))
+        return false;
+    if (targetAddressSpace == IPAddressSpace::Local)
         return false;
     return true;
 }
@@ -158,6 +161,12 @@ bool MixedContentChecker::shouldBlockRequest(LocalFrame& frame, const URL& url, 
         return false;
     logConsoleWarning(frame, /* blocked */ true, url, document->settings().iPAddressAndLocalhostMixedContentUpgradeTestingEnabled());
     return true;
+}
+bool MixedContentChecker::shouldBlockRequestWithTarget(LocalFrame& frame, const URL& url, IPAddressSpace targetAddressSpace, IsUpgradable isUpgradable)
+{
+    if (!SecurityOrigin::create(url)->isPotentiallyTrustworthy() && targetAddressSpace == IPAddressSpace::Local)
+        return false;
+    return shouldBlockRequest(frame, url, isUpgradable);
 }
 
 void MixedContentChecker::checkFormForMixedContent(LocalFrame& frame, const URL& url)
