@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "ScrollbarTheme.h"
+#pragma once
 
-#include "DeprecatedGlobalSettings.h"
-#include "PlatformMouseEvent.h"
 #include "ScrollbarThemeMock.h"
-#include <wtf/NeverDestroyed.h>
-#include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(MAC)
-#include "ScrollbarThemeMockMac.h"
-#endif
+
+OBJC_CLASS CALayer;
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollbarTheme);
+class ScrollbarThemeMockMac : public ScrollbarThemeMock {
+    int scrollbarThickness(ScrollbarWidth = ScrollbarWidth::Auto, ScrollbarExpansionState = ScrollbarExpansionState::Expanded, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IncludeOverlayScrollbarSize) final;
 
-ScrollbarTheme& ScrollbarTheme::theme()
-{
-    if (DeprecatedGlobalSettings::mockScrollbarsEnabled()) {
-#if PLATFORM(MAC)
-        static NeverDestroyed<ScrollbarThemeMockMac> mockTheme;
-        return mockTheme;
-# else
-        static NeverDestroyed<ScrollbarThemeMock> mockTheme;
-        return mockTheme;
-# endif
-    }
-    return nativeTheme();
-}
-
-ScrollbarButtonPressAction ScrollbarTheme::handleMousePressEvent(Scrollbar&, const PlatformMouseEvent& event, ScrollbarPart pressedPart)
-{
-    if (event.button() == MouseButton::Right)
-        return ScrollbarButtonPressAction::None;
-    if (pressedPart == ThumbPart)
-        return ScrollbarButtonPressAction::StartDrag;
-    return ScrollbarButtonPressAction::Scroll;
-}
+};
 
 }
+
+#endif // PLATFORM(MAC)

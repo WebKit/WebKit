@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "ScrollbarTheme.h"
-
-#include "DeprecatedGlobalSettings.h"
-#include "PlatformMouseEvent.h"
-#include "ScrollbarThemeMock.h"
-#include <wtf/NeverDestroyed.h>
-#include <wtf/TZoneMallocInlines.h>
+#import "config.h"
+#import "ScrollbarThemeMockMac.h"
 
 #if PLATFORM(MAC)
-#include "ScrollbarThemeMockMac.h"
-#endif
+
+#import "ScrollTypesMac.h"
+
+#import <pal/spi/mac/NSScrollerImpSPI.h>
+#import <wtf/BlockObjCExceptions.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollbarTheme);
-
-ScrollbarTheme& ScrollbarTheme::theme()
+int ScrollbarThemeMockMac::scrollbarThickness(ScrollbarWidth scrollbarWidth, ScrollbarExpansionState expansionState, OverlayScrollbarSizeRelevancy overlayRelevancy)
 {
-    if (DeprecatedGlobalSettings::mockScrollbarsEnabled()) {
-#if PLATFORM(MAC)
-        static NeverDestroyed<ScrollbarThemeMockMac> mockTheme;
-        return mockTheme;
-# else
-        static NeverDestroyed<ScrollbarThemeMock> mockTheme;
-        return mockTheme;
-# endif
-    }
-    return nativeTheme();
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    if (scrollbarWidth == ScrollbarWidth::None || (usesOverlayScrollbars() && overlayRelevancy == OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize))
+        return 0;
+    NSScrollerImp *scrollerImp = [NSScrollerImp scrollerImpWithStyle:NSScrollerStyleOverlay controlSize:nsControlSizeFromScrollbarWidth(scrollbarWidth) horizontal:NO replacingScrollerImp:nil];
+    [scrollerImp setExpanded:(expansionState == ScrollbarExpansionState::Expanded)];
+    return [scrollerImp trackBoxWidth];
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
-ScrollbarButtonPressAction ScrollbarTheme::handleMousePressEvent(Scrollbar&, const PlatformMouseEvent& event, ScrollbarPart pressedPart)
-{
-    if (event.button() == MouseButton::Right)
-        return ScrollbarButtonPressAction::None;
-    if (pressedPart == ThumbPart)
-        return ScrollbarButtonPressAction::StartDrag;
-    return ScrollbarButtonPressAction::Scroll;
-}
 
-}
+} // namespace WebCore
+
+#endif // PLATFORM(MAC)

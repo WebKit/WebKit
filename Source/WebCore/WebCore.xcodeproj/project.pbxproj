@@ -636,6 +636,8 @@
 		1AB7FC880A8B92EC00D9D37B /* XPathVariableReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC670A8B92EC00D9D37B /* XPathVariableReference.h */; };
 		1ABA76CA11D20E50004C201C /* CSSPropertyNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */; };
 		1ABA80001897341200DCE9D6 /* VisitedLinkStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABA7FFF1897341200DCE9D6 /* VisitedLinkStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1ABE72372E3842C80029561C /* ScrollbarThemeMockMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABE72352E3842C80029561C /* ScrollbarThemeMockMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1ABE72382E3842C80029561C /* ScrollbarThemeMockMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ABE72362E3842C80029561C /* ScrollbarThemeMockMac.mm */; };
 		1AC2260D0DB69F190089B669 /* JSDOMApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC2260B0DB69F190089B669 /* JSDOMApplicationCache.h */; };
 		1AC2D845171734A100652FC0 /* Storage.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E3F9C40DA059DC00250911 /* Storage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AC2D89D1B1E291F00D52E87 /* FontAntialiasingStateSaver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC2D89C1B1E291F00D52E87 /* FontAntialiasingStateSaver.h */; };
@@ -8260,6 +8262,8 @@
 		1AB7FC670A8B92EC00D9D37B /* XPathVariableReference.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathVariableReference.h; sourceTree = "<group>"; };
 		1ABA7FFF1897341200DCE9D6 /* VisitedLinkStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkStore.h; sourceTree = "<group>"; };
 		1ABC260327FD02140064F68F /* PathOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PathOperation.cpp; sourceTree = "<group>"; };
+		1ABE72352E3842C80029561C /* ScrollbarThemeMockMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollbarThemeMockMac.h; sourceTree = "<group>"; };
+		1ABE72362E3842C80029561C /* ScrollbarThemeMockMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollbarThemeMockMac.mm; sourceTree = "<group>"; };
 		1AC2260A0DB69F190089B669 /* JSDOMApplicationCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMApplicationCache.cpp; sourceTree = "<group>"; };
 		1AC2260B0DB69F190089B669 /* JSDOMApplicationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMApplicationCache.h; sourceTree = "<group>"; };
 		1AC2D89C1B1E291F00D52E87 /* FontAntialiasingStateSaver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontAntialiasingStateSaver.h; sourceTree = "<group>"; };
@@ -28923,6 +28927,8 @@
 				0F02245326F15D75000265C3 /* ScrollbarsControllerMac.mm */,
 				BC8B853C0E7C7F1100AB6984 /* ScrollbarThemeMac.h */,
 				BCEF869E0E844E9D00A85CD5 /* ScrollbarThemeMac.mm */,
+				1ABE72352E3842C80029561C /* ScrollbarThemeMockMac.h */,
+				1ABE72362E3842C80029561C /* ScrollbarThemeMockMac.mm */,
 				5B1E0E4325D1629B00272281 /* ScrollingEffectsController.mm */,
 				0F99059B26F6BE940054FBE0 /* ScrollingMomentumCalculatorMac.h */,
 				0F99059C26F6BE950054FBE0 /* ScrollingMomentumCalculatorMac.mm */,
@@ -45256,6 +45262,7 @@
 				44C991860F3D1EBE00586670 /* ScrollbarThemeIOS.h in Headers */,
 				BC8B853E0E7C7F1100AB6984 /* ScrollbarThemeMac.h in Headers */,
 				0FE71406142170B800DB33BA /* ScrollbarThemeMock.h in Headers */,
+				1ABE72372E3842C80029561C /* ScrollbarThemeMockMac.h in Headers */,
 				E53FC41A293BF17300EDE3E6 /* ScrollbarTrackCornerSystemImageMac.h in Headers */,
 				83C5795D1DA5C301006FAC86 /* ScrollBehavior.h in Headers */,
 				02E536C12984ECE200417C02 /* ScrollerMac.h in Headers */,
@@ -47446,6 +47453,7 @@
 				1209CD7E2AF1B9710046C3F0 /* ScrollbarMac.mm in Sources */,
 				021D763A29C2AC6B00063684 /* ScrollbarsControllerMac.mm in Sources */,
 				BCEF869F0E844E9D00A85CD5 /* ScrollbarThemeMac.mm in Sources */,
+				1ABE72382E3842C80029561C /* ScrollbarThemeMockMac.mm in Sources */,
 				43B85ED418CBEC5200E31AF4 /* SelectorPseudoClassAndCompatibilityElementMap.cpp in Sources */,
 				26AA0F9E18D2A18B00419381 /* SelectorPseudoElementMap.cpp in Sources */,
 				5CFC9C842B71AE1800F8D289 /* SerializedPlatformDataCueValue.mm in Sources */,

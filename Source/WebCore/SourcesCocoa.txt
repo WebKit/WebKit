@@ -623,6 +623,7 @@ platform/mac/ScrollViewMac.mm
 platform/mac/ScrollbarMac.mm @no-unify
 platform/mac/ScrollbarsControllerMac.mm @no-unify
 platform/mac/ScrollbarThemeMac.mm @no-unify
+platform/mac/ScrollbarThemeMockMac.mm @no-unify
 platform/mac/ScrollingEffectsController.mm
 platform/mac/ScrollingMomentumCalculatorMac.mm
 platform/mac/SerializedPlatformDataCueMac.mm
