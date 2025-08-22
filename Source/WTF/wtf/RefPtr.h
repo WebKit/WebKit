@@ -101,7 +101,7 @@ private:
     template<typename T1, typename U, typename V, typename X>
     friend bool operator==(const RefPtr<T1, U, V>&, X*);
 
-    enum AdoptTag { Adopt };
+    enum class AdoptTag { Adopt };
     RefPtr(T* ptr, AdoptTag) : m_ptr(ptr) { }
 
     typename PtrTraits::StorageType m_ptr;
@@ -210,7 +210,7 @@ template<typename T, typename U, typename V>
 inline RefPtr<T, U, V> adoptRef(T* p)
 {
     adopted(p);
-    return RefPtr<T, U, V>(p, RefPtr<T, U, V>::Adopt);
+    return RefPtr<T, U, V>(p, RefPtr<T, U, V>::AdoptTag::Adopt);
 }
 
 template<typename T, typename U = RawPtrTraits<T>, typename V = DefaultRefDerefTraits<T>, typename X, typename Y, typename Z>

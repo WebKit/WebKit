@@ -367,11 +367,11 @@ bool DoubleToStringConverter::ToPrecision(double value,
 static BignumDtoaMode DtoaToBignumDtoaMode(
     DoubleToStringConverter::DtoaMode dtoa_mode) {
   switch (dtoa_mode) {
-    case DoubleToStringConverter::SHORTEST:  return BIGNUM_DTOA_SHORTEST;
+    case DoubleToStringConverter::SHORTEST:  return BignumDtoaMode::BIGNUM_DTOA_SHORTEST;
     case DoubleToStringConverter::SHORTEST_SINGLE:
-        return BIGNUM_DTOA_SHORTEST_SINGLE;
-    case DoubleToStringConverter::FIXED:     return BIGNUM_DTOA_FIXED;
-    case DoubleToStringConverter::PRECISION: return BIGNUM_DTOA_PRECISION;
+        return BignumDtoaMode::BIGNUM_DTOA_SHORTEST_SINGLE;
+    case DoubleToStringConverter::FIXED:     return BignumDtoaMode::BIGNUM_DTOA_FIXED;
+    case DoubleToStringConverter::PRECISION: return BignumDtoaMode::BIGNUM_DTOA_PRECISION;
     default:
       UNREACHABLE();
   }
@@ -413,16 +413,16 @@ void DoubleToStringConverter::DoubleToAscii(double v,
   bool fast_worked;
   switch (mode) {
     case SHORTEST:
-      fast_worked = FastDtoa(v, FAST_DTOA_SHORTEST, 0, bufferReference, length, point);
+      fast_worked = FastDtoa(v, FastDtoaMode::FAST_DTOA_SHORTEST, 0, bufferReference, length, point);
       break;
     case SHORTEST_SINGLE:
-      fast_worked = FastDtoa(v, FAST_DTOA_SHORTEST_SINGLE, 0, bufferReference, length, point);
+      fast_worked = FastDtoa(v, FastDtoaMode::FAST_DTOA_SHORTEST_SINGLE, 0, bufferReference, length, point);
       break;
     case FIXED:
       fast_worked = FastFixedDtoa(v, requested_digits, bufferReference, length, point);
       break;
     case PRECISION:
-      fast_worked = FastDtoa(v, FAST_DTOA_PRECISION, requested_digits, bufferReference, length, point);
+      fast_worked = FastDtoa(v, FastDtoaMode::FAST_DTOA_PRECISION, requested_digits, bufferReference, length, point);
       break;
     default:
       fast_worked = false;

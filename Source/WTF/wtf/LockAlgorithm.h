@@ -104,13 +104,13 @@ public:
     static void unlock(Atomic<LockType>& lock)
     {
         if (!unlockFast(lock)) [[unlikely]]
-            unlockSlow(lock, Unfair);
+            unlockSlow(lock, Fairness::Unfair);
     }
     
     static void unlockFairly(Atomic<LockType>& lock)
     {
         if (!unlockFast(lock)) [[unlikely]]
-            unlockSlow(lock, Fair);
+            unlockSlow(lock, Fairness::Fair);
     }
     
     static bool safepointFast(const Atomic<LockType>& lock)
@@ -132,11 +132,11 @@ public:
     
     NEVER_INLINE static void lockSlow(Atomic<LockType>& lock);
     
-    enum Fairness {
+    enum class Fairness {
         Unfair,
         Fair
     };
-    NEVER_INLINE static void unlockSlow(Atomic<LockType>& lock, Fairness fairness = Unfair);
+    NEVER_INLINE static void unlockSlow(Atomic<LockType>& lock, Fairness fairness = Fairness::Unfair);
     
     NEVER_INLINE static void safepointSlow(Atomic<LockType>& lockWord)
     {
@@ -145,7 +145,7 @@ public:
     }
     
 private:
-    enum Token {
+    enum class Token {
         BargingOpportunity,
         DirectHandoff
     };

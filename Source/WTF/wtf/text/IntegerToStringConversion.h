@@ -32,7 +32,7 @@
 
 namespace WTF {
 
-enum PositiveOrNegativeNumber { PositiveNumber, NegativeNumber };
+enum class PositiveOrNegativeNumber { PositiveNumber, NegativeNumber };
 
 template<typename> struct IntegerToStringConversionTrait;
 
@@ -46,7 +46,7 @@ static typename IntegerToStringConversionTrait<T>::ReturnType numberToStringImpl
         number /= 10;
     } while (number);
 
-    if (NumberType == NegativeNumber)
+    if (NumberType == PositiveOrNegativeNumber::NegativeNumber)
         buffer[--index] = '-';
 
     return IntegerToStringConversionTrait<T>::flush(std::span { buffer }.subspan(index), additionalArgument);
@@ -56,14 +56,14 @@ template<typename T, typename SignedIntegerType>
 inline typename IntegerToStringConversionTrait<T>::ReturnType numberToStringSigned(SignedIntegerType number, typename IntegerToStringConversionTrait<T>::AdditionalArgumentType* additionalArgument = nullptr)
 {
     if (number < 0)
-        return numberToStringImpl<T, typename std::make_unsigned_t<SignedIntegerType>, NegativeNumber>(-unsignedCast(number), additionalArgument);
-    return numberToStringImpl<T, typename std::make_unsigned_t<SignedIntegerType>, PositiveNumber>(number, additionalArgument);
+        return numberToStringImpl<T, typename std::make_unsigned_t<SignedIntegerType>, PositiveOrNegativeNumber::NegativeNumber>(-unsignedCast(number), additionalArgument);
+    return numberToStringImpl<T, typename std::make_unsigned_t<SignedIntegerType>, PositiveOrNegativeNumber::PositiveNumber>(number, additionalArgument);
 }
 
 template<typename T, typename UnsignedIntegerType>
 inline typename IntegerToStringConversionTrait<T>::ReturnType numberToStringUnsigned(UnsignedIntegerType number, typename IntegerToStringConversionTrait<T>::AdditionalArgumentType* additionalArgument = nullptr)
 {
-    return numberToStringImpl<T, UnsignedIntegerType, PositiveNumber>(number, additionalArgument);
+    return numberToStringImpl<T, UnsignedIntegerType, PositiveOrNegativeNumber::PositiveNumber>(number, additionalArgument);
 }
 
 template<typename CharacterType, typename UnsignedIntegerType, PositiveOrNegativeNumber NumberType>
@@ -77,7 +77,7 @@ static void writeIntegerToBufferImpl(UnsignedIntegerType number, std::span<Chara
         number /= 10;
     } while (number);
 
-    if (NumberType == NegativeNumber)
+    if (NumberType == PositiveOrNegativeNumber::NegativeNumber)
         buffer[--index] = '-';
     
     for (size_t i = 0; i < buffer.size() - index; ++i)
@@ -89,13 +89,13 @@ inline void writeIntegerToBuffer(IntegerType integer, std::span<CharacterType> d
 {
     static_assert(std::is_integral_v<IntegerType>);
     if constexpr (std::is_same_v<IntegerType, bool>)
-        return writeIntegerToBufferImpl<CharacterType, uint8_t, PositiveNumber>(integer ? 1 : 0, destination);
+        return writeIntegerToBufferImpl<CharacterType, uint8_t, PositiveOrNegativeNumber::PositiveNumber>(integer ? 1 : 0, destination);
     else if constexpr (std::is_signed_v<IntegerType>) {
         if (integer < 0)
-            return writeIntegerToBufferImpl<CharacterType, typename std::make_unsigned_t<IntegerType>, NegativeNumber>(WTF::negate(integer), destination);
-        return writeIntegerToBufferImpl<CharacterType, typename std::make_unsigned_t<IntegerType>, PositiveNumber>(unsignedCast(integer), destination);
+            return writeIntegerToBufferImpl<CharacterType, typename std::make_unsigned_t<IntegerType>, PositiveOrNegativeNumber::NegativeNumber>(WTF::negate(integer), destination);
+        return writeIntegerToBufferImpl<CharacterType, typename std::make_unsigned_t<IntegerType>, PositiveOrNegativeNumber::PositiveNumber>(unsignedCast(integer), destination);
     } else
-        return writeIntegerToBufferImpl<CharacterType, IntegerType, PositiveNumber>(integer, destination);
+        return writeIntegerToBufferImpl<CharacterType, IntegerType, PositiveOrNegativeNumber::PositiveNumber>(integer, destination);
 }
 
 template<typename UnsignedIntegerType, PositiveOrNegativeNumber NumberType>
@@ -108,7 +108,7 @@ constexpr unsigned lengthOfIntegerAsStringImpl(UnsignedIntegerType number)
         number /= 10;
     } while (number);
 
-    if (NumberType == NegativeNumber)
+    if (NumberType == PositiveOrNegativeNumber::NegativeNumber)
         ++length;
 
     return length;
@@ -124,10 +124,10 @@ constexpr unsigned lengthOfIntegerAsString(IntegerType integer)
     }
     else if constexpr (std::is_signed_v<IntegerType>) {
         if (integer < 0)
-            return lengthOfIntegerAsStringImpl<typename std::make_unsigned_t<IntegerType>, NegativeNumber>(WTF::negate(integer));
-        return lengthOfIntegerAsStringImpl<typename std::make_unsigned_t<IntegerType>, PositiveNumber>(unsignedCast(integer));
+            return lengthOfIntegerAsStringImpl<typename std::make_unsigned_t<IntegerType>, PositiveOrNegativeNumber::NegativeNumber>(WTF::negate(integer));
+        return lengthOfIntegerAsStringImpl<typename std::make_unsigned_t<IntegerType>, PositiveOrNegativeNumber::PositiveNumber>(unsignedCast(integer));
     } else
-        return lengthOfIntegerAsStringImpl<IntegerType, PositiveNumber>(integer);
+        return lengthOfIntegerAsStringImpl<IntegerType, PositiveOrNegativeNumber::PositiveNumber>(integer);
 }
 
 template<size_t N>

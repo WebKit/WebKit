@@ -185,7 +185,7 @@ void ExecutableAllocator::disableJIT()
 
         constexpr size_t size = 1;
         constexpr int protection = PROT_READ | PROT_WRITE | PROT_EXEC;
-        constexpr int fd = OSAllocator::JSJITCodePages;
+        constexpr int fd = OSAllocator::Usage::JSJITCodePages;
         int flags = MAP_PRIVATE | MAP_ANON | (Options::useJITCage() ? MAP_EXECUTABLE_FOR_JIT_WITH_JIT_CAGE : MAP_EXECUTABLE_FOR_JIT);
         void* allocation = mmap(nullptr, size, protection, flags, fd, 0);
         const void* executableMemoryAllocationFailure = reinterpret_cast<void*>(-1);
@@ -395,11 +395,11 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
         // This makes the following JIT code logging broken and some of JIT code is not recorded correctly.
         // To avoid this problem, we use committed reservation if we need perf JITDump logging.
         if (Options::useJITDump())
-            return PageReservation::tryReserveAndCommitWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, false);
+            return PageReservation::tryReserveAndCommitWithGuardPages(reservationSize, OSAllocator::Usage::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, false);
 #endif
         if (Options::useJITCage() && JSC_ALLOW_JIT_CAGE_SPECIFIC_RESERVATION)
-            return PageReservation::tryReserve(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, Options::useJITCage());
-        return PageReservation::tryReserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, false);
+            return PageReservation::tryReserve(reservationSize, OSAllocator::Usage::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, Options::useJITCage());
+        return PageReservation::tryReserveWithGuardPages(reservationSize, OSAllocator::Usage::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true, false);
     };
 
     reservation.pageReservation = tryCreatePageReservation(reservation.size);

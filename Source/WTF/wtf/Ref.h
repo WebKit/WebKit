@@ -162,7 +162,7 @@ private:
     template<typename X, typename Y, typename Z, typename U, typename V, typename W>
     friend bool operator==(const Ref<X, Y, Z>&, const Ref<U, V, W>&);
 
-    enum AdoptTag { Adopt };
+    enum class AdoptTag { Adopt };
     Ref(T& object, AdoptTag)
         : m_ptr(&object)
     {
@@ -292,7 +292,7 @@ template<typename T, typename _PtrTraits, typename RefDerefTraits>
 inline Ref<T, _PtrTraits, RefDerefTraits> adoptRef(T& reference)
 {
     adopted(&reference);
-    return Ref<T, _PtrTraits, RefDerefTraits>(reference, Ref<T, _PtrTraits, RefDerefTraits>::Adopt);
+    return Ref<T, _PtrTraits, RefDerefTraits>(reference, Ref<T, _PtrTraits, RefDerefTraits>::AdoptTag::Adopt);
 }
 
 template<typename ExpectedType, typename ArgType, typename PtrTraits, typename RefDerefTraits>

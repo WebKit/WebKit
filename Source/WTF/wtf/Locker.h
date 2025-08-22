@@ -44,7 +44,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WTF {
 
-enum NoLockingNecessaryTag { NoLockingNecessary };
+enum class NoLockingNecessaryTag { NoLockingNecessary };
 
 class AbstractLocker {
     WTF_MAKE_NONCOPYABLE(AbstractLocker);
@@ -87,7 +87,7 @@ public:
     
     static Locker tryLock(T& lockable)
     {
-        Locker result(NoLockingNecessary);
+        Locker result(NoLockingNecessaryTag::NoLockingNecessary);
         if (lockable.tryLock()) {
             result.m_lockable = &lockable;
             return result;
@@ -232,6 +232,6 @@ using WTF::AbstractLocker;
 using WTF::AdoptLock;
 using WTF::Locker;
 using WTF::NoLockingNecessaryTag;
-using WTF::NoLockingNecessary;
+using WTF::NoLockingNecessaryTag::NoLockingNecessary;
 using WTF::DropLockForScope;
 using WTF::ExternalLocker;

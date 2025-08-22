@@ -97,7 +97,7 @@ public:
         static_assert(hasOneBitSet(structureHeapAddressSize));
         uintptr_t mappedHeapSize = structureHeapAddressSize;
         for (unsigned i = 0; i < 8; ++i) {
-            g_jscConfig.startOfStructureHeap = reinterpret_cast<uintptr_t>(OSAllocator::tryReserveUncommittedAligned(mappedHeapSize, structureHeapAddressSize, OSAllocator::FastMallocPages));
+            g_jscConfig.startOfStructureHeap = reinterpret_cast<uintptr_t>(OSAllocator::tryReserveUncommittedAligned(mappedHeapSize, structureHeapAddressSize, OSAllocator::Usage::FastMallocPages));
             if (g_jscConfig.startOfStructureHeap)
                 break;
             mappedHeapSize /= 2;

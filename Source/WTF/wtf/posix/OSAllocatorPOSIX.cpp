@@ -77,7 +77,7 @@ void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage usage, bool writable,
 #endif
 
 #if OS(DARWIN)
-    int fd = usage;
+    int fd = static_cast<int>(usage);
 #else
     UNUSED_PARAM(usage);
     int fd = -1;

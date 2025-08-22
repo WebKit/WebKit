@@ -412,7 +412,7 @@ int Thread::waitForCompletion()
         LOG_ERROR("Thread %p was unable to be joined.\n", this);
 
     Locker locker { m_mutex };
-    ASSERT(joinableState() == Joinable);
+    ASSERT(joinableState() == JoinableState::Joinable);
 
     // If the thread has already exited, then do nothing. If the thread hasn't exited yet, then just signal that we've already joined on it.
     // In both cases, Thread::destructTLS() will take care of destroying Thread.

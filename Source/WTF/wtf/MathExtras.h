@@ -803,7 +803,7 @@ template<typename T, typename C>
 constexpr Checked<T, C> roundUpToMultipleOfNonPowerOfTwo(Checked<T, C> divisor, Checked<T, C> x)
 {
     if (x.hasOverflowed() || divisor.hasOverflowed())
-        return ResultOverflowed;
+        return ResultOverflowedTag::ResultOverflowed;
     T remainder = x % divisor;
     if (!remainder)
         return x;

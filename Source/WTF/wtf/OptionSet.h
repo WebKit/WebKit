@@ -78,7 +78,7 @@ public:
 
     static constexpr OptionSet fromRaw(StorageType rawValue)
     {
-        return OptionSet(static_cast<E>(rawValue), FromRawValue);
+        return OptionSet(static_cast<E>(rawValue), InitializationTag::FromRawValue);
     }
 
     constexpr OptionSet() = default;
@@ -190,7 +190,7 @@ public:
     static OptionSet all() { return fromRaw(-1); }
 
 private:
-    enum InitializationTag { FromRawValue };
+    enum class InitializationTag { FromRawValue };
     constexpr OptionSet(E e, InitializationTag)
         : m_storage(static_cast<StorageType>(e))
     {

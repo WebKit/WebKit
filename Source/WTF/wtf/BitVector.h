@@ -286,8 +286,8 @@ public:
     
     WTF_EXPORT_PRIVATE void dump(PrintStream& out) const;
     
-    enum EmptyValueTag { EmptyValue };
-    enum DeletedValueTag { DeletedValue };
+    enum class EmptyValueTag { EmptyValue };
+    enum class DeletedValueTag { DeletedValue };
     
     BitVector(EmptyValueTag)
         : m_bitsOrPointer(0)

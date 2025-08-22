@@ -527,10 +527,10 @@ static bool Grisu3(double v,
   // boundary_minus and boundary_plus will round to v when convert to a double.
   // Grisu3 will never output representations that lie exactly on a boundary.
   DiyFp boundary_minus, boundary_plus;
-  if (mode == FAST_DTOA_SHORTEST) {
+  if (mode == FastDtoaMode::FAST_DTOA_SHORTEST) {
     Double(v).NormalizedBoundaries(&boundary_minus, &boundary_plus);
   } else {
-    ASSERT(mode == FAST_DTOA_SHORTEST_SINGLE);
+    ASSERT(mode == FastDtoaMode::FAST_DTOA_SHORTEST_SINGLE);
     float single_v = static_cast<float>(v);
     Single(single_v).NormalizedBoundaries(&boundary_minus, &boundary_plus);
   }
@@ -642,11 +642,11 @@ bool FastDtoa(double v,
   bool result = false;
   int decimal_exponent = 0;
   switch (mode) {
-    case FAST_DTOA_SHORTEST:
-    case FAST_DTOA_SHORTEST_SINGLE:
+    case FastDtoaMode::FAST_DTOA_SHORTEST:
+    case FastDtoaMode::FAST_DTOA_SHORTEST_SINGLE:
       result = Grisu3(v, mode, buffer, length, decimal_exponent);
       break;
-    case FAST_DTOA_PRECISION:
+    case FastDtoaMode::FAST_DTOA_PRECISION:
       result = Grisu3Counted(v, requested_digits, buffer, length, decimal_exponent);
       break;
     default:

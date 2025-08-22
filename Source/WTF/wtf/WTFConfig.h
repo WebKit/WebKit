@@ -55,13 +55,13 @@ extern "C" WTF_EXPORT_PRIVATE Slot g_config[];
 constexpr size_t reservedSlotsForExecutableAllocator = 2;
 constexpr size_t additionalReservedSlots = 2;
 
-enum ReservedConfigByteOffset {
+enum class ReservedConfigByteOffset {
     ReservedByteForAllocationProfiling,
     ReservedByteForAllocationProfilingMode,
     NumberOfReservedConfigBytes
 };
 
-static_assert(NumberOfReservedConfigBytes <= sizeof(Slot) * additionalReservedSlots);
+static_assert(static_cast<int>(ReservedConfigByteOffset::NumberOfReservedConfigBytes) <= sizeof(Slot) * additionalReservedSlots);
 
 } // namespace WebConfig
 

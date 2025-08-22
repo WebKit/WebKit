@@ -81,7 +81,7 @@ public:
     operator bool() const { return PageBlock::operator bool(); }
 #endif
 
-    static PageAllocation allocate(size_t size, OSAllocator::Usage usage = OSAllocator::UnknownUsage, bool writable = true, bool executable = false)
+    static PageAllocation allocate(size_t size, OSAllocator::Usage usage = OSAllocator::Usage::UnknownUsage, bool writable = true, bool executable = false)
     {
         ASSERT(isPageAligned(size));
         return PageAllocation(OSAllocator::reserveAndCommit(size, usage, writable, executable), size);

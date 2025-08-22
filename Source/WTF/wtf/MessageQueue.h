@@ -39,7 +39,7 @@
 
 namespace WTF {
 
-    enum MessageQueueWaitResult {
+    enum class MessageQueueWaitResult {
         MessageQueueTerminated,       // Queue was destroyed while waiting for message.
         MessageQueueTimeout,          // Timeout was specified and it expired.
         MessageQueueMessageReceived   // A message was successfully received and returned.
@@ -130,7 +130,7 @@ namespace WTF {
     {
         MessageQueueWaitResult exitReason; 
         std::unique_ptr<DataType> result = waitForMessageFilteredWithTimeout(exitReason, [](const DataType&) { return true; }, Seconds::infinity());
-        ASSERT(exitReason == MessageQueueTerminated || exitReason == MessageQueueMessageReceived);
+        ASSERT(exitReason == MessageQueueWaitResult::MessageQueueTerminated || exitReason == MessageQueueWaitResult::MessageQueueMessageReceived);
         return result;
     }
 
@@ -157,19 +157,19 @@ namespace WTF {
         ASSERT(!timedOut || absoluteTimeout != MonotonicTime::infinity());
 
         if (m_killed) {
-            result = MessageQueueTerminated;
+            result = MessageQueueWaitResult::MessageQueueTerminated;
             return nullptr;
         }
 
         if (timedOut) {
-            result = MessageQueueTimeout;
+            result = MessageQueueWaitResult::MessageQueueTimeout;
             return nullptr;
         }
 
         ASSERT(found != m_queue.end());
         std::unique_ptr<DataType> message = WTFMove(*found);
         m_queue.remove(found);
-        result = MessageQueueMessageReceived;
+        result = MessageQueueWaitResult::MessageQueueMessageReceived;
         return message;
     }
 
@@ -250,6 +250,6 @@ namespace WTF {
 using WTF::MessageQueue;
 // MessageQueueWaitResult enum and all its values.
 using WTF::MessageQueueWaitResult;
-using WTF::MessageQueueTerminated;
-using WTF::MessageQueueTimeout;
-using WTF::MessageQueueMessageReceived;
+using WTF::MessageQueueWaitResult::MessageQueueTerminated;
+using WTF::MessageQueueWaitResult::MessageQueueTimeout;
+using WTF::MessageQueueWaitResult::MessageQueueMessageReceived;

@@ -108,7 +108,7 @@ public:
 protected:
     WorkQueue(ASCIILiteral name, QOS);
 private:
-    enum MainTag : bool {
+    enum class MainTag : bool {
         CreateMain
     };
     explicit WorkQueue(MainTag);

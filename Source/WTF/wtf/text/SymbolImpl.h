@@ -115,7 +115,7 @@ inline SymbolImpl::SymbolImpl(Flags flags)
 
 template<unsigned characterCount>
 inline constexpr SymbolImpl::StaticSymbolImpl::StaticSymbolImpl(const char (&characters)[characterCount], Flags flags)
-    : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters, s_hashFlag8BitBuffer | s_hashFlagDidReportCost | StringSymbol | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
+    : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters, s_hashFlag8BitBuffer | s_hashFlagDidReportCost | StringSymbol | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExprTag::ConstructWithConstExpr)
     , m_hashForSymbolShiftedWithFlagCount(StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount)
     , m_flags(flags)
 {
@@ -123,7 +123,7 @@ inline constexpr SymbolImpl::StaticSymbolImpl::StaticSymbolImpl(const char (&cha
 
 template<unsigned characterCount>
 inline constexpr SymbolImpl::StaticSymbolImpl::StaticSymbolImpl(const char16_t (&characters)[characterCount], Flags flags)
-    : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters, s_hashFlagDidReportCost | StringSymbol | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
+    : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters, s_hashFlagDidReportCost | StringSymbol | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExprTag::ConstructWithConstExpr)
     , m_hashForSymbolShiftedWithFlagCount(StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount)
     , m_flags(flags)
 {

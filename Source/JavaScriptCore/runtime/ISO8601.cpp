@@ -1552,7 +1552,7 @@ static CheckedInt128 checkedCastDoubleToInt128(double n)
 
     // If the value is too large for the integer type, overflow.
     if (exponent >= 128)
-        return { WTF::ResultOverflowed };
+        return { WTF::ResultOverflowedTag::ResultOverflowed };
 
     // If 0 <= exponent < significandBits, right shift to get the result.
     // Otherwise, shift left.

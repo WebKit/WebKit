@@ -154,7 +154,7 @@ protected:
     StringImplShape(unsigned refCount, std::span<const LChar>, unsigned hashAndFlags);
     StringImplShape(unsigned refCount, std::span<const char16_t>, unsigned hashAndFlags);
 
-    enum ConstructWithConstExprTag { ConstructWithConstExpr };
+    enum class ConstructWithConstExprTag { ConstructWithConstExpr };
     template<unsigned characterCount> constexpr StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag);
     template<unsigned characterCount> constexpr StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag);
 
@@ -1280,13 +1280,13 @@ inline void StringImpl::assertHashIsCorrect() const
 
 template<unsigned characterCount> constexpr StringImpl::StaticStringImpl::StaticStringImpl(const char (&characters)[characterCount], StringKind stringKind)
     : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
-        s_hashFlag8BitBuffer | s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
+        s_hashFlag8BitBuffer | s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExprTag::ConstructWithConstExpr)
 {
 }
 
 template<unsigned characterCount> constexpr StringImpl::StaticStringImpl::StaticStringImpl(const char16_t (&characters)[characterCount], StringKind stringKind)
     : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
-        s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
+        s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExprTag::ConstructWithConstExpr)
 {
 }
 

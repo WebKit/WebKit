@@ -43,7 +43,7 @@
 
 namespace WTF {
 
-enum SentinelTag { Sentinel };
+enum class SentinelTag { Sentinel };
 
 template<typename T, typename PassedPtrTraits = RawPtrTraits<T>>
 class BasicRawSentinelNode {
@@ -117,7 +117,7 @@ public:
     using const_iterator = BaseIterator<const RawNode, const T>;
 
     SentinelLinkedList()
-        : m_sentinel(Sentinel)
+        : m_sentinel(SentinelTag::Sentinel)
     {
         m_sentinel.setPrev(&m_sentinel);
         m_sentinel.setNext(&m_sentinel);

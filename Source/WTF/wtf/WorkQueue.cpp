@@ -178,7 +178,7 @@ WorkQueue& WorkQueue::mainSingleton()
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
         WTF::initialize();
-        mainWorkQueue.get() = adoptRef(*new WorkQueue(CreateMain));
+        mainWorkQueue.get() = adoptRef(*new WorkQueue(MainTag::CreateMain));
     });
     return *mainWorkQueue.get();
 }

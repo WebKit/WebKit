@@ -56,7 +56,7 @@ public:
         PtrTraits::unwrap(m_ptr)->incrementCheckedPtrCount();
     }
 
-    enum AdoptTag { Adopt };
+    enum class AdoptTag { Adopt };
     CheckedRef(T& object, AdoptTag)
         : m_ptr(&object)
     {

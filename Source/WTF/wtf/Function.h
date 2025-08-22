@@ -110,7 +110,7 @@ public:
     }
 
 private:
-    enum AdoptTag { Adopt };
+    enum class AdoptTag { Adopt };
     Function(Impl* impl, AdoptTag)
         : m_callableWrapper(impl)
     {
@@ -123,7 +123,7 @@ private:
 
 template<typename Out, typename... In> Function<Out(In...)> adopt(Detail::CallableWrapperBase<Out, In...>* impl)
 {
-    return Function<Out(In...)>(impl, Function<Out(In...)>::Adopt);
+    return Function<Out(In...)>(impl, Function<Out(In...)>::AdoptTag::Adopt);
 }
 
 } // namespace WTF

@@ -40,7 +40,7 @@ constexpr bool hasCapacityToUseLargeGigacage = OS_CONSTANT(EFFECTIVE_ADDRESS_WID
 
 const size_t primitiveGigacageMask = 0;
 
-enum Kind {
+enum class Kind {
     Primitive,
     NumberOfKinds
 };
