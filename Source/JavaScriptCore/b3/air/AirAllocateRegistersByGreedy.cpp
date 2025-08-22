@@ -41,6 +41,7 @@
 #include "AirTmpMap.h"
 #include "AirTmpWidthInlines.h"
 #include "AirUseCounts.h"
+#include <wtf/IntervalSet.h>
 #include <wtf/IterationStatus.h>
 #include <wtf/ListDump.h>
 #include <wtf/PriorityQueue.h>
@@ -378,11 +379,19 @@ private:
 
 class RegisterRange {
 public:
+    static constexpr unsigned cacheLinesPerNode = 3;
+    using AllocatedIntervalSet = IntervalSet<Point, Tmp, cacheLinesPerNode>;
+
     RegisterRange() = default;
 
     struct AllocatedInterval {
-        Tmp tmp;
         Interval interval;
+        Tmp tmp;
+
+        AllocatedInterval(const std::pair<Interval, Tmp>& pair)
+            : interval(pair.first)
+            , tmp(pair.second)
+        { }
 
         bool operator<(const AllocatedInterval& other) const
         {
@@ -395,39 +404,40 @@ public:
         }
     };
 
-    using AllocatedIntervalSet = StdSet<AllocatedInterval>;
-
     void add(Tmp tmp, LiveRange& range)
     {
         ASSERT(!hasConflict(range, Width64)); // Can't add overlapping LiveRanges
         for (auto& interval : range.intervals()) {
             ASSERT(interval != Interval()); // Strict ordering requires no empty intervals.
-            m_allocations.insert({ tmp, interval });
+            m_allocations.insert(interval, tmp);
         }
     }
 
     void addClobberHigh64(Reg reg, Point point)
     {
         ASSERT(reg.isFPR());
-        m_allocationsHigh64.insert({ Tmp(reg), Interval(point) });
+        m_allocationsHigh64.insert(Interval(point), Tmp(reg));
     }
 
-    void evict(Tmp tmp, LiveRange& range)
+    void evict(LiveRange& range)
     {
-        for (auto& interval : range.intervals()) {
-            auto r = m_allocations.erase({ tmp, interval });
-            ASSERT_UNUSED(r, r == 1);
-        }
+        for (auto& interval : range.intervals())
+            m_allocations.erase(interval);
     }
 
     bool hasConflict(LiveRange& range, Width width)
     {
-        bool hasConflict = false;
-        forEachConflict(range, width, [&](auto&) -> IterationStatus {
-            hasConflict = true;
-            return IterationStatus::Done;
-        });
-        return hasConflict;
+        for (auto interval : range.intervals()) {
+            if (m_allocations.hasOverlap(interval))
+                return true;
+        }
+        if (width <= Width64)
+            return false;
+        for (auto interval : range.intervals()) {
+            if (m_allocationsHigh64.hasOverlap(interval))
+                return true;
+        }
+        return false;
     }
 
     // func is called with each (Tmp, Interval) pair (i.e. AllocatedInterval) of this
@@ -447,7 +457,7 @@ public:
 
     bool isEmpty() const
     {
-        return m_allocations.empty() && m_allocationsHigh64.empty();
+        return m_allocations.isEmpty() && m_allocationsHigh64.isEmpty();
     }
 
     void dump(PrintStream& out) const
@@ -455,15 +465,15 @@ public:
         auto dumpSet = [&out](const AllocatedIntervalSet& allocationSet) {
             CommaPrinter comma;
             out.print("[");
-            for (auto& alloc : allocationSet) {
+            for (auto alloc : allocationSet) {
                 out.print(comma);
-                out.print(alloc);
+                out.print(AllocatedInterval(alloc));
             }
             out.print("]");
         };
 
         dumpSet(m_allocations);
-        if (!m_allocationsHigh64.empty()) {
+        if (!m_allocationsHigh64.isEmpty()) {
             out.print(", ↑");
             dumpSet(m_allocationsHigh64);
         }
@@ -473,47 +483,21 @@ private:
     template<typename Func>
     static IterationStatus forEachConflictImpl(AllocatedIntervalSet& allocatedSet, const LiveRange& range, const Func& func)
     {
-        auto rangeIter = range.intervals().begin();
-        auto rangeEnd = range.intervals().end();
-
-        if (rangeIter == rangeEnd)
-            return IterationStatus::Continue;
-        Point nextSearch = rangeIter->begin();
-
-        while (true) {
-            AllocatedInterval conflict;
-            {
-                auto conflictIter = findFirstIntervalEndingAfter(allocatedSet, nextSearch);
-                if (conflictIter == allocatedSet.end())
-                    return IterationStatus::Continue; // End of 'm_allocations', so no more potential conflicts
-                if (rangeIter->end() <= conflictIter->interval.begin()) {
-                    // No more conflicts with this 'range' interval. Move on to the next interval in 'range'.
-                    if (++rangeIter == rangeEnd)
-                        return IterationStatus::Continue; // End of 'range', so no more potential conflicts
-                    // Start searching for conflicts of the next 'range' interval.
-                    nextSearch = rangeIter->begin();
-                    continue;
-                }
-                // Found a conflict. There may be additional conflicts of this 'range' interval, so advance
-                // the search position beyond this conflict but don't advance the 'range' interval.
-                conflict = *conflictIter;
-                nextSearch = conflictIter->interval.end();
+        for (auto interval : range.intervals()) {
+            while (true) {
+                auto intervalAndTmp = allocatedSet.find(interval);
+                if (!intervalAndTmp)
+                    break;
+                AllocatedInterval conflict = { *intervalAndTmp };
+                if (func(conflict) == IterationStatus::Done)
+                    return IterationStatus::Done;
+                if (interval.end() <= conflict.interval.end())
+                    break; // There can't exist other conflicts with interval
+                // Search for remaining conflicts with 'interval'
+                interval = { conflict.interval.end(), interval.end() };
             }
-            // 'func' can invalidate iterators of 'm_allocations'.
-            if (func(conflict) == IterationStatus::Done)
-                return IterationStatus::Done;
         }
-    }
-
-    static AllocatedIntervalSet::iterator findFirstIntervalEndingAfter(AllocatedIntervalSet& allocatedSet, Point point)
-    {
-        Interval query(point);
-        // pos can be 0, yet we can't express a non-empty interval with end==0, so instead of looking
-        // for the first interval ending after pos we find the first interval ending at or after pos+1.
-        ASSERT(query.end() == point + 1);
-        auto iter = allocatedSet.lower_bound({ Tmp(), query });
-        ASSERT(iter == allocatedSet.end() || iter->interval.end() > point);
-        return iter;
+        return IterationStatus::Continue;
     }
 
     AllocatedIntervalSet m_allocations;
@@ -1616,7 +1600,7 @@ private:
         ASSERT(tmpData.stage == Stage::Assigned);
         ASSERT(tmpData.spillCost() != unspillableCost);
         ASSERT(tmpData.assigned == reg);
-        m_regRanges[reg].evict(tmp, tmpData.liveRange);
+        m_regRanges[reg].evict(tmpData.liveRange);
         tmpData.stage = Stage::New;
         tmpData.assigned = Reg();
         dataLogLnIf(verbose(), "Evicted ", tmp, " from ", reg);

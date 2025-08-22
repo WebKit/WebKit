@@ -137,6 +137,7 @@ set(WTF_PUBLIC_HEADERS
     InstanceCounted.h
     Int128.h
     InterferenceGraph.h
+    IntervalSet.h
     IsoMalloc.h
     IsoMallocInlines.h
     IterationStatus.h
