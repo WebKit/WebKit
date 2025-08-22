@@ -50,6 +50,11 @@ messages -> NetworkProcessConnection WantsDispatchMessage {
 
     BroadcastConsoleMessage(enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message)
     LoadCancelledDownloadRedirectRequestInFrame(WebCore::ResourceRequest request, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID)
+    
+    # Parkable strings hybrid approach
+    ParkableStringRequestCandidates(uint32_t maxCount, uint64_t maxTotalSize) -> (Vector<String> digests, Vector<Vector<uint8_t>> compressedData, Vector<uint32_t> originalSizes)
+    ParkableStringGrantFileAccess(String tempFilePath, WebKit::SandboxExtensionHandle sandboxExtensionHandle) -> ()
+    ParkableStringStorageComplete(String digest, bool success) -> ()
 
     StorageAccessPermissionChanged(WebCore::RegistrableDomain topFrameDomain, WebCore::RegistrableDomain subFrameDomain)
 }

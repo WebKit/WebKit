@@ -43,6 +43,9 @@
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkStorageManagerMessages.h"
+#if ENABLE(PARKABLE_STRINGS)
+#include "NetworkParkableStringStorage.h"
+#endif
 #include "OriginQuotaManager.h"
 #include "OriginStorageManager.h"
 #include "ServiceWorkerStorageManager.h"
@@ -2305,6 +2308,80 @@ std::optional<SharedPreferencesForWebProcess> NetworkStorageManager::sharedPrefe
 
     return iter->value;
 }
+
+#if ENABLE(PARKABLE_STRINGS)
+
+// Hybrid approach message handlers
+void NetworkStorageManager::parkableStringNotifyCandidatesAvailable(IPC::Connection& connection, uint32_t candidateCount, uint64_t estimatedSize, CompletionHandler<void()>&& completionHandler)
+{
+    assertIsMainRunLoop();
+
+    // Extract ProcessIdentifier from the IPC connection on main thread
+    std::optional<WebCore::ProcessIdentifier> processIdentifier;
+    if (auto process = protectedProcess()) {
+        if (auto* webConnection = process->webProcessConnection(connection)) {
+            processIdentifier = webConnection->webProcessIdentifier();
+        }
+    }
+
+    if (!processIdentifier)
+        return completionHandler();
+
+    // Dispatch to work queue for thread-safe access to m_parkableStringStorage
+    protectedWorkQueue()->dispatch([this, protectedThis = Ref { *this }, candidateCount, estimatedSize, processIdentifier = *processIdentifier, completionHandler = WTFMove(completionHandler)]() mutable {
+        assertIsCurrent(workQueue());
+
+        if (!m_parkableStringStorage) {
+            if (auto process = protectedProcess())
+                m_parkableStringStorage = makeUnique<NetworkParkableStringStorage>(*process);
+            else {
+                RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+                    completionHandler();
+                });
+                return;
+            }
+        }
+
+        // Handle the notification from WebContent that candidates are available
+        m_parkableStringStorage->handleCandidatesAvailable(candidateCount, estimatedSize, processIdentifier);
+
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler();
+        });
+    });
+}
+
+void NetworkStorageManager::parkableStringGetDiskLocation(String&& digest, CompletionHandler<void(std::optional<uint64_t>, std::optional<uint64_t>)>&& completionHandler)
+{
+    assertIsMainRunLoop();
+
+    // Dispatch to work queue for thread-safe access to m_parkableStringStorage
+    protectedWorkQueue()->dispatch([this, protectedThis = Ref { *this }, digest = WTFMove(digest), completionHandler = WTFMove(completionHandler)]() mutable {
+        assertIsCurrent(workQueue());
+
+        if (!m_parkableStringStorage) {
+            RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+                completionHandler(std::nullopt, std::nullopt);
+            });
+            return;
+        }
+
+        // Get disk location from NetworkParkableStringStorage
+        if (auto location = m_parkableStringStorage->getDiskLocation(digest)) {
+            auto offset = location->offset;
+            auto size = location->size;
+            RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), offset, size]() mutable {
+                completionHandler(offset, size);
+            });
+        } else {
+            RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+                completionHandler(std::nullopt, std::nullopt);
+            });
+        }
+    });
+}
+
+#endif // ENABLE(PARKABLE_STRINGS)
 
 } // namespace WebKit
 

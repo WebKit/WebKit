@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Connection.h"
+#include "SandboxExtension.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/MessagePortChannelProvider.h>
@@ -36,6 +37,7 @@
 #include <WebCore/ShareableResource.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 class RegistrableDomain;
@@ -56,6 +58,7 @@ class WebIDBConnectionToServer;
 class WebSharedWorkerObjectConnection;
 class WebSWClientConnection;
 class WebSharedWorkerObjectConnection;
+class WebParkableStringStorageConnection;
 
 enum class WebsiteDataType : uint32_t;
 
@@ -83,6 +86,10 @@ public:
     Ref<WebSWClientConnection> protectedServiceWorkerConnection();
     WebSharedWorkerObjectConnection& sharedWorkerConnection();
     Ref<WebSharedWorkerObjectConnection> protectedSharedWorkerConnection();
+
+#if ENABLE(PARKABLE_STRINGS)
+    WebParkableStringStorageConnection& webParkableStringStorageConnection();
+#endif
 
 #if HAVE(AUDIT_TOKEN)
     void setNetworkProcessAuditToken(std::optional<audit_token_t> auditToken) { m_networkProcessAuditToken = auditToken; }
@@ -128,6 +135,11 @@ private:
     void broadcastConsoleMessage(MessageSource, MessageLevel, const String& message);
 
     void storageAccessPermissionChanged(const WebCore::RegistrableDomain& topFrameDomain, const WebCore::RegistrableDomain& subFrameDomain);
+
+    // Parkable strings hybrid approach message handlers
+    void parkableStringRequestCandidates(uint32_t maxCount, uint64_t maxTotalSize, CompletionHandler<void(Vector<String>&&, Vector<Vector<uint8_t>>&&, Vector<uint32_t>&&)>&&);
+    void parkableStringGrantFileAccess(String&& tempFilePath, SandboxExtension::Handle&&, CompletionHandler<void()>&&);
+    void parkableStringStorageComplete(String&& digest, bool success, CompletionHandler<void()>&&);
 
     // The connection from the web process to the network process.
     const Ref<IPC::Connection> m_connection;

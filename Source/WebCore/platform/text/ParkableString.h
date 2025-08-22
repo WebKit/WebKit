@@ -4,18 +4,15 @@
 
 #if ENABLE(PARKABLE_STRINGS)
 
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringImpl.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/ThreadingPrimitives.h>
-#include <wtf/Threading.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/FileSystem.h>
 #include <JavaScriptCore/ArrayBuffer.h>
@@ -27,34 +24,26 @@ class ArrayBuffer;
 namespace WebCore {
 
 class ParkableStringManager;
-
 struct BackgroundTaskParams;
+class DiskDataMetadata;
 
-// ParkableString represents a string that may be parked in memory, that it its
-// underlying memory address may change. Its content can be retrieved with the
-// |ToString()| method.
-// As a consequence, the inner pointer should never be cached, and only touched
-// through a string returned by the |ToString()| method.
-// It is safe to call `ToString()` and destroy ParkableStrings from any thread,
-// although the interactions with the ParkableStringManager must always be
-// performed on the main thread.
-
+// ParkableStringImpl - The core implementation of a string that can be "parked" (compressed and moved to reduce memory usage).
+// State transitions are managed by ParkableStringManager to ensure proper main thread synchronization and string deduplication.
 class WEBCORE_EXPORT ParkableStringImpl final : public WTF::ThreadSafeRefCounted<ParkableStringImpl> {
     friend class ParkableStringManager;
 public:
     enum class ParkingMode {
         SynchronousOnly,
-        CompressOnly
-    };
-    
-    enum class AgeOrParkResult {
-        SuccessOrTransientFailure,  // Operation succeeded or can be retried
-        NonTransientFailure         // Operation failed permanently
+        CompressOnly,
+        WriteToDisk,
+        CompressThenWriteToDisk
     };
     
     enum class State {
-        Unparked, 
-        Parked
+        Unparked,
+        Parked,
+        OnDisk,
+        DiskCorrupted
     };
     
     enum class Age {
@@ -69,12 +58,18 @@ public:
         Locked
     };
 
+    enum class AgeOrParkResult {
+        SuccessOrTransientFailure,  // Operation succeeded or failed temporarily (can retry)
+        NonTransientFailure         // Operation failed permanently (don't retry)
+    };
+
     // Hash-based deduplication support
-    static constexpr size_t kDigestSize = 32; // SHA256
+    static constexpr size_t kDigestSize = 32;
     using SecureDigest = WTF::Vector<uint8_t, kDigestSize>;
-    
     static std::unique_ptr<SecureDigest> hashString(WTF::StringImpl* string);
 
+    static WTF::Ref<ParkableStringImpl> create(WTF::RefPtr<WTF::StringImpl>);
+    
     static WTF::Ref<ParkableStringImpl> makeNonParkable(WTF::RefPtr<WTF::StringImpl>);
     static WTF::Ref<ParkableStringImpl> makeParkable(WTF::RefPtr<WTF::StringImpl>, std::unique_ptr<SecureDigest> digest);
 
@@ -83,64 +78,72 @@ public:
     
     ~ParkableStringImpl();
 
-    // Basic string properties (always available, no metadata required)
+    bool isNull() const;
     size_t length() const {
         if (!mayBeParked())
-            return m_string.length();
+            return m_string ? m_string->length() : 0;
         return m_metadata->length;
     }
     bool is8Bit() const {
         if (!mayBeParked())
-            return m_string.is8Bit();
+            return m_string ? m_string->is8Bit() : true;
         return m_metadata->is8Bit;
     }
     size_t sizeInBytes() const;
     
-    // Memory profiling support
     struct MemoryUsage {
-        size_t thisSize;              // Size of ParkableStringImpl + metadata + compressed data
-        const void* stringImpl;      // Pointer to underlying StringImpl (for tracking) 
-        size_t stringImplSize;       // Size of StringImpl + character data
+        size_t thisSize;
+        const void* stringImpl;
+        size_t stringImplSize;
     };
     MemoryUsage memoryUsageForSnapshot() const;
     size_t memoryFootprintForDump() const;
     
-    // Parking eligibility check
     bool mayBeParked() const { return !!m_metadata; }
     
-    // Parking-related queries (require metadata)
     bool hasCompressedData() const;
     bool hasCompressedDataNoLock() const WTF_REQUIRES_LOCK(m_metadata->lock);
-    bool isParked() const; 
-    bool isCompressionFailed() const; 
-    size_t compressedSize() const; 
+    bool isParked() const;
+    bool isCompressionFailed() const;
+    size_t compressedSize() const;
     
-    // Hash-based deduplication support
     const SecureDigest* digest() const { 
         return m_metadata ? m_metadata->digest.get() : nullptr; 
     }
     
-    bool isOnOwningThread() const;
+    String digestString() const;
     
+    std::optional<Vector<uint8_t>> compressedData() const;
+    
+    // String access
     WTF::String toString();
     WTF::RefPtr<WTF::StringImpl> impl();
     
-    // Locking mechanism to prevent parking (requires metadata)
+    // Locking mechanism to prevent parking\
     void lock();   // Increment lock count, prevents parking
     void unlock(); // Decrement lock count
-    void lockWithoutMakingYoung(); // Used in background tasks
+    void lockWithoutMakingYoung();
     
+    // Parking operations
     bool park(ParkingMode mode = ParkingMode::CompressOnly);
     AgeOrParkResult maybeParkString();
 
+    // Disk storage info
+    bool isOnDisk() const;
     State currentState() const;
     Age currentAge() const;
+    
+    // Disk storage operations
+    bool hasOnDiskData() const;
+    size_t onDiskSize() const;
+    const String& diskPath() const;
 
     // Core parking operations
     bool parkInternal(ParkingMode mode) WTF_REQUIRES_LOCK(m_metadata->lock);
     void unpark() WTF_REQUIRES_LOCK(m_metadata->lock);
     WTF::String unparkInternal() WTF_REQUIRES_LOCK(m_metadata->lock);
     WTF::String unparkFromCompressed() WTF_REQUIRES_LOCK(m_metadata->lock);
+    WTF::String unparkFromDisk() WTF_REQUIRES_LOCK(m_metadata->lock);
 
     // State management
     bool canParkNow() const WTF_REQUIRES_LOCK(m_metadata->lock);
@@ -150,83 +153,81 @@ public:
     void ageString() WTF_REQUIRES_LOCK(m_metadata->lock);
     Status currentStatus() const WTF_REQUIRES_LOCK(m_metadata->lock);
     
-    // Helper methods for memory usage calculation
+    // Helper methods
     bool isParkedNoLock() const WTF_REQUIRES_LOCK(m_metadata->lock);
-
-    // Public compression/decompression methods for testing
-    static std::unique_ptr<WTF::Vector<uint8_t>> compressData(std::span<const uint8_t> data);
-#if PLATFORM(COCOA)
-    static std::unique_ptr<WTF::Vector<uint8_t>> compressDataWithAppleCompression(std::span<const uint8_t> data);
-#endif
-    static std::unique_ptr<WTF::Vector<uint8_t>> compressDataWithZlib(std::span<const uint8_t> data);
-    static std::optional<WTF::String> decompressData(const WTF::Vector<uint8_t>& compressedData, bool is8Bit, unsigned length);
-#if PLATFORM(COCOA)
-    static std::optional<WTF::String> decompressDataWithAppleCompression(const WTF::Vector<uint8_t>& compressedData, bool is8Bit, unsigned length);
-#endif
-    static std::optional<WTF::String> decompressDataWithZlib(const WTF::Vector<uint8_t>& compressedData, bool is8Bit, unsigned length);
+    bool isOnDiskNoLock() const WTF_REQUIRES_LOCK(m_metadata->lock);
     
-    int lockDepthForTesting() const;
+    // Access compressed data
+    std::optional<Vector<uint8_t>> compressedDataNoLock() const WTF_REQUIRES_LOCK(m_metadata->lock);
 
 private:
-    explicit ParkableStringImpl(WTF::RefPtr<WTF::StringImpl>&&, std::unique_ptr<SecureDigest> digest);
+    explicit ParkableStringImpl(WTF::RefPtr<WTF::StringImpl>, bool parkable = true);
+    explicit ParkableStringImpl(WTF::RefPtr<WTF::StringImpl>, std::unique_ptr<SecureDigest> digest);
     
-    // Conditional metadata allocation
+    // metadata allocation
     struct ParkableMetadata {
-        WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ParkableMetadata);
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         ParkableMetadata(WTF::String string, std::unique_ptr<SecureDigest> digest);
         ParkableMetadata(const ParkableMetadata&) = delete;
         ParkableMetadata& operator=(const ParkableMetadata&) = delete;
-
+        
         mutable WTF::Lock lock;
         
-        // Lock count to prevent parking while string is in use
         unsigned lockCount WTF_GUARDED_BY_LOCK(lock) { 0 };
         
         State state WTF_GUARDED_BY_LOCK(lock) { State::Unparked };
         Age age WTF_GUARDED_BY_LOCK(lock) { Age::Young };
         
-        // Background task tracking
-        bool backgroundTaskInProgress { false }; 
+        bool hasCompressedData WTF_GUARDED_BY_LOCK(lock) { false };
+        bool hasOnDiskData WTF_GUARDED_BY_LOCK(lock) { false };
+        bool backgroundTaskInProgress WTF_GUARDED_BY_LOCK(lock) { false };
         bool compressionFailed WTF_GUARDED_BY_LOCK(lock) { false };
         
+        // Data storage
         std::unique_ptr<WTF::Vector<uint8_t>> compressedData WTF_GUARDED_BY_LOCK(lock);
+        std::unique_ptr<DiskDataMetadata> diskMetadata WTF_GUARDED_BY_LOCK(lock);
         
+        // Deduplication digest
         const std::unique_ptr<SecureDigest> digest;
         
+        // Cached string properties
         const bool is8Bit;
         const unsigned length;
     };
     
-    void scheduleCompressionTask(ParkingMode mode) WTF_REQUIRES_LOCK(m_metadata->lock);
+    // Compression/decompression helpers
+    static std::unique_ptr<WTF::Vector<uint8_t>> compressData(const WTF::Vector<uint8_t>& data);
+    std::optional<WTF::String> decompress() WTF_REQUIRES_LOCK(m_metadata->lock);
     
+    // Background task
+    void scheduleCompressionTask(ParkingMode mode) WTF_REQUIRES_LOCK(m_metadata->lock);
     static void compressInBackground(std::unique_ptr<BackgroundTaskParams> params);
 
-    void onCompressionCompleteOnMainThread(std::unique_ptr<BackgroundTaskParams> params, std::unique_ptr<WTF::Vector<uint8_t>> compressedData, WTF::Seconds parkingThreadTime);
+    // Background operations callback
+    void onCompressionCompleteOnMainThread(std::unique_ptr<BackgroundTaskParams> params, std::unique_ptr<WTF::Vector<uint8_t>> compressedData);
     
-    WTF::String m_string;
+    // NetworkProcess-controlled state transitions (require metadata)
+    void transitionToOnDiskWithoutMetadata();
+    
+    // Compression operations  
+    static std::optional<WTF::String> decompressData(const WTF::Vector<uint8_t>& compressedData, bool is8Bit, unsigned length);
+    
+    WTF::RefPtr<WTF::StringImpl> m_string;
     
     const std::unique_ptr<ParkableMetadata> m_metadata;
-    
-#if ASSERT_ENABLED
-    const uint32_t m_owningThreadUID;
-#endif
-    
+
     static constexpr size_t kMinimumSizeForParking = 10 * 1024; // 10KB
+    static constexpr size_t kMinimumSizeForDisk = 50 * 1024;    // 50KB for disk storage
     
 #if ASSERT_ENABLED
-    void assertOnValidThread() const { ASSERT(isOnOwningThread()); }
+    void assertOnValidThread() const { ASSERT(isMainThread()); }
 #else
     void assertOnValidThread() const { }
 #endif
 };
 
-// ParkableString - A string wrapper that provides memory-efficient storage
-// for large strings through compression.
-// 
-// This is the main public interface that users should interact with.
-// It behaves like a normal string but can automatically compress itself
-// to save memory when not actively being used.
-
+// ParkableString - A string wrapper that provides memory-efficient storage for large strings through compression.
 class WEBCORE_EXPORT ParkableString final {
 public:
     ParkableString();
@@ -239,15 +240,14 @@ public:
     
     ~ParkableString();
 
-    // Basic properties
     bool isNull() const;
     size_t length() const;
     bool is8Bit() const;
     size_t sizeInBytes() const;
     
-    bool mayBeParked() const; 
-    bool isParked() const;     
-    size_t compressedSize() const; 
+    bool mayBeParked() const;
+    bool isParked() const;
+    size_t compressedSize() const;
     
     WTF::String toString() const;
     WTF::RefPtr<WTF::StringImpl> impl() const;
@@ -256,10 +256,13 @@ public:
     
     size_t memoryFootprintForDump() const;
     
-    void lock();     
-    void unlock();   
+    void lock();
+    void unlock();
     
     bool park(ParkableStringImpl::ParkingMode mode = ParkableStringImpl::ParkingMode::CompressOnly);
+
+    bool isOnDisk() const;
+    size_t onDiskSize() const;
 
 private:
     WTF::RefPtr<ParkableStringImpl> m_impl;
