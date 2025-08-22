@@ -43,6 +43,53 @@ template<typename SignedIntegralType> std::enable_if_t<std::is_integral_v<Signed
 template<typename UnsignedIntegralType> constexpr std::enable_if_t<std::is_integral_v<UnsignedIntegralType> && !std::is_signed_v<UnsignedIntegralType>, UnsignedIntegralType> saturatedSum(UnsignedIntegralType, UnsignedIntegralType);
 template<typename IntegralType> IntegralType saturatedDifference(IntegralType, IntegralType);
 
+inline bool signedAddInt64Overflows(int64_t a, int64_t b, int64_t& result)
+{
+#if COMPILER_HAS_CLANG_BUILTIN(__builtin_saddll_overflow) && !(defined __clang_major__ && __clang_major__ < 7)
+    // Handle different int64_t definitions across platforms
+#if defined(__APPLE__) || (defined(__SIZEOF_LONG_LONG__) && __SIZEOF_LONG_LONG__ == 8 && !defined(__LP64__))
+        // macOS and systems where int64_t is long long
+        static_assert(sizeof(int64_t) == sizeof(long long), "int64_t must be same size as long long");
+        long long tempResult;
+        bool overflow = __builtin_saddll_overflow(
+            static_cast<long long>(a),
+            static_cast<long long>(b),
+            &tempResult
+        );
+        result = static_cast<int64_t>(tempResult);
+        return overflow;
+#else
+        // Linux and other LP64 systems where int64_t is long
+        static_assert(sizeof(int64_t) == sizeof(long), "int64_t must be same size as long");
+        long tempResult;
+        bool overflow = __builtin_saddl_overflow(
+            static_cast<long>(a),
+            static_cast<long>(b),
+            &tempResult
+        );
+        result = static_cast<int64_t>(tempResult);
+        return overflow;
+#endif
+#else
+    uint64_t ua = a;
+    uint64_t ub = b;
+    uint64_t uresult = ua + ub;
+    result = static_cast<int64_t>(uresult);
+
+    // Can only overflow if the signed bit of the two values match. If the signed
+    // bit of the result and one of the values differ it did overflow.
+    return !((ua ^ ub) >> 63) && (uresult ^ ua) >> 63;
+#endif
+}
+
+template<> inline int64_t saturatedSum<int64_t>(int64_t a, int64_t b)
+{
+    int64_t result;
+    if (signedAddInt64Overflows(a, b, result))
+        result = std::numeric_limits<int64_t>::max() + (static_cast<uint64_t>(a) >> 63);
+    return result;
+}
+
 inline bool signedAddInt32Overflows(int32_t a, int32_t b, int32_t& result)
 {
 #if COMPILER_HAS_CLANG_BUILTIN(__builtin_sadd_overflow) && !(defined __clang_major__ && __clang_major__ < 7)
@@ -114,7 +161,12 @@ template<typename UnsignedIntegralType> constexpr std::enable_if_t<std::is_integ
     return sum < a ? std::numeric_limits<UnsignedIntegralType>::max() : sum;
 }
 
-template<typename IntegralType, typename... ArgumentTypes> constexpr uint32_t saturatedSum(IntegralType value, ArgumentTypes... arguments)
+template<typename IntegralType> constexpr IntegralType saturatedSum(IntegralType value)
+{
+    return value;
+}
+
+template<typename IntegralType, typename... ArgumentTypes> constexpr IntegralType saturatedSum(IntegralType value, ArgumentTypes... arguments)
 {
     return saturatedSum<IntegralType>(value, saturatedSum<IntegralType>(arguments...));
 }

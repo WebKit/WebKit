@@ -817,7 +817,7 @@ inline void BuilderCustom::applyValueCounter(BuilderState& builderState, CSSValu
         if (!pair)
             return;
         AtomString identifier { pair->first->stringValue() };
-        int value =  pair->second->resolveAsNumber<int>(conversionData);
+        int64_t value =  pair->second->resolveAsNumber<int64_t>(conversionData);
         auto& directives = map.add(identifier, CounterDirectives { }).iterator->value;
         if (counterBehavior == Reset)
             directives.resetValue = value;

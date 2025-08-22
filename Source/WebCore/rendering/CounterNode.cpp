@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-CounterNode::CounterNode(RenderElement& owner, OptionSet<CounterNode::Type> type, int value)
+CounterNode::CounterNode(RenderElement& owner, OptionSet<CounterNode::Type> type, int64_t value)
     : m_type(type)
     , m_value(value)
     , m_owner(owner)
@@ -91,7 +91,7 @@ RenderElement& CounterNode::owner() const
     return m_owner.get();
 }
 
-Ref<CounterNode> CounterNode::create(RenderElement& owner, OptionSet<CounterNode::Type> type, int value)
+Ref<CounterNode> CounterNode::create(RenderElement& owner, OptionSet<CounterNode::Type> type, int64_t value)
 {
     return adoptRef(*new CounterNode(owner, type, value));
 }
@@ -143,12 +143,12 @@ CounterNode* CounterNode::previousInPreOrder() const
     return const_cast<CounterNode*>(previous);
 }
 
-int CounterNode::computeCountInParent() const
+int64_t CounterNode::computeCountInParent() const
 {
     if (hasSetType())
         return m_value;
 
-    int increment = actsAsReset() ? 0 : m_value;
+    int64_t increment = actsAsReset() ? 0 : m_value;
     // In case the sum overflows we need to ignore the operation instead
     // of just clamping the result, as per spec resolution.
     // See https://github.com/w3c/csswg-drafts/issues/9029
@@ -213,8 +213,8 @@ void CounterNode::resetThisAndDescendantsRenderers()
 void CounterNode::recount()
 {
     for (RefPtr node = this; node; node = node->m_nextSibling.get()) {
-        int oldCount = node->m_countInParent;
-        int newCount = node->computeCountInParent();
+        int64_t oldCount = node->m_countInParent;
+        int64_t newCount = node->computeCountInParent();
         if (oldCount == newCount)
             break;
         node->m_countInParent = newCount;
@@ -350,7 +350,7 @@ static void showTreeAndMark(const CounterNode* node)
         SAFE_FPRINTF(stderr, "%c", (current == node) ? '*' : ' ');
         for (const CounterNode* parent = current; parent && parent != root; parent = parent->parent())
             fprintf(stderr, "    ");
-        SAFE_FPRINTF(stderr, "%p %s: %d %d P:%p PS:%p NS:%p R:%p\n",
+        SAFE_FPRINTF(stderr, "%p %s: %lld %lld P:%p PS:%p NS:%p R:%p\n",
             current, current->actsAsReset() ? "reset____"_s : "increment"_s, current->value(),
             current->countInParent(), current->parent(), current->previousSibling(),
             current->nextSibling(), &current->owner());

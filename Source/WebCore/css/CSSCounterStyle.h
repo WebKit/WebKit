@@ -46,7 +46,7 @@ public:
             && m_predefinedCounterStyle == other.m_predefinedCounterStyle;
     }
 
-    String text(int, WritingMode);
+    String text(int64_t, WritingMode);
     const CSSCounterStyleDescriptors::Name& name() const { return m_descriptors.m_name; }
     CSSCounterStyleDescriptors::System system() const { return m_descriptors.m_system; }
     const CSSCounterStyleDescriptors::NegativeSymbols& negative() const { return m_descriptors.m_negativeSymbols; }
@@ -80,10 +80,15 @@ public:
     bool isExtendsSystem() const { return system() == CSSCounterStyleDescriptors::System::Extends; }
     void extendAndResolve(const CSSCounterStyle&);
 
-    static String counterForSystemSimplifiedChineseInformal(int);
-    static String counterForSystemSimplifiedChineseFormal(int);
-    static String counterForSystemTraditionalChineseInformal(int);
-    static String counterForSystemTraditionalChineseFormal(int);
+    static String counterForSystemSimplifiedChineseInformal(int64_t);
+    static String counterForSystemSimplifiedChineseFormal(int64_t);
+    static String counterForSystemTraditionalChineseInformal(int64_t);
+    static String counterForSystemTraditionalChineseFormal(int64_t);
+    static String counterForSystemJapaneseInformal(int64_t);
+    static String counterForSystemJapaneseFormal(int64_t);
+    static String counterForSystemKoreanHangulFormal(int64_t);
+    static String counterForSystemKoreanHanjaInformal(int64_t);
+    static String counterForSystemKoreanHanjaFormal(int64_t);
     static String counterForSystemEthiopicNumeric(unsigned);
     static String counterForSystemDisclosureClosed(WritingMode);
     static String counterForSystemDisclosureOpen(WritingMode);
@@ -92,18 +97,18 @@ private:
     CSSCounterStyle(const CSSCounterStyleDescriptors&, bool isPredefinedCounterStyle);
 
     // https://www.w3.org/TR/css-counter-styles-3/#counter-style-range
-    bool isInRange(int) const;
+    bool isInRange(int64_t) const;
     // https://www.w3.org/TR/css-counter-styles-3/#counter-style-negative
     bool usesNegativeSign();
-    bool shouldApplyNegativeSymbols(int) const;
+    bool shouldApplyNegativeSymbols(int64_t) const;
     // https://www.w3.org/TR/css-counter-styles-3/#counter-style-fallback
     WeakPtr<CSSCounterStyle> fallback() const { return m_fallbackReference; };
-    String fallbackText(int, WritingMode);
+    String fallbackText(int64_t, WritingMode);
     // Generates a CSSCounterStyle object as it was defined by a 'decimal' descriptor. It is used as a last-resource in case we can't resolve fallback references.
-    void applyPadSymbols(String&, int) const;
+    void applyPadSymbols(String&, int64_t) const;
     void applyNegativeSymbols(String&) const;
     // Initial text representation for the counter, before applying pad and/or negative symbols. Suffix and Prefix are also not considered as described by https://www.w3.org/TR/css-counter-styles-3/#counter-styles.
-    String initialRepresentation(int, WritingMode) const;
+    String initialRepresentation(int64_t, WritingMode) const;
 
     String counterForSystemCyclic(int) const;
     String counterForSystemFixed(int) const;

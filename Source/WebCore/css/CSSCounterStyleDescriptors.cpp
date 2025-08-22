@@ -56,12 +56,12 @@ CSSCounterStyleDescriptors::Ranges rangeFromCSSValue(Ref<CSSValue> value)
             return { };
         auto& low = downcast<CSSPrimitiveValue>(rangeValue.first());
         auto& high = downcast<CSSPrimitiveValue>(rangeValue.second());
-        int convertedLow { std::numeric_limits<int>::min() };
-        int convertedHigh { std::numeric_limits<int>::max() };
+        int64_t convertedLow { std::numeric_limits<int64_t>::min() };
+        int64_t convertedHigh { std::numeric_limits<int64_t>::max() };
         if (low.isInteger())
-            convertedLow = low.resolveAsIntegerDeprecated();
+            convertedLow = low.resolveAsIntegerDeprecated<int64_t>();
         if (high.isInteger())
-            convertedHigh = high.resolveAsIntegerDeprecated();
+            convertedHigh = high.resolveAsIntegerDeprecated<int64_t>();
         result.append({ convertedLow, convertedHigh });
     }
     return result;
@@ -210,7 +210,7 @@ static CSSCounterStyleDescriptors::SystemData extractSystemDataFromStyleProperti
 
 CSSCounterStyleDescriptors::SystemData extractSystemDataFromCSSValue(RefPtr<CSSValue> systemValue, CSSCounterStyleDescriptors::System system)
 {
-    std::pair<CSSCounterStyleDescriptors::Name, int> result { "decimal"_s, 1 };
+    std::pair<CSSCounterStyleDescriptors::Name, int64_t> result { "decimal"_s, 1 };
     if (!systemValue)
         return result;
     ASSERT(systemValue->isValueID() || systemValue->isPair());
@@ -297,6 +297,11 @@ bool CSSCounterStyleDescriptors::areSymbolsValidForSystem(CSSCounterStyleDescrip
     case System::SimplifiedChineseFormal:
     case System::TraditionalChineseInformal:
     case System::TraditionalChineseFormal:
+    case System::JapaneseInformal:
+    case System::JapaneseFormal:
+    case System::KoreanHangulFormal:
+    case System::KoreanHanjaInformal:
+    case System::KoreanHanjaFormal:
     case System::EthiopicNumeric:
     case System::Extends:
         return !symbols.size() && !additiveSymbols.size();
@@ -435,6 +440,11 @@ String CSSCounterStyleDescriptors::systemCSSText() const
     case System::SimplifiedChineseFormal:
     case System::TraditionalChineseInformal:
     case System::TraditionalChineseFormal:
+    case System::JapaneseInformal:
+    case System::JapaneseFormal:
+    case System::KoreanHangulFormal:
+    case System::KoreanHanjaInformal:
+    case System::KoreanHanjaFormal:
     case System::EthiopicNumeric:
     case System::DisclosureClosed:
     case System::DisclosureOpen:
@@ -476,12 +486,12 @@ String CSSCounterStyleDescriptors::rangesCSSText() const
         if (i)
             builder.append(", "_s);
         auto& range = m_ranges[i];
-        if (range.first == std::numeric_limits<int>::min())
+        if (range.first == std::numeric_limits<int64_t>::min())
             builder.append("infinite"_s);
         else
             builder.append(range.first);
         builder.append(" "_s);
-        if (range.second== std::numeric_limits<int>::max())
+        if (range.second== std::numeric_limits<int64_t>::max())
             builder.append("infinite"_s);
         else
             builder.append(range.second);

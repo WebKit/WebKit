@@ -26,9 +26,9 @@
 namespace WebCore {
 
 struct CounterDirectives {
-    std::optional<int> resetValue;
-    std::optional<int> incrementValue;
-    std::optional<int> setValue;
+    std::optional<int64_t> resetValue;
+    std::optional<int64_t> incrementValue;
+    std::optional<int64_t> setValue;
 
     friend constexpr bool operator==(const CounterDirectives&, const CounterDirectives&) = default;
 };

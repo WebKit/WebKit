@@ -36,7 +36,7 @@ class StyleProperties;
 
 struct CSSCounterStyleDescriptors {
     using Name = AtomString;
-    using Ranges = Vector<std::pair<int, int>>;
+    using Ranges = Vector<std::pair<int64_t, int64_t>>;
     using SystemData = std::pair<CSSCounterStyleDescriptors::Name, int>;
     // The keywords that can be used as values for the counter-style `system` descriptor.
     // https://www.w3.org/TR/css-counter-styles-3/#counter-style-system
@@ -60,6 +60,11 @@ struct CSSCounterStyleDescriptors {
         SimplifiedChineseFormal,
         TraditionalChineseInformal,
         TraditionalChineseFormal,
+        JapaneseInformal,
+        JapaneseFormal,
+        KoreanHangulFormal,
+        KoreanHanjaInformal,
+        KoreanHanjaFormal,
         EthiopicNumeric,
         Extends
     };

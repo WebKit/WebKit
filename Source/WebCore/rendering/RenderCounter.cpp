@@ -193,7 +193,7 @@ static CounterDirectives listItemCounterDirectives(RenderElement& renderer)
 
 struct CounterPlan {
     OptionSet<CounterNode::Type> type;
-    int value;
+    int64_t value;
 };
 
 static std::optional<CounterPlan> planCounter(RenderElement& renderer, const AtomString& identifier)
@@ -243,11 +243,12 @@ static std::optional<CounterPlan> planCounter(RenderElement& renderer, const Ato
     if (directives.setValue)
         return CounterPlan { type, *directives.setValue };
     if (directives.resetValue)
-        return CounterPlan { type, saturatedSum<int>(*directives.resetValue, directives.incrementValue.value_or(0)) };
+        return CounterPlan { type, saturatedSum<int64_t>(*directives.resetValue, directives.incrementValue.value_or(0)) };
     if (directives.incrementValue)
         return CounterPlan { type, *directives.incrementValue };
     return std::nullopt;
 }
+
 
 // - Finds the insertion point for the counter described by counterOwner, isReset and 
 // identifier in the CounterNode tree for identifier and sets parent and
@@ -464,9 +465,9 @@ String RenderCounter::originalText() const
         return emptyString();
 
     RefPtr child = m_counterNode.get();
-    int value = child->actsAsReset() ? child->value() : child->countInParent();
+    int64_t value = child->actsAsReset() ? child->value() : child->countInParent();
 
-    auto counterText = [&](int value) {
+    auto counterText = [&](int64_t value) {
         return counterStyle()->text(value, writingMode());
     };
     auto text = counterText(value);

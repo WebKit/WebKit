@@ -218,7 +218,7 @@ void RenderListItem::updateValueNow() const
     }
 
     int defaultIncrement = orderedList && orderedList->isReversed() ? -1 : 1;
-    auto valueForItem = [&](int previousValue, CounterDirectives& directives) {
+    auto valueForItem = [&](int64_t previousValue, CounterDirectives& directives) {
         if (directives.setValue)
             return *directives.setValue;
         int increment = directives.incrementValue.value_or(defaultIncrement);
@@ -242,7 +242,7 @@ void RenderListItem::updateValueNow() const
         startValue = valueForItem(startValue.value_or(0), directives);
     }
 
-    int value = *startValue;
+    int64_t value = *startValue;
 
     for (auto* item = startItem; item != this; ) {
         item = nextListItem(*list, *item);

@@ -45,13 +45,13 @@ class CounterNode : public RefCounted<CounterNode>, public CanMakeSingleThreadWe
 public:
     enum class Type : uint8_t { Increment, Reset, Set };
 
-    static Ref<CounterNode> create(RenderElement&, OptionSet<Type>, int value);
+    static Ref<CounterNode> create(RenderElement&, OptionSet<Type>, int64_t value);
     ~CounterNode();
     bool actsAsReset() const { return hasResetType() || !m_parent; }
     bool hasResetType() const { return m_type.contains(Type::Reset); }
     bool hasSetType() const { return m_type.contains(Type::Set); }
-    int value() const { return m_value; }
-    int countInParent() const { return m_countInParent; }
+    int64_t value() const { return m_value; }
+    int64_t countInParent() const { return m_countInParent; }
     RenderElement& owner() const;
     void addRenderer(RenderCounter&);
     void removeRenderer(RenderCounter&);
@@ -74,16 +74,16 @@ public:
     void removeChild(CounterNode&);
 
 private:
-    CounterNode(RenderElement&, OptionSet<Type>, int value);
-    int computeCountInParent() const;
+    CounterNode(RenderElement&, OptionSet<Type>, int64_t value);
+    int64_t computeCountInParent() const;
     // Invalidates the text in the renderer of this counter, if any,
     // and in the renderers of all descendants of this counter, if any.
     void resetThisAndDescendantsRenderers();
     void recount();
 
     OptionSet<Type> m_type { };
-    int m_value;
-    int m_countInParent { 0 };
+    int64_t m_value;
+    int64_t m_countInParent { 0 };
     SingleThreadWeakRef<RenderElement> m_owner;
     SingleThreadWeakPtr<RenderCounter> m_rootRenderer;
 
