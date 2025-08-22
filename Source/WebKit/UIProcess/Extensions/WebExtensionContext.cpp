@@ -28,16 +28,84 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#include "Logging.h"
+
 #include "WebExtensionContextParameters.h"
 #include "WebExtensionContextProxyMessages.h"
 #include "WebExtensionController.h"
 #include "WebPageProxy.h"
+#include <WebCore/LocalizedStrings.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
 using namespace WebCore;
+
+int WebExtensionContext::toAPIError(WebExtensionContext::Error error)
+{
+    switch (error) {
+    case WebExtensionContext::Error::Unknown:
+        return static_cast<int>(WebExtensionContext::APIError::Unknown);
+    case WebExtensionContext::Error::AlreadyLoaded:
+        return static_cast<int>(WebExtensionContext::APIError::AlreadyLoaded);
+    case WebExtensionContext::Error::NotLoaded:
+        return static_cast<int>(WebExtensionContext::APIError::NotLoaded);
+    case WebExtensionContext::Error::BaseURLAlreadyInUse:
+        return static_cast<int>(WebExtensionContext::APIError::BaseURLAlreadyInUse);
+    case WebExtensionContext::Error::NoBackgroundContent:
+        return static_cast<int>(WebExtensionContext::APIError::NoBackgroundContent);
+    case WebExtensionContext::Error::BackgroundContentFailedToLoad:
+        return static_cast<int>(WebExtensionContext::APIError::BackgroundContentFailedToLoad);
+    }
+
+    ASSERT_NOT_REACHED();
+    return static_cast<int>(WebExtensionContext::APIError::Unknown);
+}
+
+Ref<API::Error> WebExtensionContext::createError(Error error, const String& customLocalizedDescription, RefPtr<API::Error> underlyingError)
+{
+    auto errorCode = toAPIError(error);
+    String localizedDescription;
+
+    switch (error) {
+    case Error::Unknown:
+        localizedDescription = WEB_UI_STRING_KEY("An unknown error has occurred.", "An unknown error has occurred. (WKWebExtensionContext)", "WKWebExtensionContextErrorUnknown description");
+        break;
+
+    case Error::AlreadyLoaded:
+        localizedDescription = WEB_UI_STRING("Extension context is already loaded.", "WKWebExtensionContextErrorAlreadyLoaded description");
+        break;
+
+    case Error::NotLoaded:
+        localizedDescription = WEB_UI_STRING("Extension context is not loaded.", "WKWebExtensionContextErrorNotLoaded description");
+        break;
+
+    case Error::BaseURLAlreadyInUse:
+        localizedDescription = WEB_UI_STRING("Another extension context is loaded with the same base URL.", "WKWebExtensionContextErrorBaseURLAlreadyInUse description");
+        break;
+
+    case Error::NoBackgroundContent:
+        localizedDescription = WEB_UI_STRING("No background content is available to load.", "WKWebExtensionContextErrorNoBackgroundContent description");
+        break;
+
+    case Error::BackgroundContentFailedToLoad:
+        localizedDescription = WEB_UI_STRING("The background content failed to load due to an error.", "WKWebExtensionContextErrorBackgroundContentFailedToLoad description");
+        break;
+    }
+
+    if (!customLocalizedDescription.isEmpty())
+        localizedDescription = customLocalizedDescription;
+
+    return API::Error::create({ "WKWebExtensionContextErrorDomain"_s, errorCode, { }, localizedDescription }, underlyingError);
+}
+
+Vector<Ref<API::Error>> WebExtensionContext::errors()
+{
+    auto array = protectedExtension()->errors();
+    array.appendVector(m_errors);
+    return array;
+}
 
 static HashMap<WebExtensionContextIdentifier, WeakRef<WebExtensionContext>>& webExtensionContexts()
 {

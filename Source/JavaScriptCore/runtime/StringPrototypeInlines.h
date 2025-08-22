@@ -27,7 +27,7 @@
 
 #include "CachedCall.h"
 #include "ExceptionHelpers.h"
-#include "JSImmutableButterfly.h"
+#include "JSCellButterfly.h"
 #include "ObjectConstructor.h"
 #include "ParseInt.h"
 #include "StringPrototype.h"
@@ -689,7 +689,7 @@ static ALWAYS_INLINE JSString* removeAllUsingRegExpSearch(VM& vm, JSGlobalObject
     RELEASE_AND_RETURN(scope, jsSpliceSubstrings(globalObject, string, source, sourceRanges.span()));
 }
 
-ALWAYS_INLINE JSImmutableButterfly* addToRegExpSearchCache(VM& vm, JSGlobalObject* globalObject, JSString* string, const String& source, RegExp* regExp)
+ALWAYS_INLINE JSCellButterfly* addToRegExpSearchCache(VM& vm, JSGlobalObject* globalObject, JSString* string, const String& source, RegExp* regExp)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -748,7 +748,7 @@ ALWAYS_INLINE JSImmutableButterfly* addToRegExpSearchCache(VM& vm, JSGlobalObjec
     if (results.isEmpty())
         RELEASE_AND_RETURN(scope, nullptr);
 
-    JSImmutableButterfly* result = JSImmutableButterfly::tryCreateFromArgList(vm, results);
+    JSCellButterfly* result = JSCellButterfly::tryCreateFromArgList(vm, results);
     if (!result) [[unlikely]] {
         throwOutOfMemoryError(globalObject, scope);
         return nullptr;
@@ -758,7 +758,7 @@ ALWAYS_INLINE JSImmutableButterfly* addToRegExpSearchCache(VM& vm, JSGlobalObjec
     RELEASE_AND_RETURN(scope, result);
 }
 
-static ALWAYS_INLINE JSString* replaceAllWithCacheUsingRegExpSearchThreeArguments(VM& vm, JSGlobalObject* globalObject, JSString* string, const String& source, RegExp* regExp, JSFunction* replaceFunction, JSImmutableButterfly* result)
+static ALWAYS_INLINE JSString* replaceAllWithCacheUsingRegExpSearchThreeArguments(VM& vm, JSGlobalObject* globalObject, JSString* string, const String& source, RegExp* regExp, JSFunction* replaceFunction, JSCellButterfly* result)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -903,7 +903,7 @@ static ALWAYS_INLINE JSString* replaceAllWithCacheUsingRegExpSearch(VM& vm, JSGl
     unsigned cachedCount = regExp->numSubpatterns() + 2;
     unsigned argCount = cachedCount + 1;
 
-    JSImmutableButterfly* result = addToRegExpSearchCache(vm, globalObject, string, source, regExp);
+    JSCellButterfly* result = addToRegExpSearchCache(vm, globalObject, string, source, regExp);
     RETURN_IF_EXCEPTION(scope, nullptr);
     if (!result)
         return string;

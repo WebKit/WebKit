@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(IOS_FAMILY) && HAVE(AVKIT)
 
 #include <WebCore/VideoPresentationInterfaceIOS.h>

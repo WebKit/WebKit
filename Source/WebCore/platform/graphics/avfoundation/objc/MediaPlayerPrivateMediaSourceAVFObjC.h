@@ -295,6 +295,7 @@ private:
 
     void ensureLayer();
     void destroyLayer();
+    void destroyVideoLayerIfNeeded();
     void ensureVideoRenderer();
     void destroyVideoRenderer();
 
@@ -304,9 +305,13 @@ private:
 
     bool shouldEnsureLayerOrVideoRenderer() const;
     void ensureLayerOrVideoRenderer(MediaPlayerEnums::NeedsRenderingModeChanged);
+    void ensureLayerOrVideoRendererWithDecompressionSession(MediaPlayerEnums::NeedsRenderingModeChanged);
     void destroyLayerOrVideoRenderer();
     Ref<VideoMediaSampleRenderer> createVideoMediaSampleRendererForRendererer(WebSampleBufferVideoRendering *);
     void configureLayerOrVideoRenderer(WebSampleBufferVideoRendering *);
+
+    void setVideoRenderer(WebSampleBufferVideoRendering *);
+    void stageVideoRenderer(WebSampleBufferVideoRendering *);
 
     bool shouldBePlaying() const;
     void setSynchronizerRate(double, std::optional<MonotonicTime>&& = std::nullopt);
@@ -367,8 +372,13 @@ private:
     WeakPtrFactory<MediaPlayerPrivateMediaSourceAVFObjC> m_sizeChangeObserverWeakPtrFactory;
     RefPtr<MediaSourcePrivateAVFObjC> m_mediaSourcePrivate;
     RetainPtr<AVAsset> m_asset;
-    RefPtr<VideoMediaSampleRenderer> m_sampleBufferDisplayLayer;
-    RefPtr<VideoMediaSampleRenderer> m_sampleBufferVideoRenderer;
+    RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
+    RetainPtr<AVSampleBufferVideoRenderer> m_sampleBufferVideoRenderer;
+    // Only used if decompressionsession mode isn't active.
+    RefPtr<VideoMediaSampleRenderer> m_rendererWithSampleBufferDisplayLayer;
+    RefPtr<VideoMediaSampleRenderer> m_rendererWithSampleBufferVideoRenderer;
+
+    RefPtr<VideoMediaSampleRenderer> m_videoRenderer;
 
     struct AudioRendererProperties {
         bool hasAudibleSample { false };
@@ -429,6 +439,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     String m_spatialTrackingLabel;
 #endif
     AcceleratedVideoMode m_acceleratedVideoMode { AcceleratedVideoMode::Layer };
+    bool m_needsDestroyVideoLayer { false };
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     bool m_needNewFrameToProgressStaging { false };
     bool m_updateDisplayLayerPending { false };

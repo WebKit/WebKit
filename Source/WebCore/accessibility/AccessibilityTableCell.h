@@ -32,7 +32,6 @@
 
 namespace WebCore {
 
-class AccessibilityTable;
 class AccessibilityTableRow;
 
 class AccessibilityTableCell : public AccessibilityRenderObject {
@@ -48,7 +47,7 @@ public:
     bool isColumnHeader() const final;
     bool isRowHeader() const final;
 
-    AccessibilityTable* parentTable() const;
+    AccessibilityObject* parentTable() const;
     String readOnlyValue() const;
 
     // Returns the start location and row span of the cell.

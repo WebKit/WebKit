@@ -26,6 +26,7 @@
 #pragma once
 
 #import "Color.h"
+#import <wtf/Platform.h>
 
 #if USE(APPKIT)
 OBJC_CLASS NSColor;

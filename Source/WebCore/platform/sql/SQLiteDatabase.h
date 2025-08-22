@@ -32,6 +32,7 @@
 #include <wtf/Expected.h>
 #include <wtf/Lock.h>
 #include <wtf/OptionSet.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 #include <wtf/UniqueRef.h>

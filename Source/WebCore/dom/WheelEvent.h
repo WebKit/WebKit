@@ -26,6 +26,7 @@
 
 #include <WebCore/MouseEvent.h>
 #include <WebCore/PlatformWheelEvent.h>
+#include <wtf/Platform.h>
 
 namespace WebCore {
 

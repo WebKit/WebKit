@@ -25,11 +25,13 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 #include <WebCore/AXCoreObject.h>
 #include <WebCore/AXIsolatedTree.h>
 #include <WebCore/AXObjectCache.h>
+#include <WebCore/AXTreeStoreInlines.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/LayoutRect.h>
 #include <WebCore/NodeName.h>
@@ -62,7 +64,7 @@ public:
     void attachPlatformWrapper(AccessibilityObjectWrapper*);
     bool isDetached() const final;
     bool isTable() const final { return boolAttributeValue(AXProperty::IsTable); }
-    bool isExposable() const final { return boolAttributeValue(AXProperty::IsExposable); }
+    bool isExposableTable() const final { return boolAttributeValue(AXProperty::IsExposableTable); }
     bool hasClickHandler() const final { return boolAttributeValue(AXProperty::HasClickHandler); }
     FloatRect relativeFrame() const final;
 
@@ -234,7 +236,7 @@ private:
     AXIsolatedObject* cellForColumnAndRow(unsigned, unsigned) final;
     AccessibilityChildrenVector rowHeaders() final;
     AccessibilityChildrenVector visibleRows() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXProperty::VisibleRows)); }
-    AXIsolatedObject* headerContainer() final;
+    AXIsolatedObject* tableHeaderContainer() final;
     int axColumnCount() const final { return intAttributeValue(AXProperty::AXColumnCount); }
     int axRowCount() const final { return intAttributeValue(AXProperty::AXRowCount); }
 
@@ -491,7 +493,6 @@ private:
 
     // Functions that should never be called on an isolated tree object. ASSERT that these are not reached;
     bool isAccessibilityRenderObject() const final;
-    bool isAccessibilityTableInstance() const final;
     bool isAXRemoteFrame() const final { return false; }
     bool isNativeTextControl() const final;
     bool isMockObject() const final;

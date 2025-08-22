@@ -42,12 +42,19 @@
     --primary-glyph-color: rgba(255, 255, 255, 0.75);
     --secondary-glyph-color: rgba(255, 255, 255, 0.55);
     --scrubber-margin: 5px;
+    --inline-controls-border-radius: 23px;
 }
 
 :host(audio), :host(video.media-document.audio), * {
     --inline-controls-bar-height: 31px;
 }
 
+:host(audio) .media-controls.mac,
+:host(video.media-document.audio) .media-controls.mac,
+.media-controls.mac.MacInlineSizeSpecs,
+.media-controls.mac.MacInlineSizeSpecs * {
+    --inline-controls-bar-height: 46px;
+}
 /* We need to use relative positioning due to webkit.org/b/163603 */
 .media-controls-container {
     all: initial;
@@ -115,6 +122,17 @@
 
 .media-controls > .controls-bar {
     position: absolute;
+}
+
+.media-controls.mac.MacInlineSizeSpecs .controls-bar.bottom,
+.media-controls.mac.MacInlineSizeSpecs .controls-bar.top-left {
+    border-radius: var(--inline-controls-border-radius);
+}
+
+.media-controls.mac.MacInlineSizeSpecs .controls-bar.bottom .background-tint,
+.media-controls.mac.MacInlineSizeSpecs .controls-bar.top-left .background-tint {
+    border-radius: var(--inline-controls-border-radius);
+    overflow: hidden;
 }
 
 .media-controls.fade-in {

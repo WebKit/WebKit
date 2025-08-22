@@ -90,7 +90,7 @@ public:
 
     RequestPriority priority() const { return m_priority; }
 
-    const std::optional<IPAddressSpace>& targetAddressSpace() const { return m_targetAddressSpace; }
+    IPAddressSpace targetAddressSpace() const { return m_targetAddressSpace; }
 
     bool shouldEnableContentExtensionsCheck() const { return m_enableContentExtensionsCheck; }
     void disableContentExtensionsCheck() { m_enableContentExtensionsCheck = false; }
@@ -114,7 +114,7 @@ private:
     const Ref<AbortSignal> m_signal;
     Markable<FetchIdentifier> m_navigationPreloadIdentifier;
     bool m_enableContentExtensionsCheck { true };
-    std::optional<IPAddressSpace> m_targetAddressSpace;
+    IPAddressSpace m_targetAddressSpace;
 };
 
 WebCoreOpaqueRoot root(FetchRequest*);

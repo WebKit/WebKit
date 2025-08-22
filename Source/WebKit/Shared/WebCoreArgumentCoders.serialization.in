@@ -167,6 +167,8 @@ enum class WebCore::IDBTransactionMode : uint8_t {
     Versionchange
 };
 
+enum class WebCore::IPAddressSpace : bool;
+
 #if ENABLE(MEDIA_SESSION)
 header: <WebCore/MediaSessionAction.h>
 enum class WebCore::MediaSessionAction : uint8_t {
@@ -2114,6 +2116,7 @@ header: <WebCore/ResourceRequest.h>
     [BitField] bool m_didFilterLinkDecoration;
     [BitField] bool m_isPrivateTokenUsageByThirdPartyAllowed;
     [BitField] bool m_wasSchemeOptimisticallyUpgraded;
+    WebCore::IPAddressSpace m_targetAddressSpace;
 };
 
 #if USE(SOUP)
@@ -3718,6 +3721,7 @@ enum class WebCore::WasPrivateRelayed : bool;
     String proxyName;
     bool isRangeRequested;
     std::optional<WebCore::CertificateInfo> certificateInfo;
+    WebCore::IPAddressSpace ipAddressSpace;
 };
 
 #if PLATFORM(COCOA)
@@ -6142,10 +6146,6 @@ struct WebCore::ContentRuleListResults {
     WebCore::ContentRuleListResults::Summary summary;
     Vector<std::pair<String, WebCore::ContentRuleListResults::Result>> results;
 };
-
-#endif
-
-#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
 
 struct WebCore::ContentRuleListMatchedRule {
     WebCore::ContentRuleListMatchedRule::Request request;

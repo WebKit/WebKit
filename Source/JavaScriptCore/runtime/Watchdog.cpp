@@ -63,7 +63,7 @@ bool Watchdog::shouldTerminate(JSGlobalObject* globalObject)
     // Adding this leeway shouldn't cause a problem for other platforms
     // (since the "deadline is infinity" case should be the crucial one),
     // but it is a fact that only Windows is experiencing the issue.
-    epsilon = Seconds::fromMilliseconds(20);
+    epsilon = 20_ms;
 #endif
     if (MonotonicTime::timePointFromNow(epsilon) < m_deadline)
         return false; // Just a stale timer firing. Nothing to do.

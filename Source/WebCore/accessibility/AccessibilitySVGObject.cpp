@@ -303,7 +303,7 @@ AccessibilityRole AccessibilitySVGObject::determineAriaRoleAttribute() const
 
 AccessibilityRole AccessibilitySVGObject::determineAccessibilityRole()
 {
-    if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Unknown)
+    if (m_ariaRole != AccessibilityRole::Unknown)
         return m_ariaRole;
 
     if (!m_renderer)

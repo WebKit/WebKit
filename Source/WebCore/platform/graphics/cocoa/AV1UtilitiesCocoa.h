@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(COCOA) && ENABLE(AV1)
 
 namespace WebCore {

@@ -29,6 +29,7 @@
 #include <optional>
 #include <pal/SessionID.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/Platform.h>
 #include <wtf/URL.h>
 #include <wtf/UUID.h>
 #include <wtf/text/WTFString.h>

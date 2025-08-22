@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 
 #ifdef __OBJC__
+#include <wtf/Platform.h>
 #include <wtf/cocoa/TypeCastsCocoa.h>
 #endif
 

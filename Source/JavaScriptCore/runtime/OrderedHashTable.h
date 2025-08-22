@@ -36,7 +36,7 @@ class OrderedHashTable : public JSNonFinalObject {
 public:
     using HashTable = OrderedHashTable<Traits>;
     using Helper = OrderedHashTableHelper<Traits>;
-    using Storage = JSImmutableButterfly;
+    using Storage = JSCellButterfly;
     using TableIndex = typename Helper::TableIndex;
 
     DECLARE_VISIT_CHILDREN;

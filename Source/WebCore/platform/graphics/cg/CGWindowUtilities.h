@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if USE(CG) && PLATFORM(MAC)
 
 #include <CoreGraphics/CoreGraphics.h>

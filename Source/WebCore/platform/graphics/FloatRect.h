@@ -28,6 +28,7 @@
 
 #include <WebCore/FloatPoint.h>
 #include <WebCore/LengthBox.h>
+#include <wtf/Platform.h>
 
 #if USE(CG)
 typedef struct CGRect CGRect;

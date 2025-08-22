@@ -3530,6 +3530,67 @@ TEST(WritingTools, SmartRepliesMatchStyle)
     TestWebKitAPI::Util::run(&finished);
 }
 
+TEST(WritingTools, SmartRepliesTextColor)
+{
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);
+    [session setCompositionSessionType:WTCompositionSessionTypeSmartReply];
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<html><head><style> :root { color-scheme: light dark; font: -apple-system-body; } </style></head><body><br><div id='AppleMailSignature' dir='ltr'>Sent from my iPhone</div></body></html>"]);
+    [webView forceDarkMode];
+    [webView _setEditable:YES];
+
+    NSString *setSelectionJavaScript = @""
+        "(() => {"
+        "  const range = document.createRange();"
+        "  range.setStart(document.body, 0);"
+        "  range.setEnd(document.body, 0);"
+        "  "
+        "  var selection = window.getSelection();"
+        "  selection.removeAllRanges();"
+        "  selection.addRange(range);"
+        "})();";
+    [webView stringByEvaluatingJavaScript:setSelectionJavaScript];
+
+    __block bool done = false;
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        [[webView writingToolsDelegate] writingToolsSession:session.get() didReceiveAction:WTActionCompositionRestart];
+        [webView waitForNextPresentationUpdate];
+
+#if PLATFORM(MAC)
+        RetainPtr font = [NSFont preferredFontForTextStyle:NSFontTextStyleBody options:@{ }];
+#else
+        RetainPtr font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+#endif
+
+        RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:@"Text" attributes: @{
+            NSFontAttributeName: font.get()
+        }]);
+
+        [[webView writingToolsDelegate] compositionSession:session.get() didReceiveText:attributedText.get() replacementRange:NSMakeRange(0, 0) inContext:contexts.firstObject finished:YES];
+        [webView waitForNextPresentationUpdate];
+
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+
+    // Wait for the animations to finish.
+    TestWebKitAPI::Util::runFor(3.0_s);
+
+    NSString *getTextColorJavaScript = @""
+        "(() => {"
+        "  element = document.evaluate(\"//*[text()='Text']\", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;"
+        "  return getComputedStyle(element).color;"
+        "})();";
+
+    EXPECT_WK_STREQ("rgb(255, 255, 255)", [webView stringByEvaluatingJavaScript:getTextColorJavaScript]);
+
+    [webView forceLightMode];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_WK_STREQ("rgb(0, 0, 0)", [webView stringByEvaluatingJavaScript:getTextColorJavaScript]);
+}
+
 TEST(WritingTools, ContextRangeWithNoSelection)
 {
     RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeComposition textViewDelegate:nil]);

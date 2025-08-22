@@ -1315,7 +1315,7 @@ webkit.org/b/228127 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 
 webkit.org/b/229585 imported/w3c/web-platform-tests/navigation-timing/test_performance_attributes.sub.html [ Pass Failure ]
 
-webkit.org/b/229595 [ Debug ] imported/w3c/web-platform-tests/fetch/http-cache/invalidate.any.worker.html [ Pass Failure ]
+webkit.org/b/229595 imported/w3c/web-platform-tests/fetch/http-cache/invalidate.any.worker.html [ Pass Failure ]
 
 webkit.org/b/209878 [ Debug ] webrtc/datachannel/multiple-connections.html [ Pass Failure Slow ]
 
@@ -1626,14 +1626,17 @@ webkit.org/b/293808 [ Sequoia+ arm64 ] http/tests/webgpu/webgpu/shader [ Slow ]
 http/tests/webgpu/webgpu/api/operation/command_buffer/copyTextureToTexture.html [ Skip ]
 http/tests/webgpu/webgpu/api/operation/command_buffer/image_copy.html [ Skip ]
 http/tests/webgpu/webgpu/api/operation/resource_init/texture_zero.html [ Skip ]
-http/tests/webgpu/webgpu/api/operation/vertex_state/correctness.html [ Skip ]
 http/tests/webgpu/webgpu/api/validation/capability_checks/limits/maxStorageTexturesPerShaderStage.html [ Skip ]
 http/tests/webgpu/webgpu/api/validation/createView.html [ Skip ]
-http/tests/webgpu/webgpu/api/validation/render_pipeline/vertex_state.html [ Skip ]
+http/tests/webgpu/webgpu/api/validation/render_pipeline/vertex_state.html [ Slow ]
 http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/draw.html [ Skip ]
 http/tests/webgpu/webgpu/api/validation/createTexture.html [ Skip ]
 http/tests/webgpu/webgpu/api/validation/error_scope.html [ Skip ]
 http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/distance.html [ Skip ]
+
+# Slow tests or too slow for Intel
+[ arm64 ] http/tests/webgpu/webgpu/api/operation/vertex_state/correctness.html [ Slow ]
+[ x86_64 ] http/tests/webgpu/webgpu/api/operation/vertex_state/correctness.html [ Skip ]
 
 # these tests are flaky failures, potentially a test issue
 http/tests/webgpu/webgpu/api/operation/adapter/info.html [ Skip ]
@@ -2401,8 +2404,6 @@ webkit.org/b/297121 fast/page-color-sampling/color-sampling-fixed-ancestor-with-
 
 webkit.org/b/297251 fast/mediastream/getUserMedia-echoCancellation.html [ Pass Failure ]
 
-webkit.org/b/297289 [ Debug ] webarchive/loading/test-loading-archive-with-link.html [ Crash ]
-
 webkit.org/b/297343 [ Debug ] ipc/storage-area-cache-use-after-free.html [ Slow ]
 
 webkit.org/b/297428 http/tests/navigation/ping-attribute/anchor-cookie.html [ Pass Failure ]
@@ -2415,6 +2416,11 @@ webkit.org/b/296202 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/297613 [ Debug ] fast/scrolling/mac/stateless-user-scroll-scrollend.html [ Pass Failure ]
 
-webkit.org/b/297614 [ Sequoia Debug x86_64 ] fast/canvas/hdr/float16-canvas-imagedata.html [ Timeout ]
-
 webkit.org/b/297623 [ Release arm64 ] http/wpt/webcodecs/webcodecs-message-gc.html [ Pass Failure ]
+
+webkit.org/b/297674 [ Sonoma Release ] http/wpt/mediarecorder/MediaRecorder-matroska-AV-audio-video-dataavailable.html [ Pass Failure ]
+
+# webkit.org/b/297737 [macOS Debug] ipc/send-gradient.html is crashing in EWS
+[ Debug ] ipc/send-gradient.html [ Skip ]
+[ Debug ] ipc/send-filter.html [ Skip ]
+[ Debug ] ipc/send-ignored-network-message.html [ Skip ]

@@ -110,24 +110,13 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
         // of the rule when we process them later.
         //
         // If we're tracking rule identifiers, we also cannot combine actions since the identifiers are unique.
-        bool shouldPushRule = !rule.trigger().conditions.isEmpty() || std::holds_alternative<IgnoreFollowingRulesAction>(actionData);
-#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
-        shouldPushRule = shouldPushRule || rule.identifier();
-#endif
-        if (shouldPushRule) {
+        if (!rule.trigger().conditions.isEmpty() || std::holds_alternative<IgnoreFollowingRulesAction>(actionData) || std::holds_alternative<ReportIdentifierAction>(actionData)) {
             actionLocations.append(actions.size());
 
             actions.append(actionData.index());
             WTF::visit(WTF::makeVisitor([&](const auto& member) {
                 member.serialize(actions);
             }), actionData);
-
-#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
-            if (rule.identifier()) {
-                actions.reserveCapacity(actions.size() + sizeof(rule.identifier()));
-                actions.append(asByteSpan(rule.identifier()));
-            }
-#endif
 
             continue;
         }
@@ -187,6 +176,9 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
             return findOrMakeOtherActionLocation(modifyHeadersActionMap, action);
         }, [&] (const RedirectAction& action) {
             return findOrMakeOtherActionLocation(redirectActionMap, action);
+        }, [&] (const ReportIdentifierAction&) {
+            ASSERT_NOT_REACHED();
+            return static_cast<ActionLocation>(0);
         }), actionData);
         actionLocations.append(actionLocation);
     }

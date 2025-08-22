@@ -29,7 +29,6 @@
 #pragma once
 
 #include "AccessibilityMockObject.h"
-#include "AccessibilityTable.h"
 #include "IntRect.h"
 
 namespace WebCore {

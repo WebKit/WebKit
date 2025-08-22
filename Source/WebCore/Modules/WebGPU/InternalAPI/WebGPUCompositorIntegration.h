@@ -30,6 +30,7 @@
 #include <optional>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
+#include <wtf/Platform.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>

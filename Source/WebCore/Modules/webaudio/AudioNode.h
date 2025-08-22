@@ -28,6 +28,7 @@
 #include "ChannelCountMode.h"
 #include "ChannelInterpretation.h"
 #include "EventTarget.h"
+#include "ExceptionOr.h"
 #include <wtf/Forward.h>
 #include <wtf/LoggerHelper.h>
 

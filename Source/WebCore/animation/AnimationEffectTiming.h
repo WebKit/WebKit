@@ -67,6 +67,7 @@ struct AnimationEffectTiming {
         std::optional<WebAnimationTime> timelineDuration;
         std::optional<WebAnimationTime> startTime;
         std::optional<WebAnimationTime> localTime;
+        EndpointInclusiveActiveInterval endpointInclusiveActiveInterval { EndpointInclusiveActiveInterval::No };
         double playbackRate { 0 };
     };
 

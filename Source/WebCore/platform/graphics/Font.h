@@ -30,6 +30,7 @@
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/BitVector.h>
 #include <wtf/Hasher.h>
+#include <wtf/Platform.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/StringHash.h>
 

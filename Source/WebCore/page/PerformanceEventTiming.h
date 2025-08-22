@@ -26,50 +26,44 @@
 
 #pragma once
 
-#include <WebCore/DOMHighResTimeStamp.h>
-#include <WebCore/EventNames.h>
-#include <WebCore/EventTarget.h>
-#include <WebCore/PerformanceEntry.h>
+#include "DOMHighResTimeStamp.h"
+#include "EventTarget.h"
+#include "EventTimingInteractionID.h"
+#include "PerformanceEntry.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class EventTarget;
 class Node;
+struct PerformanceEventTimingCandidate;
 
 class PerformanceEventTiming final : public PerformanceEntry {
 public:
-    struct Candidate {
-        EventTypeInfo typeInfo { };
-        bool cancelable { false };
-        Seconds startTime { 0 };
-        Seconds processingStart { 0 };
-        Seconds processingEnd { 0 };
-        WeakPtr<EventTarget, EventTarget::WeakPtrImplType> target { nullptr };
-    };
-    static Ref<PerformanceEventTiming> create(const Candidate&, Seconds duration, bool isFirst = false);
+    static Ref<PerformanceEventTiming> create(const PerformanceEventTimingCandidate&, bool isFirst = false);
     ~PerformanceEventTiming();
 
     DOMHighResTimeStamp processingStart() const { return m_processingStart.milliseconds(); }
     DOMHighResTimeStamp processingEnd() const { return m_processingEnd.milliseconds(); }
     bool cancelable() const { return m_cancelable; }
     Node* target() const;
-    unsigned interactionId() const;
+    uint64_t interactionId() const;
 
     Type performanceEntryType() const final;
     ASCIILiteral entryType() const final;
 
     static constexpr DOMHighResTimeStamp durationResolutionInMilliseconds = 8;
-    static constexpr Seconds durationResolution = Seconds::fromMilliseconds(8);
-    static constexpr Seconds minimumDurationThreshold = Seconds::fromMilliseconds(16);
-    static constexpr Seconds defaultDurationThreshold = Seconds::fromMilliseconds(104);
+    static constexpr Seconds durationResolution = 8_ms;
+    static constexpr Seconds minimumDurationThreshold = 16_ms;
+    static constexpr Seconds defaultDurationThreshold = 104_ms;
 
 private:
-    PerformanceEventTiming(const Candidate&, Seconds duration, bool isFirst);
+    PerformanceEventTiming(const PerformanceEventTimingCandidate&, bool isFirst);
+
     bool m_isFirst;
     bool m_cancelable;
     Seconds m_processingStart;
     Seconds m_processingEnd;
+    EventTimingInteractionID m_interactionID;
     WeakPtr<EventTarget, EventTarget::WeakPtrImplType> m_target;
 };
 

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(SPEECH_SYNTHESIS)
 
 #include <WebCore/PlatformSpeechSynthesisVoice.h>

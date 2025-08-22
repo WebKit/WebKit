@@ -1198,12 +1198,6 @@ bool AXIsolatedObject::isAccessibilityRenderObject() const
     return false;
 }
 
-bool AXIsolatedObject::isAccessibilityTableInstance() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool AXIsolatedObject::isNativeTextControl() const
 {
     ASSERT_NOT_REACHED();
@@ -1813,7 +1807,7 @@ AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::rowHeaders()
     return headers;
 }
 
-AXIsolatedObject* AXIsolatedObject::headerContainer()
+AXIsolatedObject* AXIsolatedObject::tableHeaderContainer()
 {
     for (const auto& child : unignoredChildren()) {
         if (child->role() == AccessibilityRole::TableHeaderContainer)

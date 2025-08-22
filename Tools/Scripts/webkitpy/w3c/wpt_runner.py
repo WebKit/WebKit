@@ -72,7 +72,7 @@ def main(script_name, argv):
         sys.path.insert(0, filesystem.join(top_level_directory, 'Tools', 'jhbuild'))
         import jhbuildutils
 
-        if not flatpakutils.is_sandboxed() and not jhbuildutils.enter_jhbuild_environment_if_available(port.name()):
+        if not flatpakutils.is_sandboxed() and not jhbuildutils.enter_jhbuild_environment_if_available(port.name()) and os.environ.get('WEBKIT_BUILD_USE_SYSTEM_LIBRARIES') != '1':
             _log.warning('jhbuild environment not present. Run update-webkitgtk-libs before build-webkit to ensure proper testing.')
 
     # Create the Port-specific driver.

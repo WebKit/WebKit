@@ -32,7 +32,7 @@
 #include "BytecodeLivenessAnalysis.h"
 #include "JSCBytecodeCacheVersion.h"
 #include "JSCInlines.h"
-#include "JSImmutableButterfly.h"
+#include "JSCellButterfly.h"
 #include "JSTemplateObjectDescriptor.h"
 #include "ScopedArgumentsTable.h"
 #include "SourceCodeKey.h"
@@ -1261,14 +1261,14 @@ private:
 };
 
 class CachedJSValue;
-class CachedImmutableButterfly : public CachedObject<JSImmutableButterfly> {
+class CachedImmutableButterfly : public CachedObject<JSCellButterfly> {
 public:
     CachedImmutableButterfly()
         : m_cachedDoubles()
     {
     }
 
-    void encode(Encoder& encoder, JSImmutableButterfly& immutableButterfly)
+    void encode(Encoder& encoder, JSCellButterfly& immutableButterfly)
     {
         m_length = immutableButterfly.length();
         m_indexingType = immutableButterfly.indexingTypeAndMisc();
@@ -1278,9 +1278,9 @@ public:
             m_cachedValues.encode(encoder, immutableButterfly.toButterfly()->contiguous().data(), m_length);
     }
 
-    JSImmutableButterfly* decode(Decoder& decoder) const
+    JSCellButterfly* decode(Decoder& decoder) const
     {
-        JSImmutableButterfly* immutableButterfly = JSImmutableButterfly::create(decoder.vm(), m_indexingType, m_length);
+        JSCellButterfly* immutableButterfly = JSCellButterfly::create(decoder.vm(), m_indexingType, m_length);
         if (hasDouble(m_indexingType))
             m_cachedDoubles.decode(decoder, immutableButterfly->toButterfly()->contiguousDouble().data(), m_length, immutableButterfly);
         else
@@ -1398,7 +1398,7 @@ public:
             return;
         }
 
-        if (auto* immutableButterfly = jsDynamicCast<JSImmutableButterfly*>(cell)) {
+        if (auto* immutableButterfly = jsDynamicCast<JSCellButterfly*>(cell)) {
             m_type = EncodedType::ImmutableButterfly;
             this->allocate<CachedImmutableButterfly>(encoder)->encode(encoder, *immutableButterfly);
             return;

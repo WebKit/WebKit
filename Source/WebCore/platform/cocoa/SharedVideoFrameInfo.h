@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(VIDEO) && PLATFORM(COCOA)
 
 #include <span>

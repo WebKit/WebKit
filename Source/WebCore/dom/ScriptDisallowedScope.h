@@ -25,6 +25,7 @@
 
 #include <WebCore/ContainerNode.h>
 #include <wtf/MainThread.h>
+#include <wtf/Platform.h>
 #include <wtf/RuntimeApplicationChecks.h>
 
 #if PLATFORM(IOS_FAMILY)

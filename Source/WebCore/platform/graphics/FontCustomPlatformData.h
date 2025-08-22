@@ -29,6 +29,7 @@
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(WIN)

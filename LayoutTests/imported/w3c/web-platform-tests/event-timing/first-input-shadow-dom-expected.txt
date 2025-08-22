@@ -1,3 +1,3 @@
 
-FAIL Event Timing: test first input on shadow DOM. assert_equals: expected Element node <custom-button id="custom_button"></custom-button> but got Element node <button id="inner_button_id">Click me</button>
+PASS Event Timing: test first input on shadow DOM.
 

@@ -36,6 +36,7 @@
 #include <WebCore/VelocityData.h>
 #include <wtf/Deque.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>

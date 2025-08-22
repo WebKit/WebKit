@@ -33,6 +33,7 @@
 #include <optional>
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/Platform.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
 

@@ -19,11 +19,11 @@
 
 #pragma once
 
-#include <wtf/Platform.h>
 
 #if USE(MANETTE)
 
 #include <libmanette.h>
+#include <wtf/Platform.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WTF {

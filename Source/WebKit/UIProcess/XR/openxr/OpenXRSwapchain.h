@@ -51,6 +51,8 @@ public:
     int32_t width() const { return m_createInfo.width; }
     int32_t height() const { return m_createInfo.height; }
     WebCore::IntSize size() const { return WebCore::IntSize(width(), height()); }
+    int64_t format() const { return m_createInfo.format; }
+    PlatformGLObject acquiredTexture() const { return m_acquiredTexture; }
 
 private:
     OpenXRSwapchain(XrSwapchain, const XrSwapchainCreateInfo&, Vector<XrSwapchainImageOpenGLESKHR>&&);

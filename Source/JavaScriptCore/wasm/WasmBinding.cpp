@@ -55,7 +55,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     jit.loadPtr(JIT::Address(scratch), scratch);
     // We are halfway between being the caller and the callee: we have already made the call, but not yet completed the prologue.
     // On ARM64 this doesn't really matter, but on intel we need to worry about the pushed pc.
-    jit.storeWasmCalleeCallee(scratch, safeCast<int>(sizeof(CallerFrameAndPC)) - safeCast<int>(prologueStackPointerDelta()));
+    jit.storeWasmCalleeToCalleeCallFrame(scratch, safeCast<int>(sizeof(CallerFrameAndPC)) - safeCast<int>(prologueStackPointerDelta()));
 
     // FIXME: This could be a load pair.
     // B3's call codegen ensures that the JSCell is a WebAssemblyFunction.

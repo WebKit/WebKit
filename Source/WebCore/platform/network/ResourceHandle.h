@@ -30,6 +30,7 @@
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <wtf/Box.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/Platform.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>

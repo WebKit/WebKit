@@ -56,12 +56,8 @@ const std::error_category& contentExtensionErrorCategory()
                 return "Invalid object in the top level array.";
             case ContentExtensionError::JSONInvalidRule:
                 return "Invalid rule.";
-#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
             case ContentExtensionError::JSONInvalidRuleIdentifier:
                 return "Invalid rule identifier, which must be an integer.";
-            case ContentExtensionError::JSONRulesMissingIdentifier:
-                return "All rules must have an identifier or no identifiers.";
-#endif
             case ContentExtensionError::JSONContainsNoRules:
                 return "Empty extension.";
             case ContentExtensionError::JSONInvalidTrigger:

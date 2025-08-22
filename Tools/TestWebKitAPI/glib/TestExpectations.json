@@ -175,7 +175,7 @@
                 "expected": {"all": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/265886"}}
             },
             "/webkit/WebKitWebView/is-playing-audio": {
-                "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/274344"}}
+                "expected": {"all": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/274344"}}
             },
             "/webkit/WebKitWebView/submit-form": {
                 "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/279009"}}
@@ -184,7 +184,7 @@
                 "expected": {"gtk": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/284812"}}
             },
             "/webkit/WebKitWebView/save": {
-                "expected": {"wpe": {"status": ["CRASH"], "bug": "webkit.org/b/289436"}}
+                "expected": {"wpe": {"status": ["CRASH", "TIMEOUT"], "bug": "webkit.org/b/289436"}}
             }
         }
     },
@@ -372,6 +372,9 @@
             },
             "WTF_WorkQueue.DestroyDispatchedOnDispatchQueue": {
                 "expected": {"all": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/260211" }}
+            },
+            "WTF_DateMath.calculateLocalTimeOffset": {
+                "expected": {"wpe": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/297780"}}
             }
         }
     },
@@ -405,10 +408,29 @@
         "subtests": {
             "/webkit/WebKitPolicyClient/autoplay-policy": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/222091"},
-                             "wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/281986"}}
+                             "wpe": {"status": ["PASS", "FAIL", "TIMEOUT"], "bug": "webkit.org/b/281986"}}
             },
             "/webkit/WebKitPolicyClient/new-window-policy": {
                 "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/281812"}}
+            }
+        }
+    },
+    "TestDisplayWayland": {
+        "subtests": {
+            "/wpe-platform/DisplayWayland/available-input-devices": {
+                "expected": {"wpe": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/297780"}}
+            },
+            "/wpe-platform/DisplayWayland/connect": {
+                "expected": {"wpe": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/297780"}}
+            },
+            "/wpe-platform/DisplayWayland/create-view": {
+                "expected": {"wpe": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/297780"}}
+            },
+            "/wpe-platform/DisplayWayland/keymap": {
+                "expected": {"wpe": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/297780"}}
+            },
+            "/wpe-platform/DisplayWayland/screens": {
+                "expected": {"wpe": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/297780"}}
             }
         }
     },
@@ -440,7 +462,10 @@
                 "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/264505"}}
             },
             "/webkit/WebKitWebProcessExtension/user-messages": {
-                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/284812"}}
+                "expected": {"all": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/284812"}}
+            },
+            "/webkit/WebKitWebView/web-process-crashed": {
+                "expected": {"wpe": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/297780"}}
             }
         }
     },

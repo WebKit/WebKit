@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/OptionSet.h>
+#include <wtf/Platform.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

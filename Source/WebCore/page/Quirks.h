@@ -30,6 +30,7 @@
 #include <WebCore/RegistrableDomain.h>
 #include <optional>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -118,7 +119,6 @@ public:
     WEBCORE_EXPORT static std::optional<Vector<HashSet<String>>> defaultVisibilityAdjustmentSelectors(const URL&);
 
     bool needsGMailOverflowScrollQuirk() const;
-    bool needsIPadSkypeOverflowScrollQuirk() const;
     bool needsYouTubeOverflowScrollQuirk() const;
     bool needsFullscreenDisplayNoneQuirk() const;
     bool needsFullscreenObjectFitQuirk() const;

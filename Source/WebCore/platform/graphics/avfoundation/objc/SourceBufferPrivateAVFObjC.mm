@@ -686,7 +686,7 @@ void SourceBufferPrivateAVFObjC::setCDMSession(LegacyCDMSession* session)
                 RefPtr session = protectedThis->m_session.get();
                 if (session && protectedThis->m_hdcpError) {
                     bool ignored = false;
-                    session->videoRendererDidReceiveError(nullptr, protectedThis->m_hdcpError.get(), ignored);
+                    session->videoRendererDidReceiveError(protectedThis->m_hdcpError.get(), ignored);
                 }
             });
         }
@@ -768,11 +768,6 @@ void SourceBufferPrivateAVFObjC::attemptToDecrypt()
 
 bool SourceBufferPrivateAVFObjC::requiresFlush() const
 {
-#if PLATFORM(IOS_FAMILY)
-    if (m_displayLayerWasInterrupted)
-        return true;
-#endif
-
     return m_layerRequiresFlush;
 }
 
@@ -795,9 +790,6 @@ void SourceBufferPrivateAVFObjC::flushIfNeeded()
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-#if PLATFORM(IOS_FAMILY)
-    m_displayLayerWasInterrupted = false;
-#endif
     m_layerRequiresFlush = false;
     if (m_videoTracks.size())
         flushVideo();
@@ -821,35 +813,6 @@ void SourceBufferPrivateAVFObjC::unregisterForErrorNotifications(SourceBufferPri
     m_errorClients.removeFirst(client);
 }
 
-void SourceBufferPrivateAVFObjC::videoRendererDidReceiveError(WebSampleBufferVideoRendering *renderer, NSError *error)
-{
-    ERROR_LOG(LOGIDENTIFIER, error);
-
-#if PLATFORM(IOS_FAMILY)
-    if (renderer.status == AVQueuedSampleBufferRenderingStatusFailed && [error.domain isEqualToString:@"AVFoundationErrorDomain"] && error.code == AVErrorOperationInterrupted) {
-        m_displayLayerWasInterrupted = true;
-        if (RefPtr player = this->player())
-            player->setNeedsPlaceholderImage(true);
-        return;
-    }
-#endif
-
-    // FIXME(142246): Remove the following once <rdar://problem/20027434> is resolved.
-    bool anyIgnored = false;
-    for (auto& client : m_errorClients) {
-        bool shouldIgnore = false;
-        client->videoRendererDidReceiveError(renderer, error, shouldIgnore);
-        anyIgnored |= shouldIgnore;
-    }
-    if (anyIgnored)
-        return;
-
-    int errorCode = [[[error userInfo] valueForKey:@"OSStatus"] intValue];
-
-    if (RefPtr client = this->client())
-        client->sourceBufferPrivateDidReceiveRenderingError(errorCode);
-}
-
 void SourceBufferPrivateAVFObjC::audioRendererWasAutomaticallyFlushed(AVSampleBufferAudioRenderer *renderer, const CMTime& time)
 {
     auto mediaTime = PAL::toMediaTime(time);
@@ -868,26 +831,8 @@ void SourceBufferPrivateAVFObjC::audioRendererWasAutomaticallyFlushed(AVSampleBu
     reenqueSamples(*trackId);
 }
 
-void SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged(bool obscured)
-{
-#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    if (RefPtr mediaSource = downcast<MediaSourcePrivateAVFObjC>(m_mediaSource.get()); mediaSource && mediaSource->cdmInstance()) {
-        mediaSource->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
-        return;
-    }
-#else
-    UNUSED_PARAM(obscured);
-#endif
-
-    ERROR_LOG(LOGIDENTIFIER, obscured);
-
-    RetainPtr error = [NSError errorWithDomain:@"com.apple.WebKit" code:'HDCP' userInfo:nil];
-    RefPtr videoRenderer = m_videoRenderer;
-    videoRendererDidReceiveError(videoRenderer ? videoRenderer->renderer() : nil, error.get());
-}
-
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-void SourceBufferPrivateAVFObjC::audioRendererDidReceiveError(AVSampleBufferAudioRenderer *renderer, NSError *error)
+void SourceBufferPrivateAVFObjC::audioRendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *error)
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 {
     ERROR_LOG(LOGIDENTIFIER, error);
@@ -895,37 +840,10 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     if ([error code] == 'HDCP')
         m_hdcpError = error;
 
-    // FIXME(142246): Remove the following once <rdar://problem/20027434> is resolved.
-    bool anyIgnored = false;
     for (auto& client : m_errorClients) {
         bool shouldIgnore = false;
-        client->audioRendererDidReceiveError(renderer, error, shouldIgnore);
-        anyIgnored |= shouldIgnore;
+        client->audioRendererDidReceiveError(error, shouldIgnore);
     }
-    if (anyIgnored)
-        return;
-}
-
-void SourceBufferPrivateAVFObjC::videoRendererRequiresFlushToResumeDecodingChanged(WebSampleBufferVideoRendering *renderer, bool requiresFlush)
-{
-    RefPtr videoRenderer = m_videoRenderer;
-    if ((videoRenderer && renderer != videoRenderer->renderer()) || m_layerRequiresFlush == requiresFlush)
-        return;
-
-    ALWAYS_LOG(LOGIDENTIFIER, requiresFlush);
-    m_layerRequiresFlush = requiresFlush;
-}
-
-void SourceBufferPrivateAVFObjC::videoRendererReadyForDisplayChanged(WebSampleBufferVideoRendering *renderer, bool isReadyForDisplay)
-{
-    RefPtr videoRenderer = m_videoRenderer;
-    if (!videoRenderer || renderer != videoRenderer->renderer() || !isReadyForDisplay)
-        return;
-
-    ALWAYS_LOG(LOGIDENTIFIER);
-
-    if (RefPtr player = this->player())
-        player->setHasAvailableVideoFrame(true);
 }
 
 void SourceBufferPrivateAVFObjC::flush(TrackID trackID)
@@ -1338,10 +1256,42 @@ void SourceBufferPrivateAVFObjC::configureVideoRenderer(VideoMediaSampleRenderer
             protectedThis->didBecomeReadyForMoreSamples(*protectedThis->m_enabledVideoTrackID);
     });
     videoRenderer.notifyWhenVideoRendererRequiresFlushToResumeDecoding([weakThis = ThreadSafeWeakPtr { *this }] {
-        if (RefPtr protectedThis = weakThis.get())
+        if (RefPtr protectedThis = weakThis.get()) {
+#if PLATFORM(IOS_FAMILY)
+            if (RefPtr player = protectedThis->player())
+                player->setNeedsPlaceholderImage(true);
+#endif
             protectedThis->setLayerRequiresFlush();
+        }
     });
-    m_listener->beginObservingVideoRenderer(videoRenderer.renderer());
+    videoRenderer.notifyWhenDecodingErrorOccurred([weakThis = ThreadSafeWeakPtr { *this }](NSError *error) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+        if ([error.domain isEqualToString:@"com.apple.WebKit"] && error.code == 'HDCP') {
+            bool obscured = [[[error userInfo] valueForKey:@"obscured"] boolValue];
+            if (RefPtr mediaSource = downcast<MediaSourcePrivateAVFObjC>(protectedThis->m_mediaSource.get()); mediaSource && mediaSource->cdmInstance()) {
+                mediaSource->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
+                return;
+            }
+        }
+#endif
+
+        bool anyIgnored = false;
+        for (auto& client : protectedThis->m_errorClients) {
+            bool shouldIgnore = false;
+            client->videoRendererDidReceiveError(error, shouldIgnore);
+            anyIgnored |= shouldIgnore;
+        }
+        if (anyIgnored)
+            return;
+
+        int errorCode = error.code != noErr ? error.code : [[[error userInfo] valueForKey:@"OSStatus"] intValue];
+        if (RefPtr client = protectedThis->client())
+            client->sourceBufferPrivateDidReceiveRenderingError(errorCode);
+    });
 }
 
 void SourceBufferPrivateAVFObjC::invalidateVideoRenderer(VideoMediaSampleRenderer& videoRenderer)
@@ -1349,7 +1299,6 @@ void SourceBufferPrivateAVFObjC::invalidateVideoRenderer(VideoMediaSampleRendere
     videoRenderer.flush();
     videoRenderer.stopRequestingMediaData();
     videoRenderer.notifyWhenVideoRendererRequiresFlushToResumeDecoding({ });
-    m_listener->stopObservingVideoRenderer(videoRenderer.renderer());
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     if (RefPtr cdmInstance = m_cdmInstance; cdmInstance && shouldAddContentKeyRecipients() && videoRenderer.as<AVSampleBufferDisplayLayer>())
@@ -1362,6 +1311,8 @@ void SourceBufferPrivateAVFObjC::setVideoRenderer(VideoMediaSampleRenderer* rend
     if (m_videoRenderer && m_videoRenderer == renderer) {
         if (RefPtr expiringVideoRenderer = std::exchange(m_expiringVideoRenderer, nullptr))
             invalidateVideoRenderer(*expiringVideoRenderer);
+        else
+            configureVideoRenderer(*renderer);
         return;
     }
 

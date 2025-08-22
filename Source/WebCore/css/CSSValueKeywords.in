@@ -191,6 +191,7 @@ monospace
 -webkit-body
 -webkit-pictograph
 system-ui
+math
 //
 //
 // CSS_PROP_*_COLOR

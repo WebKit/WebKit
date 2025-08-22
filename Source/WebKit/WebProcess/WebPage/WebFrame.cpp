@@ -296,6 +296,7 @@ FrameInfoData WebFrame::info(WithCertificateInfo withCertificateInfo) const
     RefPtr coreFrame = this->coreFrame();
     RefPtr coreLocalFrame = this->coreLocalFrame();
     RefPtr document = coreLocalFrame ? coreLocalFrame->document() : nullptr;
+    RefPtr page = m_page.get();
 
     WebFrameMetrics metrics;
     if (coreFrame) {
@@ -316,6 +317,7 @@ FrameInfoData WebFrame::info(WithCertificateInfo withCertificateInfo) const
         SecurityOriginData::fromFrame(coreLocalFrame.get()),
         coreFrame ? coreFrame->tree().specifiedName().string() : String(),
         frameID(),
+        page ? std::optional { page->webPageProxyIdentifier() } : std::nullopt,
         parent ? std::optional { parent->frameID() } : std::nullopt,
         document ? std::optional { document->identifier() } : std::nullopt,
         withCertificateInfo == WithCertificateInfo::Yes ? certificateInfo() : CertificateInfo(),

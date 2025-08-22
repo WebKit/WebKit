@@ -31,6 +31,7 @@
 #include "DataURLDecoder.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
+#include "IPAddressSpace.h"
 #include "MIMETypeRegistry.h"
 #include "ParsedContentRange.h"
 #include "ResourceResponse.h"
@@ -90,6 +91,7 @@ ResourceResponseBase::ResourceResponseBase(std::optional<ResourceResponseData>&&
     , m_tainting(data ? data->tainting : Tainting::Basic)
     , m_source(data ? data->source : Source::Unknown)
     , m_type(data ? data->type : Type::Default)
+    , m_ipAddressSpace(data ? data->ipAddressSpace : IPAddressSpace::Public)
 {
 }
 
@@ -116,6 +118,7 @@ ResourceResponseData ResourceResponseData::isolatedCopy() const
     result.isRangeRequested = isRangeRequested;
     if (certificateInfo)
         result.certificateInfo = certificateInfo->isolatedCopy();
+    result.ipAddressSpace = ipAddressSpace;
     return result;
 }
 
@@ -143,6 +146,7 @@ ResourceResponseData ResourceResponseBase::crossThreadData() const
     data.isRangeRequested = m_isRangeRequested;
     if (m_certificateInfo)
         data.certificateInfo = m_certificateInfo->isolatedCopy();
+    data.ipAddressSpace = m_ipAddressSpace;
 
     return data;
 }
@@ -174,7 +178,7 @@ ResourceResponse ResourceResponseBase::fromCrossThreadData(CrossThreadData&& dat
     response.m_proxyName = WTFMove(data.proxyName);
     response.m_isRangeRequested = data.isRangeRequested;
     response.m_certificateInfo = WTFMove(data.certificateInfo);
-
+    response.m_ipAddressSpace = data.ipAddressSpace;
     return response;
 }
 
@@ -913,7 +917,8 @@ std::optional<ResourceResponseData> ResourceResponseBase::getResponseData() cons
         m_wasPrivateRelayed,
         String { m_proxyName },
         m_isRangeRequested,
-        m_certificateInfo
+        m_certificateInfo,
+        m_ipAddressSpace
     } };
 }
 
@@ -1047,7 +1052,8 @@ std::optional<WebCore::ResourceResponseData> Coder<WebCore::ResourceResponseData
         *wasPrivateRelayed,
         WTFMove(*proxyName),
         *isRangeRequested,
-        WTFMove(*certificateInfo)
+        WTFMove(*certificateInfo),
+        WebCore::IPAddressSpace::Public
     };
 }
 

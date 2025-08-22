@@ -33,6 +33,7 @@
 #include <WebCore/TextIndicator.h>
 #include <wtf/Forward.h>
 
+#include <wtf/Platform.h>
 #if PLATFORM(IOS_FAMILY)
 #include <wtf/RetainPtr.h>
 typedef struct CGImage *CGImageRef;

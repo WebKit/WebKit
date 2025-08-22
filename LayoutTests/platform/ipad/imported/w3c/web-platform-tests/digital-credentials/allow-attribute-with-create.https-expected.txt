@@ -1,0 +1,15 @@
+
+
+FAIL With Create: Policy to use: null, is cross-origin: false, is allowed by policy: true promise_test: Unhandled rejection with value: object "TypeError: Right side of assignment cannot be destructured"
+FAIL With Create: Policy to use: null, is cross-origin: true, is allowed by policy: false promise_test: Unhandled rejection with value: object "TypeError: Right side of assignment cannot be destructured"
+FAIL With Create: Policy to use: digital-credentials-create, is cross-origin: false, is allowed by policy: true promise_test: Unhandled rejection with value: object "TypeError: Right side of assignment cannot be destructured"
+FAIL With Create: Policy to use: digital-credentials-create, is cross-origin: true, is allowed by policy: true promise_test: Unhandled rejection with value: object "TypeError: Right side of assignment cannot be destructured"
+FAIL With Create: Policy to use: digital-credentials-create *, is cross-origin: false, is allowed by policy: true promise_test: Unhandled rejection with value: object "TypeError: Right side of assignment cannot be destructured"
+FAIL With Create: Policy to use: digital-credentials-create *, is cross-origin: true, is allowed by policy: true promise_test: Unhandled rejection with value: object "TypeError: Right side of assignment cannot be destructured"
+FAIL With Create: Policy to use: digital-credentials-create 'none', is cross-origin: false, is allowed by policy: false promise_test: Unhandled rejection with value: object "TypeError: Right side of assignment cannot be destructured"
+FAIL With Create: Policy to use: digital-credentials-create 'none', is cross-origin: true, is allowed by policy: false promise_test: Unhandled rejection with value: object "TypeError: Right side of assignment cannot be destructured"
+FAIL With Create: Policy to use: digital-credentials-create 'self', is cross-origin: false, is allowed by policy: true promise_test: Unhandled rejection with value: object "TypeError: Right side of assignment cannot be destructured"
+FAIL With Create: Policy to use: digital-credentials-create 'self', is cross-origin: true, is allowed by policy: false promise_test: Unhandled rejection with value: object "TypeError: Right side of assignment cannot be destructured"
+FAIL With Create: Policy to use: digital-credentials-create https://127.0.0.1:9443, is cross-origin: false, is allowed by policy: false promise_test: Unhandled rejection with value: object "TypeError: Right side of assignment cannot be destructured"
+FAIL With Create: Policy to use: digital-credentials-create https://127.0.0.1:9443, is cross-origin: true, is allowed by policy: true promise_test: Unhandled rejection with value: object "TypeError: Right side of assignment cannot be destructured"
+

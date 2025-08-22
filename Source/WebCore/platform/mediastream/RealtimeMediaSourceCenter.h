@@ -32,6 +32,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(MEDIA_STREAM)
 
 #include <WebCore/MediaStreamRequest.h>

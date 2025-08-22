@@ -135,6 +135,21 @@ static bool methodCanHaveBody(const ResourceRequest& request)
     return request.httpMethod() != "GET"_s && request.httpMethod() != "HEAD"_s;
 }
 
+static IPAddressSpace updateTargetAddressSpaceIfNeeded(IPAddressSpace currentAddressSpace, const URL& url)
+{
+    auto host = url.host();
+    if (host.isEmpty())
+        return currentAddressSpace;
+
+    if (WebCore::isLocalIPAddressSpace(url))
+        return IPAddressSpace::Local;
+
+    if (host.endsWithIgnoringASCIICase(".local"_s))
+        return IPAddressSpace::Local;
+
+    return currentAddressSpace;
+}
+
 inline FetchRequest::FetchRequest(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, String&& referrer)
     : FetchBodyOwner(&context, WTFMove(body), WTFMove(headers))
     , m_request(WTFMove(request))
@@ -191,6 +206,9 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
     m_request.setURL(WTFMove(requestURL));
     m_requestURL = { m_request.url(), context->topOrigin().data() };
     m_request.setInitiatorIdentifier(context->resourceRequestIdentifier());
+
+    if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext()); document && document->settings().localNetworkAccessEnabled())
+        m_targetAddressSpace = updateTargetAddressSpaceIfNeeded(m_targetAddressSpace, m_request.url());
 
     auto optionsResult = initializeOptions(init);
     if (optionsResult.hasException())
@@ -254,6 +272,21 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
     } else {
         m_headers->setInternalHeaders(HTTPHeaderMap { input.headers().internalHeaders() });
         m_navigationPreloadIdentifier = input.m_navigationPreloadIdentifier;
+    }
+
+    if (RefPtr executionContext = scriptExecutionContext()) {
+        if (RefPtr document = dynamicDowncast<Document>(*executionContext); document && document->settings().localNetworkAccessEnabled()) {
+            switch (init.targetAddressSpace) {
+            case IPAddressSpace::Public:
+                m_targetAddressSpace = IPAddressSpace::Public;
+                break;
+            case IPAddressSpace::Local:
+                m_targetAddressSpace = IPAddressSpace::Local;
+                break;
+            }
+
+            m_targetAddressSpace = updateTargetAddressSpaceIfNeeded(m_targetAddressSpace, m_request.url());
+        }
     }
 
     auto setBodyResult = init.body ? setBody(WTFMove(*init.body)) : setBody(input);
@@ -345,6 +378,11 @@ ResourceRequest FetchRequest::resourceRequest() const
     if (!isBodyNull())
         request.setHTTPBody(body().bodyAsFormData());
 
+    if (RefPtr context = scriptExecutionContext()) {
+        if (RefPtr document = dynamicDowncast<Document>(*context); document && document->settings().localNetworkAccessEnabled())
+            request.setTargetAddressSpace(m_targetAddressSpace);
+    }
+
     return request;
 }
 
@@ -352,12 +390,16 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::clone()
 {
     if (isDisturbedOrLocked())
         return Exception { ExceptionCode::TypeError, "Body is disturbed or locked"_s };
-
-    auto clone = adoptRef(*new FetchRequest(*scriptExecutionContext(), std::nullopt, FetchHeaders::create(m_headers.get()), ResourceRequest { m_request }, FetchOptions { m_options }, String { m_referrer }));
+    RefPtr context = scriptExecutionContext();
+    if (!context)
+        return Exception { ExceptionCode::InvalidStateError, "Cannot clone FetchRequest without a valid script execution context"_s };
+    auto clone = adoptRef(*new FetchRequest(*context, std::nullopt, FetchHeaders::create(m_headers.get()), ResourceRequest { m_request }, FetchOptions { m_options }, String { m_referrer }));
     clone->suspendIfNeeded();
     clone->cloneBody(*this);
     clone->setNavigationPreloadIdentifier(m_navigationPreloadIdentifier);
     clone->m_enableContentExtensionsCheck = m_enableContentExtensionsCheck;
+    if (RefPtr document = dynamicDowncast<Document>(*context); document && document->settings().localNetworkAccessEnabled())
+        clone->m_targetAddressSpace = m_targetAddressSpace;
     clone->m_signal->signalFollow(m_signal);
     return clone;
 }

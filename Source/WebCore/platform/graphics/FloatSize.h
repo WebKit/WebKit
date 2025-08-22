@@ -32,6 +32,7 @@
 #include <WebCore/IntPoint.h>
 #include <wtf/JSONValues.h>
 #include <wtf/MathExtras.h>
+#include <wtf/Platform.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)

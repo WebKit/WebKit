@@ -24,6 +24,7 @@
 #include <WebCore/SimpleRange.h>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
+#include <wtf/Platform.h>
 #include <wtf/UUID.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/MakeString.h>

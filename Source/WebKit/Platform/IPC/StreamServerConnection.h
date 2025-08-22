@@ -58,6 +58,16 @@ struct StreamServerConnectionParameters {
 #endif
 };
 
+class StreamServerConnectionClient : public StreamMessageReceiver, public CanMakeThreadSafeCheckedPtr<StreamServerConnectionClient> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(StreamServerConnectionClient);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StreamServerConnectionClient);
+public:
+    virtual void didReceiveInvalidMessage(StreamServerConnection&, MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) = 0;
+
+protected:
+    virtual ~StreamServerConnectionClient() = default;
+};
+
 // StreamServerConnection represents the connection between stream client and server, as used by the server.
 //
 // StreamServerConnection:
@@ -75,6 +85,7 @@ class StreamServerConnection final : public ThreadSafeRefCounted<StreamServerCon
 public:
     using AsyncReplyID = Connection::AsyncReplyID;
     using Handle = StreamServerConnectionHandle;
+    using Client = StreamServerConnectionClient;
 
     static RefPtr<StreamServerConnection> tryCreate(Handle&&, const StreamServerConnectionParameters&);
     ~StreamServerConnection() final;
@@ -96,7 +107,7 @@ public:
     DispatchResult dispatchStreamMessages(size_t messageLimit);
     void markCurrentlyDispatchedMessageAsInvalid();
 
-    void open(StreamConnectionWorkQueue&);
+    void open(Client&, StreamConnectionWorkQueue&);
     void invalidate();
     template<typename T, typename RawValue> Error send(T&& message, const ObjectIdentifierGenericBase<RawValue>& destinationID);
 
@@ -129,26 +140,30 @@ private:
     bool processStreamMessage(Decoder&, StreamMessageReceiver&);
     bool processOutOfStreamMessage(Decoder&);
     bool dispatchStreamMessage(Decoder&, StreamMessageReceiver&);
+    void dispatchDidReceiveInvalidMessage(Decoder&);
 
     RefPtr<StreamConnectionWorkQueue> protectedWorkQueue() const;
 
     using WakeUpClient = StreamServerConnectionBuffer::WakeUpClient;
     const Ref<IPC::Connection> m_connection;
     RefPtr<StreamConnectionWorkQueue> m_workQueue;
+    CheckedPtr<Client> m_client;
     StreamServerConnectionBuffer m_buffer;
 
     Lock m_outOfStreamMessagesLock;
     Deque<UniqueRef<Decoder>> m_outOfStreamMessages WTF_GUARDED_BY_LOCK(m_outOfStreamMessagesLock);
 
-    bool m_isProcessingStreamMessage { false };
     std::unique_ptr<IPC::Encoder> m_syncReplyToDispatch;
     Lock m_receiversLock;
     using ReceiversMap = HashMap<std::pair<uint8_t, uint64_t>, Ref<StreamMessageReceiver>>;
     ReceiversMap m_receivers WTF_GUARDED_BY_LOCK(m_receiversLock);
     uint64_t m_currentDestinationID { 0 };
     Semaphore m_clientWaitSemaphore;
+    bool m_isProcessingStreamMessage { false };
     bool m_didReceiveInvalidMessage { false };
-
+#if ASSERT_ENABLED
+    bool m_isDispatchingMessage { false };
+#endif
     friend class StreamConnectionWorkQueue;
 };
 

@@ -1,6 +1,4 @@
 Click me.
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Click event triggered by space key in checkbox should have the same      interaction id as that of the associated keyboard events. Test timed out
+FAIL Click event triggered by space key in checkbox should have the same      interaction id as that of the associated keyboard events. assert_equals: Click event should have the same interaction id as the keydown event. expected 1002 but got 0
 

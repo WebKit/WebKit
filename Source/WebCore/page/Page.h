@@ -53,6 +53,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OptionSet.h>
+#include <wtf/Platform.h>
 #include <wtf/ProcessID.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -636,7 +637,7 @@ public:
     float initialScaleIgnoringContentSize() const { return m_initialScaleIgnoringContentSize; }
     WEBCORE_EXPORT void setInitialScaleIgnoringContentSize(float);
 
-    WEBCORE_EXPORT void screenPropertiesDidChange();
+    WEBCORE_EXPORT void screenPropertiesDidChange(bool affectsStyle = true);
     void windowScreenDidChange(PlatformDisplayID, std::optional<FramesPerSecond> nominalFramesPerSecond);
     PlatformDisplayID displayID() const { return m_displayID; }
     std::optional<FramesPerSecond> displayNominalFramesPerSecond() const { return m_displayNominalFramesPerSecond; }

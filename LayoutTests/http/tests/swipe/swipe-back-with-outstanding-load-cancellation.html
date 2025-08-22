@@ -53,6 +53,13 @@ window.onload = function () {
 
     document.body.innerHTML = isFirstPage() ? "first" : "<iframe src='/resources/slow-image.py'>";
 
+    if (window.testRunner) {
+        testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
+        testRunner.installWillEndSwipeCallback(willEndSwipeCallback);
+        testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
+        testRunner.installDidRemoveSwipeSnapshotCallback(didRemoveSwipeSnapshotCallback);
+    }
+
     if (isFirstPage()) {
         if (hasInitializedSwipeTest()) {
             shouldBe(false, hasRemovedSnapshot, "The snapshot should not have been synchronously removed because of the cancelled forward load.");
@@ -60,11 +67,6 @@ window.onload = function () {
         }
 
         initializeSwipeTest();
-
-        testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
-        testRunner.installWillEndSwipeCallback(willEndSwipeCallback);
-        testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
-        testRunner.installDidRemoveSwipeSnapshotCallback(didRemoveSwipeSnapshotCallback);
 
         testRunner.dumpAsText();
         testRunner.waitUntilDone();

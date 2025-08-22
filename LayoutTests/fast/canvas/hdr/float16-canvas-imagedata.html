@@ -20,24 +20,44 @@ var a = 255;
 context.fillStyle = `rgb(${r} ${g} ${b})`;
 context.fillRect(0, 0, 1, 1);
 
-function shouldBeAround(to_eval, targetNumber, tolerance, quiet)
+const componentsPerPixel = 4;
+
+function shouldBeAround(to_eval, targetNumber, tolerance)
 {
     if (!tolerance)
-        return shouldBe(to_eval, String(targetNumber), quiet);
-    return shouldBeCloseTo(to_eval, targetNumber, tolerance, quiet);
+        return shouldBe(to_eval, String(targetNumber));
+    return shouldBeCloseTo(to_eval, targetNumber, tolerance);
 }
 
-function verifyImageData(variable, constructor, bytesPerElement, red, green, blue, alpha, tolerance, quiet) {
-    shouldBe(variable + '.width', '1', quiet);
-    shouldBe(variable + '.height', '1', quiet);
-    shouldBe(variable + '.data.constructor', constructor, quiet);
-    shouldBe(variable + '.data.BYTES_PER_ELEMENT', String(bytesPerElement), quiet);
-    shouldBe(variable + '.data.length', '4', quiet);
-    shouldBe(variable + '.data.byteLength', String(bytesPerElement * 4), quiet);
-    shouldBeAround(variable + '.data.at(0)', red, tolerance, quiet);
-    shouldBeAround(variable + '.data.at(1)', green, tolerance, quiet);
-    shouldBeAround(variable + '.data.at(2)', blue, tolerance, quiet);
-    shouldBeAround(variable + '.data.at(3)', alpha, tolerance, quiet);
+function verifyImageData(variable, constructor, bytesPerElement, red, green, blue, alpha, tolerance)
+{
+    shouldBe(variable + '.width', '1');
+    shouldBe(variable + '.height', '1');
+    shouldBe(variable + '.data.constructor', constructor);
+    shouldBe(variable + '.data.BYTES_PER_ELEMENT', String(bytesPerElement));
+    shouldBe(variable + '.data.length', '4');
+    shouldBe(variable + '.data.byteLength', String(bytesPerElement * 4));
+    shouldBeAround(variable + '.data.at(0)', red, tolerance);
+    shouldBeAround(variable + '.data.at(1)', green, tolerance);
+    shouldBeAround(variable + '.data.at(2)', blue, tolerance);
+    shouldBeAround(variable + '.data.at(3)', alpha, tolerance);
+}
+
+function areEqualImageData(imageDataActual, imageDataExpected, tolerance)
+{
+    tolerance = 0;
+    shouldBe(imageDataActual + '.width', imageDataExpected + '.width');
+    shouldBe(imageDataActual + '.height', imageDataExpected + '.height');
+    shouldBe(imageDataActual + '.data.constructor', imageDataExpected + '.data.constructor');
+    shouldBe(imageDataActual + '.data.BYTES_PER_ELEMENT', imageDataExpected + '.data.BYTES_PER_ELEMENT');
+    shouldBe(imageDataActual + '.data.length', imageDataExpected + '.data.length');
+    shouldBe(imageDataActual + '.data.byteLength', imageDataExpected + '.data.byteLength');
+    const actualData = eval(imageDataActual).data;
+    const expectedData = eval(imageDataExpected).data;
+    for (component = 0; component < actualData.length; ++component) {
+        if (Math.abs(actualData[component] - expectedData[component]) > tolerance)
+            shouldBeAround(imageDataActual + '.data[' + component + ']', expectedData[component], tolerance, true);
+    }
 }
 
 const uint8_bytes_per_element = 1;
@@ -66,46 +86,79 @@ var gotten_imageData_uint8_from_float16 = context.getImageData(0, 0, 1, 1);
 verifyImageData('gotten_imageData_uint8_from_float16', 'Uint8ClampedArray', uint8_bytes_per_element, r, g, b, a);
 
 // Exhaustive uint8->float16->uint8 round-trip test for all possible individual SRGB/uint8 component values. Only log errors.
-const quiet = true;
+canvas.width = 64;
+canvas.height = 16;
+var componentsToTest = componentsPerPixel;
+shouldBeTrue('canvas.width * canvas.height >= 256 * componentsToTest');
+
+var input_imageData_uint8 = context.createImageData(canvas.width, canvas.height);
+var expected_imageData_uint8 = context.createImageData(canvas.width, canvas.height);
+var expected_imageData_float16 = context.createImageData(canvas.width, canvas.height, { storageFormat: "float16" });
+
+var pixelOffset = 0;
 for (let v = 0; v < 256; ++v) {
-    for (component = 0; component < 4; ++component) {
+    for (component = 0; component < componentsToTest; ++component) {
         r = g = b = 0;
         a = 255;
         switch (component) {
         case 0: r = v; break;
         case 1: g = v; break;
         case 2: b = v; break;
-        case 2: r = g = b = 255; a = v; break;
+        case 3: r = g = b = (v ? 255 : 0); a = v; break;
         }
-        created_imageData_uint8.data[0] = r;
-        created_imageData_uint8.data[1] = g;
-        created_imageData_uint8.data[2] = b;
-        created_imageData_uint8.data[3] = a;
-        const prefix = '/* #' + v + "-" + component + ": " + r + "," + g + "," + b + "," + a + " */ ";
+        input_imageData_uint8.data[pixelOffset * componentsPerPixel + 0] = r;
+        input_imageData_uint8.data[pixelOffset * componentsPerPixel + 1] = g;
+        input_imageData_uint8.data[pixelOffset * componentsPerPixel + 2] = b;
+        input_imageData_uint8.data[pixelOffset * componentsPerPixel + 3] = a;
 
-        context.putImageData(created_imageData_uint8, 0, 0);
-        gotten_imageData_uint8 = context.getImageData(0, 0, 1, 1, { storageFormat: "uint8" });
-        verifyImageData(prefix + 'gotten_imageData_uint8', 'Uint8ClampedArray', uint8_bytes_per_element, r, g, b, a, 0, quiet);
-        gotten_imageData_float16 = context.getImageData(0, 0, 1, 1, { storageFormat: "float16" });
-        verifyImageData(prefix + 'gotten_imageData_float16', 'Float16Array', float16_bytes_per_element, r / 255, g / 255, b / 255, a / 255, float16_nonzero_tolerance, quiet);
+        expected_imageData_uint8.data[pixelOffset * componentsPerPixel + 0] = r;
+        expected_imageData_uint8.data[pixelOffset * componentsPerPixel + 1] = g;
+        expected_imageData_uint8.data[pixelOffset * componentsPerPixel + 2] = b;
+        expected_imageData_uint8.data[pixelOffset * componentsPerPixel + 3] = a;
 
-        context.clearRect(0, 0, 1, 1);
-        context.putImageData(gotten_imageData_float16, 0, 0);
-        gotten_imageData_float16 = context.getImageData(0, 0, 1, 1, { storageFormat: "float16" });
-        verifyImageData(prefix + 'gotten_imageData_float16', 'Float16Array', float16_bytes_per_element, r / 255, g / 255, b / 255, a / 255, float16_nonzero_tolerance, quiet);
-        gotten_imageData_uint8 = context.getImageData(0, 0, 1, 1, { storageFormat: "uint8" });
-        verifyImageData(prefix + 'gotten_imageData_uint8', 'Uint8ClampedArray', uint8_bytes_per_element, r, g, b, a, 0, quiet);
+        expected_imageData_float16.data[pixelOffset * componentsPerPixel + 0] = r / 255;
+        expected_imageData_float16.data[pixelOffset * componentsPerPixel + 1] = g / 255;
+        expected_imageData_float16.data[pixelOffset * componentsPerPixel + 2] = b / 255;
+        expected_imageData_float16.data[pixelOffset * componentsPerPixel + 3] = a / 255;
+
+        ++pixelOffset;
     }
 }
+shouldBe('pixelOffset', '256 * componentsToTest');
+
+context.putImageData(input_imageData_uint8, 0, 0);
+gotten_imageData_uint8 = context.getImageData(0, 0, canvas.width, canvas.height, { storageFormat: "uint8" });
+areEqualImageData('gotten_imageData_uint8', 'expected_imageData_uint8', 0);
+gotten_imageData_float16 = context.getImageData(0, 0, canvas.width, canvas.height, { storageFormat: "float16" });
+areEqualImageData('gotten_imageData_float16', 'expected_imageData_float16', float16_nonzero_tolerance);
+
+context.clearRect(0, 0, canvas.width, canvas.height);
+context.putImageData(gotten_imageData_float16, 0, 0);
+gotten_imageData_float16 = context.getImageData(0, 0, canvas.width, canvas.height, { storageFormat: "float16" });
+areEqualImageData('gotten_imageData_float16', 'expected_imageData_float16', float16_nonzero_tolerance);
+gotten_imageData_uint8 = context.getImageData(0, 0, canvas.width, canvas.height, { storageFormat: "uint8" });
+areEqualImageData('gotten_imageData_uint8', 'expected_imageData_uint8', 0);
 
 // Deeper float16->(same)float16->uint8->(nearby)float16 round-trip test for many possible individual component values. Only log errors.
-const divisions = 512;
+canvas.width = 100;
+canvas.height = 32;
+const divisions = 1024;
+componentsToTest = 3;
 const maxValue = 2;
 // A few extras:      largest subnormal    smallest normal  largest <1     smallest >1  largest ...
 const extraValues = [ 6.097555160522461e-5, 6.103515625e-5, 0.99951171875, 1.0009765625, 65504, -1, -65504, Infinity, -Infinity ];
+shouldBeTrue('canvas.width * canvas.height >= (extraValues.length + divisions) * componentsToTest');
+
+input_imageData_float16 = context.createImageData(canvas.width, canvas.height, { storageFormat: "float16" });
+expected_imageData_uint8 = context.createImageData(canvas.width, canvas.height);
+expected_imageData_float16 = context.createImageData(canvas.width, canvas.height, { storageFormat: "float16" });
+
+pixelOffset = 0;
+const uint8_nonzero_tolerance = 1 / 2;
+const clamp01 = (x) => Math.min(Math.max(x, 0), 1);
 for (let division = -extraValues.length; division < divisions; ++division) {
     const floatValue = (division >= 0) ? (maxValue * division / divisions) : extraValues[extraValues.length + division];
-    for (component = 0; component < 3; ++component) {
+    for (component = 0; component < componentsToTest; ++component) {
         r = g = b = 0;
         a = 1;
         switch (component) {
@@ -113,43 +166,49 @@ for (let division = -extraValues.length; division < divisions; ++division) {
         case 1: g = floatValue; break;
         case 2: b = floatValue; break;
         }
-        created_imageData_float16.data[0] = r;
-        created_imageData_float16.data[1] = g;
-        created_imageData_float16.data[2] = b;
-        created_imageData_float16.data[3] = a;
-        const prefix = '/* #' + ((division >= 0) ? division : ((extraValues.length + division) + "extra")) + "-" + component + ": " + r + "," + g + "," + b + "," + a + " */ ";
-
-        context.putImageData(created_imageData_float16, 0, 0);
-        gotten_imageData_float16 = context.getImageData(0, 0, 1, 1, { storageFormat: "float16" });
-        verifyImageData(prefix + 'gotten_imageData_float16', 'Float16Array', float16_bytes_per_element, r, g, b, a, 0, quiet);
+        input_imageData_float16.data[pixelOffset * componentsPerPixel + 0] = r;
+        input_imageData_float16.data[pixelOffset * componentsPerPixel + 1] = g;
+        input_imageData_float16.data[pixelOffset * componentsPerPixel + 2] = b;
+        input_imageData_float16.data[pixelOffset * componentsPerPixel + 3] = a;
 
         // Convert float16 [0,1] to expected [0,255] value, with a tolerance of half a unit.
-        const uint8_nonzero_tolerance = 1 / 2;
-        let clamp01 = (x) => Math.min(Math.max(x, 0), 1);
         r = clamp01(r) * 255;
         g = clamp01(g) * 255;
         b = clamp01(b) * 255;
         a = clamp01(a) * 255;
-        gotten_imageData_uint8 = context.getImageData(0, 0, 1, 1, { storageFormat: "uint8" });
-        verifyImageData(prefix + 'gotten_imageData_uint8', 'Uint8ClampedArray', uint8_bytes_per_element, r, g, b, a, uint8_nonzero_tolerance, quiet);
+        expected_imageData_uint8.data[pixelOffset * componentsPerPixel + 0] = r;
+        expected_imageData_uint8.data[pixelOffset * componentsPerPixel + 1] = g;
+        expected_imageData_uint8.data[pixelOffset * componentsPerPixel + 2] = b;
+        expected_imageData_uint8.data[pixelOffset * componentsPerPixel + 3] = a;
 
-        // Convert rounded uint8 back to float.
-        context.clearRect(0, 0, 1, 1);
-        context.putImageData(gotten_imageData_uint8, 0, 0);
-        r = Math.round(r);
-        g = Math.round(g);
-        b = Math.round(b);
-        a = Math.round(a);
-        gotten_imageData_uint8 = context.getImageData(0, 0, 1, 1, { storageFormat: "uint8" });
-        verifyImageData(prefix + 'gotten_imageData_uint8', 'Uint8ClampedArray', uint8_bytes_per_element, r, g, b, a, 0, quiet);
-        gotten_imageData_float16 = context.getImageData(0, 0, 1, 1, { storageFormat: "float16" });
-        verifyImageData(prefix + 'gotten_imageData_float16', 'Float16Array', float16_bytes_per_element, r / 255, g / 255, b / 255, a / 255, float16_nonzero_tolerance, quiet);
+        r = Math.round(r) / 255;
+        g = Math.round(g) / 255;
+        b = Math.round(b) / 255;
+        a = Math.round(a) / 255;
+        expected_imageData_float16.data[pixelOffset * componentsPerPixel + 0] = r;
+        expected_imageData_float16.data[pixelOffset * componentsPerPixel + 1] = g;
+        expected_imageData_float16.data[pixelOffset * componentsPerPixel + 2] = b;
+        expected_imageData_float16.data[pixelOffset * componentsPerPixel + 3] = a;
+
+        ++pixelOffset;
     }
 }
+shouldBe('pixelOffset', '(extraValues.length + divisions) * componentsToTest');
+
+context.putImageData(input_imageData_float16, 0, 0);
+
+gotten_imageData_uint8 = context.getImageData(0, 0, canvas.width, canvas.height, { storageFormat: "uint8" });
+areEqualImageData('gotten_imageData_uint8', 'expected_imageData_uint8', 0);
+
+context.putImageData(gotten_imageData_uint8, 0, 0);
+gotten_imageData_uint8_from_float16 = context.getImageData(0, 0, canvas.width, canvas.height, { storageFormat: "uint8" });
+areEqualImageData('gotten_imageData_uint8_from_float16', 'expected_imageData_uint8', 0);
+gotten_imageData_float16 = context.getImageData(0, 0, canvas.width, canvas.height, { storageFormat: "float16" });
+areEqualImageData('gotten_imageData_float16', 'expected_imageData_float16', float16_nonzero_tolerance);
 
 shouldThrowErrorName(`context.createImageData(1, 1, { storageFormat: "foo" })`, "TypeError")
 shouldThrowErrorName(`context.getImageData(0, 0, 1, 1, { storageFormat: "foo" })`, "TypeError")
 </script>
-<script src="../../resources/js-test-post.js"></script>
+<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

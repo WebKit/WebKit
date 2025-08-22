@@ -52,7 +52,7 @@
 #include "JSArrayInlines.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
-#include "JSImmutableButterfly.h"
+#include "JSCellButterfly.h"
 #include "JSLexicalEnvironment.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleRecord.h"
@@ -253,8 +253,8 @@ unsigned sizeOfVarargs(JSGlobalObject* globalObject, JSValue arguments, uint32_t
     case ClonedArgumentsType:
         length = jsCast<ClonedArguments*>(cell)->length(globalObject);
         break;
-    case JSImmutableButterflyType:
-        length = jsCast<JSImmutableButterfly*>(cell)->length();
+    case JSCellButterflyType:
+        length = jsCast<JSCellButterfly*>(cell)->length();
         break;
     case StringType:
     case SymbolType:
@@ -334,9 +334,9 @@ void loadVarargs(JSGlobalObject* globalObject, JSValue* firstElementDest, JSValu
         scope.release();
         jsCast<ClonedArguments*>(cell)->copyToArguments(globalObject, firstElementDest, offset, length);
         return;
-    case JSImmutableButterflyType:
+    case JSCellButterflyType:
         scope.release();
-        jsCast<JSImmutableButterfly*>(cell)->copyToArguments(globalObject, firstElementDest, offset, length);
+        jsCast<JSCellButterfly*>(cell)->copyToArguments(globalObject, firstElementDest, offset, length);
         return;
     default: {
         ASSERT(arguments.isObject());

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 namespace WebCore {
 
 class NullPlaybackSessionInterface;

@@ -37,6 +37,7 @@
 #include "AXNotifications.h"
 #include "AXObjectCache.h"
 #include "AXObjectCacheInlines.h"
+#include "AXObjectRareData.h"
 #include "AXRemoteFrame.h"
 #include "AXSearchManager.h"
 #include "AXTextMarker.h"
@@ -44,7 +45,6 @@
 #include "AccessibilityMockObject.h"
 #include "AccessibilityRenderObject.h"
 #include "AccessibilityScrollView.h"
-#include "AccessibilityTable.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ContainerNodeInlines.h"
@@ -101,7 +101,6 @@
 #include "RenderText.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
-#include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "RenderedPosition.h"
@@ -139,6 +138,9 @@ AccessibilityObject::~AccessibilityObject()
 void AccessibilityObject::init()
 {
     m_role = determineAccessibilityRole();
+
+    if (needsRareData())
+        ensureRareData();
 }
 
 std::optional<AXID> AccessibilityObject::treeID() const
@@ -706,7 +708,7 @@ void AccessibilityObject::insertChild(AccessibilityObject& child, unsigned index
         // AccessibilityTable::addChildren never actually calls `insertChild` for table section elements
         // (e.g. tbody, thead), so don't block this `insertChild` for display:contents section elements,
         // or else the child elements of the section element will never be inserted into the tree.
-        allowInsert = allowInsert || (isAccessibilityTableInstance() && is<HTMLTableSectionElement>(displayContentsParent->element()));
+        allowInsert = allowInsert || (isTable() && is<HTMLTableSectionElement>(displayContentsParent->element()));
         if (!allowInsert)
             return;
     }
@@ -2931,6 +2933,7 @@ String AccessibilityObject::computedRoleString() const
 void AccessibilityObject::updateRole()
 {
     auto previousRole = m_role;
+    recomputeAriaRole();
     m_role = determineAccessibilityRole();
     if (previousRole != m_role) {
         if (auto* cache = axObjectCache())
@@ -3014,11 +3017,7 @@ const RenderStyle* AccessibilityObject::style() const
     }
 
     RefPtr element = this->element();
-    if (!element)
-        return nullptr;
-    // We cannot resolve style (as computedStyle() does) if we are downstream of an existing render tree
-    // update. Otherwise, a RELEASE_ASSERT preventing re-entrancy will be hit inside RenderTreeBuilder.
-    return RenderTreeBuilder::current() ? element->existingComputedStyle() : element->computedStyle();
+    return element ? safeStyleFrom(*element) : nullptr;
 }
 
 bool AccessibilityObject::isValueAutofillAvailable() const
@@ -4340,6 +4339,13 @@ AccessibilityObject* AccessibilityObject::containingWebArea() const
     CheckedPtr cache = axObjectCache();
     RefPtr root = cache ? dynamicDowncast<AccessibilityScrollView>(cache->getOrCreate(frameView.get())) : nullptr;
     return root ? root->webAreaObject() : nullptr;
+}
+
+AXObjectRareData& AccessibilityObject::ensureRareData()
+{
+    if (!hasRareData())
+        m_rareDataWithBitfields.setPointer(makeUnique<AXObjectRareData>());
+    return *rareData();
 }
 
 } // namespace WebCore

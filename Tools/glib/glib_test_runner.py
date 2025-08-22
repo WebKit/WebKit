@@ -44,6 +44,8 @@ from io import BytesIO
  TEST_RUN_FAILURE,
  TEST_RUN_INCOMPLETE) = list(range(4))
 
+SETUP_SUBTEST_STR = 'beforeAll'
+SHUTDOWN_FAILED_STR = 'afterAll'
 
 class TestTimeout(Exception):
     pass
@@ -243,8 +245,12 @@ class GLibTestRunner(object):
             command.append('--GTestSkipCount=%d' % len(self._results))
         if self._wpe_legacy_api:
             command.append('--wpe-legacy-api')
-        for subtest in subtests:
-            command.extend(['-p', subtest])
+        if not any(s in subtests for s in [SETUP_SUBTEST_STR, SHUTDOWN_FAILED_STR]):
+            # Only allow to run the requested subtests if that list doesn't contain the special *_STR subtests,
+            # which are understood by this python runner, but not by the glib binary runner, so it may cause that
+            # it reports zero tests as failing or running because it ran zero, which can confuse EWS bots.
+            for subtest in subtests:
+                command.extend(['-p', subtest])
         for skip in skipped:
             command.extend(['-s', skip])
 
@@ -276,7 +282,7 @@ class GLibTestRunner(object):
             errors = self._read_from_stderr(self._stderr_fd)
             sys.stdout.write('Test program setup failed.\n')
             self._subtest_stderr(errors)
-            self._results['beforeAll'] = 'CRASH'
+            self._results[SETUP_SUBTEST_STR] = 'CRASH'
             return self._results
 
         # Try to read errors from afterAll
@@ -284,7 +290,7 @@ class GLibTestRunner(object):
             errors = self._read_from_stderr(self._stderr_fd)
             sys.stdout.write('Test program shutdown failed.')
             self._subtest_stderr(errors)
-            self._results['afterAll'] = 'CRASH'
+            self._results[SHUTDOWN_SUBTEST_STR] = 'CRASH'
             return self._results
 
         if len(self._results) == 0:

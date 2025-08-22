@@ -590,11 +590,7 @@ static CallbackMap& callbackMap()
 }
 
 enum {
-    DidBeginSwipeCallbackID = 1,
-    WillEndSwipeCallbackID,
-    DidEndSwipeCallbackID,
-    DidRemoveSwipeSnapshotCallbackID,
-    TextDidChangeInTextFieldCallbackID,
+    TextDidChangeInTextFieldCallbackID = 1,
     TextFieldDidBeginEditingCallbackID,
     TextFieldDidEndEditingCallbackID,
     FirstUIScriptCallbackID = 100
@@ -1114,46 +1110,6 @@ void TestRunner::setAllowedMenuActions(JSContextRef context, JSValueRef actions)
         WKArrayAppendItem(messageBody.get(), toWKString(context, value).get());
     }
     postPageMessage("SetAllowedMenuActions", messageBody);
-}
-
-void TestRunner::installDidBeginSwipeCallback(JSContextRef context, JSValueRef callback)
-{
-    cacheTestRunnerCallback(context, DidBeginSwipeCallbackID, callback);
-}
-
-void TestRunner::installWillEndSwipeCallback(JSContextRef context, JSValueRef callback)
-{
-    cacheTestRunnerCallback(context, WillEndSwipeCallbackID, callback);
-}
-
-void TestRunner::installDidEndSwipeCallback(JSContextRef context, JSValueRef callback)
-{
-    cacheTestRunnerCallback(context, DidEndSwipeCallbackID, callback);
-}
-
-void TestRunner::installDidRemoveSwipeSnapshotCallback(JSContextRef context, JSValueRef callback)
-{
-    cacheTestRunnerCallback(context, DidRemoveSwipeSnapshotCallbackID, callback);
-}
-
-void TestRunner::callDidBeginSwipeCallback()
-{
-    callTestRunnerCallback(DidBeginSwipeCallbackID);
-}
-
-void TestRunner::callWillEndSwipeCallback()
-{
-    callTestRunnerCallback(WillEndSwipeCallbackID);
-}
-
-void TestRunner::callDidEndSwipeCallback()
-{
-    callTestRunnerCallback(DidEndSwipeCallbackID);
-}
-
-void TestRunner::callDidRemoveSwipeSnapshotCallback()
-{
-    callTestRunnerCallback(DidRemoveSwipeSnapshotCallbackID);
 }
 
 void TestRunner::clearStatisticsDataForDomain(JSStringRef domain)

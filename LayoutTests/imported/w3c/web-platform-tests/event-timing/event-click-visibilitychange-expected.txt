@@ -1,4 +1,6 @@
 Click me
 
-FAIL Event handlers which change visibility should not measure next paint. assert_implements: Event Timing is not supported. undefined
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Event handlers which change visibility should not measure next paint. Test timed out
 

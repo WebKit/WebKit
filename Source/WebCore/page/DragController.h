@@ -32,6 +32,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/SimpleRange.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
 #include <wtf/WeakRef.h>

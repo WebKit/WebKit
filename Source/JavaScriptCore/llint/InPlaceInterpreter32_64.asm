@@ -237,7 +237,7 @@ macro ipintEntry()
     move sp, argumINTEnd
     subp argumINTTmp, sp
     move sp, argumINTDsp
-    loadp Wasm::IPIntCallee::m_argumINTBytecodePointer[lr], MC
+    loadp Wasm::IPIntCallee::m_argumINTBytecode + VectorBufferOffset[lr], MC
 
     push argumINTTmp, argumINTDst, argumINTSrc, argumINTEnd
 
@@ -379,7 +379,7 @@ ipintOp(_throw_ref, macro()
     jumpToException()
 
 .throw_null_ref:
-    throwException(NullExnReference)
+    throwException(NullExnrefReference)
 end)
 
 # MC = location in uINT bytecode
@@ -413,7 +413,7 @@ end)
 
 # This implementation is specially defined out of ipintOp scope to make end implementation tight.
 .ipint_end_ret:
-    loadp Wasm::IPIntCallee::m_uINTBytecodePointer[ws0], MC
+    loadp Wasm::IPIntCallee::m_uINTBytecode + VectorBufferOffset[ws0], MC
     ipintEpilogueOSR(10)
     loadp Wasm::IPIntCallee::m_highestReturnStackOffset[ws0], sc0
     addp cfr, sc0
@@ -487,7 +487,7 @@ end)
 ipintOp(_return, macro()
     # ret
     loadi Wasm::IPIntCallee::m_bytecodeEnd[ws0], PC
-    loadp Wasm::IPIntCallee::m_uINTBytecode[ws0], MC
+    loadp Wasm::IPIntCallee::m_uINTBytecode + VectorBufferOffset[ws0], MC
     # This is guaranteed going to an end instruction, so skip
     # dispatch and end of program check for speed
     jmp .ipint_end_ret

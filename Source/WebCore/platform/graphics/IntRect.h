@@ -27,6 +27,7 @@
 
 #include <WebCore/IntPoint.h>
 #include <WebCore/LayoutUnit.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 
 #if USE(CG)

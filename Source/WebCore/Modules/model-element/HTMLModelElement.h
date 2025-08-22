@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(MODEL_ELEMENT)
 
 #include <WebCore/ActiveDOMObject.h>

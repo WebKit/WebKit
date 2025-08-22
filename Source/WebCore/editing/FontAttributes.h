@@ -29,6 +29,7 @@
 #include <WebCore/FontShadow.h>
 #include <WebCore/RenderStyleConstants.h>
 #include <WebCore/StyleListStyleType.h>
+#include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 

@@ -37,7 +37,6 @@
 #import "AXUtilities.h"
 #import "AccessibilityRenderObject.h"
 #import "AccessibilityScrollView.h"
-#import "AccessibilityTable.h"
 #import "AccessibilityTableCell.h"
 #import "Chrome.h"
 #import "ChromeClient.h"
@@ -1244,12 +1243,10 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     return nil;
 }
 
-- (AccessibilityTable*)tableParent
+- (AccessibilityObject*)tableParent
 {
     // Find the parent table for the table cell.
-    if (auto* ancestor = self.axBackingObject->exposedTableAncestor(true))
-        return dynamicDowncast<AccessibilityTable>(ancestor);
-    return nil;
+    return self.axBackingObject->exposedTableAncestor(/* includeSelf */ true);
 }
 
 - (id)accessibilityTitleElement
@@ -1274,7 +1271,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (!tableCell)
         return nil;
 
-    AccessibilityTable* table = [self tableParent];
+    RefPtr table = [self tableParent];
     if (!table)
         return nil;
 
@@ -1316,7 +1313,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    AccessibilityTable* table = [self tableParent];
+    RefPtr table = [self tableParent];
     if (!table)
         return nil;
 
@@ -1328,33 +1325,27 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 {
     if (![self _prepareAccessibilityCall])
         return 0;
-    AccessibilityTable *table = [self tableParent];
-    if (!table)
-        return 0;
 
-    return table->rowCount();
+    RefPtr table = [self tableParent];
+    return table ? table->rowCount() : 0;
 }
 
 - (NSUInteger)accessibilityColumnCount
 {
     if (![self _prepareAccessibilityCall])
         return 0;
-    AccessibilityTable *table = [self tableParent];
-    if (!table)
-        return 0;
 
-    return table->columnCount();
+    RefPtr table = [self tableParent];
+    return table ? table->columnCount() : 0;
 }
 
 - (NSUInteger)accessibilityARIARowCount
 {
     if (![self _prepareAccessibilityCall])
         return 0;
-    AccessibilityTable *table = [self tableParent];
-    if (!table)
-        return 0;
 
-    NSInteger rowCount = table->axRowCount();
+    RefPtr table = [self tableParent];
+    NSInteger rowCount = table ? table->axRowCount() : 0;
     return rowCount > 0 ? rowCount : 0;
 }
 
@@ -1362,11 +1353,9 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 {
     if (![self _prepareAccessibilityCall])
         return 0;
-    AccessibilityTable *table = [self tableParent];
-    if (!table)
-        return 0;
 
-    NSInteger colCount = table->axColumnCount();
+    RefPtr table = [self tableParent];
+    NSInteger colCount = table ? table->axColumnCount() : 0;
     return colCount > 0 ? colCount : 0;
 }
 

@@ -203,7 +203,6 @@ dom/UIEventWithKeyState.cpp
 editing/ApplyStyleCommand.cpp
 editing/ChangeListTypeCommand.cpp
 editing/Editing.cpp
-editing/EditingStyle.cpp
 editing/Editor.cpp
 editing/EditorCommand.cpp
 editing/FormatBlockCommand.cpp

@@ -126,7 +126,7 @@ using JSResizableOrGrowableSharedBigUint64Array = JSGenericResizableOrGrowableSh
     macro(JSBigUint64Array, JSType::BigUint64ArrayType, JSType::BigUint64ArrayType) \
 
 #define FOR_EACH_JS_DYNAMIC_CAST_JS_TYPE_OVERLOAD_FORWARD_DECLARED(macro) \
-    macro(JSImmutableButterfly, JSType::JSImmutableButterflyType, JSType::JSImmutableButterflyType) \
+    macro(JSCellButterfly, JSType::JSCellButterflyType, JSType::JSCellButterflyType) \
     macro(JSStringIterator, JSType::JSStringIteratorType, JSType::JSStringIteratorType) \
     macro(Structure, JSType::StructureType, JSType::StructureType) \
     macro(JSString, JSType::StringType, JSType::StringType) \

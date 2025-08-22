@@ -27,6 +27,7 @@
 
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 #include <wtf/Ref.h>
 
 #if PLATFORM(IOS_FAMILY)

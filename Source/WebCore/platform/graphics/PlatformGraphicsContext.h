@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(WIN)
 #include "DIBPixelData.h"
 typedef struct HDC__* HDC;

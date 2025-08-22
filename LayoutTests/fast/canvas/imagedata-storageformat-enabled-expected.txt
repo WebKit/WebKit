@@ -53,6 +53,32 @@ PASS gotten_imageData_uint8_from_float16.data.at(0) is 0
 PASS gotten_imageData_uint8_from_float16.data.at(1) is 128
 PASS gotten_imageData_uint8_from_float16.data.at(2) is 255
 PASS gotten_imageData_uint8_from_float16.data.at(3) is 255
+PASS canvas.width * canvas.height >= 256 * componentsToTest is true
+PASS pixelOffset is 256 * componentsToTest
+PASS gotten_imageData_uint8.width is expected_imageData_uint8.width
+PASS gotten_imageData_uint8.height is expected_imageData_uint8.height
+PASS gotten_imageData_uint8.data.constructor is expected_imageData_uint8.data.constructor
+PASS gotten_imageData_uint8.data.BYTES_PER_ELEMENT is expected_imageData_uint8.data.BYTES_PER_ELEMENT
+PASS gotten_imageData_uint8.data.length is expected_imageData_uint8.data.length
+PASS gotten_imageData_uint8.data.byteLength is expected_imageData_uint8.data.byteLength
+PASS gotten_imageData_float16.width is expected_imageData_float16.width
+PASS gotten_imageData_float16.height is expected_imageData_float16.height
+PASS gotten_imageData_float16.data.constructor is expected_imageData_float16.data.constructor
+PASS gotten_imageData_float16.data.BYTES_PER_ELEMENT is expected_imageData_float16.data.BYTES_PER_ELEMENT
+PASS gotten_imageData_float16.data.length is expected_imageData_float16.data.length
+PASS gotten_imageData_float16.data.byteLength is expected_imageData_float16.data.byteLength
+PASS gotten_imageData_float16.width is expected_imageData_float16.width
+PASS gotten_imageData_float16.height is expected_imageData_float16.height
+PASS gotten_imageData_float16.data.constructor is expected_imageData_float16.data.constructor
+PASS gotten_imageData_float16.data.BYTES_PER_ELEMENT is expected_imageData_float16.data.BYTES_PER_ELEMENT
+PASS gotten_imageData_float16.data.length is expected_imageData_float16.data.length
+PASS gotten_imageData_float16.data.byteLength is expected_imageData_float16.data.byteLength
+PASS gotten_imageData_uint8.width is expected_imageData_uint8.width
+PASS gotten_imageData_uint8.height is expected_imageData_uint8.height
+PASS gotten_imageData_uint8.data.constructor is expected_imageData_uint8.data.constructor
+PASS gotten_imageData_uint8.data.BYTES_PER_ELEMENT is expected_imageData_uint8.data.BYTES_PER_ELEMENT
+PASS gotten_imageData_uint8.data.length is expected_imageData_uint8.data.length
+PASS gotten_imageData_uint8.data.byteLength is expected_imageData_uint8.data.byteLength
 PASS context.createImageData(1, 1, { storageFormat: "foo" }) threw exception TypeError: Type error.
 PASS context.getImageData(0, 0, 1, 1, { storageFormat: "foo" }) threw exception TypeError: Type error.
 PASS successfullyParsed is true

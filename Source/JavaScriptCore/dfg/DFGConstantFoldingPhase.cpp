@@ -1089,7 +1089,7 @@ private:
                         Edge use = m_graph.varArgChild(node, 0);
                         if (use->op() == PhantomSpread) {
                             if (use->child1()->op() == PhantomNewArrayBuffer) {
-                                auto* immutableButterfly = use->child1()->castOperand<JSImmutableButterfly*>();
+                                auto* immutableButterfly = use->child1()->castOperand<JSCellButterfly*>();
                                 if (hasContiguous(immutableButterfly->indexingType())) {
                                     node->convertToNewArrayBuffer(m_graph.freeze(immutableButterfly));
                                     changed = true;

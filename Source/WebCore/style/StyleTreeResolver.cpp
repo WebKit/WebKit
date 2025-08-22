@@ -1329,7 +1329,7 @@ auto TreeResolver::updateStateForQueryContainer(Element& element, const RenderSt
     if (!style)
         return LayoutInterleavingAction::None;
 
-    if (m_queryContainerStates.contains(element))
+    if (m_queryContainerStates.get(element).invalidated)
         return LayoutInterleavingAction::None;
 
     auto* existingStyle = element.renderOrDisplayContentsStyle();
@@ -1637,8 +1637,22 @@ std::optional<ResolvedStyle> TreeResolver::tryChoosePositionOption(const Styleab
 
     sortPositionOptionsIfNeeded(options, styleable);
 
+    auto invalidateQueryContainer = [&] () {
+        // Pseudo-elements can't be query containers, so skip invalidating for pseudo-elements.
+        if (styleable.pseudoElementIdentifier)
+            return;
+
+        auto iter = m_queryContainerStates.find(styleable.element);
+        if (iter == m_queryContainerStates.end())
+            return;
+
+        iter->value.invalidated = false;
+    };
+
     auto renderer = dynamicDowncast<RenderBox>(styleable.renderer());
     if (!renderer) {
+        invalidateQueryContainer();
+
         options.chosen = true;
         return ResolvedStyle { RenderStyle::clonePtr(options.originalStyle()) };
     }
@@ -1646,6 +1660,8 @@ std::optional<ResolvedStyle> TreeResolver::tryChoosePositionOption(const Styleab
     // On the first try, we force apply the original style (which _could_ be different from
     // the existing style, since the original style might have a fallback applied to it)
     if (options.isFirstTry) {
+        invalidateQueryContainer();
+
         options.isFirstTry = false;
         options.index = 0;
         return ResolvedStyle { options.currentOption() };
@@ -1669,6 +1685,8 @@ std::optional<ResolvedStyle> TreeResolver::tryChoosePositionOption(const Styleab
 
     // Next option to try if this doesn't work.
     ++options.index;
+
+    invalidateQueryContainer();
 
     if (options.index >= options.optionStyles.size()) {
         // None of the options worked, return back to the original.

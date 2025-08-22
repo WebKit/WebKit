@@ -457,6 +457,33 @@ RoundingMode negateTemporalRoundingMode(RoundingMode roundingMode)
     }
 }
 
+// https://tc39.es/proposal-temporal/#sec-applyunsignedroundingmode
+// ApplyUnsignedRoundingMode ( x, r1, r2, unsignedRoundingMode )
+double applyUnsignedRoundingMode(double x, double r1, double r2, UnsignedRoundingMode unsignedRoundingMode)
+{
+    if (x == r1)
+        return r1;
+    ASSERT(r1 < x && x < r2);
+    if (unsignedRoundingMode == UnsignedRoundingMode::Zero)
+        return r1;
+    if (unsignedRoundingMode == UnsignedRoundingMode::Infinity)
+        return r2;
+    double d1 = x - r1;
+    double d2 = r2 - x;
+    if (d1 < d2)
+        return r1;
+    if (d2 < d1)
+        return r2;
+    ASSERT(d1 == d2);
+    if (unsignedRoundingMode == UnsignedRoundingMode::HalfZero)
+        return r1;
+    if (unsignedRoundingMode == UnsignedRoundingMode::HalfInfinity)
+        return r2;
+    ASSERT(unsignedRoundingMode == UnsignedRoundingMode::HalfEven);
+    auto cardinality = std::fmod(r1 / (r2 - r1), 2);
+    return !cardinality ? r1 : r2;
+}
+
 void formatSecondsStringFraction(StringBuilder& builder, unsigned fraction, std::tuple<Precision, unsigned> precision)
 {
     auto [precisionType, precisionValue] = precision;
@@ -600,55 +627,77 @@ double roundNumberToIncrement(double x, double increment, RoundingMode mode)
 
 // RoundNumberToIncrementAsIfPositive ( x, increment, roundingMode )
 // https://tc39.es/proposal-temporal/#sec-temporal-roundnumbertoincrementasifpositive
-Int128 roundNumberToIncrement(Int128 x, Int128 increment, RoundingMode mode)
+Int128 roundNumberToIncrementAsIfPositive(Int128 x, Int128 increment, RoundingMode roundingMode)
 {
-    ASSERT(increment);
-
-    if (increment == 1)
-        return x;
-
+    // The following code follows the polyfill rather than the spec, because we don't have float128.
+    // ApplyUnsignedRoundingMode is inlined here to mirror the polyfill's implementation of it,
+    // which has a different type than in the spec.
+    // See https://github.com/tc39/proposal-temporal/blob/main/polyfill/lib/ecmascript.mjs#L4056
     Int128 quotient = x / increment;
     Int128 remainder = x % increment;
-    if (!remainder)
-        return x;
-
-    bool sign = remainder < 0;
-    switch (mode) {
-    case RoundingMode::Ceil:
-    case RoundingMode::Expand:
-        if (!sign)
-            quotient++;
-        break;
-    case RoundingMode::Floor:
-    case RoundingMode::Trunc:
-        if (sign)
-            quotient--;
-        break;
-    case RoundingMode::HalfCeil:
-    case RoundingMode::HalfExpand:
-        // "half toward infinity"
-        if (!sign && remainder * 2 >= increment)
-            quotient++;
-        else if (sign && -remainder * 2 > increment)
-            quotient--;
-        break;
-    case RoundingMode::HalfFloor:
-    case RoundingMode::HalfTrunc:
-        // "half toward zero"
-        if (!sign && remainder * 2 > increment)
-            quotient++;
-        else if (sign && -remainder * 2 >= increment)
-            quotient--;
-        break;
-    case RoundingMode::HalfEven:
-        // "half toward even multiple of increment"
-        if (!sign && (remainder * 2 > increment || (remainder * 2 == increment && quotient % 2 == 1)))
-            quotient++;
-        else if (sign && (-remainder * 2 > increment || (-remainder * 2 == increment && -quotient % 2 == 1)))
-            quotient--;
-        break;
+    auto unsignedRoundingMode = getUnsignedRoundingMode(roundingMode, false);
+    auto r1 = quotient;
+    auto r2 = quotient + 1;
+    if (x < 0) {
+        r1 = quotient - 1;
+        r2 = quotient;
     }
-    return quotient * increment;
+    auto doubleRemainder = absInt128(remainder * 2);
+    auto even = r1 % 2;
+    if (quotient * increment == x)
+        return x;
+    if (unsignedRoundingMode == UnsignedRoundingMode::Zero)
+        return r1 * increment;
+    if (unsignedRoundingMode == UnsignedRoundingMode::Infinity)
+        return r2 * increment;
+    if (doubleRemainder < increment)
+        return r1 * increment;
+    if (doubleRemainder > increment)
+        return r2 * increment;
+    if (unsignedRoundingMode == UnsignedRoundingMode::HalfZero)
+        return r1 * increment;
+    if (unsignedRoundingMode == UnsignedRoundingMode::HalfInfinity)
+        return r2 * increment;
+    return !even ? r1 * increment : r2 * increment;
+}
+
+// There are two different versions of this method due to the lack
+// of float128. The names are different (roundNumberToIncrementInt128() and
+// roundNumberToIncrement()) to avoid confusion in the presence of
+// implicit casts.
+// https://tc39.es/proposal-temporal/#sec-temporal-roundnumbertoincrement
+Int128 roundNumberToIncrementInt128(Int128 x, Int128 increment, RoundingMode mode)
+{
+    // This follows the polyfill code rather than the spec, in order to work around
+    // being unable to apply floating-point division in x / increment.
+    // See https://github.com/tc39/proposal-temporal/blob/main/polyfill/lib/ecmascript.mjs#L4043
+    Int128 quotient = x / increment;
+    Int128 remainder = x % increment;
+    bool isNegative = x < 0;
+    Int128 r1 = absInt128(quotient);
+    Int128 r2 = r1 + 1;
+    Int128 even = r1 % 2;
+    auto unsignedRoundingMode = getUnsignedRoundingMode(mode, isNegative);
+    Int128 rounded = 0;
+    if (absInt128(x) == r1 * increment)
+        rounded = r1;
+    else if (unsignedRoundingMode == UnsignedRoundingMode::Zero)
+        rounded = r1;
+    else if (unsignedRoundingMode == UnsignedRoundingMode::Infinity)
+        rounded = r2;
+    else if (absInt128(remainder * 2) < increment)
+        rounded = r1;
+    else if (absInt128(remainder * 2) > increment)
+        rounded = r2;
+    else if (unsignedRoundingMode == UnsignedRoundingMode::HalfZero)
+        rounded = r1;
+    else if (unsignedRoundingMode == UnsignedRoundingMode::HalfInfinity)
+        rounded = r2;
+    else
+        rounded = !even ? r1 : r2;
+    if (isNegative)
+        rounded = -rounded;
+    return rounded * increment;
 }
 
 TemporalOverflow toTemporalOverflow(JSGlobalObject* globalObject, JSObject* options)

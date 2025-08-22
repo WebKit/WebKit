@@ -57,6 +57,7 @@ class FrameHandle;
 class FrameInfo;
 class HTTPCookieStore;
 class HitTestResult;
+class JSHandle;
 class MessageListener;
 class Navigation;
 class NavigationAction;
@@ -137,6 +138,7 @@ WK_ADD_API_MAPPING(WKHTTPCookieStoreRef, API::HTTPCookieStore)
 WK_ADD_API_MAPPING(WKHitTestResultRef, API::HitTestResult)
 WK_ADD_API_MAPPING(WKIconDatabaseRef, WebIconDatabase)
 WK_ADD_API_MAPPING(WKInspectorRef, WebInspectorUIProxy)
+WK_ADD_API_MAPPING(WKJSHandleRef, API::JSHandle);
 WK_ADD_API_MAPPING(WKMediaKeySystemPermissionCallbackRef, MediaKeySystemPermissionCallback)
 WK_ADD_API_MAPPING(WKQueryPermissionResultCallbackRef, QueryPermissionResultCallback)
 WK_ADD_API_MAPPING(WKMessageListenerRef, API::MessageListener)

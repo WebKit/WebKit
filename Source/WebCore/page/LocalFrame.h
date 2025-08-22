@@ -32,6 +32,7 @@
 #include <WebCore/ScrollbarMode.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
+#include <wtf/Platform.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakRef.h>
 

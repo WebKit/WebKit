@@ -51,6 +51,7 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKFeature.h>
 #import <WebKit/_WKFrameTreeNode.h>
+#import <WebKit/_WKJSHandle.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKTextManipulationConfiguration.h>
 #import <WebKit/_WKTextManipulationDelegate.h>
@@ -5386,25 +5387,23 @@ TEST(SiteIsolation, HitTesting)
         { "/exampleframe"_s, { makeString("<div id=exampleiframediv>"_s, text, text, "</div>"_s) } },
     }, HTTPServer::Protocol::HttpsProxy);
 
-    auto hitTestResult = [] (RetainPtr<WKWebView> webView, CGPoint point, WKFrameInfo *coordinateFrame = nil) -> std::optional<std::pair<RetainPtr<_WKJSHandle>, RetainPtr<WKFrameInfo>>> {
+    auto hitTestResult = [] (RetainPtr<WKWebView> webView, CGPoint point, WKFrameInfo *coordinateFrame = nil) -> RetainPtr<_WKJSHandle> {
         __block bool done { false };
-        __block std::optional<std::pair<RetainPtr<_WKJSHandle>, RetainPtr<WKFrameInfo>>> result;
-        [webView _hitTestAtPoint:point inFrameCoordinateSpace:coordinateFrame completionHandler:^(_WKJSHandle *node, WKFrameInfo *frame, NSError *error) {
+        __block RetainPtr<_WKJSHandle> result;
+        [webView _hitTestAtPoint:point inFrameCoordinateSpace:coordinateFrame completionHandler:^(_WKJSHandle *node, NSError *error) {
             done = true;
-            if (error)
-                return;
-            result = { { { node }, { frame } } };
+            EXPECT_NE(!node, !error);
+            result = node;
         }];
         Util::run(&done);
         return result;
     };
 
     auto hitNodePrototypeAndParentElement = [&] (RetainPtr<TestWKWebView> webView, CGPoint point, WKFrameInfo *coordinateFrame = nil) -> NSString * {
-        auto result = hitTestResult(webView, point, coordinateFrame);
-        if (!result)
+        auto node = hitTestResult(webView, point, coordinateFrame);
+        if (!node)
             return @"(error)";
-        auto [node, frame] = *result;
-        return [webView objectByCallingAsyncFunction:@"return Object.getPrototypeOf(n).toString() + ' ' + n.id + ', child of ' + n.parentElement?.id" withArguments:@{ @"n" : node.get() } inFrame:frame.get() inContentWorld:WKContentWorld.pageWorld];
+        return [webView objectByCallingAsyncFunction:@"return Object.getPrototypeOf(n).toString() + ' ' + n.id + ', child of ' + n.parentElement?.id" withArguments:@{ @"n" : node.get() } inFrame:node.get().frame inContentWorld:WKContentWorld.pageWorld];
     };
 
     auto runTest = [&] (bool withSiteIsolation) {

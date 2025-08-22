@@ -370,7 +370,7 @@ TEST(WebKit, DecidePolicyForNavigationActionOpenNewWindowAndDeallocSourceWebView
 
     EXPECT_EQ(WKNavigationTypeOther, [action navigationType]);
     EXPECT_TRUE([action sourceFrame] != [action targetFrame]);
-    EXPECT_EQ(newWebView.get(), [[action sourceFrame] webView]);
+    EXPECT_NULL([[action sourceFrame] webView]);
     EXPECT_EQ(newWebView.get(), [[action targetFrame] webView]);
 
     newWebView = nullptr;

@@ -1,4 +1,4 @@
-<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!-- webkit-test-runner [ UsesBackForwardCache=true dumpJSConsoleLogInStdErr=true ] -->
 <head>
 <style>
 html {
@@ -53,16 +53,18 @@ window.onload = async function () {
 
     document.body.innerHTML = isFirstPage() ? "first" : "second";
 
+    if (window.testRunner) {
+        testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
+        testRunner.installWillEndSwipeCallback(willEndSwipeCallback);
+        testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
+        testRunner.installDidRemoveSwipeSnapshotCallback(didRemoveSwipeSnapshotCallback);
+    }
+
     if (isFirstPage()) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
 
         await initializeSwipeTest();
-
-        testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
-        testRunner.installWillEndSwipeCallback(willEndSwipeCallback);
-        testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
-        testRunner.installDidRemoveSwipeSnapshotCallback(didRemoveSwipeSnapshotCallback);
 
         onpagereveal = (e) => {
             shouldBe(e.viewTransition, null, "View transitions should be disabled when using a swipe animation");

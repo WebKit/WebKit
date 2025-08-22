@@ -88,7 +88,7 @@ TEST_P(EventTestABBA, SerializeAndSignal)
     runLoop->dispatch([&] {
         ASSERT_TRUE(openB());
 
-        bClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
+        bClient().setAsyncMessageHandler([&] (IPC::Connection&, IPC::Decoder& decoder) -> bool {
             auto signal = decoder.decode<IPC::Signal>();
             signal->signal();
 
@@ -112,7 +112,7 @@ TEST_P(EventTestABBA, InterruptOnDestruct)
     runLoop->dispatch([&] {
         ASSERT_TRUE(openB());
 
-        bClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
+        bClient().setAsyncMessageHandler([&] (IPC::Connection&, IPC::Decoder& decoder) -> bool {
             {
                 auto signal = decoder.decode<IPC::Signal>();
             }

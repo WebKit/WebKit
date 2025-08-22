@@ -34,7 +34,7 @@
 #include "JSArrayIterator.h"
 #include "JSCBuiltins.h"
 #include "JSCInlines.h"
-#include "JSImmutableButterfly.h"
+#include "JSCellButterfly.h"
 #include "JSStringJoiner.h"
 #include "ObjectConstructor.h"
 #include "ObjectPrototypeInlines.h"
@@ -1322,7 +1322,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncIndexOf, (JSGlobalObject* globalObject, C
     if (isJSArray(thisObject)) [[likely]] {
         JSArray* array = asArray(thisObject);
         Butterfly* butterfly = array->butterfly();
-        if (isCopyOnWrite(array->indexingMode()) && JSImmutableButterfly::isOnlyAtomStringsStructure(vm, butterfly) && searchElement.isString()) {
+        if (isCopyOnWrite(array->indexingMode()) && JSCellButterfly::isOnlyAtomStringsStructure(vm, butterfly) && searchElement.isString()) {
             auto search = asString(searchElement)->toAtomString(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
 

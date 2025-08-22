@@ -35,10 +35,16 @@
 #include <EGL/egl.h>
 #endif
 #include <WebCore/GLContext.h>
-#include <WebCore/PlatformDisplaySurfaceless.h>
+#include <WebCore/GLDisplay.h>
 #include <openxr/openxr_platform.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WorkQueue.h>
+
+#if USE(GBM)
+#include "DRMMainDevice.h"
+#include <WebCore/DRMDevice.h>
+#include <WebCore/GBMDevice.h>
+#endif
 
 namespace WebKit {
 
@@ -183,8 +189,13 @@ void OpenXRCoordinator::createLayerProjection(uint32_t width, uint32_t height, b
                     return;
                 }
 
-                if (auto layer = OpenXRLayerProjection::create(WTFMove(swapchain)))
+                if (auto layer = OpenXRLayerProjection::create(WTFMove(swapchain))) {
+#if USE(GBM)
+                    if (m_gbmDevice)
+                        layer->setGBMDevice(m_gbmDevice);
+#endif
                     m_layers.add(defaultLayerHandle(), WTFMove(layer));
+                }
             });
         });
 }
@@ -338,6 +349,40 @@ void OpenXRCoordinator::createInstance()
     CHECK_XRCMD(xrCreateInstance(&createInfo, &m_instance));
 }
 
+RefPtr<WebCore::GLDisplay> OpenXRCoordinator::createGLDisplay() const
+{
+    ASSERT(RunLoop::isMain());
+    ASSERT(!m_glDisplay);
+
+    const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
+    auto tryCreateDisplay = [&](EGLenum platform, void *native) -> RefPtr<WebCore::GLDisplay> {
+        if (WebCore::GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
+            return WebCore::GLDisplay::create(eglGetPlatformDisplayEXT(platform, native, nullptr));
+        if (WebCore::GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
+            return WebCore::GLDisplay::create(eglGetPlatformDisplay(platform, native, nullptr));
+        return nullptr;
+    };
+
+    RefPtr<WebCore::GLDisplay> glDisplay;
+    if (WebCore::GLContext::isExtensionSupported(extensions, "EGL_MESA_platform_surfaceless")) {
+        glDisplay = tryCreateDisplay(EGL_PLATFORM_SURFACELESS_MESA, EGL_DEFAULT_DISPLAY);
+        if (glDisplay && !glDisplay->extensions().MESA_image_dma_buf_export)
+            glDisplay = nullptr;
+    }
+
+#if USE(GBM)
+    if (!glDisplay && WebCore::GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_gbm")) {
+        const auto& mainDevice = drmMainDevice();
+        if (!mainDevice.isNull()) {
+            m_gbmDevice = WebCore::GBMDevice::create(!mainDevice.renderNode.isNull() ? mainDevice.renderNode : mainDevice.primaryNode);
+            glDisplay = tryCreateDisplay(EGL_PLATFORM_GBM_KHR, m_gbmDevice->device());
+        }
+    }
+#endif
+
+    return glDisplay;
+}
+
 void OpenXRCoordinator::collectViewConfigurations()
 {
     ASSERT(RunLoop::isMain());
@@ -385,7 +430,7 @@ void OpenXRCoordinator::initializeDevice()
     if (m_instance != XR_NULL_HANDLE)
         return;
 
-    auto display = WebCore::PlatformDisplaySurfaceless::create();
+    auto display = createGLDisplay();
     if (!display) {
         LOG(XR, "Failed to create a display for OpenXR.");
         return;
@@ -417,7 +462,7 @@ void OpenXRCoordinator::initializeDevice()
     collectViewConfigurations();
     initializeBlendModes();
 
-    m_platformDisplay = WTFMove(display);
+    m_glDisplay = WTFMove(display);
 }
 
 void OpenXRCoordinator::initializeBlendModes()
@@ -456,7 +501,12 @@ void OpenXRCoordinator::tryInitializeGraphicsBinding()
     }
 
     if (!m_glContext) {
-        m_glContext = WebCore::GLContext::createOffscreen(*m_platformDisplay);
+#if USE(GBM)
+        const WebCore::GLContext::Target target = m_gbmDevice ? WebCore::GLContext::Target::Default : WebCore::GLContext::Target::Surfaceless;
+#else
+        static const WebCore::GLContext::Target target = WebCore::GLContext::Target::Surfaceless;
+#endif
+        m_glContext = WebCore::GLContext::create(*m_glDisplay, target);
         if (!m_glContext) {
             LOG(XR, "Failed to create the GL context for OpenXR.");
             return;
@@ -464,7 +514,7 @@ void OpenXRCoordinator::tryInitializeGraphicsBinding()
     }
 
     m_graphicsBinding = createOpenXRStruct<XrGraphicsBindingEGLMNDX, XR_TYPE_GRAPHICS_BINDING_EGL_MNDX>();
-    m_graphicsBinding.display = m_platformDisplay->eglDisplay();
+    m_graphicsBinding.display = m_glDisplay->eglDisplay();
     m_graphicsBinding.context = m_glContext->platformContext();
     m_graphicsBinding.config = m_glContext->config();
     m_graphicsBinding.getProcAddress = m_extensions->methods().getProcAddressFunc;

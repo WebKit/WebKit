@@ -38,6 +38,7 @@
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 #include <wtf/WallTime.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>

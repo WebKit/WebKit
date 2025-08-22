@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(COCOA_WEBM_PLAYER)
 
 #include <WebCore/MediaPlayerPrivate.h>
@@ -76,7 +77,8 @@ class MediaPlayerPrivateWebM
     : public MediaPlayerPrivateInterface
     , public WebMResourceClientParent
     , public WebAVSampleBufferListenerClient
-    , private LoggerHelper {
+    , private LoggerHelper
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaPlayerPrivateWebM, WTF::DestructionThread::Main> {
     WTF_MAKE_TZONE_ALLOCATED(MediaPlayerPrivateWebM);
 public:
     MediaPlayerPrivateWebM(MediaPlayer*);
@@ -84,10 +86,10 @@ public:
 
     constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::CocoaWebM; }
 
-    void ref() const final { WebMResourceClientParent::ref(); }
-    void deref() const final { WebMResourceClientParent::deref(); }
-
     static void registerMediaEngine(MediaEngineRegistrar);
+
+    WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
+
 private:
     void setPreload(MediaPlayer::Preload) final;
     void doPreload();
@@ -238,6 +240,7 @@ private:
     bool shouldEnsureLayerOrVideoRenderer() const;
     void ensureLayer();
     void destroyLayer();
+    void destroyVideoLayerIfNeeded();
     void ensureVideoRenderer();
     void destroyVideoRenderer();
 
@@ -265,8 +268,6 @@ private:
     void checkNewVideoFrameMetadata(const MediaTime& presentationTime, double displayTime);
 
     // WebAVSampleBufferListenerParent
-    // Methods are called on the WebMResourceClient's WorkQueue
-    void videoRendererDidReceiveError(WebSampleBufferVideoRendering *, NSError *) final;
     void audioRendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *) final;
 
     void setShouldDisableHDR(bool) final;
@@ -373,8 +374,8 @@ private:
     size_t m_contentLength { 0 };
     size_t m_contentReceived { 0 };
     uint32_t m_pendingAppends { 0 };
+    bool m_layerRequiresFlush { false };
 #if PLATFORM(IOS_FAMILY)
-    bool m_displayLayerWasInterrupted { false };
     bool m_applicationIsActive { true };
 #endif
     bool m_hasAudio { false };
@@ -413,6 +414,7 @@ private:
     String m_defaultSpatialTrackingLabel;
     String m_spatialTrackingLabel;
 #endif
+    bool m_needsDestroyVideoLayer { false };
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     bool m_usingLinearMediaPlayer { false };
     RetainPtr<FigVideoTargetRef> m_videoTarget;

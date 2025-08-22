@@ -29,6 +29,7 @@
 #include <WebCore/KeypressCommand.h>
 #include <WebCore/UIEventWithKeyState.h>
 #include <memory>
+#include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

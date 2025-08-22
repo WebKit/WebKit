@@ -27,7 +27,7 @@
 
 DECLARE_SYSTEM_HEADER
 
-#import <wtf/Platform.h>
+#include <wtf/Platform.h>
 
 #if PLATFORM(IOS_FAMILY)
 

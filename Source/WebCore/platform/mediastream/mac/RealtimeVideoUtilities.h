@@ -26,6 +26,7 @@
 #pragma once
 
 #include <CoreVideo/CoreVideo.h>
+#include <wtf/Platform.h>
 
 namespace WebCore {
 

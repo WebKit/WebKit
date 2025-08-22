@@ -36,7 +36,11 @@ using JSHandleIdentifier = ProcessQualified<ObjectIdentifier<JSHandleIdentifierT
 namespace WebKit {
 
 struct JSHandleInfo {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(JSHandleInfo);
+    JSHandleInfo(WebCore::JSHandleIdentifier, FrameInfoData&&, Markable<WebCore::FrameIdentifier>);
+
     WebCore::JSHandleIdentifier identifier;
+    FrameInfoData frameInfo;
     Markable<WebCore::FrameIdentifier> windowProxyFrameIdentifier;
 };
 

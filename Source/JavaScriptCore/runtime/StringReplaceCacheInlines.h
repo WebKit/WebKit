@@ -53,7 +53,7 @@ inline StringReplaceCache::Entry* StringReplaceCache::get(const String& subject,
     return nullptr;
 }
 
-inline void StringReplaceCache::set(const String& subject, RegExp* regExp, JSImmutableButterfly* result, MatchResult matchResult, const Vector<int>& lastMatch)
+inline void StringReplaceCache::set(const String& subject, RegExp* regExp, JSCellButterfly* result, MatchResult matchResult, const Vector<int>& lastMatch)
 {
     AssertNoGC assertNoGC;
     if (!subject.impl() || !subject.impl()->isAtom())

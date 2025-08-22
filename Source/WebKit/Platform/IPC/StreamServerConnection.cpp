@@ -60,13 +60,14 @@ StreamServerConnection::~StreamServerConnection()
     ASSERT(!m_connection->isValid());
 }
 
-void StreamServerConnection::open(StreamConnectionWorkQueue& workQueue)
+void StreamServerConnection::open(Client& client, StreamConnectionWorkQueue& workQueue)
 {
+    m_client = &client;
     m_workQueue = workQueue;
     // FIXME(http://webkit.org/b/238986): Workaround for not being able to deliver messages from the dedicated connection to the work queue the client uses.
-    Ref connection = m_connection;
-    connection->addMessageReceiveQueue(*this, { });
-    connection->open(*this, workQueue);
+    // This delivers both valid and invalid messages to *this.
+    m_connection->addMessageReceiveQueue(*this, { });
+    m_connection->open(*this, workQueue);
     workQueue.addStreamConnection(*this);
 }
 
@@ -81,6 +82,7 @@ void StreamServerConnection::invalidate()
     connection->invalidate();
     connection->removeMessageReceiveQueue({ });
     m_workQueue = nullptr;
+    m_client = nullptr;
     Locker locker { m_outOfStreamMessagesLock };
     m_outOfStreamMessages.clear();
 }
@@ -130,7 +132,7 @@ void StreamServerConnection::didClose(Connection&)
 
 void StreamServerConnection::didReceiveInvalidMessage(Connection&, MessageName, const Vector<uint32_t>&)
 {
-    // The sender is expected to be trusted, so all invalid messages are programming errors.
+    // All messages go to message queue.
     ASSERT_NOT_REACHED();
 }
 
@@ -146,7 +148,7 @@ StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMes
             return DispatchResult::HasNoMessages;
         IPC::Decoder decoder { *span, m_currentDestinationID };
         if (!decoder.isValid()) {
-            protectedConnection()->dispatchDidReceiveInvalidMessage(decoder.messageName(), decoder.indicesOfObjectsFailingDecoding());
+            dispatchDidReceiveInvalidMessage(decoder);
             return DispatchResult::HasNoMessages;
         }
         if (decoder.messageName() == MessageName::SetStreamDestinationID) {
@@ -166,7 +168,7 @@ StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMes
         if (!currentReceiver) {
             auto key = std::make_pair(static_cast<uint8_t>(currentReceiverName), m_currentDestinationID);
             if (!ReceiversMap::isValidKey(key)) {
-                protectedConnection()->dispatchDidReceiveInvalidMessage(decoder.messageName(), decoder.indicesOfObjectsFailingDecoding());
+                dispatchDidReceiveInvalidMessage(decoder);
                 return DispatchResult::HasNoMessages;
             }
             Locker locker { m_receiversLock };
@@ -192,7 +194,7 @@ bool StreamServerConnection::processSetStreamDestinationID(Decoder& decoder, Ref
 {
     auto destinationID = decoder.decode<uint64_t>();
     if (!destinationID) {
-        protectedConnection()->dispatchDidReceiveInvalidMessage(decoder.messageName(), decoder.indicesOfObjectsFailingDecoding());
+        dispatchDidReceiveInvalidMessage(decoder);
         return false;
     }
     if (m_currentDestinationID != *destinationID) {
@@ -235,9 +237,17 @@ bool StreamServerConnection::processOutOfStreamMessage(Decoder& decoder)
         message = m_outOfStreamMessages.takeFirst().moveToUniquePtr();
     }
 
+    auto key = std::make_pair(static_cast<uint8_t>(message->messageReceiverName()), static_cast<uint64_t>(message->destinationID()));
+
+    if (!message->isValid() || !m_receivers.isValidKey(key)) {
+        // The ignoreInvalidMessageForTesting() path for sync messages that dispatchStreamMessage() has
+        //  is not supported here because it is likely we don't have a id to reply to. No clients for this.
+        dispatchDidReceiveInvalidMessage(*message);
+        return false;
+    }
+
     RefPtr<StreamMessageReceiver> receiver;
     {
-        auto key = std::make_pair(static_cast<uint8_t>(message->messageReceiverName()), static_cast<uint64_t>(message->destinationID()));
         Locker locker { m_receiversLock };
         receiver = m_receivers.get(key);
     }
@@ -257,7 +267,13 @@ bool StreamServerConnection::processOutOfStreamMessage(Decoder& decoder)
 
 bool StreamServerConnection::dispatchStreamMessage(Decoder& message, StreamMessageReceiver& receiver)
 {
+#if ASSERT_ENABLED
+    m_isDispatchingMessage = true;
+#endif
     receiver.didReceiveStreamMessage(*this, message);
+#if ASSERT_ENABLED
+    m_isDispatchingMessage = false;
+#endif
     auto didReceiveInvalidMessage = std::exchange(m_didReceiveInvalidMessage, false);
     if (!didReceiveInvalidMessage && message.isValid())
         return true;
@@ -276,13 +292,19 @@ bool StreamServerConnection::dispatchStreamMessage(Decoder& message, StreamMessa
         return false;
     }
 #endif
-    connection->dispatchDidReceiveInvalidMessage(message.messageName(), message.indicesOfObjectsFailingDecoding());
+    dispatchDidReceiveInvalidMessage(message);
     return false;
+}
+
+void StreamServerConnection::dispatchDidReceiveInvalidMessage(Decoder& message)
+{
+    CheckedPtr { m_client }->didReceiveInvalidMessage(*this, message.messageName(), message.indicesOfObjectsFailingDecoding());
+    invalidate();
 }
 
 void StreamServerConnection::markCurrentlyDispatchedMessageAsInvalid()
 {
-    ASSERT(m_isProcessingStreamMessage);
+    ASSERT(m_isDispatchingMessage);
     m_didReceiveInvalidMessage = true;
 }
 
@@ -290,5 +312,6 @@ RefPtr<StreamConnectionWorkQueue> StreamServerConnection::protectedWorkQueue() c
 {
     return m_workQueue;
 }
+
 
 }

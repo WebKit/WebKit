@@ -672,9 +672,6 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
 
             layer.setStaticBlockPosition(borderBoxLogicalTopLeft.y());
             layer.setStaticInlinePosition(borderBoxLogicalTopLeft.x());
-
-            if (!delta.isZero() && hasStaticInlinePositioning)
-                renderer.setChildNeedsLayout(MarkOnlyThis);
             continue;
         }
     }

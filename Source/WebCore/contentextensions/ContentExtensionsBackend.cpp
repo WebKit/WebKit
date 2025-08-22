@@ -33,6 +33,7 @@
 #include "CompiledContentExtension.h"
 #include "ContentExtension.h"
 #include "ContentExtensionsDebugging.h"
+#include "ContentRuleListMatchedRule.h"
 #include "ContentRuleListResults.h"
 #include "DFABytecodeInterpreter.h"
 #include "Document.h"
@@ -53,10 +54,6 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
-
-#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
-#include "ContentRuleListMatchedRule.h"
-#endif
 
 namespace WebCore::ContentExtensions {
 
@@ -319,16 +316,14 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
                     results.summary.redirected = true;
                     results.summary.redirectActions.append({ redirectAction, m_contentExtensions.get(contentRuleListIdentifier)->extensionBaseURL() });
                 }
+            }, [&] (const ReportIdentifierAction& reportIdentifierAction) {
+                // FIXME: <rdar://157880177> Include the rest of the parameters on the ContentRuleListMatchedRule struct.
+                ContentRuleListMatchedRule matchedRule;
+                matchedRule.request.url = url.string();
+                matchedRule.rule.extensionId = contentRuleListIdentifier;
+                matchedRule.rule.ruleId = reportIdentifierAction.identifier;
+                page.chrome().client().contentRuleListMatchedRule(matchedRule);
             }), action.data());
-
-#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
-            // FIXME: <rdar://157880177> Include the rest of the parameters on the ContentRuleListMatchedRule struct.
-            ContentRuleListMatchedRule matchedRule;
-            matchedRule.request.url = url.string();
-            matchedRule.rule.extensionId = contentRuleListIdentifier;
-            matchedRule.rule.ruleId = action.actionID();
-            page.chrome().client().contentRuleListMatchedRule(matchedRule);
-#endif
         }
 
         if (!actionsFromContentRuleList.sawIgnorePreviousRules) {
@@ -400,6 +395,8 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingL
                 // We currently have not implemented active actions from the network process (CORS preflight).
             }, [&] (const RedirectAction&) {
                 // We currently have not implemented active actions from the network process (CORS preflight).
+            }, [&] (const ReportIdentifierAction&) {
+                // We currently have not implemented notifications from the NetworkProcess to the UIProcess.
             }), action.data());
         }
     }
@@ -427,6 +424,7 @@ bool ContentExtensionsBackend::processContentRuleListsForResourceMonitoring(cons
                 RELEASE_ASSERT_NOT_REACHED();
             }, [&] (const ModifyHeadersAction&) {
             }, [&] (const RedirectAction&) {
+            }, [&] (const ReportIdentifierAction&) {
             }), action.data());
         }
     }

@@ -1,5 +1,5 @@
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tempus lacinia nisi, eget tempor orci. Nullam congue pharetra arcu, et consectetur massa mollis tincidunt. Quisque odio sapien, viverra finibus lectus ac, consectetur ornare quam. In hac habitasse platea dictumst. Morbi cursus est odio, non fermentum ligula posuere vitae. Sed ullamcorper convallis rhoncus. In condimentum neque nec metus hendrerit, et cursus ipsum aliquet.
 
 
-FAIL Event Timing: compare event timing interactionId for key press with no effect. assert_implements: Event Timing is not supported. undefined
+PASS Event Timing: compare event timing interactionId for key press with no effect.
 

@@ -27,6 +27,7 @@
 
 #include <WebCore/Color.h>
 #include <WebCore/FloatSize.h>
+#include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 

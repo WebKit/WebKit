@@ -28,6 +28,7 @@
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PlatformWheelEvent.h>
+#include <wtf/Platform.h>
 
 #if PLATFORM(MAC)
 

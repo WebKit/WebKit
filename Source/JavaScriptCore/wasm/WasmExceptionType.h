@@ -40,7 +40,7 @@ namespace Wasm {
     macro(OutOfBoundsCallIndirect, "Out of bounds call_indirect"_s) \
     macro(NullTableEntry,  "call_indirect to a null table entry"_s) \
     macro(NullReference,  "call_ref to a null reference"_s) \
-    macro(NullExnReference,  "throw_ref on a null reference"_s) \
+    macro(NullExnrefReference,  "throw_ref on a null reference"_s) \
     macro(NullI31Get, "i31.get_<sx> to a null reference"_s) \
     macro(BadSignature, "call_indirect to a signature that does not match"_s) \
     macro(OutOfBoundsTrunc, "Out of bounds Trunc operation"_s) \
@@ -112,7 +112,7 @@ ALWAYS_INLINE bool isTypeErrorExceptionType(ExceptionType type)
     case ExceptionType::OutOfBoundsCallIndirect:
     case ExceptionType::NullTableEntry:
     case ExceptionType::NullReference:
-    case ExceptionType::NullExnReference:
+    case ExceptionType::NullExnrefReference:
     case ExceptionType::NullI31Get:
     case ExceptionType::BadSignature:
     case ExceptionType::OutOfBoundsTrunc:

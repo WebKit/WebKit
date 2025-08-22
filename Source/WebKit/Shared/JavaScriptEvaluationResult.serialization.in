@@ -22,12 +22,13 @@
 
 struct WebKit::JSHandleInfo {
     WebCore::JSHandleIdentifier identifier;
+    WebKit::FrameInfoData frameInfo;
     Markable<WebCore::FrameIdentifier> windowProxyFrameIdentifier;
 };
 
 class WebKit::JavaScriptEvaluationResult {
     WebKit::JSObjectID root()
-    HashMap<WebKit::JSObjectID, Variant<WebKit::JavaScriptEvaluationResult::EmptyType, bool, double, String, Seconds, Vector<WebKit::JSObjectID>, HashMap<WebKit::JSObjectID, WebKit::JSObjectID>, WebKit::JSHandleInfo, UniqueRef<WebCore::SerializedNode>>> map()
+    HashMap<WebKit::JSObjectID, Variant<WebKit::JavaScriptEvaluationResult::EmptyType, bool, double, String, Seconds, Vector<WebKit::JSObjectID>, HashMap<WebKit::JSObjectID, WebKit::JSObjectID>, UniqueRef<WebKit::JSHandleInfo>, UniqueRef<WebCore::SerializedNode>>> map()
 }
 
 [Nested] enum class WebKit::JavaScriptEvaluationResult::EmptyType : bool

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import <wtf/Platform.h>
 #if ENABLE(GAMEPAD) && PLATFORM(COCOA)
 
 #import "GameControllerSPI.h"

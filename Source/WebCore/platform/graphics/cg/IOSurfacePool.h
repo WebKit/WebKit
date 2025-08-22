@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if HAVE(IOSURFACE)
 
 #include <WebCore/IOSurface.h>

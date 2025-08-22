@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/OrientationNotifier.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/VideoPreset.h>
 #include <wtf/Lock.h>
@@ -39,7 +40,7 @@ class ImageTransferSessionVT;
 
 enum class VideoFrameRotation : uint16_t;
 
-class WEBCORE_EXPORT RealtimeVideoCaptureSource : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeVideoCaptureSource, WTF::DestructionThread::MainRunLoop> {
+class WEBCORE_EXPORT RealtimeVideoCaptureSource : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeVideoCaptureSource, WTF::DestructionThread::MainRunLoop>, protected OrientationNotifier::Observer {
 public:
     virtual ~RealtimeVideoCaptureSource();
 
@@ -98,6 +99,8 @@ private:
     Ref<TakePhotoNativePromise> takePhoto(PhotoSettings&&) final;
     bool isPowerEfficient() const final;
 
+    void orientationChanged(IntDegrees) override;
+
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const override { return "RealtimeVideoCaptureSource"_s; }
 #endif
@@ -120,6 +123,10 @@ struct SizeFrameRateAndZoom {
 };
 
 inline void RealtimeVideoCaptureSource::applyFrameRateAndZoomWithPreset(double, double, std::optional<VideoPreset>&&)
+{
+}
+
+inline void RealtimeVideoCaptureSource::orientationChanged(IntDegrees)
 {
 }
 

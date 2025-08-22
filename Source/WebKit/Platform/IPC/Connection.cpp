@@ -1018,7 +1018,19 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
 {
     ASSERT(message->messageReceiverName() != ReceiverName::Invalid);
 
+    // FIXME: These are practically the same mutex, so maybe they could be merged.
+    Locker waitForMessagesLocker { m_waitForMessageLock };
+
+    Locker incomingMessagesLocker { m_incomingMessagesLock };
+
+    if (auto* receiveQueue = m_receiveQueues.get(message.get())) {
+        receiveQueue->enqueueMessage(*this, WTFMove(message));
+        return;
+    }
+
     if (!message->isValid()) {
+        incomingMessagesLocker.unlockEarly();
+        waitForMessagesLocker.unlockEarly();
         // If the message is invalid, we could send back a SyncMessageError. In case the message
         // would need a reply, we do not cancel it as we don't know the destination to cancel it
         // with. Currently ther is no use-case to handle invalid messages.
@@ -1027,19 +1039,12 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
     }
 
     if (message->messageName() == MessageName::SyncMessageReply || message->messageName() == MessageName::CancelSyncMessageReply) {
+        incomingMessagesLocker.unlockEarly();
+        waitForMessagesLocker.unlockEarly();
         processIncomingSyncReply(WTFMove(message));
         return;
     }
 
-    if (!MessageReceiveQueueMap::isValidMessage(message.get())) {
-        dispatchDidReceiveInvalidMessage(message->messageName(), message->indicesOfObjectsFailingDecoding());
-        return;
-    }
-
-    // FIXME: These are practically the same mutex, so maybe they could be merged.
-    Locker waitForMessagesLocker { m_waitForMessageLock };
-
-    Locker incomingMessagesLocker { m_incomingMessagesLock };
     if (!m_syncState)
         return;
 
@@ -1049,11 +1054,6 @@ void Connection::processIncomingMessage(UniqueRef<Decoder> message)
             return;
         }
         // Fallback to default case, error handling will be performed in sendMessage().
-    }
-
-    if (auto* receiveQueue = m_receiveQueues.get(message.get())) {
-        receiveQueue->enqueueMessage(*this, WTFMove(message));
-        return;
     }
 
     if (message->isSyncMessage()) {
@@ -1452,12 +1452,6 @@ void Connection::dispatchMessage(UniqueRef<Decoder> message)
 #if ENABLE(IPC_TESTING_API)
     if (m_ignoreInvalidMessageForTesting)
         return;
-#endif
-#if ASSERT_ENABLED
-    if (didReceiveInvalidMessage) {
-        WTFLogAlways("Received invalid message %s for destination %" PRIu64, description(message->messageName()).characters(), message->destinationID());
-        ASSERT_NOT_REACHED();
-    }
 #endif
     if (didReceiveInvalidMessage && isValid())
         protectedClient()->didReceiveInvalidMessage(*this, message->messageName(), message->indicesOfObjectsFailingDecoding());

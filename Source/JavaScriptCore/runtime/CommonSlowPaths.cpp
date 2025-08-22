@@ -41,7 +41,7 @@
 #include "JSAsyncGenerator.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
-#include "JSImmutableButterfly.h"
+#include "JSCellButterfly.h"
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseConstructor.h"
 #include "JSIteratorHelper.h"
@@ -1285,7 +1285,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_with_spread)
     if (numItems == 1 && bitVector.get(0)) {
         Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(CopyOnWriteArrayWithContiguous);
         if (isCopyOnWrite(structure->indexingMode())) {
-            JSArray* result = CommonSlowPaths::allocateNewArrayBuffer(vm, structure, jsCast<JSImmutableButterfly*>(values[0]));
+            JSArray* result = CommonSlowPaths::allocateNewArrayBuffer(vm, structure, jsCast<JSCellButterfly*>(values[0]));
             RETURN(result);
         }
     }
@@ -1294,7 +1294,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_with_spread)
     for (int i = 0; i < numItems; i++) {
         if (bitVector.get(i)) {
             JSValue value = values[-i];
-            JSImmutableButterfly* array = jsCast<JSImmutableButterfly*>(value);
+            JSCellButterfly* array = jsCast<JSCellButterfly*>(value);
             checkedArraySize += array->publicLength();
         } else
             checkedArraySize += 1;
@@ -1318,7 +1318,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_with_spread)
         JSValue value = values[-i];
         if (bitVector.get(i)) {
             // We are spreading.
-            JSImmutableButterfly* array = jsCast<JSImmutableButterfly*>(value);
+            JSCellButterfly* array = jsCast<JSCellButterfly*>(value);
             for (unsigned i = 0; i < array->publicLength(); i++) {
                 RELEASE_ASSERT(array->get(i));
                 result->putDirectIndex(globalObject, index, array->get(i));
@@ -1371,7 +1371,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_buffer)
     BEGIN();
     auto bytecode = pc->as<OpNewArrayBuffer>();
     ASSERT(bytecode.m_immutableButterfly.isConstant());
-    JSImmutableButterfly* immutableButterfly = std::bit_cast<JSImmutableButterfly*>(GET_C(bytecode.m_immutableButterfly).jsValue().asCell());
+    JSCellButterfly* immutableButterfly = std::bit_cast<JSCellButterfly*>(GET_C(bytecode.m_immutableButterfly).jsValue().asCell());
     auto& profile = bytecode.metadata(codeBlock).m_arrayAllocationProfile;
 
     IndexingType indexingMode = profile.selectIndexingType();
@@ -1380,7 +1380,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_buffer)
     ASSERT(!structure->outOfLineCapacity());
 
     if (immutableButterfly->indexingMode() != indexingMode) [[unlikely]] {
-        auto* newButterfly = JSImmutableButterfly::create(vm, indexingMode, immutableButterfly->length());
+        auto* newButterfly = JSCellButterfly::create(vm, indexingMode, immutableButterfly->length());
         for (unsigned i = 0; i < immutableButterfly->length(); ++i)
             newButterfly->setIndex(vm, i, immutableButterfly->get(i));
         immutableButterfly = newButterfly;
@@ -1428,7 +1428,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_spread)
         array = jsCast<JSArray*>(arrayResult);
     }
 
-    RETURN(JSImmutableButterfly::createFromArray(globalObject, vm, array));
+    RETURN(JSCellButterfly::createFromArray(globalObject, vm, array));
 }
 
 } // namespace JSC

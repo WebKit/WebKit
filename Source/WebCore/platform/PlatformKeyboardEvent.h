@@ -29,6 +29,7 @@
 #include <WebCore/CompositionUnderline.h>
 #include <WebCore/KeypressCommand.h>
 #include <WebCore/PlatformEvent.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WindowsExtras.h>
 #include <wtf/text/WTFString.h>

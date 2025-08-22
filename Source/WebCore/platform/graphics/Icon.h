@@ -22,6 +22,7 @@
 #define Icon_h
 
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>

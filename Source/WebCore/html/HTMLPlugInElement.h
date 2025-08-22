@@ -26,6 +26,7 @@
 #include <WebCore/Image.h>
 #include <WebCore/JSValueInWrappedObject.h>
 #include <WebCore/RenderEmbeddedObject.h>
+#include <wtf/Platform.h>
 
 namespace JSC {
 namespace Bindings {

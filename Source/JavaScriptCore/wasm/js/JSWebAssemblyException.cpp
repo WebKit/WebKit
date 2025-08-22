@@ -94,7 +94,7 @@ JSValue JSWebAssemblyException::getArg(JSGlobalObject* globalObject, unsigned i)
     ASSERT(i < tagType.argumentCount());
 
     auto argTypeKind = tagType.argumentType(i).kind;
-    if (argTypeKind == Wasm::TypeKind::V128 || argTypeKind == Wasm::TypeKind::Exn) {
+    if (argTypeKind == Wasm::TypeKind::V128 || argTypeKind == Wasm::TypeKind::Exnref) {
         throwTypeError(globalObject, scope, "argument type cannot be a V128 or exnref");
         return { };
     }

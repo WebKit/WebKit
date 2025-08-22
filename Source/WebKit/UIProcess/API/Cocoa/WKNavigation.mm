@@ -66,7 +66,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     if (!frameInfo)
         return nil;
     RefPtr frame = WebKit::WebFrameProxy::webFrame(frameInfo->frameID);
-    return wrapper(API::FrameInfo::create(WebKit::FrameInfoData { *frameInfo }, frame ? frame->page() : nullptr)).autorelease();
+    return wrapper(API::FrameInfo::create(WebKit::FrameInfoData { *frameInfo })).autorelease();
 }
 
 #if PLATFORM(IOS_FAMILY)

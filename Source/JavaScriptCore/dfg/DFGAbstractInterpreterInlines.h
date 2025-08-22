@@ -42,8 +42,8 @@
 #include "HashMapHelper.h"
 #include "JITOperations.h"
 #include "JSAsyncGenerator.h"
+#include "JSCellButterfly.h"
 #include "JSGenerator.h"
-#include "JSImmutableButterfly.h"
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseConstructor.h"
 #include "JSPromiseConstructor.h"
@@ -2713,7 +2713,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
                 // Check that the early StructureID is not nuked, get the butterfly, and check the late StructureID again.
                 // And we check the indexing mode of the structure. If the indexing mode is CoW, the butterfly is
-                // definitely JSImmutableButterfly.
+                // definitely a JSCellButterfly and immutable.
                 StructureID structureIDEarly = array->structureID();
                 if (structureIDEarly.isNuked())
                     return false;
@@ -2742,7 +2742,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     }
                     ASSERT(isCopyOnWrite(structure->indexingMode()));
 
-                    JSImmutableButterfly* immutableButterfly = JSImmutableButterfly::fromButterfly(butterfly);
+                    JSCellButterfly* immutableButterfly = JSCellButterfly::fromButterfly(butterfly);
                     if (index < immutableButterfly->length()) {
                         JSValue value = immutableButterfly->get(index);
                         ASSERT(value);
@@ -3682,7 +3682,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         }
 
-        setForNode(node, m_vm.immutableButterflyStructure(CopyOnWriteArrayWithContiguous));
+        setForNode(node, m_vm.cellButterflyStructure(CopyOnWriteArrayWithContiguous));
         break;
         
     case NewArrayBuffer:

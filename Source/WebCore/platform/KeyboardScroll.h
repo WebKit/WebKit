@@ -27,6 +27,7 @@
 
 #include <WebCore/FloatSize.h>
 #include <WebCore/ScrollTypes.h>
+#include <wtf/Platform.h>
 
 namespace WTF {
 class TextStream;

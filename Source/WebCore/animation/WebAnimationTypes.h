@@ -57,6 +57,7 @@ enum class AnimationImpact : uint8_t {
 
 enum class UseAcceleratedAction : bool { No, Yes };
 enum class UseCachedCurrentTime : bool { No, Yes };
+enum class EndpointInclusiveActiveInterval : bool { No, Yes };
 
 enum class WebAnimationType : uint8_t { CSSAnimation, CSSTransition, WebAnimation };
 

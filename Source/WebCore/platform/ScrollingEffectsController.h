@@ -37,6 +37,7 @@
 #include <WebCore/WheelEventTestMonitor.h>
 #include <wtf/Deque.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Platform.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
 

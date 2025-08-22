@@ -27,6 +27,7 @@
 
 #include <WebCore/AlternativeTextClient.h>
 #include <WebCore/PlatformTextAlternatives.h>
+#include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {

@@ -107,12 +107,15 @@ WorkQueue& VideoMediaSampleRenderer::queueSingleton()
 VideoMediaSampleRenderer::VideoMediaSampleRenderer(WebSampleBufferVideoRendering *renderer)
     : m_rendererIsThreadSafe(isRendererThreadSafe(renderer))
     , m_displayLayer(dynamic_objc_cast<AVSampleBufferDisplayLayer>(renderer))
+    , m_listener(WebAVSampleBufferListener::create(*this))
     , m_frameRateMonitor([] (auto info) {
         RELEASE_LOG_ERROR(MediaPerformance, "VideoMediaSampleRenderer Frame decoding allowance exceeded:%f expected:%f", Seconds { info.lastFrameTime - info.frameTime }.value(), 1 / info.observedFrameRate);
     })
 {
     if (!renderer)
         return;
+
+    m_listener->beginObservingVideoRenderer(renderer);
 
 #if HAVE(AVSAMPLEBUFFERVIDEORENDERER)
     if (RetainPtr videoRenderer = videoRendererFor(renderer)) {
@@ -141,6 +144,7 @@ VideoMediaSampleRenderer::~VideoMediaSampleRenderer()
         decompressionSession->invalidate();
 
     if (RetainPtr renderer = this->renderer()) {
+        m_listener->stopObservingVideoRenderer(renderer.get());
         [renderer flush];
         [renderer stopRequestingMediaData];
 #if ENABLE(LINEAR_MEDIA_PLAYER)
@@ -167,17 +171,25 @@ Ref<GenericPromise> VideoMediaSampleRenderer::changeRenderer(WebSampleBufferVide
     ASSERT(useDecompressionSessionForProtectedContent());
     ASSERT(isUsingDecompressionSession());
 
+    RetainPtr currentRenderer = this->renderer();
+
     RetainPtr videoRenderer = videoRendererFor(renderer);
-    ASSERT(videoRenderer);
     if (std::exchange(m_mainRenderer, videoRenderer) == videoRenderer)
         return GenericPromise::createAndResolve();
+
+    if (currentRenderer)
+        m_listener->stopObservingVideoRenderer(currentRenderer.get());
+    if (renderer)
+        m_listener->beginObservingVideoRenderer(renderer);
+
     m_displayLayer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(renderer);
     return invokeAsync(dispatcher(), [weakThis = ThreadSafeWeakPtr { *this }, renderer = WTFMove(videoRenderer)] {
         if (RefPtr protectedThis = weakThis.get()) {
             assertIsCurrent(protectedThis->dispatcher().get());
-            RetainPtr previousRenderer = std::exchange(protectedThis->m_renderer, renderer);
-            [previousRenderer flush];
-            [previousRenderer stopRequestingMediaData];
+            if (RetainPtr previousRenderer = std::exchange(protectedThis->m_renderer, renderer)) {
+                [previousRenderer flush];
+                [previousRenderer stopRequestingMediaData];
+            }
             protectedThis->purgeDecodedSampleQueue(protectedThis->m_flushId);
             for (Ref sample : protectedThis->m_decodedSampleQueue)
                 [renderer enqueueSampleBuffer:sample->platformSample().sample.cmSampleBuffer];
@@ -569,7 +581,8 @@ void VideoMediaSampleRenderer::decodeNextSampleIfNeeded()
 
                 callOnMainThread([protectedThis, status = result.error()] {
                     assertIsMainThread();
-                    protectedThis->notifyErrorHasOccurred(status);
+                    RetainPtr error = [NSError errorWithDomain:@"com.apple.WebKit" code:status userInfo:nil];
+                    protectedThis->notifyErrorHasOccurred(error.get());
                 });
                 return;
             }
@@ -1150,7 +1163,7 @@ void VideoMediaSampleRenderer::notifyHasAvailableVideoFrame(const MediaTime& pre
     });
 }
 
-void VideoMediaSampleRenderer::notifyWhenDecodingErrorOccurred(Function<void(OSStatus)>&& callback)
+void VideoMediaSampleRenderer::notifyWhenDecodingErrorOccurred(Function<void(NSError *)>&& callback)
 {
     assertIsMainThread();
     m_errorOccurredFunction = WTFMove(callback);
@@ -1162,12 +1175,12 @@ void VideoMediaSampleRenderer::notifyWhenVideoRendererRequiresFlushToResumeDecod
     m_rendererNeedsFlushFunction = WTFMove(callback);
 }
 
-void VideoMediaSampleRenderer::notifyErrorHasOccurred(OSStatus status)
+void VideoMediaSampleRenderer::notifyErrorHasOccurred(NSError *error)
 {
     assertIsMainThread();
 
     if (m_errorOccurredFunction)
-        m_errorOccurredFunction(status);
+        m_errorOccurredFunction(error);
 }
 
 void VideoMediaSampleRenderer::notifyVideoRendererRequiresFlushToResumeDecoding()
@@ -1211,6 +1224,45 @@ void VideoMediaSampleRenderer::ensureOnDispatcherSync(Function<void()>&& functio
     if (m_rendererIsThreadSafe)
         return queueSingleton().dispatchSync(WTFMove(function));
     callOnMainThreadAndWait(WTFMove(function));
+}
+
+void VideoMediaSampleRenderer::videoRendererDidReceiveError(WebSampleBufferVideoRendering *renderer, NSError *error)
+{
+    assertIsMainThread();
+    if (renderer != this->renderer())
+        return;
+#if PLATFORM(IOS_FAMILY)
+    if (renderer.status == AVQueuedSampleBufferRenderingStatusFailed && [error.domain isEqualToString:@"AVFoundationErrorDomain"] && error.code == AVErrorOperationInterrupted) {
+        notifyVideoRendererRequiresFlushToResumeDecoding();
+        return;
+    }
+#endif
+    notifyErrorHasOccurred(error);
+}
+
+void VideoMediaSampleRenderer::videoRendererRequiresFlushToResumeDecodingChanged(WebSampleBufferVideoRendering *renderer, bool requiresFlush)
+{
+    assertIsMainThread();
+    if (renderer != this->renderer() || !requiresFlush)
+        return;
+    notifyVideoRendererRequiresFlushToResumeDecoding();
+}
+
+void VideoMediaSampleRenderer::videoRendererReadyForDisplayChanged(WebSampleBufferVideoRendering *renderer, bool isReadyForDisplay)
+{
+    assertIsMainThread();
+    if (renderer != this->renderer() || !isReadyForDisplay)
+        return;
+    if (m_hasFirstFrameAvailableCallback)
+        m_hasFirstFrameAvailableCallback({ }, { });
+}
+
+void VideoMediaSampleRenderer::outputObscuredDueToInsufficientExternalProtectionChanged(bool obscured)
+{
+    RetainPtr error = [NSError errorWithDomain:@"com.apple.WebKit" code:'HDCP' userInfo:@{
+        @"obscured": obscured ? @YES : @NO
+    }];
+    notifyErrorHasOccurred(error.get());
 }
 
 #undef LogPerformance

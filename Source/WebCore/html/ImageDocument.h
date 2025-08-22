@@ -25,6 +25,7 @@
 #pragma once
 
 #include <WebCore/HTMLDocument.h>
+#include <wtf/Platform.h>
 
 namespace WebCore {
 

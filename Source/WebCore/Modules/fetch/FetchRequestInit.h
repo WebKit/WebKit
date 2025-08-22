@@ -51,9 +51,8 @@ struct FetchRequestInit {
     JSC::JSValue signal;
     std::optional<RequestPriority> priority;
     JSC::JSValue window;
-    std::optional<IPAddressSpace> targetAddressSpace;
-
-    bool hasMembers() const { return !method.isEmpty() || headers || body || !referrer.isEmpty() || referrerPolicy || mode || credentials || cache || redirect || !integrity.isEmpty() || keepalive || !window.isUndefined() || !signal.isUndefined() || targetAddressSpace; }
+    IPAddressSpace targetAddressSpace { IPAddressSpace::Public };
+    bool hasMembers() const { return !method.isEmpty() || headers || body || !referrer.isEmpty() || referrerPolicy || mode || credentials || cache || redirect || !integrity.isEmpty() || keepalive || !window.isUndefined() || !signal.isUndefined() || targetAddressSpace != IPAddressSpace::Public; }
 };
 
 }

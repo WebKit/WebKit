@@ -54,7 +54,6 @@ struct PresentationContextDescriptor;
 
 namespace IPC {
 class Connection;
-class StreamServerConnection;
 }
 
 namespace WebCore {
@@ -73,8 +72,9 @@ class ObjectHeap;
 struct RequestAdapterOptions;
 }
 
-class RemoteGPU final : public IPC::StreamMessageReceiver, public CanMakeWeakPtr<RemoteGPU> {
+class RemoteGPU final : public CanMakeWeakPtr<RemoteGPU>, public IPC::StreamServerConnection::Client {
     WTF_MAKE_TZONE_ALLOCATED(RemoteGPU);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteGPU);
 public:
     static Ref<RemoteGPU> create(WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& serverConnection)
     {
@@ -116,7 +116,11 @@ private:
         return Ref { *m_streamConnection }->send(std::forward<T>(message), m_identifier);
     }
 
+    // IPC::StreamMessageReceiver overrides.
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
+    // IPC::StreamServerConnection::Client overrides.
+    void didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName, const Vector<uint32_t>&) final;
+
 
     void requestAdapter(const WebGPU::RequestAdapterOptions&, WebGPUIdentifier, CompletionHandler<void(std::optional<RemoteGPURequestAdapterResponse>&&)>&&);
 

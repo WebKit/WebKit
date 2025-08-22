@@ -27,6 +27,7 @@
 
 #include <WebCore/NotificationOptionsPayload.h>
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/Platform.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 

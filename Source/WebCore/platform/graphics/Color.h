@@ -35,6 +35,7 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/Hasher.h>
 #include <wtf/OptionSet.h>
+#include <wtf/Platform.h>
 #include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>

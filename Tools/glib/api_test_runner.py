@@ -18,6 +18,7 @@
 # Boston, MA 02110-1301, USA.
 
 import os
+import optparse
 import errno
 import json
 import sys
@@ -35,14 +36,15 @@ from webkitcorepy import Timeout
 
 import subprocess
 
+
+UNKNOWN_CRASH_STR = "CRASH_OR_PROBLEM_IN_TEST_EXECUTABLE"
+
+
 class TestRunner(object):
     TEST_TARGETS = []
 
     def __init__(self, port, options, tests=[]):
-        if len(options.subtests) > 0 and len(tests) != 1:
-            raise ValueError("Passing one or more subtests requires one and only test argument")
         self._options = options
-
         self._port = Host().port_factory.get(port)
         self._driver = self._create_driver()
         self._weston = None
@@ -58,6 +60,7 @@ class TestRunner(object):
         self._programs_path = common.binary_build_path(self._port)
         expectations_file = os.path.join(common.top_level_path(), "Tools", "TestWebKitAPI", "glib", "TestExpectations.json")
         self._expectations = TestExpectations(self._port.name(), expectations_file, self._build_type)
+        self._initial_test_list = tests
         self._tests = self._get_tests(tests)
         self._disabled_tests = []
 
@@ -89,29 +92,27 @@ class TestRunner(object):
         test_dir_prefix_len = len(self._test_programs_base_dir()) + 1
         return (path[test_dir_prefix_len:] for path in test_paths)
 
-    def _get_tests(self, initial_tests):
+    def _get_tests(self, requested_test_list):
         tests = []
-        for test in initial_tests:
+        for test in requested_test_list:
+            test = test.split(':', 1)[0]
+            if not os.path.exists(test):
+                test = os.path.join(self._test_programs_base_dir(), test)
             if os.path.isdir(test):
                 tests.extend(self._get_tests_from_dir(test))
-            else:
-                if not os.path.exists(test):
-                    candidate = os.path.join(self._test_programs_base_dir(), test)
-                    if not os.path.exists(candidate):
-                        return []
-                    test = candidate
+            elif os.path.isfile(test) and os.access(test, os.X_OK):
                 tests.append(test)
-        if tests:
-            return tests
-
-        tests = []
-        for test_target in self.TEST_TARGETS:
-            absolute_test_target = os.path.join(self._test_programs_base_dir(), test_target)
-            if test_target.lower().startswith("test") and os.path.isfile(absolute_test_target) and os.access(absolute_test_target, os.X_OK):
-                tests.append(absolute_test_target)
             else:
-                tests.extend(self._get_tests_from_dir(absolute_test_target))
-        return tests
+                sys.stderr.write(f'WARNING: Unable to find test "{test}". Ignoring it. Pass "-l" to see the available tests\n')
+        # If not test found on requested_test_list then return all available
+        if not tests:
+            for test_target in self.TEST_TARGETS:
+                absolute_test_target = os.path.join(self._test_programs_base_dir(), test_target)
+                if test_target.lower().startswith("test") and os.path.isfile(absolute_test_target) and os.access(absolute_test_target, os.X_OK):
+                    tests.append(absolute_test_target)
+                else:
+                    tests.extend(self._get_tests_from_dir(absolute_test_target))
+        return sorted(set(tests))  # Remove duplicates and sort
 
     def _create_driver(self, port_options=[]):
         self._port._display_server = self._options.display_server
@@ -317,12 +318,33 @@ class TestRunner(object):
     def _has_gpu_available(self):
         return os.access("/dev/dri/card0", os.R_OK | os.W_OK) and os.access("/dev/dri/renderD128", os.R_OK | os.W_OK)
 
+    def _get_test_short_name(self, test_path):
+        return test_path.replace(self._test_programs_base_dir(), '', 1).lstrip('/').split(':', 1)[0]
+
+    def _getsubtests_to_run_for_test(self, requested_test_name):
+        subtests_to_run = []
+        requested_test_name = self._get_test_short_name(requested_test_name)
+        for test_name in self._initial_test_list:
+            subtest_name = None
+            if ':' in test_name:
+                test_name, subtest_name = test_name.split(':', 1)
+            if requested_test_name == self._get_test_short_name(test_name):
+                if subtest_name:
+                    subtests_to_run.append(subtest_name)
+                else:
+                    return []  # If there is any entry matching without ":subtest", return [] which means run all subtests.
+        return sorted(set(subtests_to_run))  # Remove duplicates and sort
+
+    def list_tests(self):
+        indent = ' ' * 4
+        print(f'Tests available at {self._test_programs_base_dir()} are:')
+        sys.stdout.write(indent)
+        print(f'\n{indent}'.join(sorted(self._get_all_valid_test_names())))
+
     def run_tests(self):
-        if not self._tests:
-            sys.stderr.write("ERROR: tests not found in %s.\n" % (self._test_programs_base_dir()))
-            sys.stderr.write("Valid options are: {}\n".format(", ".join(self._get_all_valid_test_names())))
-            sys.stderr.flush()
-            sys.exit(1)
+        if self._options.list_tests:
+            self.list_tests()
+            return 0
 
         self._setup_testing_environment()
 
@@ -360,32 +382,33 @@ class TestRunner(object):
         timed_out_tests = {}
         passed_tests = {}
         try:
-            subtests = self._options.subtests
             for test in self._tests:
+                subtests = self._getsubtests_to_run_for_test(test)
+                if UNKNOWN_CRASH_STR in subtests:
+                    subtests = []  # The binary runner can't run a subtest named UNKNOWN_CRASH_STR, so run all subtests if this is requested.
                 skipped_subtests = self._test_cases_to_skip(test)
                 number_of_total_tests += len(skipped_subtests if not subtests else set(skipped_subtests).intersection(subtests))
                 results = self._run_test(test, subtests, skipped_subtests)
-                if len(results) == 0:
+                number_of_executed_subtests_for_test = len(results)
+                if number_of_executed_subtests_for_test > 0:
+                    # When adding the subtests to the total, substract 1 because the maintest was initially counted as one subtest.
+                    number_of_executed_tests += number_of_executed_subtests_for_test - 1
+                    number_of_total_tests += number_of_executed_subtests_for_test - 1
+                    for test_case, result in results.items():
+                        if result in self._expectations.get_expectation(os.path.basename(test), test_case):
+                            continue
+                        if result == "FAIL":
+                            failed_tests.setdefault(test, []).append(test_case)
+                        elif result == "TIMEOUT":
+                            timed_out_tests.setdefault(test, []).append(test_case)
+                        elif result == "CRASH":
+                            crashed_tests.setdefault(test, []).append(test_case)
+                        elif result == "PASS":
+                            passed_tests.setdefault(test, []).append(test_case)
+                else:
                     # No subtests were emitted, either the test binary didn't exist, or we don't know how to run it, or it crashed.
                     sys.stderr.write("ERROR: %s failed to run, as it didn't emit any subtests.\n" % test)
-                    crashed_tests[test] = ["(problem in test executable)"]
-                    continue
-                number_of_executed_subtests_for_test = len(results)
-                if number_of_executed_subtests_for_test > 1:
-                    number_of_executed_tests += number_of_executed_subtests_for_test
-                    number_of_total_tests += number_of_executed_subtests_for_test
-                for test_case, result in results.items():
-                    if result in self._expectations.get_expectation(os.path.basename(test), test_case):
-                        continue
-
-                    if result == "FAIL":
-                        failed_tests.setdefault(test, []).append(test_case)
-                    elif result == "TIMEOUT":
-                        timed_out_tests.setdefault(test, []).append(test_case)
-                    elif result == "CRASH":
-                        crashed_tests.setdefault(test, []).append(test_case)
-                    elif result == "PASS":
-                        passed_tests.setdefault(test, []).append(test_case)
+                    crashed_tests[test] = [UNKNOWN_CRASH_STR]
         finally:
             self._tear_down_testing_environment()
 
@@ -407,10 +430,10 @@ class TestRunner(object):
         report(timed_out_tests, "timeouts", self._test_programs_base_dir())
         report(passed_tests, "passes", self._test_programs_base_dir())
 
-        def generate_test_list_for_json_output(base_dir, tests):
+        def generate_test_list_for_json_output(tests):
             test_list = []
             for test in tests:
-                base_name = test.replace(base_dir, '', 1)
+                base_name = self._get_test_short_name(test)
                 for test_case in tests[test]:
                     test_name = "%s:%s" % (base_name, test_case)
                     # FIXME: get output from failed tests
@@ -419,9 +442,9 @@ class TestRunner(object):
 
         if self._options.json_output:
             result_dictionary = {}
-            result_dictionary['Failed'] = generate_test_list_for_json_output(self._test_programs_base_dir(), failed_tests)
-            result_dictionary['Crashed'] = generate_test_list_for_json_output(self._test_programs_base_dir(), crashed_tests)
-            result_dictionary['Timedout'] = generate_test_list_for_json_output(self._test_programs_base_dir(), timed_out_tests)
+            result_dictionary['Failed'] = generate_test_list_for_json_output(failed_tests)
+            result_dictionary['Crashed'] = generate_test_list_for_json_output(crashed_tests)
+            result_dictionary['Timedout'] = generate_test_list_for_json_output(timed_out_tests)
             self._port.host.filesystem.write_text_file(self._options.json_output, json.dumps(result_dictionary, indent=4))
 
         number_of_failed_tests = number_of_tests(failed_tests) + number_of_tests(timed_out_tests) + number_of_tests(crashed_tests)
@@ -433,8 +456,11 @@ class TestRunner(object):
         return number_of_failed_tests
 
 
-
-def add_options(option_parser):
+def create_option_parser():
+    option_parser = optparse.OptionParser(usage='usage: %prog [options] [test MainTest:subtest1 ...]',
+                                          epilog='When passing the test name you can pass it alone (to run all subtests) '
+                                                 'or you can specify specific subtests with the format: '
+                                                 'MainTestName1:subtest-name1 MainTestName1:subtest-name2 ...')
     option_parser.add_option('-r', '--release',
                              action='store_true', dest='release',
                              help='Run in Release')
@@ -448,10 +474,12 @@ def add_options(option_parser):
     option_parser.add_option('-t', '--timeout',
                              action='store', type='int', dest='timeout', default=5,
                              help='Time in seconds until a test times out')
+    option_parser.add_option('-l', '--list-tests',
+                             action='store_true', dest='list_tests',
+                             help='List the tests (main tests) available to run.')
     option_parser.add_option('--json-output', action='store', default=None,
                              help='Save test results as JSON to file')
-    option_parser.add_option('-p', action='append', dest='subtests', default=[],
-                             help='Subtests to run')
+    return option_parser
 
 
 def get_runner_args(argv):

@@ -243,7 +243,6 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* le
     ASSERT(lexicalGlobalObject->vm().currentThreadIsHoldingAPILock());
     // These are also allowed cross-origin, so come before the access check.
     if (frame) {
-        // FIXME: <rdar://118263337> DOMWindow::length needs to include RemoteFrames.
         // FIXME: scopedChild/scopedChildCount and RemoteFrame need to work together well. We're using using child/childCount until then.
         if (is<LocalFrame>(frame)) {
             if (index < frame->tree().scopedChildCount()) {

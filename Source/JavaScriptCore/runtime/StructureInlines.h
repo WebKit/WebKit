@@ -317,19 +317,19 @@ inline bool Structure::transitivelyTransitionedFrom(Structure* structureToFind)
     return false;
 }
 
-inline void Structure::setCachedPropertyNames(VM& vm, CachedPropertyNamesKind kind, JSImmutableButterfly* cached)
+inline void Structure::setCachedPropertyNames(VM& vm, CachedPropertyNamesKind kind, JSCellButterfly* cached)
 {
     ensureRareData(vm)->setCachedPropertyNames(vm, kind, cached);
 }
 
-inline JSImmutableButterfly* Structure::cachedPropertyNames(CachedPropertyNamesKind kind) const
+inline JSCellButterfly* Structure::cachedPropertyNames(CachedPropertyNamesKind kind) const
 {
     if (!hasRareData())
         return nullptr;
     return rareData()->cachedPropertyNames(kind);
 }
 
-inline JSImmutableButterfly* Structure::cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind kind) const
+inline JSCellButterfly* Structure::cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind kind) const
 {
     if (!hasRareData())
         return nullptr;

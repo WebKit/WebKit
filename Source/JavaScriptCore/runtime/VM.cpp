@@ -70,7 +70,7 @@
 #include "JSAPIValueWrapper.h"
 #include "JSBigInt.h"
 #include "JSGlobalObject.h"
-#include "JSImmutableButterflyInlines.h"
+#include "JSCellButterflyInlines.h"
 #include "JSIterator.h"
 #include "JSLock.h"
 #include "JSMap.h"
@@ -306,14 +306,14 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     symbolTableStructure.setWithoutWriteBarrier(SymbolTable::createStructure(*this, nullptr, jsNull()));
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    rawImmutableButterflyStructure(CopyOnWriteArrayWithInt32).setWithoutWriteBarrier(JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithInt32));
-    Structure* copyOnWriteArrayWithContiguousStructure = JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithContiguous);
-    rawImmutableButterflyStructure(CopyOnWriteArrayWithDouble).setWithoutWriteBarrier(Options::allowDoubleShape() ? JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithDouble) : copyOnWriteArrayWithContiguousStructure);
+    rawImmutableButterflyStructure(CopyOnWriteArrayWithInt32).setWithoutWriteBarrier(JSCellButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithInt32));
+    Structure* copyOnWriteArrayWithContiguousStructure = JSCellButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithContiguous);
+    rawImmutableButterflyStructure(CopyOnWriteArrayWithDouble).setWithoutWriteBarrier(Options::allowDoubleShape() ? JSCellButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithDouble) : copyOnWriteArrayWithContiguousStructure);
     rawImmutableButterflyStructure(CopyOnWriteArrayWithContiguous).setWithoutWriteBarrier(copyOnWriteArrayWithContiguousStructure);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-    // This is only for JSImmutableButterfly filled with atom strings.
-    immutableButterflyOnlyAtomStringsStructure.setWithoutWriteBarrier(JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithContiguous));
+    // This is only for JSCellButterfly filled with atom strings.
+    cellButterflyOnlyAtomStringsStructure.setWithoutWriteBarrier(JSCellButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithContiguous));
 
     sourceCodeStructure.setWithoutWriteBarrier(JSSourceCode::createStructure(*this, nullptr, jsNull()));
     scriptFetcherStructure.setWithoutWriteBarrier(JSScriptFetcher::createStructure(*this, nullptr, jsNull()));
@@ -1642,9 +1642,9 @@ void VM::visitAggregateImpl(Visitor& visitor)
     visitor.append(regExpStructure);
     visitor.append(symbolStructure);
     visitor.append(symbolTableStructure);
-    for (auto& structure : immutableButterflyStructures)
+    for (auto& structure : cellButterflyStructures)
         visitor.append(structure);
-    visitor.append(immutableButterflyOnlyAtomStringsStructure);
+    visitor.append(cellButterflyOnlyAtomStringsStructure);
     visitor.append(sourceCodeStructure);
     visitor.append(scriptFetcherStructure);
     visitor.append(scriptFetchParametersStructure);

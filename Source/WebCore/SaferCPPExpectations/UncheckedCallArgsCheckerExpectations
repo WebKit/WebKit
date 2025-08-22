@@ -56,7 +56,6 @@ accessibility/AccessibilityScrollView.cpp
 accessibility/AccessibilityScrollbar.cpp
 accessibility/AccessibilitySlider.cpp
 accessibility/AccessibilitySpinButton.cpp
-accessibility/AccessibilityTable.cpp
 accessibility/AccessibilityTableCell.cpp
 accessibility/cocoa/AccessibilityObjectCocoa.mm
 accessibility/isolatedtree/AXIsolatedTree.cpp
@@ -480,7 +479,6 @@ page/text-extraction/TextExtraction.cpp
 page/writing-tools/WritingToolsController.mm
 platform/DragImage.cpp
 platform/KeyboardScrollingAnimator.cpp
-platform/OrientationNotifier.h
 platform/ScrollAnimator.cpp
 platform/ScrollView.cpp
 platform/Scrollbar.cpp

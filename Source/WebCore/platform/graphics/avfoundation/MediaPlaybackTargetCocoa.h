@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 #include <WebCore/MediaPlaybackTarget.h>

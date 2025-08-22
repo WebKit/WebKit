@@ -37,6 +37,7 @@
 #include <WebCore/CachedResource.h>
 #include <WebCore/InspectorWebAgentBase.h>
 #include <WebCore/LayoutRect.h>
+#include <wtf/Platform.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>

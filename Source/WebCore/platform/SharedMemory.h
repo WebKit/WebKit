@@ -28,6 +28,7 @@
 
 #include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(UNIX_DOMAIN_SOCKETS)

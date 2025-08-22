@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
 #include <IOKit/hid/IOHIDManager.h>

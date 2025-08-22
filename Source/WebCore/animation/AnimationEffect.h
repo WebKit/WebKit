@@ -55,7 +55,7 @@ public:
     EffectTiming getBindingsTiming() const;
     BasicEffectTiming getBasicTiming();
     ComputedEffectTiming getBindingsComputedTiming();
-    ComputedEffectTiming getComputedTiming(UseCachedCurrentTime = UseCachedCurrentTime::Yes);
+    ComputedEffectTiming getComputedTiming(UseCachedCurrentTime = UseCachedCurrentTime::Yes, EndpointInclusiveActiveInterval = EndpointInclusiveActiveInterval::No);
     ExceptionOr<void> bindingsUpdateTiming(Document&, std::optional<OptionalEffectTiming>);
     ExceptionOr<void> updateTiming(Document&, std::optional<OptionalEffectTiming>);
 
@@ -115,7 +115,7 @@ protected:
     virtual std::optional<double> progressUntilNextStep(double) const;
 
 private:
-    AnimationEffectTiming::ResolutionData resolutionData(UseCachedCurrentTime = UseCachedCurrentTime::Yes) const;
+    AnimationEffectTiming::ResolutionData resolutionData(UseCachedCurrentTime = UseCachedCurrentTime::Yes, EndpointInclusiveActiveInterval = EndpointInclusiveActiveInterval::No) const;
     void updateComputedTimingPropertiesIfNeeded();
 
     AnimationEffectTiming m_timing;

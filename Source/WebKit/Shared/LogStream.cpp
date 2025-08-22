@@ -26,16 +26,17 @@
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 
-#include <wtf/OSObjectPtr.h>
-
-#if HAVE(OS_SIGNPOST)
-#include <wtf/SystemTracing.h>
-#endif
-
 #include "LogStreamMessages.h"
 #include "Logging.h"
 #include "StreamConnectionWorkQueue.h"
 #include "StreamServerConnection.h"
+#include "WebProcessProxy.h"
+#include <wtf/OSObjectPtr.h>
+#include <wtf/TZoneMallocInlines.h>
+
+#if HAVE(OS_SIGNPOST)
+#include <wtf/SystemTracing.h>
+#endif
 
 #define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
 
@@ -43,10 +44,15 @@ namespace WebKit {
 
 static std::atomic<unsigned> globalLogCountForTesting { 0 };
 
-LogStream::LogStream(Ref<ConnectionType>&& connection, ProcessID pid, LogStreamIdentifier identifier)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LogStream);
+
+LogStream::LogStream(WebProcessProxy& process, Ref<ConnectionType>&& connection, LogStreamIdentifier identifier)
     : m_connection(WTFMove(connection))
+#if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+    , m_process(process)
+#endif
     , m_identifier(identifier)
-    , m_pid(pid)
+    , m_pid(process.processID())
 {
 }
 
@@ -101,25 +107,34 @@ void LogStream::logOnBehalfOfWebContent(std::span<const uint8_t> logSubsystem, s
 
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
 
-RefPtr<LogStream> LogStream::create(IPC::StreamServerConnectionHandle&& serverConnection, ProcessID pid, LogStreamIdentifier identifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&& completionHandler)
+RefPtr<LogStream> LogStream::create(WebProcessProxy& process, IPC::StreamServerConnectionHandle&& serverConnection, LogStreamIdentifier identifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&& completionHandler)
 {
     RefPtr connection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnection), { });
     if (!connection)
         return nullptr;
     static NeverDestroyed<Ref<IPC::StreamConnectionWorkQueue>> logQueue = IPC::StreamConnectionWorkQueue::create("Log work queue"_s);
 
-    Ref instance = adoptRef(*new LogStream(connection.releaseNonNull(), pid, identifier));
-    instance->m_connection->open(logQueue.get());
+    Ref instance = adoptRef(*new LogStream(process, connection.releaseNonNull(), identifier));
+    instance->m_connection->open(instance.get(), logQueue.get());
     instance->m_connection->startReceivingMessages(instance, Messages::LogStream::messageReceiverName(), identifier.toUInt64());
     completionHandler(logQueue.get()->wakeUpSemaphore(), instance->m_connection->clientWaitSemaphore());
     return instance;
 }
 
+void LogStream::didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName messageName, const Vector<uint32_t>&)
+{
+    RELEASE_LOG_FAULT(IPC, "Received an invalid message '%" PUBLIC_LOG_STRING "' from WebContent process, requesting for it to be terminated.", description(messageName).characters());
+    callOnMainRunLoop([weakProcess = m_process] {
+        if (RefPtr process = weakProcess.get())
+            process->terminate();
+    });
+}
+
 #else
 
-Ref<LogStream> LogStream::create(Ref<IPC::Connection>&& connection, ProcessID pid, LogStreamIdentifier identifier)
+Ref<LogStream> LogStream::create(WebProcessProxy& process, Ref<IPC::Connection>&& connection, LogStreamIdentifier identifier)
 {
-    return adoptRef(*new LogStream(WTFMove(connection), pid, identifier));
+    return adoptRef(*new LogStream(process, WTFMove(connection), identifier));
 }
 
 #endif

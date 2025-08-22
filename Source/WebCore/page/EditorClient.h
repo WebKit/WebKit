@@ -34,6 +34,7 @@
 #include <WebCore/UndoStep.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>

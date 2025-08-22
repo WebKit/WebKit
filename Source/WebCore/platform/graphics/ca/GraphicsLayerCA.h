@@ -31,6 +31,7 @@
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/PlatformCALayerClient.h>
 #include <wtf/HashMap.h>
+#include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/MakeString.h>

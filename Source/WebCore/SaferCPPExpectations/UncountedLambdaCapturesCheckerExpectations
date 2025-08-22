@@ -24,7 +24,6 @@ Modules/webcodecs/WebCodecsVideoEncoder.cpp
 Modules/webdatabase/DatabaseThread.cpp
 Modules/webdatabase/SQLCallbackWrapper.h
 accessibility/AccessibilityScrollView.cpp
-accessibility/AccessibilityTable.cpp
 accessibility/isolatedtree/AXIsolatedObject.cpp
 accessibility/isolatedtree/AXIsolatedObject.h
 accessibility/isolatedtree/AXIsolatedTree.cpp

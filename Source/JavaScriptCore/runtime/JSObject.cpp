@@ -33,10 +33,10 @@
 #include "HeapAnalyzer.h"
 #include "IndexingHeaderInlines.h"
 #include "JSCInlines.h"
+#include "JSCellButterfly.h"
 #include "JSCustomGetterFunction.h"
 #include "JSCustomSetterFunction.h"
 #include "JSFunction.h"
-#include "JSImmutableButterfly.h"
 #include "Lookup.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
@@ -84,7 +84,7 @@ ALWAYS_INLINE void JSObject::markAuxiliaryAndVisitOutOfLineProperties(Visitor& v
         return;
 
     if (isCopyOnWrite(structure->indexingMode())) {
-        visitor.append(std::bit_cast<WriteBarrier<JSCell>>(JSImmutableButterfly::fromButterfly(butterfly)));
+        visitor.append(std::bit_cast<WriteBarrier<JSCell>>(JSCellButterfly::fromButterfly(butterfly)));
         return;
     }
 
@@ -125,7 +125,7 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(Visitor& visitor)
 
     auto visitElements = [&] (IndexingType indexingMode) {
         switch (indexingMode) {
-        // We don't need to visit the elements for CopyOnWrite butterflies since they we marked the JSImmutableButterfly acting as our butterfly.
+        // We don't need to visit the elements for CopyOnWrite butterflies since they we marked the JSCellButterfly acting as our butterfly.
         case ALL_WRITABLE_CONTIGUOUS_INDEXING_TYPES:
             visitor.appendValuesHidden(butterfly->contiguous().data(), butterfly->publicLength());
             break;

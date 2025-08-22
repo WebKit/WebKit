@@ -31,6 +31,7 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 #include <wtf/MainThread.h>
+#include <wtf/Platform.h>
 #include <wtf/TriState.h>
 
 #if PLATFORM(IOS_FAMILY)

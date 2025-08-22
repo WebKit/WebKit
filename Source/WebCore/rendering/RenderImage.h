@@ -26,6 +26,7 @@
 
 #include <WebCore/RenderImageResource.h>
 #include <WebCore/RenderReplaced.h>
+#include <wtf/Platform.h>
 
 namespace WebCore {
 

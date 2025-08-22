@@ -36,6 +36,7 @@ class WorkQueue;
 namespace WebCore {
 
 struct ParentalControlsURLFilterParameters;
+class ParentalControlsContentFilter;
 
 class ParentalControlsURLFilter {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ParentalControlsURLFilter);
@@ -49,7 +50,7 @@ public:
 
     void resetIsEnabled();
     bool isEnabled() const;
-    void isURLAllowedWithQueue(const URL&, CompletionHandler<void(bool, NSData *)>&&, WTF::WorkQueue& completionHandlerQueue);
+    void isURLAllowed(const URL&, ParentalControlsContentFilter&);
     void allowURL(const URL&, CompletionHandler<void(bool)>&&);
 
 private:

@@ -138,6 +138,31 @@ CSSSelectorList CSSSelectorList::makeJoining(const CSSSelectorList& a, const CSS
     return CSSSelectorList { WTFMove(selectorArray) };
 }
 
+CSSSelectorList CSSSelectorList::makeJoining(const Vector<const CSSSelectorList*>& lists)
+{
+    size_t totalComponentCount = 0;
+    for (auto list : lists)
+        totalComponentCount += list->componentCount();
+
+    if (!totalComponentCount)
+        return { };
+
+    auto selectorArray = makeUniqueArray<CSSSelector>(totalComponentCount);
+
+    size_t componentIndex = 0;
+    for (auto list : lists) {
+        auto count = list->componentCount();
+        for (size_t i = 0; i < count; ++i)
+            new (NotNull, &selectorArray[componentIndex++]) CSSSelector(list->m_selectorArray[i]);
+        selectorArray[componentIndex - 1].m_isLastInSelectorList = false;
+    }
+
+    ASSERT(componentIndex == totalComponentCount);
+    selectorArray[componentIndex - 1].m_isLastInSelectorList = true;
+
+    return CSSSelectorList { WTFMove(selectorArray) };
+}
+
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 unsigned CSSSelectorList::componentCount() const
 {

@@ -26,6 +26,7 @@
 #ifndef InbandTextTrackPrivateAVF_h
 #define InbandTextTrackPrivateAVF_h
 
+#include <wtf/Platform.h>
 #if ENABLE(VIDEO) && (USE(AVFOUNDATION) || PLATFORM(IOS_FAMILY))
 
 #include <WebCore/InbandTextTrackPrivate.h>

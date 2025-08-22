@@ -29,6 +29,7 @@
 #if HAVE(WEBCONTENTRESTRICTIONS)
 
 #import "Logging.h"
+#import "ParentalControlsContentFilter.h"
 #import "ParentalControlsURLFilterParameters.h"
 #import <wtf/CompletionHandler.h>
 #import <wtf/MainThread.h>
@@ -90,6 +91,12 @@ ParentalControlsURLFilter::ParentalControlsURLFilter() = default;
 
 #endif
 
+static WorkQueue& globalQueue()
+{
+    static MainThreadNeverDestroyed<Ref<WorkQueue>> queue = WorkQueue::create("ParentalControlsContentFilter queue"_s);
+    return queue.get();
+}
+
 static void webContentFilterTypeDidChange(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
 {
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
@@ -129,21 +136,23 @@ bool ParentalControlsURLFilter::isEnabled() const
     return *m_isEnabled;
 }
 
-void ParentalControlsURLFilter::isURLAllowedWithQueue(const URL& url, CompletionHandler<void(bool, NSData *)>&& completionHandler, WTF::WorkQueue& completionHandlerQueue)
+void ParentalControlsURLFilter::isURLAllowed(const URL& url, ParentalControlsContentFilter& filter)
 {
     ASSERT(isMainThread());
 
     RetainPtr wcrBrowserEngineClient = effectiveWCRBrowserEngineClient();
     if (!wcrBrowserEngineClient) {
-        completionHandlerQueue.dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
-            completionHandler(true, nullptr);
+        globalQueue().dispatch([weakFilter = ThreadSafeWeakPtr { filter }]() mutable {
+            if (RefPtr filter = weakFilter.get())
+                filter->didReceiveAllowDecisionOnQueue(true, nullptr);
         });
         return;
     }
 
-    [wcrBrowserEngineClient evaluateURL:url.createNSURL().get() withCompletion:makeBlockPtr([url = url.isolatedCopy(), completionHandler = WTFMove(completionHandler)](BOOL shouldBlock, NSData *replacementData) mutable {
-        completionHandler(!shouldBlock, replacementData);
-    }).get() onCompletionQueue:completionHandlerQueue.dispatchQueue()];
+    [wcrBrowserEngineClient evaluateURL:url.createNSURL().get() withCompletion:makeBlockPtr([weakFilter = ThreadSafeWeakPtr { filter }](BOOL shouldBlock, NSData *replacementData) mutable {
+        if (RefPtr filter = weakFilter.get())
+            filter->didReceiveAllowDecisionOnQueue(!shouldBlock, replacementData);
+    }).get() onCompletionQueue:globalQueue().dispatchQueue()];
 }
 
 void ParentalControlsURLFilter::allowURL(const URL& url, CompletionHandler<void(bool)>&& completionHandler)

@@ -1356,6 +1356,21 @@ CSSScrollbarWidthEnabled:
     WebCore:
       default: true
 
+CSSSelectorJITCompilerEnabled:
+  type: bool
+  status: internal
+  category: css
+  humanReadableName: "CSS Selector JIT Compiler"
+  humanReadableDescription: "Enable the JIT compiler for CSS selectors"
+  condition: ENABLE(CSS_SELECTOR_JIT)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 CSSShapeFunctionEnabled:
   type: bool
   status: stable
@@ -1811,17 +1826,17 @@ ColorFilterEnabled:
 
 CommandAttributesEnabled:
   type: bool
-  status: preview
+  status: stable
   category: html
   humanReadableName: "HTML command & commandfor attributes"
   humanReadableDescription: "Enable HTML command & commandfor attribute support"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 # FIXME: WebKit has an alternate name for this called 'ShowDebugBorders'. We should standardize on one name.
 CompositingBordersVisible:
@@ -4440,6 +4455,7 @@ LocalFileContentSniffingEnabled:
 LocalNetworkAccessEnabled:
   type: bool
   status: unstable
+  category: networking
   humanReadableName: "Local Network Access"
   humanReadableDescription: "Enable Local Network Access"
   webKitLegacyPreferenceKey: WebKitLocalNetworkAccessEnabledPreferenceKey
@@ -4772,6 +4788,20 @@ MediaControlsContextMenusEnabled:
       default: false
   sharedPreferenceForWebProcess: true
   mediaPlaybackRelated: true
+
+MediaControlsMacInlineSizeSpecsEnabled:
+  type: bool
+  status: testable
+  category: media
+  humanReadableName: "Media Controls Rounded Corners"
+  humanReadableDescription: "Adopt new size specs for media controls"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 MediaControlsScaleWithPageZoom:
   type: bool
@@ -8388,8 +8418,10 @@ VideoRendererUseDecompressionSessionForProtected:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(VISION)" : true
       default: false
     WebCore:
+      "PLATFORM(VISION)" : true
       default: false
   sharedPreferenceForWebProcess: true
 

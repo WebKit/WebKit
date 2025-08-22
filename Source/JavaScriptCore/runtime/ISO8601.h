@@ -86,6 +86,8 @@ private:
     std::array<double, numberOfTemporalUnits> m_data { };
 };
 
+class InternalDuration;
+
 class ExactTime {
     WTF_MAKE_TZONE_ALLOCATED(ExactTime);
 public:
@@ -152,8 +154,8 @@ public:
     friend constexpr auto operator<=>(const ExactTime&, const ExactTime&) = default;
 
     std::optional<ExactTime> add(Duration) const;
-    Int128 difference(ExactTime other, unsigned increment, TemporalUnit, RoundingMode) const;
-    ExactTime round(unsigned increment, TemporalUnit, RoundingMode) const;
+    InternalDuration difference(JSGlobalObject*, ExactTime, unsigned, TemporalUnit, RoundingMode) const;
+    ExactTime round(JSGlobalObject*, unsigned, TemporalUnit, RoundingMode) const;
 
     static ExactTime now();
 
@@ -164,8 +166,6 @@ private:
             asStringImpl(builder, value / 10);
         builder.append(static_cast<LChar>(static_cast<unsigned>(value % 10) + '0'));
     }
-
-    static Int128 round(Int128 quantity, unsigned increment, TemporalUnit, RoundingMode);
 
     Int128 m_epochNanoseconds { };
 };
@@ -328,4 +328,12 @@ bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned h
 bool isYearWithinLimits(double year);
 
 } // namespace ISO8601
+
+static constexpr Int128 absInt128(const Int128& value)
+{
+    if (value < 0)
+        return -value;
+    return value;
+}
+
 } // namespace JSC

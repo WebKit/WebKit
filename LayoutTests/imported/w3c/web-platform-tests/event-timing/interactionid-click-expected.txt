@@ -1,4 +1,4 @@
 Click me.
 
-FAIL Event Timing: compare event timing interactionId. assert_implements: Event Timing is not supported. undefined
+PASS Event Timing: compare event timing interactionId.
 

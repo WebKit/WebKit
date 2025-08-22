@@ -30,6 +30,7 @@
 #include "InspectorInstrumentation.h"
 #include "LocalDOMWindow.h"
 #include "Performance.h"
+#include "PerformanceEventTiming.h"
 #include "PerformanceObserverEntryList.h"
 #include "WorkerGlobalScope.h"
 
@@ -37,6 +38,7 @@ namespace WebCore {
 
 PerformanceObserver::PerformanceObserver(ScriptExecutionContext& scriptExecutionContext, Ref<PerformanceObserverCallback>&& callback)
     : m_callback(WTFMove(callback))
+    , m_durationThreshold(PerformanceEventTiming::defaultDurationThreshold)
 {
     if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext)) {
         if (auto* window = document->window())

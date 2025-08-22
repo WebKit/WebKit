@@ -66,7 +66,6 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<P
     case PerformanceEntry::Type::Event: [[fallthrough]];
     case PerformanceEntry::Type::FirstInput:
         return createWrapper<PerformanceEventTiming>(globalObject, WTFMove(entry));
-        return createWrapper<PerformanceEventTiming>(globalObject, WTFMove(entry));
     }
 
     ASSERT_NOT_REACHED();

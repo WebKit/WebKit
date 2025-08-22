@@ -45,6 +45,7 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/Platform.h>
 #include <wtf/PointerComparison.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RobinHoodHashSet.h>

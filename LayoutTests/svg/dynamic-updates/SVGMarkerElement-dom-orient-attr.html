@@ -66,7 +66,7 @@ shouldBeEqualToString("markerElement.getAttribute('orient')", "auto");
 debug("");
 shouldBeEqualToString("markerElement.orient = 'auto-start-reverse'", "auto-start-reverse");
 shouldBeEqualToString("markerElement.orient", "auto-start-reverse");
-shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_UNKNOWN");
+shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_AUTO_START_REVERSE");
 shouldBe("markerElement.orientAngle.baseVal.value", "0");
 shouldBeEqualToString("markerElement.getAttribute('orient')", "auto-start-reverse");
 

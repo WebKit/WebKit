@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <wtf/Platform.h>
+
 #if PLATFORM(MAC) && ENABLE(FULLSCREEN_API)
 
 #import <wtf/RetainPtr.h>

@@ -31,6 +31,7 @@
 #include <WebCore/Timer.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/Platform.h>
 #include <wtf/WorkQueue.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN

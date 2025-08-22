@@ -259,17 +259,9 @@ ISO8601::Duration TemporalInstant::difference(JSGlobalObject* globalObject, Temp
     unsigned increment = temporalRoundingIncrement(globalObject, options, maxIncrement, false);
     RETURN_IF_EXCEPTION(scope, { });
 
-    Int128 roundedDiff = exactTime().difference(other->exactTime(), increment, smallestUnit, roundingMode);
-    // NOTE: Duration fields are currently doubles, and the total number of
-    // nanoseconds may not fit in a double. This may need to change if the
-    // internal representation of Duration changes.
-    ASSERT(roundedDiff / 1'000'000'000 < INT64_MAX);
-    double seconds { static_cast<double>(static_cast<int64_t>(roundedDiff / 1'000'000'000)) };
-    double nanosecondsRemainder { static_cast<double>(static_cast<int64_t>(roundedDiff % 1'000'000'000)) };
-    ISO8601::Duration result { 0, 0, 0, 0, 0, 0, seconds, 0, 0, nanosecondsRemainder };
-
-    TemporalDuration::balance(result, largestUnit);
-    return result;
+    ISO8601::InternalDuration internalDuration = exactTime().difference(globalObject, other->exactTime(), increment, smallestUnit, roundingMode);
+    RETURN_IF_EXCEPTION(scope, { });
+    return TemporalDuration::temporalDurationFromInternal(internalDuration, largestUnit);
 }
 
 static double maximumIncrement(TemporalUnit smallestUnit)
@@ -332,7 +324,7 @@ ISO8601::ExactTime TemporalInstant::round(JSGlobalObject* globalObject, JSValue 
     double increment = temporalRoundingIncrement(globalObject, options, maximumIncrement(smallestUnit), true);
     RETURN_IF_EXCEPTION(scope, { });
 
-    return exactTime().round(increment, smallestUnit, roundingMode);
+    RELEASE_AND_RETURN(scope, exactTime().round(globalObject, increment, smallestUnit, roundingMode));
 }
 
 // Temporal.Instant.prototype.toString( [ options ] )
@@ -366,7 +358,8 @@ String TemporalInstant::toString(JSGlobalObject* globalObject, JSValue optionsVa
     if (std::get<0>(data.precision) == Precision::Auto && roundingMode == RoundingMode::Trunc)
         return toString(timeZone);
 
-    ISO8601::ExactTime newExactTime { exactTime().round(data.increment, data.unit, roundingMode) };
+    auto newExactTime = exactTime().round(globalObject, data.increment, data.unit, roundingMode);
+    RETURN_IF_EXCEPTION(scope, { });
 
     // FIXME: Missing, relies on TimeZone:
     // 1. Let roundedInstant be ! CreateTemporalInstant(roundedNs).

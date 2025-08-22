@@ -34,14 +34,13 @@
 
 namespace API {
 
-Ref<FrameInfo> FrameInfo::create(WebKit::FrameInfoData&& frameInfoData, RefPtr<WebKit::WebPageProxy>&& page)
+Ref<FrameInfo> FrameInfo::create(WebKit::FrameInfoData&& frameInfoData)
 {
-    return adoptRef(*new FrameInfo(WTFMove(frameInfoData), std::forward<RefPtr<WebKit::WebPageProxy>&&>(page)));
+    return adoptRef(*new FrameInfo(WTFMove(frameInfoData)));
 }
 
-FrameInfo::FrameInfo(WebKit::FrameInfoData&& data, RefPtr<WebKit::WebPageProxy>&& page)
-    : m_data(WTFMove(data))
-    , m_page(WTFMove(page)) { }
+FrameInfo::FrameInfo(WebKit::FrameInfoData&& data)
+    : m_data(WTFMove(data)) { }
 
 FrameInfo::~FrameInfo() = default;
 
@@ -59,13 +58,24 @@ RefPtr<FrameHandle> FrameInfo::parentFrameHandle() const
 
 WTF::String FrameInfo::title() const
 {
-    if (!m_page)
+    RefPtr page = this->page();
+    if (!page)
         return { };
 
-    if (RefPtr frame = WebKit::WebFrameProxy::webFrame(m_data.frameID); frame && frame->page() == m_page)
+    if (RefPtr frame = WebKit::WebFrameProxy::webFrame(m_data.frameID); frame && frame->page() == page)
         return frame->title();
 
     return { };
+}
+
+const WebKit::WebPageProxy* FrameInfo::page() const
+{
+    return WebKit::WebPageProxy::fromIdentifier(m_data.webPageProxyID).get();
+}
+
+WebKit::WebPageProxy* FrameInfo::page()
+{
+    return WebKit::WebPageProxy::fromIdentifier(m_data.webPageProxyID).get();
 }
 
 } // namespace API

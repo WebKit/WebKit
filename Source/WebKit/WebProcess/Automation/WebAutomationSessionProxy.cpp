@@ -636,7 +636,7 @@ void WebAutomationSessionProxy::resolveParentFrame(WebCore::PageIdentifier pageI
     completionHandler(std::nullopt, parentFrame->frameID());
 }
 
-void WebAutomationSessionProxy::focusFrame(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, CompletionHandler<void(std::optional<String>)>&& completionHandler)
+void WebAutomationSessionProxy::focusFrame(WebCore::PageIdentifier pageID, WebCore::FrameIdentifier frameID, CompletionHandler<void(std::optional<String>)>&& completionHandler)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);
     if (!page || !page->corePage()) {
@@ -645,30 +645,16 @@ void WebAutomationSessionProxy::focusFrame(WebCore::PageIdentifier pageID, std::
         return;
     }
 
-    auto executeHandlerWithFrameNotFoundError = [&completionHandler] {
-        String frameNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
-        completionHandler(frameNotFoundErrorType);
-    };
-
-    RefPtr<WebCore::Frame> coreFrame;
-    if (frameID) {
-        RefPtr frame = WebProcess::singleton().webFrame(*frameID);
-        if (!frame) {
-            executeHandlerWithFrameNotFoundError();
-            return;
-        }
-        coreFrame = frame->coreFrame();
-    } else
-        coreFrame = page->mainFrame();
-
     // If frame is no longer connected to the page, then it is
     // closing and it's not possible to focus the frame.
-    if (!coreFrame  || !coreFrame->page()) {
-        executeHandlerWithFrameNotFoundError();
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame || !frame->coreFrame() || !frame->coreFrame()->page()) {
+        String frameNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
+        completionHandler(frameNotFoundErrorType);
         return;
     }
 
-    page->corePage()->focusController().setFocusedFrame(coreFrame.get());
+    page->corePage()->focusController().setFocusedFrame(frame->protectedCoreFrame().get());
     completionHandler(std::nullopt);
 }
 

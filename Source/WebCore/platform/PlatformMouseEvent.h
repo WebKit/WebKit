@@ -31,6 +31,7 @@
 #include <WebCore/PlatformEvent.h>
 #include <WebCore/PointerEventTypeNames.h>
 #include <WebCore/PointerID.h>
+#include <wtf/Platform.h>
 #include <wtf/UUID.h>
 #include <wtf/WindowsExtras.h>
 

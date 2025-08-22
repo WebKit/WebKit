@@ -876,7 +876,7 @@
 		276B38AE2A71D1E800252F4E /* DatePrototypeInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 276B38AB2A71D1E700252F4E /* DatePrototypeInlines.h */; };
 		276B38AF2A71D1E800252F4E /* InternalFunctionInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 276B38AC2A71D1E700252F4E /* InternalFunctionInlines.h */; };
 		276B38D52A71D26400252F4E /* JSTemplateObjectDescriptorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 276B38B02A71D25900252F4E /* JSTemplateObjectDescriptorInlines.h */; };
-		276B38D62A71D26400252F4E /* JSImmutableButterflyInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 276B38B12A71D25A00252F4E /* JSImmutableButterflyInlines.h */; };
+		276B38D62A71D26400252F4E /* JSCellButterflyInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 276B38B12A71D25A00252F4E /* JSCellButterflyInlines.h */; };
 		276B38D72A71D26400252F4E /* ProxyConstructorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 276B38B22A71D25A00252F4E /* ProxyConstructorInlines.h */; };
 		276B38D82A71D26400252F4E /* JSNativeStdFunctionInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 276B38B32A71D25A00252F4E /* JSNativeStdFunctionInlines.h */; };
 		276B38D92A71D26400252F4E /* JSAsyncGeneratorFunctionInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 276B38B42A71D25A00252F4E /* JSAsyncGeneratorFunctionInlines.h */; };
@@ -1236,7 +1236,7 @@
 		53EAFE2F208DFAB4007D524B /* testapi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 531D4E191F59CDD200EC836C /* testapi.cpp */; };
 		53EE01B6218F691600AD1F8D /* JSScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EE01B5218F690F00AD1F8D /* JSScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53EE01B8218F7EFF00AD1F8D /* JSScriptInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EE01B7218F7EFF00AD1F8D /* JSScriptInternal.h */; };
-		53F11F41209138D700E411A7 /* JSImmutableButterfly.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F11F40209138D700E411A7 /* JSImmutableButterfly.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		53F11F41209138D700E411A7 /* JSCellButterfly.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F11F40209138D700E411A7 /* JSCellButterfly.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53F40E851D58F9770099A1B6 /* WasmSections.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E841D58F9770099A1B6 /* WasmSections.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53F40E8B1D5901BB0099A1B6 /* WasmFunctionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E8A1D5901BB0099A1B6 /* WasmFunctionParser.h */; };
 		53F40E8D1D5901F20099A1B6 /* WasmParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F40E8C1D5901F20099A1B6 /* WasmParser.h */; };
@@ -3973,7 +3973,7 @@
 		276B38AB2A71D1E700252F4E /* DatePrototypeInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatePrototypeInlines.h; sourceTree = "<group>"; };
 		276B38AC2A71D1E700252F4E /* InternalFunctionInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InternalFunctionInlines.h; sourceTree = "<group>"; };
 		276B38B02A71D25900252F4E /* JSTemplateObjectDescriptorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTemplateObjectDescriptorInlines.h; sourceTree = "<group>"; };
-		276B38B12A71D25A00252F4E /* JSImmutableButterflyInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSImmutableButterflyInlines.h; sourceTree = "<group>"; };
+		276B38B12A71D25A00252F4E /* JSCellButterflyInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCellButterflyInlines.h; sourceTree = "<group>"; };
 		276B38B22A71D25A00252F4E /* ProxyConstructorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProxyConstructorInlines.h; sourceTree = "<group>"; };
 		276B38B32A71D25A00252F4E /* JSNativeStdFunctionInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNativeStdFunctionInlines.h; sourceTree = "<group>"; };
 		276B38B42A71D25A00252F4E /* JSAsyncGeneratorFunctionInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAsyncGeneratorFunctionInlines.h; sourceTree = "<group>"; };
@@ -4457,8 +4457,8 @@
 		53EE01B4218F690E00AD1F8D /* JSScript.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSScript.mm; sourceTree = "<group>"; };
 		53EE01B5218F690F00AD1F8D /* JSScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScript.h; sourceTree = "<group>"; };
 		53EE01B7218F7EFF00AD1F8D /* JSScriptInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScriptInternal.h; sourceTree = "<group>"; };
-		53F11F40209138D700E411A7 /* JSImmutableButterfly.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSImmutableButterfly.h; sourceTree = "<group>"; };
-		53F11F422091749800E411A7 /* JSImmutableButterfly.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSImmutableButterfly.cpp; sourceTree = "<group>"; };
+		53F11F40209138D700E411A7 /* JSCellButterfly.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSCellButterfly.h; sourceTree = "<group>"; };
+		53F11F422091749800E411A7 /* JSCellButterfly.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSCellButterfly.cpp; sourceTree = "<group>"; };
 		53F256E11B87E28000B4B768 /* JSTypedArrayViewPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTypedArrayViewPrototype.cpp; sourceTree = "<group>"; };
 		53F40E841D58F9770099A1B6 /* WasmSections.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmSections.h; sourceTree = "<group>"; };
 		53F40E8A1D5901BB0099A1B6 /* WasmFunctionParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmFunctionParser.h; sourceTree = "<group>"; };
@@ -8533,6 +8533,9 @@
 				FE48BD4223245E8700F136D0 /* JSCConfig.h */,
 				BC7F8FBA0E19D1EF008632C0 /* JSCell.cpp */,
 				BC1167D80E19BCC9008066DD /* JSCell.h */,
+				53F11F422091749800E411A7 /* JSCellButterfly.cpp */,
+				53F11F40209138D700E411A7 /* JSCellButterfly.h */,
+				276B38B12A71D25A00252F4E /* JSCellButterflyInlines.h */,
 				0F97496F1687ADE200A4FF6A /* JSCellInlines.h */,
 				0F1DD84918A945BE0026F3FA /* JSCInlines.h */,
 				F692A8870255597D01FF60F7 /* JSCJSValue.cpp */,
@@ -8594,9 +8597,6 @@
 				862553CE16136AA5009F17D0 /* JSGlobalProxy.cpp */,
 				862553CF16136AA5009F17D0 /* JSGlobalProxy.h */,
 				276B390A2A71D2B400252F4E /* JSGlobalProxyInlines.h */,
-				53F11F422091749800E411A7 /* JSImmutableButterfly.cpp */,
-				53F11F40209138D700E411A7 /* JSImmutableButterfly.h */,
-				276B38B12A71D25A00252F4E /* JSImmutableButterflyInlines.h */,
 				0F2B66CA17B6B5AB00A7AE3F /* JSInt16Array.h */,
 				0F2B66CB17B6B5AB00A7AE3F /* JSInt32Array.h */,
 				0F2B66C917B6B5AB00A7AE3F /* JSInt8Array.h */,
@@ -11416,6 +11416,8 @@
 				FFF3373F2BCDF1240070D04B /* JSCBytecodeCacheVersion.h in Headers */,
 				FE48BD4423245E9300F136D0 /* JSCConfig.h in Headers */,
 				BC1167DA0E19BCC9008066DD /* JSCell.h in Headers */,
+				53F11F41209138D700E411A7 /* JSCellButterfly.h in Headers */,
+				276B38D62A71D26400252F4E /* JSCellButterflyInlines.h in Headers */,
 				0F9749711687ADE400A4FF6A /* JSCellInlines.h in Headers */,
 				0F1DD84A18A945BE0026F3FA /* JSCInlines.h in Headers */,
 				BC18C42B0E16F5CD00B34460 /* JSCJSValue.h in Headers */,
@@ -11475,8 +11477,6 @@
 				862553D216136E1A009F17D0 /* JSGlobalProxy.h in Headers */,
 				27C241492A71F29000FCDA68 /* JSGlobalProxyInlines.h in Headers */,
 				0F0CAEFC1EC4DA6B00970D12 /* JSHeapFinalizerPrivate.h in Headers */,
-				53F11F41209138D700E411A7 /* JSImmutableButterfly.h in Headers */,
-				276B38D62A71D26400252F4E /* JSImmutableButterflyInlines.h in Headers */,
 				A513E5C0185BFACC007E95AD /* JSInjectedScriptHost.h in Headers */,
 				A513E5C2185BFACC007E95AD /* JSInjectedScriptHostPrototype.h in Headers */,
 				0F2B66F817B6B5AB00A7AE3F /* JSInt16Array.h in Headers */,

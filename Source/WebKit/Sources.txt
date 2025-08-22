@@ -227,6 +227,7 @@ Shared/IPCStreamTester.cpp
 Shared/IPCTester.cpp
 Shared/IPCTesterReceiver.cpp
 Shared/JavaScriptEvaluationResult.cpp
+Shared/JSHandleInfo.cpp
 Shared/KeyEventInterpretationContext.cpp
 Shared/PersistencyUtils.cpp
 Shared/PrintInfo.cpp
@@ -530,6 +531,7 @@ UIProcess/API/C/WKHTTPCookieStoreRef.cpp
 UIProcess/API/C/WKHitTestResult.cpp
 UIProcess/API/C/WKIconDatabase.cpp
 UIProcess/API/C/WKInspector.cpp
+UIProcess/API/C/WKJSHandleRef.cpp
 UIProcess/API/C/WKKeyValueStorageManager.cpp
 UIProcess/API/C/WKMediaKeySystemPermissionCallback.cpp
 UIProcess/API/C/WKMessageListener.cpp

@@ -28,6 +28,7 @@
 
 #import <WebCore/AXTextMarker.h>
 #import <WebCore/WebAccessibilityObjectWrapperBase.h>
+#import <wtf/Platform.h>
 
 #if PLATFORM(MAC)
 

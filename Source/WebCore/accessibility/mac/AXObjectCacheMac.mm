@@ -33,7 +33,6 @@
 #import "AXObjectCacheInlines.h"
 #import "AXSearchManager.h"
 #import "AccessibilityObject.h"
-#import "AccessibilityTable.h"
 #import "CocoaAccessibilityConstants.h"
 #import "DeprecatedGlobalSettings.h"
 #import "LocalFrameView.h"
@@ -291,7 +290,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
         macNotification = NSAccessibilityInvalidStatusChangedNotification;
         break;
     case AXNotification::SelectedChildrenChanged:
-        if (object.isTable() && object.isExposable())
+        if (object.isExposableTable())
             macNotification = NSAccessibilitySelectedRowsChangedNotification;
         else
             macNotification = NSAccessibilitySelectedChildrenChangedNotification;

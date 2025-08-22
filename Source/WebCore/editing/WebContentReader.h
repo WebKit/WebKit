@@ -30,6 +30,7 @@
 #include <WebCore/Pasteboard.h>
 #include <WebCore/SimpleRange.h>
 #include <WebCore/markup.h>
+#include <wtf/Platform.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {

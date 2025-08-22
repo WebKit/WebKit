@@ -28,6 +28,7 @@
 
 #if ENABLE(NOTIFICATION_EVENT)
 
+#include "EventTargetInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

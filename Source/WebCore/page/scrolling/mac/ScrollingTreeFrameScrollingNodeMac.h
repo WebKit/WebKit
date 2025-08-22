@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
 
 #include <WebCore/ScrollbarThemeMac.h>

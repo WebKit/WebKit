@@ -28,6 +28,7 @@
 #include <WebCore/ShouldLocalizeAxisNames.h>
 #include <WebCore/TextFlags.h>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>

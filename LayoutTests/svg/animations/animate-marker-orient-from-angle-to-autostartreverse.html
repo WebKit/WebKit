@@ -76,7 +76,7 @@ function sample3() {
     shouldBeCloseEnough("marker.orientAngle.animVal.value", "0");
     shouldBe("marker.orientAngle.baseVal.value", "0");
 
-    shouldBe("marker.orientType.animVal", "SVGMarkerElement.SVG_MARKER_ORIENT_UNKNOWN");
+    shouldBe("marker.orientType.animVal", "SVGMarkerElement.SVG_MARKER_ORIENT_AUTO_START_REVERSE");
     shouldBe("marker.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
 }
 
@@ -92,10 +92,7 @@ function executeTest() {
     ];
 
     // Ensure new enum value is not exposed through the IDL
-    shouldBe("SVGMarkerElement.SVG_MARKER_ORIENT_AUTOSTARTREVERSE", "undefined");
-
-    // Ensure we cannot set autostartreverse through the orient property.
-    shouldThrow("marker.orientType.baseVal = 3");
+    shouldBe("SVGMarkerElement.SVG_MARKER_ORIENT_AUTO_START_REVERSE", "3");
 
     runAnimationTest(expectedValues);
 }

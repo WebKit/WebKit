@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(COCOA) && HAVE(AVKIT)
 
 #include <WebCore/EventListener.h>

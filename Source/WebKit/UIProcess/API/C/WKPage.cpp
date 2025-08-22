@@ -2132,7 +2132,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
                 return completionHandler(false);
 
             auto origin = API::SecurityOrigin::create(SecurityOrigin::createFromString(page.protectedPageLoadState()->activeURL()).get());
-            auto apiFrameInfo = API::FrameInfo::create(WTFMove(frameInfo), &page);
+            auto apiFrameInfo = API::FrameInfo::create(WTFMove(frameInfo));
             completionHandler(m_client.shouldAllowDeviceOrientationAndMotionAccess(toAPI(&page), toAPI(origin.ptr()), toAPI(apiFrameInfo.ptr()), m_client.base.clientInfo));
         }
 #endif
@@ -2426,7 +2426,7 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
                     m_client.didFailProvisionalNavigation(toAPI(&page), toAPI(navigation), toAPI(error), toAPI(userData), m_client.base.clientInfo);
             } else {
                 if (m_client.didFailProvisionalLoadInSubframe)
-                    m_client.didFailProvisionalLoadInSubframe(toAPI(&page), toAPI(navigation), toAPI(API::FrameInfo::create(WTFMove(frameInfo), &page).ptr()), toAPI(error), toAPI(userData), m_client.base.clientInfo);
+                    m_client.didFailProvisionalLoadInSubframe(toAPI(&page), toAPI(navigation), toAPI(API::FrameInfo::create(WTFMove(frameInfo)).ptr()), toAPI(error), toAPI(userData), m_client.base.clientInfo);
             }
         }
 

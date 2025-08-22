@@ -81,7 +81,7 @@ inline bool isValueType(Type type)
     case TypeKind::F32:
     case TypeKind::F64:
         return true;
-    case TypeKind::Exn:
+    case TypeKind::Exnref:
     case TypeKind::Externref:
     case TypeKind::Funcref:
         return false;
@@ -95,6 +95,22 @@ inline bool isValueType(Type type)
     }
     return false;
 }
+
+
+// Type hierarchy of Ref types is here
+//
+//     any -> eq -> i31    ----+
+//             |               |
+//             +--> array  ----+-> none
+//             |               |
+//             +--> struct ----+
+//
+//     func -> nofunc
+//
+//     extern -> noextern
+//
+//     exn -> noexn
+//
 
 inline bool isRefType(Type type)
 {
@@ -129,24 +145,24 @@ inline bool isAnyref(Type type)
     return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Anyref);
 }
 
-inline bool isNullexnref(Type type)
+inline bool isNoexnref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Nullexn);
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Noexnref);
 }
 
-inline bool isNullref(Type type)
+inline bool isNoneref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Nullref);
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Noneref);
 }
 
-inline bool isNullfuncref(Type type)
+inline bool isNofuncref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Nullfuncref);
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Nofuncref);
 }
 
-inline bool isNullexternref(Type type)
+inline bool isNoexternref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Nullexternref);
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Noexternref);
 }
 
 inline bool isInternalref(Type type)
@@ -160,7 +176,7 @@ inline bool isInternalref(Type type)
         case TypeKind::Structref:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
-        case TypeKind::Nullref:
+        case TypeKind::Noneref:
             return true;
         default:
             return false;
@@ -186,7 +202,7 @@ inline bool isStructref(Type type)
 
 inline bool isExnref(Type type)
 {
-    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Exn);
+    return isRefType(type) && type.index == static_cast<TypeIndex>(TypeKind::Exnref);
 }
 
 inline JSString* typeToJSAPIString(VM& vm, Type type)
@@ -248,7 +264,7 @@ inline Type arrayrefType(bool isNullable = true)
 
 inline Type exnrefType()
 {
-    return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Exn) };
+    return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Exnref) };
 }
 
 inline bool isRefWithTypeIndex(Type type)
@@ -324,16 +340,16 @@ inline bool isSubtypeSlow(Type sub, Type parent)
     if (isEqref(sub) && isAnyref(parent))
         return true;
 
-    if (isNullref(sub))
+    if (isNoneref(sub))
         return isInternalref(parent);
 
-    if (isNullfuncref(sub))
+    if (isNofuncref(sub))
         return isSubtype(parent, funcrefType());
 
-    if (isNullexternref(sub) && isExternref(parent))
+    if (isNoexternref(sub) && isExternref(parent))
         return true;
 
-    if (isNullexnref(sub) && isExnref(parent))
+    if (isNoexnref(sub) && isExnref(parent))
         return true;
 
     if (sub.isRef() && parent.isRefNull())
@@ -364,16 +380,16 @@ inline bool isValidHeapTypeKind(intptr_t kind)
     switch (kind) {
     case static_cast<intptr_t>(TypeKind::Funcref):
     case static_cast<intptr_t>(TypeKind::Externref):
-    case static_cast<intptr_t>(TypeKind::Exn):
+    case static_cast<intptr_t>(TypeKind::Exnref):
     case static_cast<intptr_t>(TypeKind::I31ref):
     case static_cast<intptr_t>(TypeKind::Arrayref):
     case static_cast<intptr_t>(TypeKind::Structref):
     case static_cast<intptr_t>(TypeKind::Eqref):
     case static_cast<intptr_t>(TypeKind::Anyref):
-    case static_cast<intptr_t>(TypeKind::Nullexn):
-    case static_cast<intptr_t>(TypeKind::Nullref):
-    case static_cast<intptr_t>(TypeKind::Nullfuncref):
-    case static_cast<intptr_t>(TypeKind::Nullexternref):
+    case static_cast<intptr_t>(TypeKind::Noexnref):
+    case static_cast<intptr_t>(TypeKind::Noneref):
+    case static_cast<intptr_t>(TypeKind::Nofuncref):
+    case static_cast<intptr_t>(TypeKind::Noexternref):
         return true;
     default:
         break;
@@ -400,16 +416,16 @@ inline const char* heapTypeKindAsString(TypeKind kind)
         return "eq";
     case TypeKind::Anyref:
         return "any";
-    case TypeKind::Nullref:
+    case TypeKind::Noneref:
         return "none";
-    case TypeKind::Nullfuncref:
+    case TypeKind::Nofuncref:
         return "nofunc";
-    case TypeKind::Nullexternref:
+    case TypeKind::Noexternref:
         return "noextern";
-    case TypeKind::Exn:
-        return "exn";
-    case TypeKind::Nullexn:
-        return "nullexn";
+    case TypeKind::Exnref:
+        return "exnref";
+    case TypeKind::Noexnref:
+        return "noexnref";
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return "";
@@ -780,7 +796,6 @@ struct UnlinkedWasmToWasmCall {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(UnlinkedWasmToWasmCall);
     CodeLocationNearCall<WasmEntryPtrTag> callLocation;
     FunctionSpaceIndex functionIndexSpace;
-    CodeLocationDataLabelPtr<WasmEntryPtrTag> calleeLocation;
 
 };
 

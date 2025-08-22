@@ -1446,9 +1446,23 @@ void WebProcess::switchFromStaticFontRegistryToUserFontRegistry(Vector<WebKit::S
 
 void WebProcess::setScreenProperties(const WebCore::ScreenProperties& properties)
 {
+#if HAVE(SUPPORT_HDR_DISPLAY)
+    auto propertiesWithStyleAffectingOnly = [](auto properties) {
+        for (auto& value : properties.screenDataMap.values()) {
+            value.suppressEDR = false;
+            value.currentEDRHeadroom = 1;
+            value.maxEDRHeadroom = 1;
+        }
+        return properties;
+    };
+    bool affectsStyle = propertiesWithStyleAffectingOnly(properties) != propertiesWithStyleAffectingOnly(WebCore::getScreenProperties());
+#else
+    constexpr bool affectsStyle = true;
+#endif
+
     WebCore::setScreenProperties(properties);
     for (auto& page : m_pageMap.values())
-        page->screenPropertiesDidChange();
+        page->screenPropertiesDidChange(affectsStyle);
 #if PLATFORM(MAC)
     updatePageScreenProperties();
 #endif

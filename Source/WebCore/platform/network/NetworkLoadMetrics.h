@@ -29,6 +29,7 @@
 #include <WebCore/HTTPHeaderMap.h>
 #include <wtf/Box.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/Platform.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)

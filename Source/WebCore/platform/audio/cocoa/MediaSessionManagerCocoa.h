@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(COCOA)
 
 #include <WebCore/AudioHardwareListener.h>

@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

@@ -41,7 +41,6 @@
 #include <WebCore/NotImplemented.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(VIDEO)
 #include "RemoteVideoFrameObjectHeap.h"
@@ -81,8 +80,6 @@ Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebP
     return instance;
 }
 #endif
-
-WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteGraphicsContextGL);
 
 RemoteGraphicsContextGL::RemoteGraphicsContextGL(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLIdentifier identifier, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& streamConnection)
     : m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
@@ -128,7 +125,7 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
 {
     assertIsCurrent(workQueue());
     platformWorkQueueInitialize(WTFMove(attributes));
-    m_connection->open(m_workQueue);
+    m_connection->open(*this, m_workQueue);
     if (RefPtr context = m_context) {
         context->setClient(this);
         String extensions = context->getString(GraphicsContextGL::EXTENSIONS);
@@ -152,6 +149,15 @@ void RemoteGraphicsContextGL::workQueueUninitialize()
     }
     m_connection->invalidate();
     m_renderingResourcesRequest = { };
+}
+
+void RemoteGraphicsContextGL::didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName messageName, const Vector<uint32_t>&)
+{
+    RELEASE_LOG_FAULT(IPC, "Received an invalid message '%" PUBLIC_LOG_STRING "' from WebContent process, requesting for it to be terminated.", description(messageName).characters());
+    callOnMainRunLoop([weakGPUConnectionToWebProcess = m_gpuConnectionToWebProcess] {
+        if (RefPtr gpuConnectionToWebProcess = weakGPUConnectionToWebProcess.get())
+            gpuConnectionToWebProcess->terminateWebProcess();
+    });
 }
 
 void RemoteGraphicsContextGL::forceContextLost()

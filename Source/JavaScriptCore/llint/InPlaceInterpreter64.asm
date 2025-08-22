@@ -186,7 +186,7 @@ macro ipintEntry()
     move sp, argumINTEnd
     subq argumINTTmp, sp
     move sp, argumINTDsp
-    loadp Wasm::IPIntCallee::m_argumINTBytecodePointer[ws0], MC
+    loadp Wasm::IPIntCallee::m_argumINTBytecode + VectorBufferOffset[ws0], MC
 
     push argumINTTmp, argumINTDst, argumINTSrc, argumINTEnd
 
@@ -378,7 +378,7 @@ ipintOp(_throw_ref, macro()
     jumpToException()
 
 .throw_null_ref:
-    throwException(NullExnReference)
+    throwException(NullExnrefReference)
 end)
 
 macro uintDispatch()
@@ -416,7 +416,7 @@ end)
 
 # This implementation is specially defined out of ipintOp scope to make end implementation tight.
 .ipint_end_ret:
-    loadp Wasm::IPIntCallee::m_uINTBytecodePointer[ws0], MC
+    loadp Wasm::IPIntCallee::m_uINTBytecode + VectorBufferOffset[ws0], MC
     ipintEpilogueOSR(10)
 if X86_64
     loadp UnboxedWasmCalleeStackSlot[cfr], ws0

@@ -27,6 +27,7 @@
 
 #include <WebCore/FloatRoundedRect.h>
 #include <WebCore/GraphicsLayer.h>
+#include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/TypeCasts.h>

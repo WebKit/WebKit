@@ -33,6 +33,7 @@
 #include <optional>
 #include <wtf/CheckedRef.h>
 #include <wtf/HashSet.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/CharacterProperties.h>

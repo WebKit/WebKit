@@ -211,7 +211,8 @@ PolicyContainer SecurityContext::policyContainer() const
         m_contentSecurityPolicy->responseHeaders(),
         crossOriginEmbedderPolicy(),
         crossOriginOpenerPolicy(),
-        referrerPolicy()
+        referrerPolicy(),
+        ipAddressSpace()
     };
 }
 
@@ -224,6 +225,7 @@ void SecurityContext::inheritPolicyContainerFrom(const PolicyContainer& policyCo
     setCrossOriginOpenerPolicy(policyContainer.crossOriginOpenerPolicy);
     setCrossOriginEmbedderPolicy(policyContainer.crossOriginEmbedderPolicy);
     setReferrerPolicy(policyContainer.referrerPolicy);
+    setIPAddressSpace(policyContainer.ipAddressSpace);
 }
 
 CheckedPtr<ContentSecurityPolicy> SecurityContext::checkedContentSecurityPolicy()

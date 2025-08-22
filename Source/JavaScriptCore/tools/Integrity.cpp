@@ -118,7 +118,7 @@ bool Random::reloadAndCheckShouldAuditSlow(VM& vm)
 void auditCellMinimallySlow(VM&, JSCell* cell)
 {
     if (Gigacage::contains(cell)) {
-        if (cell->type() != JSImmutableButterflyType) {
+        if (cell->type() != JSCellButterflyType) {
             if (IntegrityInternal::verbose)
                 dataLogLn("Integrity ERROR: Bad cell ", RawPointer(cell), " ", JSValue(cell));
             CRASH();
@@ -254,7 +254,7 @@ bool Analyzer::analyzeCell(VM& vm, JSCell* cell, Analyzer::Action action)
     }
 
     JSType cellType = cell->type();
-    if (cell->type() != JSImmutableButterflyType)
+    if (cell->type() != JSCellButterflyType)
         AUDIT_VERIFY(!Gigacage::contains(cell), "cell %p cell.type %d", cell, cellType);
 
     WeakSet& weakSet = cell->cellContainer().weakSet();

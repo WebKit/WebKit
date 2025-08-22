@@ -52,7 +52,7 @@ WebURLSchemeTask::WebURLSchemeTask(WebURLSchemeHandler& handler, WebPageProxy& p
     , m_pageProxyID(page.identifier())
     , m_webPageID(webPageID)
     , m_request(WTFMove(parameters.request))
-    , m_frameInfo(API::FrameInfo::create(WTFMove(parameters.frameInfo), &page))
+    , m_frameInfo(API::FrameInfo::create(WTFMove(parameters.frameInfo)))
     , m_syncCompletionHandler(WTFMove(syncCompletionHandler))
 {
     ASSERT(RunLoop::isMain());

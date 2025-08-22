@@ -63,7 +63,7 @@ AccessibilityObject* AccessibilityImageMapLink::parentObject() const
 
 AccessibilityRole AccessibilityImageMapLink::determineAccessibilityRole()
 {
-    if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Unknown)
+    if (m_ariaRole != AccessibilityRole::Unknown)
         return m_ariaRole;
 
     return !url().isEmpty() ? AccessibilityRole::Link : AccessibilityRole::Generic;

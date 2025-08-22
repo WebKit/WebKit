@@ -171,6 +171,7 @@ class Color;
 - (void)waitForNextPresentationUpdate;
 - (void)waitForNextVisibleContentRectUpdate;
 - (void)waitUntilActivityStateUpdateDone;
+- (void)forceLightMode;
 - (void)forceDarkMode;
 - (NSString *)stylePropertyAtSelectionStart:(NSString *)propertyName;
 - (NSString *)stylePropertyAtSelectionEnd:(NSString *)propertyName;

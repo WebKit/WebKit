@@ -912,7 +912,7 @@ runtime/JSGlobalObject.cpp
 runtime/JSGlobalObjectDebuggable.cpp
 runtime/JSGlobalObjectFunctions.cpp
 runtime/JSGlobalProxy.cpp
-runtime/JSImmutableButterfly.cpp
+runtime/JSCellButterfly.cpp
 runtime/JSInternalPromise.cpp
 runtime/JSInternalPromiseConstructor.cpp
 runtime/JSInternalPromisePrototype.cpp

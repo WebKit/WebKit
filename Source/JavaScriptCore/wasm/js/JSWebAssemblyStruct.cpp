@@ -90,7 +90,7 @@ uint64_t JSWebAssemblyStruct::get(uint32_t fieldIndex) const
     case TypeKind::I64:
     case TypeKind::F64:
         return *std::bit_cast<const uint64_t*>(targetPointer);
-    case TypeKind::Exn:
+    case TypeKind::Exnref:
     case TypeKind::Externref:
     case TypeKind::Funcref:
     case TypeKind::Ref:
@@ -150,13 +150,13 @@ void JSWebAssemblyStruct::set(uint32_t fieldIndex, uint64_t argument)
     case TypeKind::Sub:
     case TypeKind::Subfinal:
     case TypeKind::Rec:
-    case TypeKind::Exn:
+    case TypeKind::Exnref:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
-    case TypeKind::Nullexn:
-    case TypeKind::Nullref:
-    case TypeKind::Nullfuncref:
-    case TypeKind::Nullexternref:
+    case TypeKind::Noexnref:
+    case TypeKind::Noneref:
+    case TypeKind::Nofuncref:
+    case TypeKind::Noexternref:
     case TypeKind::I31ref: {
         break;
     }

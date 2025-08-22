@@ -2487,12 +2487,12 @@ void SpeculativeJIT::compileMapGetImpl(Node* node)
         speculate(node, node->child2());
 
     JumpList notPresentInTable;
-    JIT_COMMENT(*this, "Get the JSImmutableButterfly first.");
+    JIT_COMMENT(*this, "Get the JSCellButterfly first.");
     loadPtr(Address(mapGPR, MapOrSet::offsetOfButterfly()), mapStorageOrDataGPR);
     notPresentInTable.append(branchTestPtr(Zero, mapStorageOrDataGPR));
 
     JIT_COMMENT(*this, "Compute the bucketCount = Capacity / LoadFactor and bucketIndex = hashTableStartIndex + (hash & bucketCount - 1).");
-    addPtr(TrustedImm32(JSImmutableButterfly::offsetOfData()), mapStorageOrDataGPR);
+    addPtr(TrustedImm32(JSCellButterfly::offsetOfData()), mapStorageOrDataGPR);
     static_assert(MapOrSet::Helper::LoadFactor == 1);
     load32(Address(mapStorageOrDataGPR, MapOrSet::Helper::capacityIndex() * sizeof(uint64_t)), bucketCountGPR);
     sub32(bucketCountGPR, TrustedImm32(1), bucketIndexOrDeletedValueGPR);

@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if USE(LIBWEBRTC)
 
 #if PLATFORM(IOS_FAMILY)

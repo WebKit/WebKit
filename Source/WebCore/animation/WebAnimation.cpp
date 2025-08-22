@@ -1573,14 +1573,14 @@ void WebAnimation::maybeMarkAsReady()
     m_pendingStartTime = std::nullopt;
 }
 
-OptionSet<AnimationImpact> WebAnimation::resolve(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext)
+OptionSet<AnimationImpact> WebAnimation::resolve(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, EndpointInclusiveActiveInterval endpointInclusiveActiveInterval)
 {
     if (!m_shouldSkipUpdatingFinishedStateWhenResolving)
         updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
     m_shouldSkipUpdatingFinishedStateWhenResolving = false;
 
     if (RefPtr keyframeEffect = dynamicDowncast<KeyframeEffect>(m_effect))
-        return keyframeEffect->apply(targetStyle, resolutionContext);
+        return keyframeEffect->apply(targetStyle, resolutionContext, endpointInclusiveActiveInterval);
     return { };
 }
 
@@ -1785,40 +1785,54 @@ ExceptionOr<void> WebAnimation::commitStyles()
         return styleDeclaration->copyProperties();
     }();
 
-    auto& keyframeStack = styledElement->ensureKeyframeEffectStack({ });
+    // We cannot use the keyframe effect stack directly here since effects that aren't
+    // relevant will not be represented and since commitStyles() uses endpoint-inclusive
+    // active intervals, an animation that was just finished, or is about to become active,
+    // would be disregarded.
+    auto* unsortedAnimations = styledElement->animations({ });
+    ASSERT(unsortedAnimations && !unsortedAnimations->isEmpty());
+    auto sortedAnimations = copyToVector(*unsortedAnimations);
+    std::ranges::stable_sort(sortedAnimations, [](auto& lhs, auto& rhs) {
+        return compareAnimationsByCompositeOrder(lhs.get(), rhs.get());
+    });
 
     auto commitProperty = [&](AnimatableCSSProperty property) {
         // 1. Let partialEffectStack be a copy of the effect stack for property on target.
         // 2. If animation's replace state is removed, add all animation effects associated with animation whose effect target is target and which include
         // property as a target property to partialEffectStack.
         // 3. Remove from partialEffectStack any animation effects whose associated animation has a higher composite order than animation.
-        // 4. Let effect value be the result of calculating the result of partialEffectStack for property using target's computed style (see § 5.4.3 Calculating
-        // the result of an effect stack).
+        // 4. Let effect value be the result of calculating the result of partialEffectStack for property using target’s computed style (see § 5.4.3 Calculating
+        // the result of an effect stack) and setting the endpoint-inclusive active interval flag to true when calculating the animation effect phase (see §
+        // 4.6.6 Animation effect phases and states).
         // 5. Set a CSS declaration property for effect value in inline style.
         // 6. Update style attribute for inline style.
 
-        // We actually perform those steps in a different way: instead of building a copy of the effect stack and then removing stuff, we iterate through the
-        // effect stack and stop when we've found this animation's effect or when we've found an effect associated with an animation with a higher composite order.
+        // We actually perform those steps in a different way: instead of building a copy of the sorted animation list and then removing stuff, we iterate through the
+        // sorted animation list and stop when we've found this animation's effect or when we've found an effect associated with an animation with a higher composite order.
         auto animatedStyle = RenderStyle::clonePtr(unanimatedStyle);
-        for (const auto& effectInStack : keyframeStack.sortedEffects()) {
+        for (const auto& animation : sortedAnimations) {
+            RefPtr effectInStack = dynamicDowncast<KeyframeEffect>(animation->effect());
+            if (!effectInStack)
+                continue;
             if (effectInStack->animation() != this && !compareAnimationsByCompositeOrder(*effectInStack->animation(), *this))
                 break;
             if (effectInStack->animatedProperties().contains(property))
-                effectInStack->animation()->resolve(*animatedStyle, { nullptr });
+                effectInStack->animation()->resolve(*animatedStyle, { nullptr }, EndpointInclusiveActiveInterval::Yes);
             if (effectInStack->animation() == this)
                 break;
         }
         if (m_replaceState == ReplaceState::Removed)
-            effect->animation()->resolve(*animatedStyle, { nullptr });
+            effect->animation()->resolve(*animatedStyle, { nullptr }, EndpointInclusiveActiveInterval::Yes);
         return WTF::switchOn(property,
             [&](CSSPropertyID propertyId) {
                 auto string = computedStyleExtractor.propertyValueSerializationInStyle(*animatedStyle, propertyId, CSS::defaultSerializationContext(), CSSValuePool::singleton(), nullptr, Style::ExtractorState::PropertyValueType::Computed);
-                if (!string.isEmpty())
-                    return inlineStyle->setProperty(propertyId, WTFMove(string), { styledElement->document() });
-                return false;
+                if (string.isEmpty())
+                    return false;
+                auto resolvedCSSProperty = CSSProperty::resolveDirectionAwareProperty(propertyId, animatedStyle->writingMode());
+                return inlineStyle->setProperty(resolvedCSSProperty, WTFMove(string), { styledElement->document() });
             },
             [&](const AtomString& customProperty) {
-                auto string = computedStyleExtractor.customPropertyValueSerialization(customProperty, CSS::defaultSerializationContext());
+                auto string = computedStyleExtractor.customPropertyValueSerializationInStyle(*animatedStyle, customProperty, CSS::defaultSerializationContext());
                 if (!string.isEmpty())
                     return inlineStyle->setCustomProperty(customProperty, WTFMove(string), { styledElement->document() });
                 return false;

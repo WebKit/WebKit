@@ -32,6 +32,7 @@
 
 #include <WebCore/ShareableResource.h>
 #include <WebCore/SharedBuffer.h>
+#include <wtf/Platform.h>
 
 namespace WebCore {
 

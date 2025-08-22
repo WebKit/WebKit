@@ -70,7 +70,7 @@ bool AccessibilityTree::computeIsIgnored() const
 
 AccessibilityRole AccessibilityTree::determineAccessibilityRole()
 {
-    if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Tree)
+    if (m_ariaRole != AccessibilityRole::Tree)
         return AccessibilityRenderObject::determineAccessibilityRole();
 
     return isTreeValid() ? AccessibilityRole::Tree : AccessibilityRole::Generic;

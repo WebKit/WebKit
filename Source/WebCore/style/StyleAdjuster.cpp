@@ -988,19 +988,6 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
         if (style.overflowY() == Overflow::Hidden && m_element->attributeWithoutSynchronization(roleAttr) == roleValue)
             style.setOverflowY(Overflow::Auto);
     }
-    if (m_document->quirks().needsIPadSkypeOverflowScrollQuirk()) {
-        // This makes the layout scrollable and makes visible the buttons hidden outside of the viewport.
-        // static MainThreadNeverDestroyed<const AtomString> selectorValue(".app-container .noFocusOutline > div"_s);
-        if (is<HTMLDivElement>(*m_element)) {
-            auto matchesNoFocus = m_element->matches(".app-container .noFocusOutline > div"_s);
-            if (matchesNoFocus.hasException())
-                return;
-            if (matchesNoFocus.returnValue()) {
-                if (style.overflowY() == Overflow::Hidden)
-                    style.setOverflowY(Overflow::Scroll);
-            }
-        }
-    }
     if (m_document->quirks().needsYouTubeOverflowScrollQuirk()) {
         // This turns sidebar scrollable without hover.
         static MainThreadNeverDestroyed<const AtomString> idValue("guide-inner-content"_s);

@@ -46,7 +46,7 @@ class SecurityOrigin;
 
 class FrameInfo final : public ObjectImpl<Object::Type::FrameInfo> {
 public:
-    static Ref<FrameInfo> create(WebKit::FrameInfoData&&, RefPtr<WebKit::WebPageProxy>&&);
+    static Ref<FrameInfo> create(WebKit::FrameInfoData&&);
     virtual ~FrameInfo();
 
     bool isMainFrame() const { return m_data.isMainFrame; }
@@ -54,7 +54,8 @@ public:
     const WebCore::ResourceRequest& request() const { return m_data.request; }
     const WebCore::SecurityOriginData& securityOrigin() const { return m_data.securityOrigin; }
     Ref<FrameHandle> handle() const;
-    WebKit::WebPageProxy* page() { return m_page.get(); }
+    WebKit::WebPageProxy* page();
+    const WebKit::WebPageProxy* page() const;
     RefPtr<FrameHandle> parentFrameHandle() const;
     Markable<WebCore::ScriptExecutionContextIdentifier> documentID() const { return m_data.documentID; }
     ProcessID processID() const { return m_data.processID; }
@@ -65,10 +66,9 @@ public:
     const WebKit::FrameInfoData& frameInfoData() const { return m_data; }
 
 private:
-    FrameInfo(WebKit::FrameInfoData&&, RefPtr<WebKit::WebPageProxy>&&);
+    FrameInfo(WebKit::FrameInfoData&&);
 
     const WebKit::FrameInfoData m_data;
-    RefPtr<WebKit::WebPageProxy> m_page;
 };
 
 } // namespace API

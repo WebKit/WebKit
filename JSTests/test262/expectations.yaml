@@ -262,48 +262,9 @@ test/built-ins/Temporal/Duration/prototype/total/throws-if-target-nanoseconds-ou
 test/built-ins/Temporal/Duration/prototype/total/total-of-each-unit-relativeto.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
-test/built-ins/Temporal/Instant/prototype/since/add-subtract.js:
-  default: 'Test262Error: equals method'
-  strict mode: 'Test262Error: equals method'
-test/built-ins/Temporal/Instant/prototype/since/largestunit.js:
-  default: 'Test262Error: does not include higher units than necessary (largest unit unspecified): nanoseconds result Expected SameValue(«40», «101») to be true'
-  strict mode: 'Test262Error: does not include higher units than necessary (largest unit unspecified): nanoseconds result Expected SameValue(«40», «101») to be true'
 test/built-ins/Temporal/Instant/prototype/since/order-of-operations.js:
   default: 'Test262Error: Actual [get other.toString, call other.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and expected [get other.toString, call other.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
   strict mode: 'Test262Error: Actual [get other.toString, call other.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and expected [get other.toString, call other.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
-test/built-ins/Temporal/Instant/prototype/since/round-cross-unit-boundary.js:
-  default: 'Test262Error: -1:59 balances to -2 hours: hours result: Expected SameValue(«-1», «-2») to be true'
-  strict mode: 'Test262Error: -1:59 balances to -2 hours: hours result: Expected SameValue(«-1», «-2») to be true'
-test/built-ins/Temporal/Instant/prototype/since/rounding-increments.js:
-  default: 'Test262Error: nanoseconds result Expected SameValue(«128», «0») to be true'
-  strict mode: 'Test262Error: nanoseconds result Expected SameValue(«128», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/since/roundingmode-ceil.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = ceil, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = ceil, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/since/roundingmode-expand.js:
-  default: 'Test262Error: rounds to hours (rounding mode = expand, negative case): hours result: Expected SameValue(«-376435», «-376436») to be true'
-  strict mode: 'Test262Error: rounds to hours (rounding mode = expand, negative case): hours result: Expected SameValue(«-376435», «-376436») to be true'
-test/built-ins/Temporal/Instant/prototype/since/roundingmode-floor.js:
-  default: 'Test262Error: rounds to milliseconds (rounding mode = floor, negative case): nanoseconds result Expected SameValue(«-936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (rounding mode = floor, negative case): nanoseconds result Expected SameValue(«-936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/since/roundingmode-halfCeil.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfCeil, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfCeil, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/since/roundingmode-halfEven.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfEven, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfEven, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/since/roundingmode-halfExpand.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfExpand, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfExpand, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/since/roundingmode-halfFloor.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfFloor, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfFloor, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/since/roundingmode-halfTrunc.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfTrunc, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfTrunc, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/since/roundingmode-trunc.js:
-  default: 'Test262Error: rounds to hours (rounding mode = trunc, negative case): hours result: Expected SameValue(«-376436», «-376435») to be true'
-  strict mode: 'Test262Error: rounds to hours (rounding mode = trunc, negative case): hours result: Expected SameValue(«-376436», «-376435») to be true'
 test/built-ins/Temporal/Instant/prototype/toString/order-of-operations.js:
   default: 'Error: FIXME: Temporal.Instant.toString({timeZone}) not implemented yet'
   strict mode: 'Error: FIXME: Temporal.Instant.toString({timeZone}) not implemented yet'
@@ -313,42 +274,9 @@ test/built-ins/Temporal/Instant/prototype/toString/timezone-string-sub-minute-of
 test/built-ins/Temporal/Instant/prototype/toString/timezone-wrong-type.js:
   default: 'Test262Error: null does not convert to a valid ISO string Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: null does not convert to a valid ISO string Expected a TypeError but got a RangeError'
-test/built-ins/Temporal/Instant/prototype/until/add-subtract.js:
-  default: 'Test262Error: equals method'
-  strict mode: 'Test262Error: equals method'
 test/built-ins/Temporal/Instant/prototype/until/order-of-operations.js:
   default: 'Test262Error: Actual [get other.toString, call other.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and expected [get other.toString, call other.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
   strict mode: 'Test262Error: Actual [get other.toString, call other.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and expected [get other.toString, call other.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
-test/built-ins/Temporal/Instant/prototype/until/rounding-increments.js:
-  default: 'Test262Error: nanoseconds result Expected SameValue(«128», «0») to be true'
-  strict mode: 'Test262Error: nanoseconds result Expected SameValue(«128», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/until/roundingmode-ceil.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = ceil, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = ceil, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/until/roundingmode-expand.js:
-  default: 'Test262Error: rounds to hours (rounding mode = expand, negative case): hours result: Expected SameValue(«-376435», «-376436») to be true'
-  strict mode: 'Test262Error: rounds to hours (rounding mode = expand, negative case): hours result: Expected SameValue(«-376435», «-376436») to be true'
-test/built-ins/Temporal/Instant/prototype/until/roundingmode-floor.js:
-  default: 'Test262Error: rounds to milliseconds (rounding mode = floor, negative case): nanoseconds result Expected SameValue(«-936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (rounding mode = floor, negative case): nanoseconds result Expected SameValue(«-936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfCeil.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfCeil, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfCeil, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfEven.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfEven, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfEven, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfExpand.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfExpand, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfExpand, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfFloor.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfFloor, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfFloor, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfTrunc.js:
-  default: 'Test262Error: rounds to milliseconds (roundingMode = halfTrunc, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfTrunc, positive case): nanoseconds result Expected SameValue(«936», «0») to be true'
-test/built-ins/Temporal/Instant/prototype/until/roundingmode-trunc.js:
-  default: 'Test262Error: rounds to hours (rounding mode = trunc, negative case): hours result: Expected SameValue(«-376436», «-376435») to be true'
-  strict mode: 'Test262Error: rounds to hours (rounding mode = trunc, negative case): hours result: Expected SameValue(«-376436», «-376435») to be true'
 test/built-ins/Temporal/PlainDate/argument-convert.js:
   default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
   strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'

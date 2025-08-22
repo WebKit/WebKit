@@ -36,6 +36,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
+#include <wtf/Platform.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 

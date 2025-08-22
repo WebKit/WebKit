@@ -42,10 +42,7 @@ enum class ContentExtensionError {
     JSONTopLevelStructureNotAnArray,
     JSONInvalidObjectInTopLevelArray,
     JSONInvalidRule,
-#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
     JSONInvalidRuleIdentifier,
-    JSONRulesMissingIdentifier,
-#endif
     JSONContainsNoRules,
 
     JSONInvalidTrigger,

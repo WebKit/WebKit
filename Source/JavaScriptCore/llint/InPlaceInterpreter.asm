@@ -520,7 +520,7 @@ end
     move sp, PL
 
     loadp Wasm::IPIntCallee::m_bytecode[ws0], PC
-    loadp Wasm::IPIntCallee::m_metadata[ws0], MC
+    loadp Wasm::IPIntCallee::m_metadata + VectorBufferOffset[ws0], MC
     # Load memory
     ipintReloadMemory()
 
@@ -561,7 +561,7 @@ end
     loadp CodeBlock[cfr], wasmInstance
     loadp Wasm::IPIntCallee::m_bytecode[ws0], t1
     addp t1, PC
-    loadp Wasm::IPIntCallee::m_metadata[ws0], t1
+    loadp Wasm::IPIntCallee::m_metadata + VectorBufferOffset[ws0], t1
     addp t1, MC
 
     # Recompute PL

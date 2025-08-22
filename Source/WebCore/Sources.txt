@@ -136,6 +136,7 @@ Modules/fetch/FetchLoader.cpp
 Modules/fetch/FetchRequest.cpp
 Modules/fetch/FetchResponse.cpp
 Modules/fetch/FormDataConsumer.cpp
+Modules/fetch/IPAddressSpace.cpp
 Modules/fetch/WindowOrWorkerGlobalScopeFetch.cpp
 Modules/filesystem/FileSystemDirectoryHandle.cpp
 Modules/filesystem/FileSystemFileHandle.cpp
@@ -559,8 +560,10 @@ accessibility/AXGeometryManager.cpp
 accessibility/AXLogger.cpp
 accessibility/AXLoggerBase.cpp
 accessibility/AXObjectCache.cpp
+accessibility/AXObjectRareData.cpp
 accessibility/AXRemoteFrame.cpp
 accessibility/AXSearchManager.cpp
+accessibility/AXTableHelpers.cpp
 accessibility/AXTextMarker.cpp
 accessibility/AXTextRun.cpp
 accessibility/AXTreeStore.cpp
@@ -568,7 +571,6 @@ accessibility/AXUtilities.cpp
 accessibility/AXAttachmentHelpers.cpp
 accessibility/AXListHelpers.cpp
 accessibility/AccessibilityImageMapLink.cpp
-accessibility/AccessibilityLabel.cpp
 accessibility/AccessibilityListBoxOption.cpp
 accessibility/AccessibilityMathMLElement.cpp
 accessibility/AccessibilityMenuList.cpp
@@ -585,7 +587,6 @@ accessibility/AccessibilityScrollbar.cpp
 accessibility/AccessibilitySlider.cpp
 accessibility/AccessibilitySpinButton.cpp
 accessibility/AccessibilitySpinButtonPart.cpp
-accessibility/AccessibilityTable.cpp
 accessibility/AccessibilityTableCell.cpp
 accessibility/AccessibilityTableColumn.cpp
 accessibility/AccessibilityTableHeaderContainer.cpp

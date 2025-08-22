@@ -19,11 +19,11 @@
 
 #pragma once
 
-#include <wtf/Platform.h>
 
 #if USE(FLITE)
 
 #include <flite/flite.h>
+#include <wtf/Platform.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WTF {

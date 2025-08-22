@@ -280,12 +280,6 @@ interface TestRunner {
     object numberOfDFGCompiles(object function);
     object neverInlineFunction(object function);
 
-    // Swipe gestures
-    undefined installDidBeginSwipeCallback(object callback);
-    undefined installWillEndSwipeCallback(object callback);
-    undefined installDidEndSwipeCallback(object callback);
-    undefined installDidRemoveSwipeSnapshotCallback(object callback);
-
     unsigned long imageCountInGeneralPasteboard();
 
     // UI Process Testing

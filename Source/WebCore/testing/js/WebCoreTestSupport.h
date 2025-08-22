@@ -29,6 +29,7 @@
 #include <span>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
+#include <wtf/Platform.h>
 
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef struct OpaqueJSString* JSStringRef;

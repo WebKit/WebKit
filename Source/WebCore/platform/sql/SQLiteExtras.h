@@ -27,6 +27,7 @@
 
 #include <span>
 #include <sqlite3.h>
+#include <wtf/Platform.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

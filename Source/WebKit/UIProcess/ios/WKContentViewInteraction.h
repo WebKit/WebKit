@@ -370,6 +370,10 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<UISwipeGestureRecognizer> _touchActionUpSwipeGestureRecognizer;
     RetainPtr<UISwipeGestureRecognizer> _touchActionDownSwipeGestureRecognizer;
 
+#if ENABLE(GAMEPAD)
+    RetainPtr<UITapGestureRecognizer> _gamepadInteractionGestureRecognizer;
+#endif
+
 #if HAVE(LOOKUP_GESTURE_RECOGNIZER)
     RetainPtr<_UILookupGestureRecognizer> _lookupGestureRecognizer;
 #endif
@@ -592,6 +596,7 @@ struct ImageAnalysisContextMenuActionData {
 
     BOOL _waitingForEditorStateAfterScrollingSelectionContainer;
     std::optional<WebCore::IntPoint> _lastSelectionChildScrollViewContentOffset;
+    std::optional<CGPoint> _lastSelectionContainerViewOrigin;
 
     BOOL _hasSetUpInteractions;
     std::optional<BOOL> _cachedHasCustomTintColor;

@@ -27,6 +27,7 @@
 
 #include <cstdint>
 #include <wtf/OptionSet.h>
+#include <wtf/Platform.h>
 
 // GCGL types match the corresponding GL types as defined in OpenGL ES 2.0
 // header file gl2.h from khronos.org.

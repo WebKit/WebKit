@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 #include <WebCore/HTMLElement.h>

@@ -81,9 +81,9 @@ TEST(WebKit, DidAssociateFormControls)
     [userContentController addUserScript:pageWorldScript.get()];
     [userContentController addUserScript:autofillWorldScript.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"associate-form-controls" withExtension:@"html"]]];
-    [webView _test_waitForDidFinishNavigation];
-    [webView evaluateJavaScript:@"addPasswordFieldToForm()" completionHandler:nil];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "pass [object HTMLFormElement]");
+    [webView evaluateJavaScript:@"addPasswordFieldToForm()" completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "pass [object HTMLInputElement]");
 }
 
 }

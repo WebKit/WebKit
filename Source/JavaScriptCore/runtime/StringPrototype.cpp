@@ -712,9 +712,9 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
         unsigned resultSize = result.size();
         if (limit == 0xFFFFFFFFu && !globalObject->isHavingABadTime() && resultSize < MIN_SPARSE_ARRAY_INDEX) [[likely]] {
             bool makeAtomStringsArray = resultSize < atomStringsArrayLimit;
-            Structure* immutableButterflyStructure = makeAtomStringsArray ? vm.immutableButterflyOnlyAtomStringsStructure.get() : vm.immutableButterflyStructure(CopyOnWriteArrayWithContiguous);
+            Structure* cellButterflyStructure = makeAtomStringsArray ? vm.cellButterflyOnlyAtomStringsStructure.get() : vm.cellButterflyStructure(CopyOnWriteArrayWithContiguous);
 
-            auto* newButterfly = JSImmutableButterfly::tryCreate(vm, immutableButterflyStructure, resultSize);
+            auto* newButterfly = JSCellButterfly::tryCreate(vm, cellButterflyStructure, resultSize);
             if (!newButterfly) [[unlikely]] {
                 throwOutOfMemoryError(globalObject, scope);
                 return { };
@@ -746,7 +746,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
                 start = end + separatorLength;
             }
             if (makeAtomStringsArray && encounteredNonAtoms) {
-                Structure* replacementStructure = vm.immutableButterflyStructure(CopyOnWriteArrayWithContiguous);
+                Structure* replacementStructure = vm.cellButterflyStructure(CopyOnWriteArrayWithContiguous);
                 newButterfly->setStructure(vm, replacementStructure);
             }
             vm.stringSplitCache.set(input, separator, newButterfly);
@@ -788,9 +788,9 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
 
         if (limit == 0xFFFFFFFFu && !globalObject->isHavingABadTime() && resultSize < MIN_SPARSE_ARRAY_INDEX) [[likely]] {
             bool makeAtomStringsArray = resultSize < atomStringsArrayLimit;
-            Structure* immutableButterflyStructure = makeAtomStringsArray ? vm.immutableButterflyOnlyAtomStringsStructure.get() : vm.immutableButterflyStructure(CopyOnWriteArrayWithContiguous);
+            Structure* cellButterflyStructure = makeAtomStringsArray ? vm.cellButterflyOnlyAtomStringsStructure.get() : vm.cellButterflyStructure(CopyOnWriteArrayWithContiguous);
 
-            auto* newButterfly = JSImmutableButterfly::tryCreate(vm, immutableButterflyStructure, resultSize);
+            auto* newButterfly = JSCellButterfly::tryCreate(vm, cellButterflyStructure, resultSize);
             if (!newButterfly) [[unlikely]] {
                 throwOutOfMemoryError(globalObject, scope);
                 return { };

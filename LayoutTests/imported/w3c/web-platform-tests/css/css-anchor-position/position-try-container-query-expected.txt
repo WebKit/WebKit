@@ -1,4 +1,4 @@
 
 PASS Size container query responds to fallback width
-FAIL Size container query responds to fallback width and applies height to not fit the first fallback assert_equals: expected "0px" but got "100px"
+PASS Size container query responds to fallback width and applies height to not fit the first fallback
 

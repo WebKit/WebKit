@@ -818,6 +818,13 @@
 #define ENABLE_STATIC_IPAD_USER_AGENT_VALUE 1
 #endif
 
+#if !defined(ENABLE_SWIFTUI) \
+    && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 260000) \
+    || ((PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 260000) \
+    || (PLATFORM(VISION) &&  __VISION_OS_VERSION_MIN_REQUIRED >= 260000))
+#define ENABLE_SWIFTUI 1
+#endif
+
 // Used in internal build
 #if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(VISION) || PLATFORM(APPLETV)
 #define ENABLE_SYNCED_CREDENTIALS 1
@@ -1014,7 +1021,7 @@
 #define ENABLE_WK_WEB_EXTENSIONS 1
 #endif
 
-// When this is enabled, CurrentContentRuleListFileVersion, currentDeclarativeNetRequestRuleTranslatorVersion, and currentBackgroundContentListenerStateVersion need to be bumped.
+// When this is enabled, currentDeclarativeNetRequestRuleTranslatorVersion and currentBackgroundContentListenerStateVersion need to be bumped.
 #if !defined(ENABLE_DNR_ON_RULE_MATCHED_DEBUG)
 #define ENABLE_DNR_ON_RULE_MATCHED_DEBUG 0
 #endif

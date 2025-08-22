@@ -161,6 +161,8 @@ String CSSFontFaceSet::familyNameFromPrimitive(const CSSPrimitiveValue& value)
         return pictographFamily.get();
     case CSSValueSystemUi:
         return systemUiFamily.get();
+    case CSSValueMath:
+        return mathFamily.get();
     default:
         return { };
     }

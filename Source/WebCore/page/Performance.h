@@ -36,7 +36,6 @@
 #include "DOMHighResTimeStamp.h"
 #include "EventTarget.h"
 #include "EventTargetInterfaces.h"
-#include "PerformanceEventTiming.h"
 #include "ReducedResolutionSeconds.h"
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
@@ -69,6 +68,7 @@ class ResourceResponse;
 class ResourceTiming;
 class ScriptExecutionContext;
 enum class EventType : uint16_t;
+struct PerformanceEventTimingCandidate;
 struct PerformanceMarkOptions;
 struct PerformanceMeasureOptions;
 template<typename> class ExceptionOr;
@@ -87,7 +87,7 @@ public:
     PerformanceTiming* timing();
     EventCounts* eventCounts();
 
-    unsigned interactionCount() { return 0; }
+    uint64_t interactionCount();
 
     Vector<Ref<PerformanceEntry>> getEntries() const;
     Vector<Ref<PerformanceEntry>> getEntriesByType(const String& entryType) const;
@@ -95,7 +95,7 @@ public:
     void appendBufferedEntriesByType(const String& entryType, Vector<Ref<PerformanceEntry>>&, PerformanceObserver&) const;
 
     void countEvent(EventType);
-    void processEventEntry(PerformanceEventTiming::Candidate&, Seconds duration);
+    void processEventEntry(const PerformanceEventTimingCandidate&);
 
     void clearResourceTimings();
     void setResourceTimingBufferSize(unsigned);
@@ -160,17 +160,12 @@ private:
     Timer m_resourceTimingBufferFullTimer;
     Vector<Ref<PerformanceEntry>> m_backupResourceTimingBuffer;
 
-    RefPtr<PerformanceEventTiming> m_firstInput;
-    Vector<Ref<PerformanceEventTiming>> m_eventTimingBuffer;
+    RefPtr<PerformanceEntry> m_firstInput;
+    Vector<Ref<PerformanceEntry>> m_eventTimingBuffer;
 
     // Sizes recommended by https://w3c.github.io/timing-entrytypes-registry/#registry:
     unsigned m_eventTimingBufferSize { 150 };
     unsigned m_resourceTimingBufferSize { 250 };
-
-    // Constants to avoid the need to round to PerformanceEventTiming::durationResolution
-    // when filtering candidate entries:
-    static constexpr Seconds minDurationCutoffBeforeRounding = PerformanceEventTiming::minimumDurationThreshold - (PerformanceEventTiming::durationResolution / 2);
-    static constexpr Seconds defaultDurationCutoffBeforeRounding = PerformanceEventTiming::defaultDurationThreshold - (PerformanceEventTiming::durationResolution / 2);
 
     // https://w3c.github.io/resource-timing/#dfn-resource-timing-buffer-full-flag
     bool m_resourceTimingBufferFullFlag { false };

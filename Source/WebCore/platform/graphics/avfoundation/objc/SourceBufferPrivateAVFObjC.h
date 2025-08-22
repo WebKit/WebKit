@@ -81,10 +81,8 @@ struct TrackInfo;
 class SourceBufferPrivateAVFObjCErrorClient {
 public:
     virtual ~SourceBufferPrivateAVFObjCErrorClient() = default;
-    virtual void videoRendererDidReceiveError(WebSampleBufferVideoRendering *, NSError *, bool& shouldIgnore) = 0;
-ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-    virtual void audioRendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *, bool& shouldIgnore) = 0;
-ALLOW_NEW_API_WITHOUT_GUARDS_END
+    virtual void videoRendererDidReceiveError(NSError *, bool& shouldIgnore) = 0;
+    virtual void audioRendererDidReceiveError(NSError *, bool& shouldIgnore) = 0;
 };
 
 class SourceBufferPrivateAVFObjC final
@@ -179,11 +177,7 @@ private:
     void updateTrackIds(Vector<std::pair<TrackID, TrackID>>&&) final;
 
     // WebAVSampleBufferListenerClient
-    void videoRendererDidReceiveError(WebSampleBufferVideoRendering *, NSError *) final;
     void audioRendererWasAutomaticallyFlushed(AVSampleBufferAudioRenderer *, const CMTime&) final;
-    void outputObscuredDueToInsufficientExternalProtectionChanged(bool) final;
-    void videoRendererRequiresFlushToResumeDecodingChanged(WebSampleBufferVideoRendering *, bool) final;
-    void videoRendererReadyForDisplayChanged(WebSampleBufferVideoRendering *, bool isReadyForDisplay) final;
     void audioRendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *) final;
 
     void processPendingTrackChangeTasks();
@@ -237,7 +231,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
 ALLOW_NEW_API_WITHOUT_GUARDS_END
     const Ref<WebAVSampleBufferListener> m_listener;
 #if PLATFORM(IOS_FAMILY)
-    bool m_displayLayerWasInterrupted { false };
     bool m_applicationIsActive { true };
 #endif
     RetainPtr<NSError> m_hdcpError;

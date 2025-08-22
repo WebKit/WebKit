@@ -2659,6 +2659,7 @@
 		FA580B4C2DA64B5F005E4965 /* UnifiedSource177.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA580B372DA64B5F005E4965 /* UnifiedSource177.cpp */; };
 		FA580B4D2DA64B5F005E4965 /* UnifiedSource179.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA580B392DA64B5F005E4965 /* UnifiedSource179.cpp */; };
 		FA580B4E2DA64B5F005E4965 /* UnifiedSource163.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA580B292DA64B5F005E4965 /* UnifiedSource163.cpp */; };
+		FA84D6692E579F38004BDAA4 /* WKJSHandleRef.h in Headers */ = {isa = PBXBuildFile; fileRef = FA84D6672E579EA4004BDAA4 /* WKJSHandleRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FA8B4F6D2E46AFFC00E419CD /* WKScriptMessageRef.h in Headers */ = {isa = PBXBuildFile; fileRef = FA8B4F6B2E46A93500E419CD /* WKScriptMessageRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FA8B4F7C2E4A5F7C00E419CD /* _WKJSHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA8B4F792E4A5F7300E419CD /* _WKJSHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FAA4E3012A1575A5003F5E50 /* WebFrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = FAA4E2FF2A1575A4003F5E50 /* WebFrameLoaderClient.h */; };
@@ -8711,6 +8712,9 @@
 		FA6DCE722BAAB3AB0043109B /* WebPagePreferencesLockdownModeObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPagePreferencesLockdownModeObserver.h; sourceTree = "<group>"; };
 		FA7036C32D72882A00083D04 /* RunJavaScriptParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RunJavaScriptParameters.h; sourceTree = "<group>"; };
 		FA8262722B2193EA00BB8236 /* APINumber.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = APINumber.serialization.in; sourceTree = "<group>"; };
+		FA84D6672E579EA4004BDAA4 /* WKJSHandleRef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKJSHandleRef.h; sourceTree = "<group>"; };
+		FA84D6682E579EA4004BDAA4 /* WKJSHandleRef.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WKJSHandleRef.cpp; sourceTree = "<group>"; };
+		FA84D66A2E57AE2F004BDAA4 /* JSHandleInfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSHandleInfo.cpp; sourceTree = "<group>"; };
 		FA87D9B42D8BDC2B00B609D4 /* FrameInfoData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FrameInfoData.cpp; sourceTree = "<group>"; };
 		FA8B4F662E4674BC00E419CD /* APIScriptMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIScriptMessage.h; sourceTree = "<group>"; };
 		FA8B4F672E4674BC00E419CD /* APIScriptMessage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = APIScriptMessage.cpp; sourceTree = "<group>"; };
@@ -9762,6 +9766,7 @@
 				FAC7C0AF2D70225500E7297E /* JavaScriptEvaluationResult.h */,
 				FAC7C0B22D7022AF00E7297E /* JavaScriptEvaluationResult.mm */,
 				FAC7C0B02D70228200E7297E /* JavaScriptEvaluationResult.serialization.in */,
+				FA84D66A2E57AE2F004BDAA4 /* JSHandleInfo.cpp */,
 				FA58F4562E1E030A0098E1C8 /* JSHandleInfo.h */,
 				074A6FC62D5F1DEA0027F958 /* KeyEventInterpretationContext.cpp */,
 				074A6FC52D5F1DEA0027F958 /* KeyEventInterpretationContext.h */,
@@ -15258,6 +15263,8 @@
 				5110AE0B133C16CB0072717A /* WKIconDatabase.h */,
 				1C8E293812761E5B00BC7BD0 /* WKInspector.cpp */,
 				1C8E293712761E5B00BC7BD0 /* WKInspector.h */,
+				FA84D6682E579EA4004BDAA4 /* WKJSHandleRef.cpp */,
+				FA84D6672E579EA4004BDAA4 /* WKJSHandleRef.h */,
 				51A9E1081315CD18009E7031 /* WKKeyValueStorageManager.cpp */,
 				51A9E1091315CD18009E7031 /* WKKeyValueStorageManager.h */,
 				2D790A9E1AD7164900AB90B3 /* WKLayoutMode.h */,
@@ -18426,6 +18433,7 @@
 				073A63CF2DC33DEC0057A3F5 /* WKIntelligenceSmartReplyTextEffectCoordinator.h in Headers */,
 				073A63CE2DC33DE30057A3F5 /* WKIntelligenceTextEffectCoordinator.h in Headers */,
 				E88885682DC914C400C572B8 /* WKISO18013Request.h in Headers */,
+				FA84D6692E579F38004BDAA4 /* WKJSHandleRef.h in Headers */,
 				2DD5E129210ADC7B00DB6012 /* WKKeyboardScrollingAnimator.h in Headers */,
 				51E8284E2B21395A009119F9 /* WKKeyedCoder.h in Headers */,
 				51A9E10B1315CD18009E7031 /* WKKeyValueStorageManager.h in Headers */,

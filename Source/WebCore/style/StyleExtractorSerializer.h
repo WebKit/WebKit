@@ -1569,6 +1569,8 @@ inline void ExtractorSerializer::serializeFontFamily(ExtractorState&, StringBuil
             return CSSValueFantasy;
         if (family == monospaceFamily)
             return CSSValueMonospace;
+        if (family == mathFamily)
+            return CSSValueMath;
         if (family == pictographFamily)
             return CSSValueWebkitPictograph;
         if (family == sansSerifFamily)

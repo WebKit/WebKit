@@ -233,6 +233,20 @@ struct WEBCORE_EXPORT RedirectAction {
     void applyToRequest(ResourceRequest&, const URL&);
 };
 
+struct ReportIdentifierAction {
+    double identifier;
+
+    ReportIdentifierAction isolatedCopy() const { return { identifier }; }
+    friend bool operator==(const ReportIdentifierAction&, const ReportIdentifierAction&) = default;
+    void serialize(Vector<uint8_t>& vector) const
+    {
+        vector.reserveCapacity(vector.size() + sizeof(identifier));
+        vector.append(asByteSpan(identifier));
+    }
+    static ReportIdentifierAction deserialize(std::span<const uint8_t> span) { return { reinterpretCastSpanStartTo<double>(span) }; }
+    static size_t serializedLength(std::span<const uint8_t>) { return sizeof(identifier); }
+};
+
 using ActionData = Variant<
     BlockLoadAction,
     BlockCookiesAction,
@@ -242,7 +256,8 @@ using ActionData = Variant<
     IgnoreFollowingRulesAction,
     MakeHTTPSAction,
     ModifyHeadersAction,
-    RedirectAction
+    RedirectAction,
+    ReportIdentifierAction
 >;
 
 inline void add(Hasher& hasher, const ModifyHeadersAction::ModifyHeaderInfo::AppendOperation& operation)

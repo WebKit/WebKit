@@ -93,7 +93,7 @@ std::optional<SourcePair> sourcePairForResource(const String& path, WebExtension
     Ref extension = extensionContext.extension();
     auto scriptString = extension->resourceStringForPath(path, error, WebExtension::CacheResult::Yes);
     if (!scriptString || error) {
-        extensionContext.recordError(wrapper(error));
+        extensionContext.recordErrorIfNeeded(error);
         return std::nullopt;
     }
 

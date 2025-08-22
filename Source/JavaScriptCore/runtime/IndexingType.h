@@ -77,7 +77,7 @@ static const IndexingType IndexingShapeShift              = 1;
 static const IndexingType NumberOfIndexingShapes          = 7;
 static const IndexingType IndexingTypeMask                = IndexingShapeMask | IsArray;
 
-// Whether or not the butterfly is copy on write. If it is copy on write then the butterfly is actually a JSImmutableButterfly. This should only ever be set if there are no named properties.
+// Whether or not the butterfly is copy on write. If it is copy on write then the butterfly is actually a JSCellButterfly. This should only ever be set if there are no named properties.
 static const IndexingType CopyOnWrite                      = 0x10;
 static const IndexingType IndexingShapeAndWritabilityMask  = CopyOnWrite | IndexingShapeMask;
 static const IndexingType IndexingModeMask                 = CopyOnWrite | IndexingTypeMask;

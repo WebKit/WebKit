@@ -35,6 +35,8 @@
 
 #include "RTCSdpType.h"
 #include <WebCore/ScriptWrappable.h>
+#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

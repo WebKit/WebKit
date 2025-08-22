@@ -258,15 +258,16 @@ RefPtr<CSSValue> Extractor::customPropertyValue(const AtomString& propertyName) 
 String Extractor::customPropertyValueSerialization(const AtomString& propertyName, const CSS::SerializationContext& serializationContext) const
 {
     std::unique_ptr<RenderStyle> ownedStyle;
-    auto* style = computeStyleForCustomProperty(ownedStyle);
-    if (!style)
-        return emptyString();
+    if (auto* style = computeStyleForCustomProperty(ownedStyle))
+        return customPropertyValueSerializationInStyle(*style, propertyName, serializationContext);
+    return emptyString();
+}
 
-    RefPtr value = style->customPropertyValue(propertyName);
-    if (!value)
-        return emptyString();
-
-    return value->propertyValueSerialization(serializationContext, *style);
+String Extractor::customPropertyValueSerializationInStyle(const RenderStyle& style, const AtomString& propertyName, const CSS::SerializationContext& serializationContext) const
+{
+    if (RefPtr value = style.customPropertyValue(propertyName))
+        return value->propertyValueSerialization(serializationContext, style);
+    return emptyString();
 }
 
 static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style, const RenderObject* renderer)

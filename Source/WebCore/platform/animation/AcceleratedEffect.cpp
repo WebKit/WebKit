@@ -368,6 +368,7 @@ void AcceleratedEffect::apply(WebAnimationTime currentTime, AcceleratedEffectVal
         std::nullopt,
         { m_holdTime ? *m_holdTime : *m_startTime },
         { localTime },
+        EndpointInclusiveActiveInterval::No,
         m_playbackRate
     });
     if (!resolvedTiming.transformedProgress)

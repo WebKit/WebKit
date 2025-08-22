@@ -519,8 +519,6 @@ const HashMap<RegistrableDomain, HashSet<RegistrableDomain>>& NetworkStorageSess
         HashMap<RegistrableDomain, HashSet<RegistrableDomain>> map;
         map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoft.com"_s),
             HashSet { RegistrableDomain::uncheckedCreateFromRegistrableDomainString("microsoftonline.com"_s) });
-        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("live.com"_s),
-            HashSet { RegistrableDomain::uncheckedCreateFromRegistrableDomainString("skype.com"_s) });
         map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("playstation.com"_s), HashSet {
             RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sonyentertainmentnetwork.com"_s),
             RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sony.com"_s) });

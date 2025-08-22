@@ -28,6 +28,7 @@
 
 #include "HTTPHeaderNames.h"
 #include "HTTPStatusCodes.h"
+#include "IPAddressSpace.h"
 #include "Logging.h"
 #include "PublicSuffixStore.h"
 #include "RegistrableDomain.h"

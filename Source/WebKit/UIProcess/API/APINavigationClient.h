@@ -44,9 +44,7 @@
 #endif
 
 namespace WebCore {
-#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
 struct ContentRuleListMatchedRule;
-#endif
 struct ContentRuleListResults;
 class ResourceError;
 class ResourceRequest;
@@ -138,10 +136,7 @@ public:
     }
 
     virtual void contentRuleListNotification(WebKit::WebPageProxy&, WTF::URL&&, WebCore::ContentRuleListResults&&) { };
-
-#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
     virtual void contentRuleListMatchedRule(WebKit::WebPageProxy&, WebCore::ContentRuleListMatchedRule&&) { };
-#endif
 
     virtual void shouldGoToBackForwardListItem(WebKit::WebPageProxy&, WebKit::WebBackForwardListItem&, bool inBackForwardCache, CompletionHandler<void(bool)>&& completionHandler)
     {

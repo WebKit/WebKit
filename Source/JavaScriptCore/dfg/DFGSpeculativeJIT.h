@@ -1938,8 +1938,8 @@ public:
     void speculateDateObject(Edge);
     void speculateDateObject(Edge, GPRReg cell);
     void speculateMapObject(Edge);
-    void speculateImmutableButterfly(Edge, GPRReg);
-    void speculateImmutableButterfly(Edge);
+    void speculateCellButterfly(Edge, GPRReg);
+    void speculateCellButterfly(Edge);
     void speculateMapObject(Edge, GPRReg cell);
     void speculateSetObject(Edge);
     void speculateSetObject(Edge, GPRReg cell);

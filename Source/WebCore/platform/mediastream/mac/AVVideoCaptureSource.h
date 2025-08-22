@@ -25,10 +25,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(MEDIA_STREAM) && HAVE(AVCAPTUREDEVICE)
 
 #include <WebCore/IntSize.h>
-#include <WebCore/OrientationNotifier.h>
 #include <WebCore/RealtimeVideoCaptureSource.h>
 #include <WebCore/Timer.h>
 #include <wtf/Lock.h>
@@ -59,7 +59,7 @@ class ImageTransferSessionVT;
 
 enum class VideoFrameRotation : uint16_t;
 
-class AVVideoCaptureSource : public RealtimeVideoCaptureSource, private OrientationNotifier::Observer {
+class AVVideoCaptureSource : public RealtimeVideoCaptureSource {
 public:
     static CaptureSourceOrError create(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
     static NSMutableArray* cameraCaptureDeviceTypes();

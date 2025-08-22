@@ -30,6 +30,8 @@
 
 #import "Chrome.h"
 #import "ChromeClient.h"
+#import "ColorCocoa.h"
+#import "ContainerNodeInlines.h"
 #import "CompositeEditCommand.h"
 #import "DocumentInlines.h"
 #import "DocumentMarkerController.h"
@@ -38,6 +40,7 @@
 #import "FocusController.h"
 #import "FrameSelection.h"
 #import "GeometryUtilities.h"
+#import "HTMLBodyElement.h"
 #import "IntelligenceTextEffectsSupport.h"
 #import "Logging.h"
 #import "NodeRenderStyle.h"
@@ -46,6 +49,7 @@
 #import "TextIterator.h"
 #import "VisibleUnits.h"
 #import "WebContentReader.h"
+#import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <ranges>
 #import <wtf/Scope.h>
 #import <wtf/TZoneMallocInlines.h>
@@ -157,6 +161,45 @@ static std::optional<SimpleRange> contextRangeForSession(Document& document, con
         return editableContentRange;
 
     return selection.firstRange();
+}
+
+static RetainPtr<NSAttributedString> attributedStringApplyingBodyTextColorIfNecessary(const Document& document, NSAttributedString *originalAttributedString)
+{
+    RetainPtr attributedString = adoptNS([[NSMutableAttributedString alloc] initWithAttributedString:originalAttributedString]);
+
+    __block BOOL attributedStringHasSpecifiedTextColor = NO;
+    [originalAttributedString enumerateAttributesInRange:NSMakeRange(0, originalAttributedString.length) options:0 usingBlock:^(NSDictionary<NSAttributedStringKey, id> *attributes, NSRange, BOOL *stop) {
+        // FIXME: This is a static analysis false positive.
+        SUPPRESS_UNRETAINED_ARG if (attributes[NSForegroundColorAttributeName]) {
+            attributedStringHasSpecifiedTextColor = YES;
+            *stop = YES;
+        }
+    }];
+
+    if (attributedStringHasSpecifiedTextColor)
+        return attributedString;
+
+    RefPtr body = document.body();
+    if (!body)
+        return attributedString;
+
+    CheckedPtr renderer = body->renderer();
+    if (!renderer)
+        return attributedString;
+
+    CheckedRef style = renderer->style();
+
+    Color textColor = style->visitedDependentColorWithColorFilter(CSSPropertyColor);
+    if (!textColor.isVisible())
+        return attributedString;
+
+    RetainPtr attributes = @{
+        NSForegroundColorAttributeName: cocoaColor(textColor).get(),
+    };
+
+    [attributedString addAttributes:attributes.get() range:NSMakeRange(0, [attributedString length])];
+
+    return attributedString;
 }
 
 #pragma mark - WritingToolsController implementation.
@@ -1253,7 +1296,11 @@ void WritingToolsController::replaceContentsOfRangeInSession(ProofreadingState& 
 
 void WritingToolsController::replaceContentsOfRangeInSession(CompositionState& state, const SimpleRange& range, const AttributedString& replacementText, WritingToolsCompositionCommand::State commandState)
 {
-    RefPtr fragment = createFragment(*document()->frame(), replacementText.nsAttributedString().get(), { FragmentCreationOptions::NoInterchangeNewlines, FragmentCreationOptions::SanitizeMarkup });
+    RetainPtr platformReplacementText = replacementText.nsAttributedString();
+    if (state.session.compositionType == WritingTools::Session::CompositionType::SmartReply)
+        platformReplacementText = attributedStringApplyingBodyTextColorIfNecessary(*document(), platformReplacementText.get());
+
+    RefPtr fragment = createFragment(*document()->frame(), platformReplacementText.get(), { FragmentCreationOptions::NoInterchangeNewlines, FragmentCreationOptions::SanitizeMarkup });
     if (!fragment) {
         ASSERT_NOT_REACHED();
         return;

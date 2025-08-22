@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/MediaTime.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 

@@ -519,20 +519,23 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
 
 #if ENABLE(CSS_SELECTOR_JIT)
     auto& compiledSelector = ruleData.compiledSelector();
+    const bool compilerEnabled = element().document().settings().cssSelectorJITCompilerEnabled();
 
-    if (compiledSelector.status == SelectorCompilationStatus::NotCompiled)
-        SelectorCompiler::compileSelector(compiledSelector, ruleData.selector(), SelectorCompiler::SelectorContext::RuleCollector);
+    if (compilerEnabled) {
+        if (compiledSelector.status == SelectorCompilationStatus::NotCompiled)
+            SelectorCompiler::compileSelector(compiledSelector, ruleData.selector(), SelectorCompiler::SelectorContext::RuleCollector);
 
-    if (compiledSelector.status == SelectorCompilationStatus::SimpleSelectorChecker) {
-        compiledSelector.wasUsed();
+        if (compiledSelector.status == SelectorCompilationStatus::SimpleSelectorChecker) {
+            compiledSelector.wasUsed();
 
 #if !ASSERT_MSG_DISABLED
-        unsigned ignoreSpecificity;
-        ASSERT_WITH_MESSAGE(!SelectorCompiler::ruleCollectorSimpleSelectorChecker(compiledSelector, &element(), &ignoreSpecificity) || !m_pseudoElementRequest, "When matching pseudo elements, we should never compile a selector checker without context unless it cannot match anything.");
+            unsigned ignoreSpecificity;
+            ASSERT_WITH_MESSAGE(!SelectorCompiler::ruleCollectorSimpleSelectorChecker(compiledSelector, &element(), &ignoreSpecificity) || !m_pseudoElementRequest, "When matching pseudo elements, we should never compile a selector checker without context unless it cannot match anything.");
 #endif
-        bool selectorMatches = SelectorCompiler::ruleCollectorSimpleSelectorChecker(compiledSelector, &element(), &specificity);
+            bool selectorMatches = SelectorCompiler::ruleCollectorSimpleSelectorChecker(compiledSelector, &element(), &specificity);
 
-        return selectorMatches;
+            return selectorMatches;
+        }
     }
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
@@ -550,7 +553,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
 
     bool selectorMatches;
 #if ENABLE(CSS_SELECTOR_JIT)
-    if (compiledSelector.status == SelectorCompilationStatus::SelectorCheckerWithCheckingContext) {
+    if (compilerEnabled && compiledSelector.status == SelectorCompilationStatus::SelectorCheckerWithCheckingContext) {
         compiledSelector.wasUsed();
         selectorMatches = SelectorCompiler::ruleCollectorSelectorCheckerWithCheckingContext(compiledSelector, &element(), &context, &specificity);
     } else

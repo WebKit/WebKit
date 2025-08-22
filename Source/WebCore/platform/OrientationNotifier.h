@@ -26,32 +26,31 @@
 #pragma once
 
 #include <WebCore/IntDegrees.h>
-#include <wtf/CheckedRef.h>
-#include <wtf/Vector.h>
+#include <wtf/AbstractThreadSafeRefCountedAndCanMakeWeakPtr.h>
+#include <wtf/WeakHashSet.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 enum class VideoFrameRotation : uint16_t;
 
-class OrientationNotifier final : public CanMakeCheckedPtr<OrientationNotifier> {
+class OrientationNotifier final {
     WTF_MAKE_TZONE_ALLOCATED(OrientationNotifier);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(OrientationNotifier);
 public:
-    explicit OrientationNotifier(IntDegrees orientation) { m_orientation = orientation; }
-    ~OrientationNotifier();
+    explicit OrientationNotifier(IntDegrees orientation)
+        : m_orientation(orientation)
+    {
+    }
+    ~OrientationNotifier() = default;
 
     void orientationChanged(IntDegrees orientation);
     void rotationAngleForCaptureDeviceChanged(const String&, VideoFrameRotation);
 
-    class Observer {
+    class Observer : public AbstractThreadSafeRefCountedAndCanMakeWeakPtr {
     public:
-        virtual ~Observer();
+        virtual ~Observer() = default;
         virtual void orientationChanged(IntDegrees orientation) = 0;
         virtual void rotationAngleForHorizonLevelDisplayChanged(const String&, VideoFrameRotation) { }
-        void setNotifier(OrientationNotifier*);
-
-    private:
-        OrientationNotifier* m_notifier { nullptr };
     };
 
     void addObserver(Observer&);
@@ -59,61 +58,33 @@ public:
     IntDegrees orientation() const { return m_orientation; }
 
 private:
-    Vector<std::reference_wrapper<Observer>> m_observers;
+    ThreadSafeWeakHashSet<Observer> m_observers;
     IntDegrees m_orientation;
 };
-
-inline OrientationNotifier::~OrientationNotifier()
-{
-    for (Observer& observer : m_observers)
-        observer.setNotifier(nullptr);
-}
-
-inline OrientationNotifier::Observer::~Observer()
-{
-    if (m_notifier)
-        m_notifier->removeObserver(*this);
-}
-
-inline void OrientationNotifier::Observer::setNotifier(OrientationNotifier* notifier)
-{
-    if (m_notifier == notifier)
-        return;
-
-    if (m_notifier && notifier)
-        m_notifier->removeObserver(*this);
-
-    ASSERT(!m_notifier || !notifier);
-    m_notifier = notifier;
-}
 
 inline void OrientationNotifier::orientationChanged(IntDegrees orientation)
 {
     m_orientation = orientation;
-    for (Observer& observer : m_observers)
+    m_observers.forEach([orientation](auto& observer) {
         observer.orientationChanged(orientation);
+    });
 }
 
 inline void OrientationNotifier::rotationAngleForCaptureDeviceChanged(const String& devicePersistentId, VideoFrameRotation orientation)
 {
-    for (Observer& observer : m_observers)
+    m_observers.forEach([&](auto& observer) {
         observer.rotationAngleForHorizonLevelDisplayChanged(devicePersistentId, orientation);
+    });
 }
 
 inline void OrientationNotifier::addObserver(Observer& observer)
 {
-    m_observers.append(observer);
-    observer.setNotifier(this);
+    m_observers.add(observer);
 }
 
 inline void OrientationNotifier::removeObserver(Observer& observer)
 {
-    m_observers.removeFirstMatching([&observer](auto item) {
-        if (&observer != &item.get())
-            return false;
-        observer.setNotifier(nullptr);
-        return true;
-    });
+    m_observers.remove(observer);
 }
 
 } // namespace WebCore

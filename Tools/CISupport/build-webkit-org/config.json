@@ -16,6 +16,8 @@
 
                   { "name": "bot105", "platform": "mac-sonoma" },
                   { "name": "bot111", "platform": "mac-sonoma" },
+                  { "name": "bot113", "platform": "mac-sonoma" },
+                  { "name": "bot114", "platform": "mac-sonoma" },
                   { "name": "bot603", "platform": "mac-sonoma" },
                   { "name": "bot632", "platform": "mac-sonoma" },
 
@@ -260,7 +262,7 @@
                   "triggers": [
                       "sonoma-release-tests-test262", "sonoma-release-tests-wk1", "sonoma-release-tests-wk2",
                       "sonoma-release-applesilicon-tests-wk1", "sonoma-release-applesilicon-tests-wk2",
-                      "sonoma-applesilicon-release-tests-jsc"
+                      "sonoma-applesilicon-release-tests-jsc", "sonoma-intel-release-tests-jsc"
                   ],
                   "workernames": ["bot243", "bot244"]
                   },
@@ -291,6 +293,10 @@
                   { "name": "Apple-Sonoma-AppleSilicon-Release-JSC-Tests", "factory": "TestJSCFactory",
                     "platform": "mac-sonoma", "configuration": "release", "architectures": ["x86_64", "arm64"],
                     "workernames": ["bot111"]
+                  },
+                  { "name": "Apple-Sonoma-Intel-Release-JSC-Tests", "factory": "TestJSCFactory",
+                    "platform": "mac-sonoma", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                    "workernames": ["bot113", "bot114"]
                   },
                   {
                     "name": "Apple-Sequoia-Safer-CPP-Checks", "factory": "SaferCPPStaticAnalyzerFactory",
@@ -815,6 +821,9 @@
                   },
                   { "type": "Triggerable", "name": "sonoma-applesilicon-release-tests-jsc",
                     "builderNames": ["Apple-Sonoma-AppleSilicon-Release-JSC-Tests"]
+                  },
+                  { "type": "Triggerable", "name": "sonoma-intel-release-tests-jsc",
+                    "builderNames": ["Apple-Sonoma-Intel-Release-JSC-Tests"]
                   },
                   { "type": "PlatformSpecificScheduler", "platform": "ios-18", "branch": "main", "treeStableTimer": 45.0,
                     "builderNames": ["Apple-iOS-18-Release-Build"]

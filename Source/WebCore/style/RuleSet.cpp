@@ -441,6 +441,13 @@ void RuleSet::traverseRuleDatas(Function&& function)
     traverseVector(m_universalRules);
 }
 
+template<typename Function> void RuleSet::traverseRuleDatas(Function&& function) const
+{
+    const_cast<RuleSet&>(*this).traverseRuleDatas([&](const RuleData& ruleData) {
+        function(ruleData);
+    });
+}
+
 std::optional<DynamicMediaQueryEvaluationChanges> RuleSet::evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator& evaluator)
 {
     auto collectedChanges = evaluateDynamicMediaQueryRules(evaluator, 0);
@@ -579,6 +586,18 @@ Vector<Ref<const StyleRuleScope>> RuleSet::scopeRulesFor(const RuleData& ruleDat
 const RefPtr<const StyleRulePositionTry> RuleSet::positionTryRuleForName(const AtomString& name) const
 {
     return m_positionTryRules.get(name);
+}
+
+String RuleSet::selectorsForDebugging() const
+{
+    TextStream ts;
+    ts << "RuleSet size " << ruleCount();
+    ts.nextLine();
+    traverseRuleDatas([&](auto& ruleData) {
+        ts << ruleData.selector()->selectorText();
+        ts.nextLine();
+    });
+    return ts.release();
 }
 
 } // namespace Style

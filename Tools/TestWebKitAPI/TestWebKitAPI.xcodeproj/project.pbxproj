@@ -177,6 +177,7 @@
 		3ADD8988299F192F005DCE4E /* MetalGenerationTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3ADD897E299F1400005DCE4E /* MetalGenerationTests.cpp */; };
 		3AF4A0952D9DEE0B00B3FF5E /* icon-svg-16.tiff in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3AF4A0932D9DEE0B00B3FF5E /* icon-svg-16.tiff */; };
 		3AF4A0962D9DEE0B00B3FF5E /* icon-svg-256.tiff in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3AF4A0942D9DEE0B00B3FF5E /* icon-svg-256.tiff */; };
+		3CF676F42E4ED17D00D988EC /* IPAddressSpaceTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3CF676EC2E4ED17000D988EC /* IPAddressSpaceTests.cpp */; };
 		4102EE1727845ED500D6BE74 /* ServiceWorkerRoutines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4102EE1627845ED500D6BE74 /* ServiceWorkerRoutines.cpp */; };
 		411204CE2D3AAD8E009A8554 /* SharedVideoFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 411204CD2D3AAD8E009A8554 /* SharedVideoFrame.mm */; };
 		411223C726035FBF00B0A0B6 /* WebRTC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 411223C626035FBE00B0A0B6 /* WebRTC.mm */; };
@@ -2787,6 +2788,7 @@
 		3AEA55B22CB0897200A9ECAA /* WKPreferences.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPreferences.mm; sourceTree = "<group>"; };
 		3AF4A0932D9DEE0B00B3FF5E /* icon-svg-16.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = "icon-svg-16.tiff"; sourceTree = "<group>"; };
 		3AF4A0942D9DEE0B00B3FF5E /* icon-svg-256.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = "icon-svg-256.tiff"; sourceTree = "<group>"; };
+		3CF676EC2E4ED17000D988EC /* IPAddressSpaceTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IPAddressSpaceTests.cpp; sourceTree = "<group>"; };
 		3F1B52681D3D7129008D60C4 /* FullscreenLayoutConstraints.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FullscreenLayoutConstraints.mm; sourceTree = "<group>"; };
 		3FBD1B491D39D1DB00E6D6FA /* FullscreenLayoutConstraints.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = FullscreenLayoutConstraints.html; sourceTree = "<group>"; };
 		3FCC4FE41EC4E8520076E37C /* PictureInPictureDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PictureInPictureDelegate.mm; sourceTree = "<group>"; };
@@ -5188,6 +5190,7 @@
 				7A909A731D877475007E10F8 /* IntPointTests.cpp */,
 				7A909A741D877475007E10F8 /* IntRectTests.cpp */,
 				7A909A751D877475007E10F8 /* IntSizeTests.cpp */,
+				3CF676EC2E4ED17000D988EC /* IPAddressSpaceTests.cpp */,
 				F4B8A5C028F8B54F00E3F54F /* IPAddressTests.cpp */,
 				CD5FF4962162E27E004BD86F /* ISOBox.cpp */,
 				278E3E1823CD82FA005A6B80 /* KeyedCoding.cpp */,
@@ -7773,6 +7776,7 @@
 				7A909A831D877480007E10F8 /* IntSizeTests.cpp in Sources */,
 				CDE4E4E52B7E787900B3AE35 /* InWindowFullscreen.mm in Sources */,
 				7BB62ABE29BB4BAA00228CD6 /* IOSurfaceTests.mm in Sources */,
+				3CF676F42E4ED17D00D988EC /* IPAddressSpaceTests.cpp in Sources */,
 				F4B8A5C128F8B54F00E3F54F /* IPAddressTests.cpp in Sources */,
 				5C0BF8931DD599BD00B00328 /* IsNavigationActionTrusted.mm in Sources */,
 				CD5FF49F2162E943004BD86F /* ISOBox.cpp in Sources */,

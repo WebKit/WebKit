@@ -32,6 +32,10 @@
 #include "RTCRtpSenderBackend.h"
 #include "RealtimeOutgoingAudioSource.h"
 #include "RealtimeOutgoingVideoSource.h"
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <webrtc/api/rtp_sender_interface.h>
+#include <webrtc/api/scoped_refptr.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 

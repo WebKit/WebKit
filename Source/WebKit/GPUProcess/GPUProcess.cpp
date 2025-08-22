@@ -575,6 +575,11 @@ void GPUProcess::webProcessConnectionCountForTesting(CompletionHandler<void(uint
     completionHandler(GPUConnectionToWebProcess::objectCountForTesting());
 }
 
+void GPUProcess::terminateWebProcess(WebCore::ProcessIdentifier identifier)
+{
+    protectedParentProcessConnection()->send(Messages::GPUProcessProxy::TerminateWebProcess(identifier), 0);
+}
+
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 void GPUProcess::processIsStartingToCaptureAudio(GPUConnectionToWebProcess& process)
 {

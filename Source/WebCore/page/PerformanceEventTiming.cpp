@@ -28,23 +28,26 @@
 
 #include "Document.h"
 #include "DocumentInlines.h"
+#include "EventNames.h"
 #include "EventTargetInlines.h"
 #include "Node.h"
+#include "PerformanceEventTimingCandidate.h"
 #include <cmath>
 
 namespace WebCore {
 
-Ref<PerformanceEventTiming> PerformanceEventTiming::create(const Candidate& candidate, Seconds duration, bool isFirst)
+Ref<PerformanceEventTiming> PerformanceEventTiming::create(const PerformanceEventTimingCandidate& candidate, bool isFirst)
 {
-    return adoptRef(*new PerformanceEventTiming(candidate, duration, isFirst));
+    return adoptRef(*new PerformanceEventTiming(candidate, isFirst));
 }
 
-PerformanceEventTiming::PerformanceEventTiming(const Candidate& candidate, Seconds duration, bool isFirst)
-    : PerformanceEntry(eventNames().eventNameFromEventType(candidate.typeInfo.type()), candidate.startTime.milliseconds(), candidate.startTime.milliseconds() + durationResolutionInMilliseconds*std::round(duration.milliseconds() / durationResolutionInMilliseconds))
+PerformanceEventTiming::PerformanceEventTiming(const PerformanceEventTimingCandidate& candidate, bool isFirst)
+    : PerformanceEntry(eventNames().eventNameFromEventType(candidate.type), candidate.startTime.milliseconds(), candidate.startTime.milliseconds() + durationResolutionInMilliseconds*std::round(candidate.duration.milliseconds() / durationResolutionInMilliseconds))
     , m_isFirst(isFirst)
     , m_cancelable(candidate.cancelable)
     , m_processingStart(candidate.processingStart)
     , m_processingEnd(candidate.processingEnd)
+    , m_interactionID(candidate.interactionID)
     , m_target(candidate.target)
 { }
 
@@ -76,9 +79,9 @@ ASCIILiteral PerformanceEventTiming::entryType() const
     return m_isFirst ? "first-input"_s : "event"_s;
 }
 
-unsigned PerformanceEventTiming::interactionId() const
+uint64_t PerformanceEventTiming::interactionId() const
 {
-    return 0;
+    return m_interactionID.value;
 }
 
 } // namespace WebCore

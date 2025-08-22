@@ -169,6 +169,8 @@ fast/forms/form-control-refresh [ Pass ]
 # Window inactive appearance is only used on macOS.
 fast/forms/form-control-refresh/checkbox-radio-inactive-appearance-dark-bg-light-color-scheme.html [ Skip ]
 fast/forms/form-control-refresh/checkbox-radio-inactive-appearance-light-bg-dark-color-scheme.html [ Skip ]
+fast/forms/form-control-refresh/progress-window-inactive-state-dark-mode.html [ Skip ]
+fast/forms/form-control-refresh/progress-window-inactive-state-light-mode.html [ Skip ]
 
 ### END OF Triaged failures
 ###################################################################################################

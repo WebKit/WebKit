@@ -15,7 +15,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.8);
         }
 
         .tall {
@@ -33,7 +33,7 @@
         await UIHelper.ensurePresentationUpdate();
         colors = await UIHelper.fixedContainerEdgeColors();
 
-        shouldBeEqualToString("colors.top", "rgb(102, 102, 102)");
+        shouldBeEqualToString("colors.top", "rgb(51, 51, 51)");
         finishJSTest();
     });
     </script>

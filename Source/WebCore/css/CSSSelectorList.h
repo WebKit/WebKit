@@ -49,6 +49,7 @@ public:
     static CSSSelectorList makeCopyingSimpleSelector(const CSSSelector&);
     static CSSSelectorList makeCopyingComplexSelector(const CSSSelector&);
     static CSSSelectorList makeJoining(const CSSSelectorList&, const CSSSelectorList&);
+    static CSSSelectorList makeJoining(const Vector<const CSSSelectorList*>&);
 
     bool isEmpty() const { return !m_selectorArray; }
     const CSSSelector* first() const { return m_selectorArray.get(); }

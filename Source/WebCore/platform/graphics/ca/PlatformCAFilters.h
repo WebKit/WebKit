@@ -28,6 +28,7 @@
 #include <WebCore/FilterOperations.h>
 #include <WebCore/GraphicsTypes.h>
 #include <WebCore/PlatformLayer.h>
+#include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSValue;

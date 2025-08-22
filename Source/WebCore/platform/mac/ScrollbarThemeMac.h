@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/ScrollbarThemeComposite.h>
+#include <wtf/Platform.h>
 
 #if PLATFORM(MAC)
 

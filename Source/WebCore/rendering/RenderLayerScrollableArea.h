@@ -46,6 +46,7 @@
 
 #include <WebCore/RenderLayer.h>
 #include <WebCore/ScrollableArea.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

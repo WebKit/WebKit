@@ -29,6 +29,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/GraphicsTypes.h>
 #include <WebCore/Image.h>
+#include <wtf/Platform.h>
 #include <wtf/RuntimeApplicationChecks.h>
 
 #if USE(CG)

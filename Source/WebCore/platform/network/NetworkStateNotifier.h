@@ -27,6 +27,7 @@
 
 #include <WebCore/Timer.h>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)

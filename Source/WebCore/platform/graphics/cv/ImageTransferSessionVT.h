@@ -27,6 +27,7 @@
 
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntSize.h>
+#include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 
 typedef struct CGImage *CGImageRef;

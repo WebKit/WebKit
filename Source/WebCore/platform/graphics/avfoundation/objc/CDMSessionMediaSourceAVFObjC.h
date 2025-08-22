@@ -56,10 +56,8 @@ public:
     void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref(); }
 
     // SourceBufferPrivateAVFObjCErrorClient
-    void videoRendererDidReceiveError(WebSampleBufferVideoRendering *, NSError *, bool& shouldIgnore) override;
-ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-    void audioRendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *, bool& shouldIgnore) override;
-ALLOW_NEW_API_WITHOUT_GUARDS_END
+    void videoRendererDidReceiveError(NSError *, bool& shouldIgnore) final;
+    void audioRendererDidReceiveError(NSError *, bool& shouldIgnore) final;
 
     void addSourceBuffer(SourceBufferPrivateAVFObjC*);
     void removeSourceBuffer(SourceBufferPrivateAVFObjC*);

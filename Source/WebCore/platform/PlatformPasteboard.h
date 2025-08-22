@@ -28,6 +28,7 @@
 #include <WebCore/DataOwnerType.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
+#include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 

@@ -311,13 +311,21 @@ static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const KeyType& ke
         if (!features)
             return nullptr;
 
-        HashMap<std::tuple<uint8_t, bool, bool>, InvalidationRuleSet> invalidationRuleSetMap;
+        struct Builder {
+            RefPtr<RuleSet> ruleSet;
+            Vector<const CSSSelectorList*> invalidationSelectors;
+            MatchElement matchElement;
+            IsNegation isNegation;
+        };
+        using BuilderKey = std::tuple<uint8_t, bool, bool>;
+
+        HashMap<BuilderKey, Builder> builderMap;
 
         for (auto& feature : *features) {
-            auto key = std::tuple { static_cast<uint8_t>(feature.matchElement), static_cast<bool>(feature.isNegation), true };
+            auto key = BuilderKey { static_cast<uint8_t>(feature.matchElement), static_cast<bool>(feature.isNegation), true };
 
-            auto& invalidationRuleSet = invalidationRuleSetMap.ensure(key, [&] {
-                return InvalidationRuleSet {
+            auto& builder = builderMap.ensure(key, [&] {
+                return Builder {
                     RuleSet::create(),
                     { },
                     feature.matchElement,
@@ -325,15 +333,20 @@ static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const KeyType& ke
                 };
             }).iterator->value;
 
-            invalidationRuleSet.ruleSet->addRule(*feature.styleRule, feature.selectorIndex, feature.selectorListIndex);
+            builder.ruleSet->addRule(*feature.styleRule, feature.selectorIndex, feature.selectorListIndex);
 
             if constexpr (std::is_same<typename RuleFeatureVectorType::ValueType, RuleFeatureWithInvalidationSelector>::value)
-                invalidationRuleSet.invalidationSelectors = CSSSelectorList::makeJoining(invalidationRuleSet.invalidationSelectors, feature.invalidationSelector);
+                builder.invalidationSelectors.append(&feature.invalidationSelector);
         }
 
-        return makeUnique<Vector<InvalidationRuleSet>>(WTF::map(invalidationRuleSetMap.values(), [](auto&& invalidationRuleSet) {
-            invalidationRuleSet.ruleSet->shrinkToFit();
-            return WTFMove(invalidationRuleSet);
+        return makeUnique<Vector<InvalidationRuleSet>>(WTF::map(builderMap.values(), [](auto&& builder) {
+            builder.ruleSet->shrinkToFit();
+            return InvalidationRuleSet {
+                WTFMove(builder.ruleSet),
+                CSSSelectorList::makeJoining(builder.invalidationSelectors),
+                builder.matchElement,
+                builder.isNegation
+            };
         }));
     }).iterator->value.get();
 }

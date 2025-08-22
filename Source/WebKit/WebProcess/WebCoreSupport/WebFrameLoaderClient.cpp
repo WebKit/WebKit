@@ -107,6 +107,10 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
             originatingFrameIsMain = originatingFrame->isMainFrame();
     }
 
+    std::optional<WebPageProxyIdentifier> originatingPageID;
+    if (RefPtr webPage = requester.pageID ? WebProcess::singleton().webPage(*requester.pageID) : nullptr)
+        originatingPageID = webPage->webPageProxyIdentifier();
+
     auto originatingFrameInfoData = originator ? FrameInfoData { WTFMove(*originator) } : FrameInfoData {
         originatingFrameIsMain,
         FrameType::Local,
@@ -114,16 +118,13 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         requester.securityOrigin->data(),
         { },
         WTFMove(originatingFrameID),
+        originatingPageID,
         WTFMove(parentFrameID),
         document ? std::optional { document->identifier() } : std::nullopt,
         requestingFrame ? requestingFrame->certificateInfo() : CertificateInfo(),
         getCurrentProcessID(),
         requestingFrame ? requestingFrame->isFocused() : false
     };
-
-    std::optional<WebPageProxyIdentifier> originatingPageID;
-    if (RefPtr webPage = requester.pageID ? WebProcess::singleton().webPage(*requester.pageID) : nullptr)
-        originatingPageID = webPage->webPageProxyIdentifier();
 
     // FIXME: When we receive a redirect after the navigation policy has been decided for the initial request,
     // the provisional load's DocumentLoader needs to receive navigation policy decisions. We need a better model for this state.

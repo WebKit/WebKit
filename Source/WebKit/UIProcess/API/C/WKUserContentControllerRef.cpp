@@ -90,7 +90,7 @@ public:
 private:
     void didPostMessage(WebPageProxy& page, FrameInfoData&& frameInfo, API::ContentWorld&, JavaScriptEvaluationResult&& result, CompletionHandler<void(Expected<JavaScriptEvaluationResult, String>&&)>&& completionHandler) override
     {
-        Ref message = API::ScriptMessage::create(result.toAPI(), page, API::FrameInfo::create(WTFMove(frameInfo), &page), m_name, API::ContentWorld::pageContentWorldSingleton());
+        Ref message = API::ScriptMessage::create(result.toAPI(), page, API::FrameInfo::create(WTFMove(frameInfo)), m_name, API::ContentWorld::pageContentWorldSingleton());
         Ref listener = API::CompletionListener::create([completionHandler = WTFMove(completionHandler)] (WKTypeRef reply) mutable {
             if (auto result = JavaScriptEvaluationResult::extract(toProtectedImpl(reply).get()))
                 return completionHandler(WTFMove(*result));

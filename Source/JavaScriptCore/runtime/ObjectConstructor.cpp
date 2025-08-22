@@ -24,7 +24,7 @@
 #include "BuiltinNames.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
-#include "JSImmutableButterfly.h"
+#include "JSCellButterfly.h"
 #include "ObjectConstructorInlines.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
@@ -452,7 +452,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
             }
 
             Structure* targetStructure = target->structure();
-            JSImmutableButterfly* cachedButterfly = nullptr;
+            JSCellButterfly* cachedButterfly = nullptr;
             if (!globalObject->isHavingABadTime()) [[likely]] {
                 auto* butterfly = targetStructure->cachedPropertyNames(CachedPropertyNamesKind::EnumerableStrings);
                 if (butterfly) {
@@ -466,7 +466,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
                 auto* canSentinel = targetStructure->cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind::EnumerableStrings);
                 if (canSentinel == StructureRareData::cachedPropertyNamesSentinel()) {
                     size_t numProperties = properties.size();
-                    auto* newButterfly = JSImmutableButterfly::create(vm, CopyOnWriteArrayWithContiguous, numProperties);
+                    auto* newButterfly = JSCellButterfly::create(vm, CopyOnWriteArrayWithContiguous, numProperties);
                     for (size_t i = 0; i < numProperties; i++) {
                         const auto& identifier = properties[i];
                         newButterfly->setIndex(vm, i, jsOwnedString(vm, identifier.get()));
@@ -1304,7 +1304,7 @@ JSArray* ownPropertyKeys(JSGlobalObject* globalObject, JSObject* object, Propert
             if (structure->canCacheOwnPropertyNames()) {
                 auto* cachedButterfly = structure->cachedPropertyNamesIgnoringSentinel(kind);
                 if (cachedButterfly == StructureRareData::cachedPropertyNamesSentinel()) {
-                    auto* newButterfly = JSImmutableButterfly::tryCreate(vm, CopyOnWriteArrayWithContiguous, numProperties);
+                    auto* newButterfly = JSCellButterfly::tryCreate(vm, CopyOnWriteArrayWithContiguous, numProperties);
                     if (!newButterfly) [[unlikely]] {
                         throwOutOfMemoryError(globalObject, scope);
                         return { };

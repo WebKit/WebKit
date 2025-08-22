@@ -32,6 +32,7 @@
 #include <WebCore/PCMSites.h>
 #include <WebCore/RegistrableDomain.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Platform.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/WTFString.h>
 

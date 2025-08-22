@@ -465,8 +465,6 @@ public:
     void setUseWorkQueue(bool useWorkQueue) { m_useWorkQueue = useWorkQueue; }
     bool useWorkQueue() const { return m_useWorkQueue; }
 
-    void listenForTooltipChanges(WKFrameInfoRef, WKTypeRef);
-
     void setHasMouseDeviceForTesting(bool);
 
 private:
@@ -534,6 +532,9 @@ private:
     UIPasteboardConsistencyEnforcer *pasteboardConsistencyEnforcer();
     void restorePortraitOrientationIfNeeded();
 #endif
+
+    static void didReceiveScriptMessage(WKScriptMessageRef, WKCompletionListenerRef, const void *);
+    void didReceiveScriptMessage(WKScriptMessageRef, CompletionHandler<void(WKTypeRef)>&&);
 
     // WKContextInjectedBundleClient
     static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, const void*);
@@ -800,11 +801,20 @@ private:
     HashMap<String, AbandonedDocumentInfo> m_abandonedDocumentInfo;
     CompletionHandler<void()> m_finishExitFullscreenHandler;
 
-    struct TooltipChangeCallbackInfo {
-        WKRetainPtr<WKFrameInfoRef> frame;
-        WKRetainPtr<WKTypeRef> callbackHandle;
+    class Callbacks {
+    public:
+        void append(WKTypeRef);
+        void clear() { m_callbacks.clear(); }
+        void notifyListeners(WKStringRef);
+        void notifyListeners();
+    private:
+        Vector<WKRetainPtr<WKJSHandleRef>> m_callbacks;
     };
-    Vector<TooltipChangeCallbackInfo> m_framesListeningForTooltipChange;
+    Callbacks m_tooltipCallbacks;
+    Callbacks m_beginSwipeCallbacks;
+    Callbacks m_willEndSwipeCallbacks;
+    Callbacks m_didEndSwipeCallbacks;
+    Callbacks m_didRemoveSwipeSnapshotCallbacks;
 
     uint64_t m_serverTrustEvaluationCallbackCallsCount { 0 };
     bool m_shouldDismissJavaScriptAlertsAsynchronously { false };

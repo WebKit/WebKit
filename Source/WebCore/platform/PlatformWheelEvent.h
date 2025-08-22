@@ -28,6 +28,7 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/PlatformEvent.h>
+#include <wtf/Platform.h>
 #include <wtf/WindowsExtras.h>
 
 namespace WTF {

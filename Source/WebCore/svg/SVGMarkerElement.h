@@ -42,7 +42,8 @@ public:
     enum {
         SVG_MARKER_ORIENT_UNKNOWN = SVGMarkerOrientUnknown,
         SVG_MARKER_ORIENT_AUTO = SVGMarkerOrientAuto,
-        SVG_MARKER_ORIENT_ANGLE = SVGMarkerOrientAngle
+        SVG_MARKER_ORIENT_ANGLE = SVGMarkerOrientAngle,
+        SVG_MARKER_ORIENT_AUTO_START_REVERSE = SVGMarkerOrientAutoStartReverse
     };
 
     static Ref<SVGMarkerElement> create(const QualifiedName&, Document&);
@@ -70,6 +71,7 @@ public:
 
     void setOrientToAuto();
     void setOrientToAngle(const SVGAngle&);
+    void setOrientToAutoStartReverse();
 
 private:
     SVGMarkerElement(const QualifiedName&, Document&);

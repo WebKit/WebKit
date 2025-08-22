@@ -75,6 +75,7 @@
 #include "HTTPParsers.h"
 #include "History.h"
 #include "IdleRequestOptions.h"
+#include "InputEvent.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMPromiseDeferred.h"
@@ -137,12 +138,14 @@
 #include "WindowFocusAllowedIndicator.h"
 #include "WindowPostMessageOptions.h"
 #include "WindowProxy.h"
+#include "page/EventTimingInteractionID.h"
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <algorithm>
 #include <cmath>
 #include <memory>
 #include <wtf/Assertions.h>
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Language.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
@@ -2458,39 +2461,196 @@ void LocalDOMWindow::finishedLoading()
     }
 }
 
-PerformanceEventTiming::Candidate LocalDOMWindow::initializeEventTimingEntry(const Event& event, EventTypeInfo typeInfo)
+EventTimingInteractionID LocalDOMWindow::computeInteractionID(const Event& event, EventType type)
 {
-    // FIXME: implement InteractionId logic
+    auto finalizePendingPointerDown = [this]() {
+        auto interactionID = generateInteractionID();
+        m_pointerMap = interactionID;
+        m_pendingPointerDown->interactionID = interactionID;
+        m_performanceEventTimingCandidates.append(*m_pendingPointerDown);
+        m_pendingPointerDown.reset();
+        return interactionID;
+    };
+
+    switch (type) {
+    case EventType::keyup: {
+        ASSERT(event.isKeyboardEvent());
+        auto keyboardEvent = downcast<KeyboardEvent>(&event);
+        ASSERT(keyboardEvent);
+        if (keyboardEvent->isComposing())
+            return EventTimingInteractionID();
+
+        auto it = m_pendingKeyDowns.find(keyboardEvent->keyCode());
+        if (it == m_pendingKeyDowns.end())
+            return EventTimingInteractionID();
+
+        auto interactionID = generateInteractionID();
+        it->value.interactionID = interactionID;
+        m_performanceEventTimingCandidates.append(it->value);
+        m_pendingKeyDowns.remove(it);
+        return interactionID;
+    }
+    case EventType::compositionstart: {
+        for (auto& pendingEntry : m_pendingKeyDowns)
+            m_performanceEventTimingCandidates.append(pendingEntry.value);
+
+        m_pendingKeyDowns.clear();
+        return EventTimingInteractionID();
+    }
+    case EventType::input: {
+        if (!event.isInputEvent())
+            return EventTimingInteractionID();
+
+        ASSERT(event.isInputEvent());
+        auto inputEvent = downcast<InputEvent>(&event);
+        ASSERT(inputEvent);
+        if (!inputEvent->isInputMethodComposing())
+            return EventTimingInteractionID();
+
+        return generateInteractionID();
+    }
+    case EventType::click: {
+        if (!m_pointerMap)
+            return EventTimingInteractionID();
+
+        auto interactionID = *m_pointerMap;
+        m_pointerMap.reset();
+        return interactionID;
+    }
+    case EventType::pointerup: {
+        if (!m_pendingPointerDown) {
+            if (!m_contextMenuTriggered)
+                return EventTimingInteractionID();
+
+            m_contextMenuTriggered = false;
+            return currentInteractionID();
+        }
+        return finalizePendingPointerDown();
+    }
+    case EventType::pointercancel: {
+        if (m_pendingPointerDown) {
+            // Cancelled pointerDowns are finalized without receiving an interactionID:
+            m_performanceEventTimingCandidates.append(*m_pendingPointerDown);
+            m_pendingPointerDown.reset();
+        }
+        return EventTimingInteractionID();
+    }
+    case EventType::contextmenu: {
+        if (!m_pendingPointerDown)
+            return currentInteractionID();
+
+        m_contextMenuTriggered = true;
+        return finalizePendingPointerDown();
+    }
+    default:
+        return EventTimingInteractionID();
+    }
+}
+
+EventTimingInteractionID LocalDOMWindow::currentInteractionID()
+{
+    return ensureUserInteractionValue();
+}
+
+EventTimingInteractionID& LocalDOMWindow::ensureUserInteractionValue()
+{
+    // Should be initialized with a random number from 100 to 10000:
+    if (!m_userInteractionValue) [[unlikely]]
+        m_userInteractionValue = EventTimingInteractionID { .value = 100 + WTF::cryptographicallyRandomNumber<uint64_t>() % 9901 };
+    return *m_userInteractionValue;
+}
+
+EventTimingInteractionID LocalDOMWindow::generateInteractionID()
+{
+    ++m_interactionCount;
+    return generateInteractionIDWithoutIncreasingInteractionCount();
+}
+
+EventTimingInteractionID LocalDOMWindow::generateInteractionIDWithoutIncreasingInteractionCount()
+{
+    // User interaction value should be increased by a small integer to
+    // "discourage developers from considering it as a counter":
+    ensureUserInteractionValue().value += 7;
+    return ensureUserInteractionValue();
+}
+
+PerformanceEventTimingCandidate LocalDOMWindow::initializeEventTimingEntry(const Event& event, EventType type)
+{
+    auto startTime = performance().relativeTimeFromTimeOriginInReducedResolutionSeconds(event.timeStamp());
     auto processingStart = performance().nowInReducedResolutionSeconds();
-    LOG_WITH_STREAM(PerformanceTimeline, stream << "Initializing event timing entry (type=" << event.type() << ") at t=" << processingStart);
-    return PerformanceEventTiming::Candidate {
-        .typeInfo = typeInfo,
+    LOG_WITH_STREAM(PerformanceTimeline, stream << "Initializing event timing entry (type=" << event.type() << "; tstamp=" << startTime << ") at t=" << processingStart);
+    if (startTime > processingStart)
+        startTime = processingStart;
+
+    return PerformanceEventTimingCandidate {
+        .type = type,
         .cancelable = event.cancelable(),
-        // Account for event.timeStamp() unreliability (based on wall clock):
-        .startTime =  std::min(processingStart, performance().relativeTimeFromTimeOriginInReducedResolutionSeconds(event.timeStamp())),
-        .processingStart = processingStart
+        .startTime =  startTime,
+        .processingStart = processingStart,
+        .processingEnd = { },
+        .duration = { },
+        .target = { },
+        .interactionID = computeInteractionID(event, type)
     };
 }
 
-void LocalDOMWindow::finalizeEventTimingEntry(const PerformanceEventTiming::Candidate& entry, const Event& event)
+void LocalDOMWindow::finalizeEventTimingEntry(PerformanceEventTimingCandidate& entry, const Event& event)
 {
+    auto processingEnd = performance().nowInReducedResolutionSeconds();
+    entry.processingEnd = processingEnd;
+    entry.target = event.target();
+    if (event.type() == eventNames().pointerdownEvent) [[unlikely]] {
+        if (m_pendingPointerDown) {
+            m_performanceEventTimingCandidates.append(*m_pendingPointerDown);
+            LOG_WITH_STREAM(PerformanceTimeline, stream << "Repeated pointerdown entries at t=" << processingEnd);
+        }
+
+        LOG_WITH_STREAM(PerformanceTimeline, stream << "Adding pending pointerdown at t=" << processingEnd);
+        m_pendingPointerDown = entry;
+        m_contextMenuTriggered = false;
+        return;
+    }
+    if (event.type() == eventNames().keydownEvent) [[unlikely]] {
+        ASSERT(event.isKeyboardEvent());
+        auto keyboardEvent = downcast<KeyboardEvent>(&event);
+        ASSERT(keyboardEvent);
+        if (keyboardEvent->isComposing()) {
+            m_performanceEventTimingCandidates.append(entry);
+            return;
+        }
+        auto code = keyboardEvent->keyCode();
+        auto it = m_pendingKeyDowns.find(code);
+        if (it == m_pendingKeyDowns.end()) {
+            m_pendingKeyDowns.set(code, entry);
+            return;
+        }
+        // Code 229 corresponds to IME keyboard events
+        // (https://www.w3.org/TR/event-timing/#sec-fin-event-timing)
+        if (code != 229)
+            it->value.interactionID = generateInteractionIDWithoutIncreasingInteractionCount();
+
+        m_performanceEventTimingCandidates.append(it->value);
+        it->value = entry;
+        return;
+    }
+
     m_performanceEventTimingCandidates.append(entry);
-    // FIXME: implement InteractionId logic
-    m_performanceEventTimingCandidates.last().target = event.target();
-    m_performanceEventTimingCandidates.last().processingEnd = performance().nowInReducedResolutionSeconds();
 }
 
 void LocalDOMWindow::dispatchPendingEventTimingEntries()
 {
+    auto renderingTime = performance().nowInReducedResolutionSeconds();
+    if (m_pendingPointerDown && !m_pendingPointerDown->duration)
+        m_pendingPointerDown->duration = renderingTime - m_pendingPointerDown->startTime;
+
     if (m_performanceEventTimingCandidates.isEmpty())
         return;
 
-    auto renderingTime = performance().nowInReducedResolutionSeconds();
     LOG_WITH_STREAM(PerformanceTimeline, stream << "Dispatching " << m_performanceEventTimingCandidates.size() << " event timing entries at t=" << renderingTime);
     for (auto& candidateEntry : m_performanceEventTimingCandidates) {
-        performance().countEvent(candidateEntry.typeInfo.type());
-        auto duration = renderingTime - candidateEntry.startTime;
-        performance().processEventEntry(candidateEntry, duration);
+        performance().countEvent(candidateEntry.type);
+        candidateEntry.duration = renderingTime - candidateEntry.startTime;
+        performance().processEventEntry(candidateEntry);
     }
     m_performanceEventTimingCandidates.clear();
 }

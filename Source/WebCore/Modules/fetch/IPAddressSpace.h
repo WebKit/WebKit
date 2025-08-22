@@ -32,4 +32,9 @@ enum class IPAddressSpace : bool {
     Local
 };
 
+WEBCORE_EXPORT IPAddressSpace determineIPAddressSpace(const WTF::URL&);
+
+WEBCORE_EXPORT bool isLocalIPAddressSpace(IPAddressSpace);
+WEBCORE_EXPORT bool isLocalIPAddressSpace(const WTF::URL&);
+
 } // namespace WebCore

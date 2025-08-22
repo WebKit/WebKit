@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #include <WebCore/MediaPlayerPrivate.h>

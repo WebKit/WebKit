@@ -480,9 +480,6 @@ messages -> WebPageProxy {
 
 #if ENABLE(CONTENT_EXTENSIONS)
     ContentRuleListNotification(URL url, struct WebCore::ContentRuleListResults results)
-#endif
-
-#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
     ContentRuleListMatchedRule(struct WebCore::ContentRuleListMatchedRule matchedRule)
 #endif
 

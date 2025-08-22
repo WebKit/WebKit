@@ -113,8 +113,8 @@ RefPtr<API::Object> JavaScriptEvaluationResult::APIInserter::toAPI(Value&& root)
         Ref dictionary = API::Dictionary::create();
         m_dictionaries.append({ WTFMove(map), dictionary });
         return { WTFMove(dictionary) };
-    }, [] (JSHandleInfo&& info) -> RefPtr<API::Object> {
-        return API::JSHandle::create(WTFMove(info));
+    }, [] (UniqueRef<JSHandleInfo>&& info) -> RefPtr<API::Object> {
+        return API::JSHandle::create(WTFMove(info.get()));
     }, [] (UniqueRef<WebCore::SerializedNode>&& node) -> RefPtr<API::Object> {
         return API::SerializedNode::create(WTFMove(node.get()));
     });
@@ -161,7 +161,7 @@ auto JavaScriptEvaluationResult::APIExtractor::toValue(API::Object& object) -> V
     case API::Object::Type::Int64:
         return static_cast<double>(downcast<API::Int64>(object).value());
     case API::Object::Type::JSHandle:
-        return downcast<API::JSHandle>(object).info();
+        return makeUniqueRef<JSHandleInfo>(downcast<API::JSHandle>(object).info());
     case API::Object::Type::SerializedNode:
         return makeUniqueRef<WebCore::SerializedNode>(downcast<API::SerializedNode>(object).coreSerializedNode());
     case API::Object::Type::Array: {
@@ -300,8 +300,12 @@ auto JavaScriptEvaluationResult::JSExtractor::toValue(JSGlobalContextRef context
     JSC::JSObject* jsObject = ::toJS(globalObject, object).toObject(globalObject);
 
     if (auto* info = jsDynamicCast<JSWebKitJSHandle*>(jsObject)) {
+        RELEASE_ASSERT(globalObject->template inherits<WebCore::JSDOMGlobalObject>());
+        auto* domGlobalObject = jsCast<WebCore::JSDOMGlobalObject*>(globalObject);
+        RefPtr document = dynamicDowncast<Document>(domGlobalObject->scriptExecutionContext());
+        RefPtr frame = WebFrame::webFrame(document->frameID());
         Ref ref { info->wrapped() };
-        return JSHandleInfo { ref->identifier(), ref->windowFrameIdentifier() };
+        return makeUniqueRef<JSHandleInfo>(ref->identifier(), frame->info(), ref->windowFrameIdentifier());
     }
 
     if (auto* node = jsDynamicCast<JSWebKitSerializedNode*>(jsObject)) {
@@ -394,8 +398,8 @@ JSValueRef JavaScriptEvaluationResult::JSInserter::toJS(JSGlobalContextRef conte
         JSObjectRef dictionary = JSObjectMake(context, 0, 0);
         m_dictionaries.append({ WTFMove(map), Protected<JSObjectRef>(context, dictionary) });
         return dictionary;
-    }, [&] (JSHandleInfo&& info) -> JSValueRef {
-        auto [originalDocument, object] = WebCore::WebKitJSHandle::objectForIdentifier(info.identifier);
+    }, [&] (UniqueRef<JSHandleInfo>&& info) -> JSValueRef {
+        auto [originalDocument, object] = WebCore::WebKitJSHandle::objectForIdentifier(info.get().identifier);
         if (!object)
             return JSValueMakeUndefined(context);
         auto [lexicalGlobalObject, domGlobalObject, document] = globalObjectTuple(context);

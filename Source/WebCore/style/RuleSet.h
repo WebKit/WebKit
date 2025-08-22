@@ -136,6 +136,8 @@ public:
 
     const RefPtr<const StyleRulePositionTry> positionTryRuleForName(const AtomString&) const;
 
+    String selectorsForDebugging() const;
+
 private:
     friend class RuleSetBuilder;
 
@@ -160,6 +162,7 @@ private:
     CollectedMediaQueryChanges evaluateDynamicMediaQueryRules(const MQ::MediaQueryEvaluator&, size_t startIndex);
 
     template<typename Function> void traverseRuleDatas(Function&&);
+    template<typename Function> void traverseRuleDatas(Function&&) const;
 
     struct CascadeLayer {
         CascadeLayerName resolvedName;

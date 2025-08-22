@@ -23,6 +23,7 @@
 #include <WebCore/GraphicsContextCG.h>
 #include <WebCore/GraphicsContextStateSaver.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Platform.h>
 
 #if PLATFORM(COCOA)
 

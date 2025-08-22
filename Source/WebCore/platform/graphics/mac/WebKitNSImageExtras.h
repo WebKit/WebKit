@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <wtf/Platform.h>
 #if !PLATFORM(IOS_FAMILY)
 
 #import <Cocoa/Cocoa.h>

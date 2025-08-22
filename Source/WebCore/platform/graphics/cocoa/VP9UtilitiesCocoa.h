@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(VP9) && PLATFORM(COCOA)
 
 #include <WebCore/VP9Utilities.h>

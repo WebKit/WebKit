@@ -29,6 +29,7 @@
 
 #include <WebCore/ActiveDOMObject.h>
 #include <WebCore/Document.h>
+#include <wtf/Platform.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 

@@ -30,6 +30,7 @@
 #include "MediaReorderQueue.h"
 #include "ProcessIdentity.h"
 #include "SampleMap.h"
+#include "WebAVSampleBufferListener.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -57,7 +58,9 @@ class EffectiveRateChangedListener;
 class MediaSample;
 class WebCoreDecompressionSession;
 
-class VideoMediaSampleRenderer final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoMediaSampleRenderer, WTF::DestructionThread::Main> {
+class VideoMediaSampleRenderer final
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoMediaSampleRenderer, WTF::DestructionThread::Main>
+    , public WebAVSampleBufferListenerClient {
 public:
     static Ref<VideoMediaSampleRenderer> create(WebSampleBufferVideoRendering *renderer) { return adoptRef(*new VideoMediaSampleRenderer(renderer)); }
     ~VideoMediaSampleRenderer();
@@ -77,7 +80,7 @@ public:
 
     void notifyFirstFrameAvailable(Function<void(const MediaTime&, double)>&&);
     void notifyWhenHasAvailableVideoFrame(Function<void(const MediaTime&, double)>&&);
-    void notifyWhenDecodingErrorOccurred(Function<void(OSStatus)>&&);
+    void notifyWhenDecodingErrorOccurred(Function<void(NSError *)>&&);
     void notifyWhenVideoRendererRequiresFlushToResumeDecoding(Function<void()>&&);
 
 #if HAVE(AVSAMPLEBUFFERVIDEORENDERER)
@@ -159,7 +162,7 @@ private:
     bool shouldDecodeSample(const MediaSample&);
 
     void notifyHasAvailableVideoFrame(const MediaTime&, double, FlushId);
-    void notifyErrorHasOccurred(OSStatus);
+    void notifyErrorHasOccurred(NSError *);
     void notifyVideoRendererRequiresFlushToResumeDecoding();
 
     Ref<GuaranteedSerialFunctionDispatcher> dispatcher() const;
@@ -170,6 +173,12 @@ private:
     bool useDecompressionSessionForProtectedFallback() const;
     bool useDecompressionSessionForProtectedContent() const;
     bool useStereoDecoding() const;
+
+    // WebAVSampleBufferListenerClient
+    void videoRendererDidReceiveError(WebSampleBufferVideoRendering *, NSError *) final;
+    void videoRendererRequiresFlushToResumeDecodingChanged(WebSampleBufferVideoRendering *, bool) final;
+    void videoRendererReadyForDisplayChanged(WebSampleBufferVideoRendering *, bool) final;
+    void outputObscuredDueToInsufficientExternalProtectionChanged(bool) final;
 
     const bool m_rendererIsThreadSafe { false };
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer WTF_GUARDED_BY_CAPABILITY(mainThread);
@@ -219,9 +228,10 @@ private:
     Function<void(const MediaTime&, double)> m_hasFirstFrameAvailableCallback WTF_GUARDED_BY_CAPABILITY(mainThread);
     Function<void(const MediaTime&, double)> m_hasAvailableFrameCallback WTF_GUARDED_BY_CAPABILITY(mainThread);
     std::atomic<bool> m_notifyWhenHasAvailableVideoFrame { false };
-    Function<void(OSStatus)> m_errorOccurredFunction WTF_GUARDED_BY_CAPABILITY(mainThread);
+    Function<void(NSError *)> m_errorOccurredFunction WTF_GUARDED_BY_CAPABILITY(mainThread);
     Function<void()> m_rendererNeedsFlushFunction WTF_GUARDED_BY_CAPABILITY(mainThread);
     ProcessIdentity m_resourceOwner;
+    const Ref<WebAVSampleBufferListener> m_listener;
     MonotonicTime m_startupTime;
     MonotonicTime m_timeSinceLastDecode;
     FrameRateMonitor m_frameRateMonitor;

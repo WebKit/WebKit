@@ -42,6 +42,7 @@
 #include <WebCore/VisibleSelection.h>
 #include <WebCore/WritingDirection.h>
 #include <memory>
+#include <wtf/Platform.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>

@@ -20,12 +20,14 @@
 #include "config.h"
 #include "WebKitXRPermissionRequest.h"
 
-#if ENABLE(WEBXR)
-
 #include "WebKitPermissionRequest.h"
 #include "WebKitSecurityOriginPrivate.h"
 #include "WebKitXRPermissionRequestPrivate.h"
 #include <wtf/glib/WTFGType.h>
+
+#if !ENABLE(WEBXR)
+#include <WebCore/NotImplemented.h>
+#endif
 
 #if !ENABLE(2022_GLIB_API)
 typedef WebKitPermissionRequestIface WebKitPermissionRequestInterface;
@@ -52,16 +54,19 @@ typedef WebKitPermissionRequestIface WebKitPermissionRequestInterface;
 static void webkit_permission_request_interface_init(WebKitPermissionRequestInterface*);
 
 struct _WebKitXRPermissionRequestPrivate {
+#if ENABLE(WEBXR)
     WebKitSecurityOrigin* securityOrigin;
     WebKitXRSessionMode mode;
     PlatformXR::Device::FeatureList grantedFeatures;
     CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)> completionHandler;
+#endif
 };
 
 WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE(
     WebKitXRPermissionRequest, webkit_xr_permission_request, G_TYPE_OBJECT, GObject,
     G_IMPLEMENT_INTERFACE(WEBKIT_TYPE_PERMISSION_REQUEST, webkit_permission_request_interface_init))
 
+#if ENABLE(WEBXR)
 static void webkitXRPermissionRequestAllow(WebKitPermissionRequest* request)
 {
     ASSERT(WEBKIT_IS_XR_PERMISSION_REQUEST(request));
@@ -81,19 +86,24 @@ static void webkitXRPermissionRequestDeny(WebKitPermissionRequest* request)
     if (priv->completionHandler)
         priv->completionHandler(std::nullopt);
 }
+#endif
 
 static void webkit_permission_request_interface_init(WebKitPermissionRequestInterface* iface)
 {
+#if ENABLE(WEBXR)
     iface->allow = webkitXRPermissionRequestAllow;
     iface->deny = webkitXRPermissionRequestDeny;
+#endif
 }
 
 static void webkitXRPermissionRequestDispose(GObject* object)
 {
+#if ENABLE(WEBXR)
     // Default behaviour when no decision has been made is denying the request.
     webkitXRPermissionRequestDeny(WEBKIT_PERMISSION_REQUEST(object));
     WebKitXRPermissionRequestPrivate* priv = WEBKIT_XR_PERMISSION_REQUEST(object)->priv;
     g_clear_pointer(&priv->securityOrigin, webkit_security_origin_unref);
+#endif
     G_OBJECT_CLASS(webkit_xr_permission_request_parent_class)->dispose(object);
 }
 
@@ -115,8 +125,13 @@ static void webkit_xr_permission_request_class_init(WebKitXRPermissionRequestCla
  */
 WebKitSecurityOrigin* webkit_xr_permission_request_get_security_origin(WebKitXRPermissionRequest* request)
 {
+#if ENABLE(WEBXR)
     g_return_val_if_fail(WEBKIT_IS_XR_PERMISSION_REQUEST(request), nullptr);
     return request->priv->securityOrigin;
+#else
+    notImplemented();
+    return nullptr;
+#endif
 }
 
 /**
@@ -131,10 +146,16 @@ WebKitSecurityOrigin* webkit_xr_permission_request_get_security_origin(WebKitXRP
  */
 WebKitXRSessionMode webkit_xr_permission_request_get_session_mode(WebKitXRPermissionRequest* request)
 {
+#if ENABLE(WEBXR)
     g_return_val_if_fail(WEBKIT_IS_XR_PERMISSION_REQUEST(request), WEBKIT_XR_SESSION_MODE_INLINE);
     return request->priv->mode;
+#else
+    notImplemented();
+    return WEBKIT_XR_SESSION_MODE_INLINE;
+#endif
 }
 
+#if ENABLE(WEBXR)
 static WebKitXRSessionMode toWebKitXRSessionMode(PlatformXR::SessionMode mode)
 {
     switch (mode) {
@@ -158,18 +179,4 @@ WebKitXRPermissionRequest* webkitXRPermissionRequestCreate(const WebCore::Securi
     xrPermissionRequest->priv->completionHandler = WTFMove(completionHandler);
     return xrPermissionRequest;
 }
-#else
-#include <WebCore/NotImplemented.h>
-
-WebKitSecurityOrigin* webkit_xr_permission_request_get_security_origin(WebKitXRPermissionRequest* request)
-{
-    notImplemented();
-    return nullptr;
-}
-
-WebKitXRSessionMode webkit_xr_permission_request_get_session_mode(WebKitXRPermissionRequest* request)
-{
-    notImplemented();
-    return WebKitXRSessionMode::WEBKIT_XR_SESSION_MODE_INLINE;
-}
-#endif // ENABLE(WEBXR)
+#endif

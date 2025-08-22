@@ -64,6 +64,7 @@ bool isRenderHidden(const RenderStyle*);
 bool isRenderHidden(const RenderStyle&);
 // Only checks CSS visibility properties.
 bool isVisibilityHidden(const RenderStyle&);
+const RenderStyle* safeStyleFrom(Element&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, AXNotification);
 

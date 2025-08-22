@@ -586,7 +586,7 @@ CodePtr<JSEntryPtrTag> FunctionSignature::jsToWasmICEntrypoint() const
         slowPath.append(jit.branchPtr(CCallHelpers::LessThanOrEqual, MacroAssembler::stackPointerRegister, stackLimitGPR));
     }
     // Don't store the Wasm::Callee until after our stack check.
-    jit.storeWasmCalleeCallee(scratchJSR.payloadGPR());
+    jit.storeWasmCalleeToCalleeCallFrame(scratchJSR.payloadGPR());
 
     // Ensure:
     // argCountPlusThis - 1 >= argumentCount()

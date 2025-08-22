@@ -1148,6 +1148,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSCalleeInlines.h
     runtime/JSCast.h
     runtime/JSCell.h
+    runtime/JSCellButterfly.h
     runtime/JSCellInlines.h
     runtime/JSCInlines.h
     runtime/JSCJSValue.h
@@ -1179,7 +1180,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSGlobalObjectInlines.h
     runtime/JSGlobalProxy.h
     runtime/JSGlobalProxyInlines.h
-    runtime/JSImmutableButterfly.h
     runtime/JSInt16Array.h
     runtime/JSInt32Array.h
     runtime/JSInt8Array.h

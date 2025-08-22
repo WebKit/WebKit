@@ -29,9 +29,15 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && USE(GBM)
 
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebKit {
 
 class RemoteGraphicsContextGLGBM final : public RemoteGraphicsContextGL {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteGraphicsContextGLGBM);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteGraphicsContextGLGBM);
+
 public:
     RemoteGraphicsContextGLGBM(GPUConnectionToWebProcess&, GraphicsContextGLIdentifier, RemoteRenderingBackend&, Ref<IPC::StreamServerConnection>&&);
 
@@ -39,6 +45,8 @@ private:
     void platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&&) final;
     void prepareForDisplay(CompletionHandler<void(uint64_t, std::optional<WebCore::DMABufBuffer::Attributes>&&, UnixFileDescriptor&&)>&&) final;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteGraphicsContextGLGBM);
 
 RemoteGraphicsContextGLGBM::RemoteGraphicsContextGLGBM(GPUConnectionToWebProcess& connection, GraphicsContextGLIdentifier identifier, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& streamConnection)
     : RemoteGraphicsContextGL(connection, identifier, renderingBackend, WTFMove(streamConnection))

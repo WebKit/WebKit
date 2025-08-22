@@ -2494,6 +2494,8 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
         return samplingRect;
     };
 
+    static constexpr auto minimumOpacityThresholdToClampToSolidColor = 0.75;
+
     auto pageBackgroundColor = page->pageExtendedBackgroundColor();
     auto blendAgainstPageBackground = [pageBackgroundColor](const Color& color) {
         if (color.isOpaque())
@@ -2525,7 +2527,11 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
         }
 
         if (result.backgroundColor.isVisible()) {
-            edges.colors.setAt(side, result.isDimmingLayer ? blendAgainstPageBackground(result.backgroundColor) : result.backgroundColor.colorWithAlpha(1));
+            edges.colors.setAt(side, [&] {
+                if (result.isDimmingLayer || result.backgroundColor.alphaAsFloat() < minimumOpacityThresholdToClampToSolidColor)
+                    return blendAgainstPageBackground(result.backgroundColor);
+                return result.backgroundColor.colorWithAlpha(1);
+            }());
             continue;
         }
 
@@ -2540,7 +2546,7 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
                 return samplingResult;
 
             auto color = std::get<Color>(samplingResult);
-            if (result.isDimmingLayer)
+            if (result.isDimmingLayer || color.alphaAsFloat() < minimumOpacityThresholdToClampToSolidColor)
                 return blendAgainstPageBackground(color);
 
             return color.colorWithAlpha(1);

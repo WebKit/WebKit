@@ -55,16 +55,6 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ParentalControlsContentFilter);
 
-#if HAVE(WEBCONTENTRESTRICTIONS)
-
-static WorkQueue& globalQueue()
-{
-    static MainThreadNeverDestroyed<Ref<WorkQueue>> queue = WorkQueue::create("ParentalControlsContentFilter queue"_s);
-    return queue.get();
-}
-
-#endif
-
 bool ParentalControlsContentFilter::enabled() const
 {
 #if HAVE(WEBCONTENTRESTRICTIONS)
@@ -121,6 +111,7 @@ void ParentalControlsContentFilter::responseReceived(const ResourceResponse& res
 
 #if HAVE(WEBCONTENTRESTRICTIONS)
     if (m_usesWebContentRestrictions) {
+        ASSERT(!m_evaluatedURL);
         m_evaluatedURL = response.url();
         m_state = State::Filtering;
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
@@ -128,10 +119,7 @@ void ParentalControlsContentFilter::responseReceived(const ResourceResponse& res
 #else
         auto& filter = ParentalControlsURLFilter::singleton();
 #endif
-        filter.isURLAllowedWithQueue(*m_evaluatedURL, [weakThis = ThreadSafeWeakPtr { *this }](bool isAllowed, auto replacementData) {
-            if (RefPtr protectedThis = weakThis.get())
-                protectedThis->didReceiveAllowDecisionOnQueue(isAllowed, replacementData);
-        }, globalQueue());
+        filter.isURLAllowed(*m_evaluatedURL, *this);
         return;
     }
 #endif

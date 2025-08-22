@@ -93,21 +93,21 @@ public:
     void setCachedPropertyNameEnumerator(VM&, Structure*, JSPropertyNameEnumerator*, StructureChain*);
     void clearCachedPropertyNameEnumerator();
 
-    JSImmutableButterfly* cachedPropertyNames(CachedPropertyNamesKind) const;
-    JSImmutableButterfly* cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind) const;
-    JSImmutableButterfly* cachedPropertyNamesConcurrently(CachedPropertyNamesKind) const;
-    void setCachedPropertyNames(VM&, CachedPropertyNamesKind, JSImmutableButterfly*);
+    JSCellButterfly* cachedPropertyNames(CachedPropertyNamesKind) const;
+    JSCellButterfly* cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind) const;
+    JSCellButterfly* cachedPropertyNamesConcurrently(CachedPropertyNamesKind) const;
+    void setCachedPropertyNames(VM&, CachedPropertyNamesKind, JSCellButterfly*);
 
     Box<InlineWatchpointSet> copySharedPolyProtoWatchpoint() const { return m_polyProtoWatchpoint; }
     const Box<InlineWatchpointSet>& sharedPolyProtoWatchpoint() const { return m_polyProtoWatchpoint; }
     void setSharedPolyProtoWatchpoint(Box<InlineWatchpointSet>&& sharedPolyProtoWatchpoint) { m_polyProtoWatchpoint = WTFMove(sharedPolyProtoWatchpoint); }
     bool hasSharedPolyProtoWatchpoint() const { return static_cast<bool>(m_polyProtoWatchpoint); }
 
-    static JSImmutableButterfly* cachedPropertyNamesSentinel() { return std::bit_cast<JSImmutableButterfly*>(static_cast<uintptr_t>(1)); }
+    static JSCellButterfly* cachedPropertyNamesSentinel() { return std::bit_cast<JSCellButterfly*>(static_cast<uintptr_t>(1)); }
 
     static constexpr ptrdiff_t offsetOfCachedPropertyNames(CachedPropertyNamesKind kind)
     {
-        return OBJECT_OFFSETOF(StructureRareData, m_cachedPropertyNames) + sizeof(WriteBarrier<JSImmutableButterfly>) * static_cast<unsigned>(kind);
+        return OBJECT_OFFSETOF(StructureRareData, m_cachedPropertyNames) + sizeof(WriteBarrier<JSCellButterfly>) * static_cast<unsigned>(kind);
     }
 
     static constexpr ptrdiff_t offsetOfCachedPropertyNameEnumeratorAndFlag()
@@ -164,7 +164,7 @@ private:
     // https://bugs.webkit.org/show_bug.cgi?id=192659
     uintptr_t m_cachedPropertyNameEnumeratorAndFlag { 0 };
     FixedVector<StructureChainInvalidationWatchpoint> m_cachedPropertyNameEnumeratorWatchpoints;
-    WriteBarrier<JSImmutableButterfly> m_cachedPropertyNames[numberOfCachedPropertyNames] { };
+    WriteBarrier<JSCellButterfly> m_cachedPropertyNames[numberOfCachedPropertyNames] { };
 
     typedef UncheckedKeyHashMap<PropertyOffset, RefPtr<WatchpointSet>, WTF::IntHash<PropertyOffset>, WTF::UnsignedWithZeroKeyHashTraits<PropertyOffset>> PropertyWatchpointMap;
 #ifdef NDEBUG

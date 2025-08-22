@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(LLVM_PROFILE_GENERATION) && PLATFORM(IOS_FAMILY)
 
 namespace WebCore {

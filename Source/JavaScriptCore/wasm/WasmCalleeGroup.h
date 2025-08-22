@@ -130,6 +130,12 @@ public:
         return m_ipintCallees->at(calleeIndex).get();
     }
 
+    Ref<IPIntCallee> ipintCalleeFromFunctionIndexSpace(const AbstractLocker&, FunctionSpaceIndex functionIndexSpace) const WTF_REQUIRES_LOCK(m_lock)
+    {
+        ASSERT(functionIndexSpace >= functionImportCount());
+        unsigned calleeIndex = functionIndexSpace - functionImportCount();
+        return m_ipintCallees->at(calleeIndex).get();
+    }
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
     RefPtr<BBQCallee> bbqCallee(const AbstractLocker&, FunctionCodeIndex functionIndex) WTF_REQUIRES_LOCK(m_lock)

@@ -4681,6 +4681,9 @@ bool RenderLayer::setAnchorScrollAdjustment(LayoutSize offset)
     if (m_anchorScrollAdjustment == offset)
         return false;
 
+    if (renderer().renderTreeBeingDestroyed())
+        return false;
+
     // FIXME: Scroll offset should be adjusted in the scrolling tree so layers stay exactly in sync.
     m_anchorScrollAdjustment = offset;
     updateTransform();
@@ -4694,6 +4697,9 @@ bool RenderLayer::setAnchorScrollAdjustment(LayoutSize offset)
 void RenderLayer::clearAnchorScrollAdjustment()
 {
     if (!m_anchorScrollAdjustment)
+        return;
+
+    if (renderer().renderTreeBeingDestroyed())
         return;
 
     m_anchorScrollAdjustment = { };

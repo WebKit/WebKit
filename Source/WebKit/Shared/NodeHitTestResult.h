@@ -25,25 +25,18 @@
 
 #pragma once
 
-#include "FrameInfoData.h"
 #include "JSHandleInfo.h"
 #include <WebCore/FloatPoint.h>
-#include <WebCore/FrameIdentifier.h>
 #include <wtf/Variant.h>
 
 namespace WebKit {
-
-struct NodeAndFrameInfo {
-    WebKit::JSHandleInfo node;
-    WebKit::FrameInfoData frame;
-};
 
 struct NodeHitTestResult {
     struct RemoteFrameInfo {
         WebCore::FrameIdentifier remoteFrameIdentifier;
         WebCore::FloatPoint transformedPoint;
     };
-    Variant<std::monostate, RemoteFrameInfo, NodeAndFrameInfo> variant;
+    Variant<std::monostate, RemoteFrameInfo, JSHandleInfo> variant;
 };
 
 }

@@ -39,9 +39,9 @@
 #include "JSArrayIterator.h"
 #include "JSAsyncFunction.h"
 #include "JSAsyncGeneratorFunction.h"
+#include "JSCellButterfly.h"
 #include "JSCInlines.h"
 #include "JSGeneratorFunction.h"
-#include "JSImmutableButterfly.h"
 #include "JSInternalPromise.h"
 #include "JSIteratorHelper.h"
 #include "JSLexicalEnvironment.h"
@@ -612,21 +612,21 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSG
         }
         RELEASE_ASSERT(array);
 
-        // Note: it is sound for JSImmutableButterfly::createFromArray to call getDirectIndex here
+        // Note: it is sound for JSCellButterfly::createFromArray to call getDirectIndex here
         // because we're guaranteed we won't be calling any getters. The reason for this is
         // that we only support PhantomSpread over CreateRest, which is an array we create.
         // Any attempts to put a getter on any indices on the rest array will escape the array.
-        auto* fixedArray = JSImmutableButterfly::createFromArray(globalObject, vm, array);
+        auto* fixedArray = JSCellButterfly::createFromArray(globalObject, vm, array);
         RELEASE_ASSERT(fixedArray);
         return fixedArray;
     }
 
     case PhantomNewArrayBuffer: {
-        JSImmutableButterfly* immutableButterfly = nullptr;
+        JSCellButterfly* immutableButterfly = nullptr;
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];
             if (property.location().kind() == NewArrayBufferPLoc) {
-                immutableButterfly = jsCast<JSImmutableButterfly*>(JSValue::decode(values[i]));
+                immutableButterfly = jsCast<JSCellButterfly*>(JSValue::decode(values[i]));
                 break;
             }
         }
@@ -652,7 +652,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSG
         ASSERT(!structure->outOfLineCapacity());
 
         if (immutableButterfly->indexingMode() != indexingMode) [[unlikely]] {
-            auto* newButterfly = JSImmutableButterfly::create(vm, indexingMode, immutableButterfly->length());
+            auto* newButterfly = JSCellButterfly::create(vm, indexingMode, immutableButterfly->length());
             for (unsigned i = 0; i < immutableButterfly->length(); ++i)
                 newButterfly->setIndex(vm, i, immutableButterfly->get(i));
             immutableButterfly = newButterfly;
@@ -683,7 +683,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSG
             if (property.location().kind() == NewArrayWithSpreadArgumentPLoc) {
                 ++numProperties;
                 JSValue value = JSValue::decode(values[i]);
-                if (JSImmutableButterfly* immutableButterfly = jsDynamicCast<JSImmutableButterfly*>(value))
+                if (JSCellButterfly* immutableButterfly = jsDynamicCast<JSCellButterfly*>(value))
                     checkedArraySize += immutableButterfly->publicLength();
                 else
                     checkedArraySize += 1;
@@ -725,7 +725,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSG
 
         unsigned arrayIndex = 0;
         for (JSValue value : arguments) {
-            if (JSImmutableButterfly* immutableButterfly = jsDynamicCast<JSImmutableButterfly*>(value)) {
+            if (JSCellButterfly* immutableButterfly = jsDynamicCast<JSCellButterfly*>(value)) {
                 for (unsigned i = 0; i < immutableButterfly->publicLength(); i++) {
                     ASSERT(immutableButterfly->get(i));
                     result->putDirectIndex(globalObject, arrayIndex, immutableButterfly->get(i));

@@ -1515,26 +1515,6 @@ void TestInvocation::outputText(const WTF::String& text)
     m_textOutput.append(text);
 }
 
-void TestInvocation::didBeginSwipe()
-{
-    postPageMessage("CallDidBeginSwipeCallback");
-}
-
-void TestInvocation::willEndSwipe()
-{
-    postPageMessage("CallWillEndSwipeCallback");
-}
-
-void TestInvocation::didEndSwipe()
-{
-    postPageMessage("CallDidEndSwipeCallback");
-}
-
-void TestInvocation::didRemoveSwipeSnapshot()
-{
-    postPageMessage("CallDidRemoveSwipeSnapshotCallback");
-}
-
 void TestInvocation::notifyDownloadDone()
 {
     postPageMessage("NotifyDownloadDone");

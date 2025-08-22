@@ -1,4 +1,4 @@
 Generate a 'click' event
 
-FAIL Event Timing: check first-input for a PerformanceObserver observing only first-input. assert_equals: expected 1 but got 0
+PASS Event Timing: check first-input for a PerformanceObserver observing only first-input.
 

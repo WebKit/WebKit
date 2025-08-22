@@ -741,7 +741,7 @@ void EditingStyle::overrideTypingStyleAt(const EditingStyle& style, const Positi
     Ref lineThrough = CSSPrimitiveValue::create(CSSValueLineThrough);
     RefPtr value = m_mutableStyle->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
     CSSValueListBuilder valueList;
-    if (auto* list = dynamicDowncast<CSSValueList>(value.get())) {
+    if (RefPtr list = dynamicDowncast<CSSValueList>(value.get())) {
         valueList = list->copyValues();
         applyTextDecorationChangeToValueList(valueList, underlineChange, WTFMove(underline));
         applyTextDecorationChangeToValueList(valueList, strikeThroughChange, WTFMove(lineThrough));
@@ -1186,7 +1186,7 @@ bool EditingStyle::elementIsStyledSpanOrHTMLEquivalent(const HTMLElement& elemen
         matchedAttributes++;
 
     if (element.hasAttribute(HTMLNames::styleAttr)) {
-        if (const auto* style = element.inlineStyle()) {
+        if (const RefPtr style = element.inlineStyle()) {
             for (auto property : *style) {
                 if (!isEditingProperty(property.id()))
                     return false;
@@ -1382,8 +1382,8 @@ void EditingStyle::mergeStyle(const StyleProperties* style, CSSPropertyOverrideM
 
         // text decorations never override values.
         if ((property.id() == CSSPropertyTextDecorationLine || property.id() == CSSPropertyWebkitTextDecorationsInEffect) && value) {
-            if (auto* propertyValueList = dynamicDowncast<CSSValueList>(*property.value())) {
-                if (auto* valueList = dynamicDowncast<CSSValueList>(*value)) {
+            if (RefPtr propertyValueList = dynamicDowncast<CSSValueList>(*property.value())) {
+                if (RefPtr valueList = dynamicDowncast<CSSValueList>(*value)) {
                     auto newValue = valueList->copyValues();
                     mergeTextDecorationValues(newValue, *propertyValueList);
                     auto isImportant = property.isImportant() ? IsImportant::Yes : IsImportant::No;
@@ -1709,7 +1709,7 @@ bool EditingStyle::fontStyleIsItalic()
     if (!fontStyle)
         return false;
 
-    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*fontStyle);
+    RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*fontStyle);
     auto keyword = primitiveValue ? primitiveValue->valueID() : CSSValueOblique;
     return keyword == CSSValueOblique || keyword == CSSValueItalic;
 }
@@ -1928,7 +1928,7 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
             value = computedStyle.propertyValue(CSSPropertyTextDecorationLine);
 
         CSSValueListBuilder valueList;
-        if (auto* list = dynamicDowncast<CSSValueList>(value.get()))
+        if (RefPtr list = dynamicDowncast<CSSValueList>(value.get()))
             valueList = list->copyValues();
 
         bool hasUnderline = contains(valueList, CSSValueUnderline);
@@ -2061,7 +2061,7 @@ static void diffTextDecorations(MutableStyleProperties& style, CSSPropertyID pro
     if (!textDecoration || !refTextDecorationList)
         return;
     auto newTextDecoration = textDecoration->copyValues();
-    for (auto& value : *refTextDecorationList)
+    for (Ref value : *refTextDecorationList)
         removeAll(newTextDecoration, value);
     setTextDecorationProperty(style, CSSValueList::createSpaceSeparated(WTFMove(newTextDecoration)), propertyID);
 }

@@ -30,7 +30,6 @@
 #include "AccessibilityTableRow.h"
 
 #include "AXObjectCache.h"
-#include "AccessibilityTable.h"
 #include "AccessibilityTableCell.h"
 #include "HTMLNames.h"
 #include "RenderObject.h"
@@ -68,7 +67,7 @@ AccessibilityRole AccessibilityTableRow::determineAccessibilityRole()
     if (!isTableRow())
         return AccessibilityRenderObject::determineAccessibilityRole();
 
-    if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Unknown)
+    if (m_ariaRole != AccessibilityRole::Unknown)
         return m_ariaRole;
 
     return AccessibilityRole::Row;
@@ -77,7 +76,7 @@ AccessibilityRole AccessibilityTableRow::determineAccessibilityRole()
 bool AccessibilityTableRow::isTableRow() const
 {
     RefPtr table = parentTable();
-    return table && table->isExposable();
+    return table && table->isExposableTable();
 }
 
 AccessibilityObject* AccessibilityTableRow::observableObject() const
@@ -100,20 +99,20 @@ bool AccessibilityTableRow::computeIsIgnored() const
     return isRenderHidden() || ignoredFromPresentationalRole();
 }
 
-AccessibilityTable* AccessibilityTableRow::parentTable() const
+AccessibilityObject* AccessibilityTableRow::parentTable() const
 {
     // The parent table might not be the direct ancestor of the row unfortunately. ARIA states that role="grid" should
     // only have "row" elements, but if not, we still should handle it gracefully by finding the right table.
     for (RefPtr parent = parentObject(); parent; parent = parent->parentObject()) {
-        if (auto* parentTable = dynamicDowncast<AccessibilityTable>(*parent)) {
-            bool isNonGridRowOrValidAriaTable = !isARIAGridRow() || parentTable->isAriaTable() || elementName() == ElementName::HTML_tr;
-            if (parentTable->isExposable() && isNonGridRowOrValidAriaTable)
-                return parentTable;
+        if (parent->isTable()) {
+            bool isNonGridRowOrValidAriaTable = !isARIAGridRow() || parent->isAriaTable() || elementName() == ElementName::HTML_tr;
+            if (parent->isExposableTable() && isNonGridRowOrValidAriaTable)
+                return parent.get();
 
             // If this is a non-anonymous table object, but not an accessibility table, we should stop because we don't want to
             // choose another ancestor table as this row's table.
             // Don't exit for ARIA grids, since they could have <table>'s between rows and the owning grid (see aria-grid-with-strange-hierarchy.html).
-            if (!isARIAGridRow() && parentTable->node())
+            if (!isARIAGridRow() && parent->node())
                 break;
         }
     }
@@ -191,7 +190,7 @@ AccessibilityObject::AccessibilityChildrenVector AccessibilityTableRow::disclose
     // The contiguous disclosed rows will be the rows in the table that
     // have an aria-level of plus 1 from this row.
     Ref parent = *parentObjectUnignored();
-    if (RefPtr axTable = dynamicDowncast<AccessibilityTable>(parent); !axTable || !axTable->isExposable())
+    if (!parent->isExposableTable())
         return disclosedRows;
 
     // Search for rows that match the correct level.
@@ -220,8 +219,8 @@ AccessibilityObject* AccessibilityTableRow::disclosedByRow() const
 
     // The row that discloses this one is the row in the table
     // that is aria-level subtract 1 from this row.
-    RefPtr parent = dynamicDowncast<AccessibilityTable>(parentObjectUnignored());
-    if (!parent || !parent->isExposable())
+    RefPtr parent = dynamicDowncast<AccessibilityNodeObject>(parentObjectUnignored());
+    if (!parent->isExposableTable())
         return nullptr;
 
     // If the level is 1 or less, than nothing discloses this row.

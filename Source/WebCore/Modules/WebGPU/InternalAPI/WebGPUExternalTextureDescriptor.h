@@ -29,6 +29,7 @@
 #include <WebCore/VideoFrame.h>
 #include <WebCore/WebGPUObjectDescriptorBase.h>
 #include <WebCore/WebGPUPredefinedColorSpace.h>
+#include <wtf/Platform.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(VIDEO) && PLATFORM(COCOA)

@@ -24,6 +24,7 @@
 
 #include <WebCore/RenderBoxModelObject.h>
 #include <WebCore/RenderLineBoxList.h>
+#include <wtf/Platform.h>
 
 namespace WebCore {
 

@@ -211,6 +211,8 @@ static String getFamilyNameStringFromFamily(const String& family)
         return "cursive"_s;
     if (family == familyNamesData->at(FamilyNamesIndex::FantasyFamily))
         return "fantasy"_s;
+    if (family == familyNamesData->at(FamilyNamesIndex::MathFamily))
+        return "math"_s;
 
 #if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
     if (family == familyNamesData->at(FamilyNamesIndex::SystemUiFamily) || family == "-webkit-system-font"_s)

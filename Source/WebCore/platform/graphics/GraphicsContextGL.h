@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(WEBGL)
 
 #include <WebCore/DestinationColorSpace.h>

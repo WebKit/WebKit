@@ -23,6 +23,7 @@
 
 #include <WebCore/RenderBlockFlow.h>
 #include <WebCore/RenderFlexibleBox.h>
+#include <wtf/Platform.h>
 
 namespace WebCore {
 

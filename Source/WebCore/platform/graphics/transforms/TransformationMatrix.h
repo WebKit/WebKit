@@ -33,6 +33,7 @@
 #include <array>
 #include <string.h> //for memcpy
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 
 #if USE(CA)

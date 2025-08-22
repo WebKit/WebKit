@@ -2009,6 +2009,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/ElementTargetingTypes.h
     page/EmptyAttachmentElementClient.h
     page/EventHandler.h
+    page/EventTimingInteractionID.h
     page/FocusController.h
     page/FocusDirection.h
     page/FocusEventData.h
@@ -2061,8 +2062,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/PageOverlayController.h
     page/PagePasteboardContext.h
     page/PartitionedSecurityOrigin.h
-    page/PerformanceEntry.h
-    page/PerformanceEventTiming.h
+    page/PerformanceEventTimingCandidate.h
     page/PerformanceLogging.h
     page/PerformanceLoggingClient.h
     page/PointerCaptureController.h

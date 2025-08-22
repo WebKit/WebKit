@@ -146,19 +146,10 @@ private:
 
 class ContentExtensionRule {
 public:
-#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
-    WEBCORE_EXPORT ContentExtensionRule(Trigger&&, Action&&, uint32_t identifier);
-
-    uint32_t identifier() const { return m_identifier; }
-
-    ContentExtensionRule isolatedCopy() const & { return { m_trigger.isolatedCopy(), m_action.isolatedCopy(), m_identifier }; }
-    ContentExtensionRule isolatedCopy() && { return { WTFMove(m_trigger).isolatedCopy(), WTFMove(m_action).isolatedCopy(), m_identifier }; }
-#else
     WEBCORE_EXPORT ContentExtensionRule(Trigger&&, Action&&);
 
     ContentExtensionRule isolatedCopy() const & { return { m_trigger.isolatedCopy(), m_action.isolatedCopy() }; }
     ContentExtensionRule isolatedCopy() && { return { WTFMove(m_trigger).isolatedCopy(), WTFMove(m_action).isolatedCopy() }; }
-#endif
 
     const Trigger& trigger() const { return m_trigger; }
     const Action& action() const { return m_action; }
@@ -168,10 +159,6 @@ public:
 private:
     Trigger m_trigger;
     Action m_action;
-
-#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
-    uint32_t m_identifier;
-#endif
 };
 
 } // namespace WebCore::ContentExtensions

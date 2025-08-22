@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <JavaScriptCore/JSImmutableButterfly.h>
+#include <JavaScriptCore/JSCellButterfly.h>
 #include <JavaScriptCore/JSPropertyNameEnumerator.h>
 #include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/StructureChain.h>
@@ -122,7 +122,7 @@ inline void StructureRareData::setCachedPropertyNameEnumerator(VM& vm, Structure
     vm.writeBarrier(this, enumerator);
 }
 
-inline JSImmutableButterfly* StructureRareData::cachedPropertyNames(CachedPropertyNamesKind kind) const
+inline JSCellButterfly* StructureRareData::cachedPropertyNames(CachedPropertyNamesKind kind) const
 {
     ASSERT(!isCompilationThread());
     auto* butterfly = m_cachedPropertyNames[static_cast<unsigned>(kind)].unvalidatedGet();
@@ -131,13 +131,13 @@ inline JSImmutableButterfly* StructureRareData::cachedPropertyNames(CachedProper
     return butterfly;
 }
 
-inline JSImmutableButterfly* StructureRareData::cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind kind) const
+inline JSCellButterfly* StructureRareData::cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind kind) const
 {
     ASSERT(!isCompilationThread());
     return m_cachedPropertyNames[static_cast<unsigned>(kind)].unvalidatedGet();
 }
 
-inline JSImmutableButterfly* StructureRareData::cachedPropertyNamesConcurrently(CachedPropertyNamesKind kind) const
+inline JSCellButterfly* StructureRareData::cachedPropertyNamesConcurrently(CachedPropertyNamesKind kind) const
 {
     auto* butterfly = m_cachedPropertyNames[static_cast<unsigned>(kind)].unvalidatedGet();
     if (butterfly == cachedPropertyNamesSentinel())
@@ -145,7 +145,7 @@ inline JSImmutableButterfly* StructureRareData::cachedPropertyNamesConcurrently(
     return butterfly;
 }
 
-inline void StructureRareData::setCachedPropertyNames(VM& vm, CachedPropertyNamesKind kind, JSImmutableButterfly* butterfly)
+inline void StructureRareData::setCachedPropertyNames(VM& vm, CachedPropertyNamesKind kind, JSCellButterfly* butterfly)
 {
     if (butterfly == cachedPropertyNamesSentinel()) {
         m_cachedPropertyNames[static_cast<unsigned>(kind)].setWithoutWriteBarrier(butterfly);

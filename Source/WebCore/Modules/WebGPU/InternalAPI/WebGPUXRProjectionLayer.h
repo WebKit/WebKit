@@ -30,6 +30,7 @@
 #include <WebCore/WebGPUXREye.h>
 #include <WebCore/WebGPUXRSubImage.h>
 
+#include <wtf/Platform.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>

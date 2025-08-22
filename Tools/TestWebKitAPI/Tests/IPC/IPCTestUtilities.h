@@ -29,7 +29,9 @@
 #include "Connection.h"
 #include "Utilities.h"
 #include <optional>
+#include <wtf/Deque.h>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace TestWebKitAPI {
 
@@ -69,8 +71,106 @@ struct MockTestMessageWithAsyncReply1 {
     using Promise = WTF::NativePromise<uint64_t, IPC::Error>;
 };
 
-class MockConnectionClient final : public IPC::Connection::Client, public RefCounted<MockConnectionClient> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MockConnectionClient);
+class WaitForMessageMixin {
+public:
+    ~WaitForMessageMixin()
+    {
+        ASSERT(m_messages.isEmpty()); // Received unexpected messages.
+        ASSERT(m_invalidMessages.isEmpty()); // Received unexpected invalid message.
+    }
+
+    Vector<MessageInfo> takeMessages()
+    {
+        Locker locker { m_lock };
+        Vector<MessageInfo> result;
+        result.appendRange(m_messages.begin(), m_messages.end());
+        m_messages.clear();
+        return result;
+    }
+
+    Vector<IPC::MessageName> takeInvalidMessages()
+    {
+        Locker locker { m_lock };
+        Vector<IPC::MessageName> result;
+        result.appendRange(m_invalidMessages.begin(), m_invalidMessages.end());
+        m_invalidMessages.clear();
+        return result;
+    }
+
+    MessageInfo waitForMessage(Seconds timeout)
+    {
+        Locker locker { m_lock };
+        if (m_messages.isEmpty()) {
+            m_continueWaitForMessage = false;
+            DropLockForScope unlocker { locker };
+            Util::runFor(&m_continueWaitForMessage, timeout);
+        }
+        ASSERT(m_messages.size() >= 1);
+        return m_messages.takeFirst();
+    }
+
+    bool waitForDidClose(Seconds timeout)
+    {
+        Locker locker { m_lock };
+        ASSERT(!m_didClose); // Caller checks this.
+        {
+            DropLockForScope unlocker { locker }; // FIXME: makes no sense.
+            Util::runFor(&m_didClose, timeout);
+        }
+        return m_didClose;
+    }
+
+    bool gotDidClose() const
+    {
+        Locker locker { m_lock };
+        return m_didClose;
+    }
+
+    IPC::MessageName waitForInvalidMessage(Seconds timeout)
+    {
+        Locker locker { m_lock };
+        if (m_invalidMessages.isEmpty()) {
+            m_continueWaitForMessage = false;
+            DropLockForScope unlocker { locker }; // FIXME: makes no sense.
+            Util::runFor(&m_continueWaitForMessage, timeout);
+        }
+        ASSERT(m_invalidMessages.size() >= 1);
+        return m_invalidMessages.takeFirst();
+    }
+
+    void addMessage(IPC::Decoder& decoder)
+    {
+        Locker locker { m_lock };
+        ASSERT(!m_didClose);
+        m_messages.append({ decoder.messageName(), decoder.destinationID() });
+        m_continueWaitForMessage = true;
+    }
+
+    void addInvalidMessage(IPC::MessageName messageName, const Vector<uint32_t>&)
+    {
+        Locker locker { m_lock };
+        ASSERT(!m_didClose);
+        m_invalidMessages.append(messageName);
+        m_continueWaitForMessage = true;
+    }
+
+    void markDidClose()
+    {
+        Locker locker { m_lock };
+        ASSERT(!m_didClose);
+        m_didClose = true;
+    }
+
+protected:
+    mutable Lock m_lock;
+    Deque<MessageInfo> m_messages WTF_GUARDED_BY_LOCK(m_lock);
+    Deque<IPC::MessageName> m_invalidMessages WTF_GUARDED_BY_LOCK(m_lock);
+    bool m_continueWaitForMessage WTF_GUARDED_BY_LOCK(m_lock) { false };
+    bool m_didClose WTF_GUARDED_BY_LOCK(m_lock) { false };
+};
+
+class MockConnectionClient final : public IPC::Connection::Client, public RefCounted<MockConnectionClient>, public WaitForMessageMixin {
+    WTF_MAKE_TZONE_ALLOCATED(MockConnectionClient);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(MockConnectionClient);
 public:
     static Ref<MockConnectionClient> create()
@@ -83,84 +183,57 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    Vector<MessageInfo> takeMessages()
-    {
-        Vector<MessageInfo> result;
-        result.appendRange(m_messages.begin(), m_messages.end());
-        m_messages.clear();
-        return result;
-    }
-
-    MessageInfo waitForMessage(Seconds timeout)
-    {
-        if (m_messages.isEmpty()) {
-            m_continueWaitForMessage = false;
-            Util::runFor(&m_continueWaitForMessage, timeout);
-        }
-        ASSERT(m_messages.size() >= 1);
-        return m_messages.takeFirst();
-    }
-
-    bool gotDidClose() const
-    {
-        return m_didClose;
-    }
-
-    bool waitForDidClose(Seconds timeout)
-    {
-        ASSERT(!m_didClose); // Caller checks this.
-        Util::runFor(&m_didClose, timeout);
-        return m_didClose;
-    }
-
     // Handler returns false if the message should be just recorded.
-    void setAsyncMessageHandler(Function<bool(IPC::Decoder&)>&& handler)
+    void setAsyncMessageHandler(Function<bool(IPC::Connection&, IPC::Decoder&)>&& handler)
     {
         m_asyncMessageHandler = WTFMove(handler);
     }
 
-    // IPC::Connection::Client overrides.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder& decoder) override
-    {
-        if (m_asyncMessageHandler && m_asyncMessageHandler(decoder))
-            return;
-        m_messages.append({ decoder.messageName(), decoder.destinationID() });
-        m_continueWaitForMessage = true;
-    }
-
     // Handler contract as IPC::MessageReceiver::didReceiveSyncMessage: false on invalid message, may adopt encoder,
     // decoder used only during the call, if encoder not adopted it will be submitted.
-    void setSyncMessageHandler(Function<bool(IPC::Decoder&, UniqueRef<IPC::Encoder>&)>&& handler)
+    void setSyncMessageHandler(Function<bool(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&)>&& handler)
     {
         m_syncMessageHandler = WTFMove(handler);
     }
 
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) override
+    void setInvalidMessageHandler(Function<bool(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>&)>&& handler)
     {
-        if (m_syncMessageHandler)
-            return m_syncMessageHandler(decoder, encoder);
-        return false;
-    }
-
-    void didClose(IPC::Connection&) override
-    {
-        m_didClose = true;
-    }
-
-    void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName message, const Vector<uint32_t>&) override
-    {
-        m_didReceiveInvalidMessage = message;
+        m_invalidMessageHandler = WTFMove(handler);
     }
 
 private:
     MockConnectionClient() = default;
 
-    bool m_didClose { false };
-    std::optional<IPC::MessageName> m_didReceiveInvalidMessage;
-    Deque<MessageInfo> m_messages;
-    bool m_continueWaitForMessage { false };
-    Function<bool(IPC::Decoder&)> m_asyncMessageHandler;
-    Function<bool(IPC::Decoder&, UniqueRef<IPC::Encoder>&)> m_syncMessageHandler;
+    // IPC::Connection::Client overrides.
+    void didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder) override
+    {
+        if (m_asyncMessageHandler && m_asyncMessageHandler(connection, decoder))
+            return;
+        addMessage(decoder);
+    }
+    bool didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) override
+    {
+        if (m_syncMessageHandler)
+            return m_syncMessageHandler(connection, decoder, encoder);
+        addMessage(decoder);
+        return false;
+    }
+
+    void didClose(IPC::Connection&) override
+    {
+        markDidClose();
+    }
+
+    void didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName, const Vector<uint32_t>& failIndices) override
+    {
+        if (m_invalidMessageHandler && m_invalidMessageHandler(connection, messageName, failIndices))
+            return;
+        addInvalidMessage(messageName, failIndices);
+    }
+
+    Function<bool(IPC::Connection&, IPC::Decoder&)> m_asyncMessageHandler;
+    Function<bool(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&)> m_syncMessageHandler;
+    Function<bool(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>&)> m_invalidMessageHandler;
 };
 
 enum class ConnectionTestDirection {
@@ -262,5 +335,13 @@ public:
         teardownBase();
     }
 };
+
+
+enum class InvalidMessageTestType : uint8_t {
+    DecodeError,
+    ValidationError
+};
+
+void PrintTo(InvalidMessageTestType, ::std::ostream*);
 
 }

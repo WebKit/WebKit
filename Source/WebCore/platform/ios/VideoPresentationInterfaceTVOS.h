@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(APPLETV)
 
 #include <WebCore/VideoPresentationInterfaceIOS.h>

@@ -1894,7 +1894,7 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
             } else
                 callee = params[patchArgsIndex + 1].gpr();
 
-            jit.storeWasmCalleeCallee(callee, sizeof(CallerFrameAndPC) - prologueStackPointerDelta());
+            jit.storeWasmCalleeToCalleeCallFrame(callee, sizeof(CallerFrameAndPC) - prologueStackPointerDelta());
 
             if (is32Bit() && params[patchArgsIndex].isStack()) {
                 callTarget = MacroAssembler::addressTempRegister;
@@ -1927,7 +1927,7 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
         if (handle)
             handle->generate(jit, params, this);
 
-        jit.storeWasmCalleeCallee(params[patchArgsIndex + 1].gpr());
+        jit.storeWasmCalleeToCalleeCallFrame(params[patchArgsIndex + 1].gpr());
         jit.call(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
     });
     fillCallResults(patchpoint, signature, results);
@@ -3722,13 +3722,13 @@ void OMGIRGenerator::emitRefTestOrCast(CastKind castKind, ExpressionType referen
         case Wasm::TypeKind::Funcref:
         case Wasm::TypeKind::Externref:
         case Wasm::TypeKind::Anyref:
-        case Wasm::TypeKind::Exn:
+        case Wasm::TypeKind::Exnref:
             // Casts to these types cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
             break;
-        case Wasm::TypeKind::Nullref:
-        case Wasm::TypeKind::Nullfuncref:
-        case Wasm::TypeKind::Nullexternref:
-        case Wasm::TypeKind::Nullexn:
+        case Wasm::TypeKind::Noneref:
+        case Wasm::TypeKind::Nofuncref:
+        case Wasm::TypeKind::Noexternref:
+        case Wasm::TypeKind::Noexnref:
             // Casts to any bottom type should always fail.
             if (castKind == CastKind::Cast) {
                 B3::PatchpointValue* throwException = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
@@ -4254,7 +4254,7 @@ auto OMGIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
             auto& data = m_parser->controlStack()[controlIndex].controlData;
             auto& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
             connectControlAtEntrypoint(LoadI64, indexInBuffer, pointer, data, expressionStack, block);
-            if (Options::useWasmIPInt() && ControlType::isTry(data))
+            if (ControlType::isTry(data))
                 ++indexInBuffer;
         }
         connectControlAtEntrypoint(LoadI64, indexInBuffer, pointer, block, enclosingStack, block);
@@ -4588,7 +4588,7 @@ auto OMGIRGenerator::emitCatchTableImpl(ControlData& data, const ControlData::Tr
             m_currentBlock->appendNew<Const32Value>(m_proc, Origin(), JSValue::CellTag));
         set(var, exceptionWithTag);
         push(exceptionWithTag);
-        newStack.constructAndAppend(Type { TypeKind::RefNull, static_cast<TypeIndex>(TypeKind::Exn) }, var);
+        newStack.constructAndAppend(Type { TypeKind::RefNull, static_cast<TypeIndex>(TypeKind::Exnref) }, var);
     }
 
     auto& targetControl = m_parser->resolveControlRef(target.target).controlData;
@@ -4644,7 +4644,7 @@ auto OMGIRGenerator::addThrow(unsigned exceptionIndex, ArgumentList& args, Stack
     return { };
 }
 
-auto WARN_UNUSED_RETURN OMGIRGenerator::addThrowRef(ExpressionType exn, Stack&) -> PartialResult
+auto WARN_UNUSED_RETURN OMGIRGenerator::addThrowRef(ExpressionType exnref, Stack&) -> PartialResult
 {
     TRACE_CF("THROW_REF");
 
@@ -4652,7 +4652,7 @@ auto WARN_UNUSED_RETURN OMGIRGenerator::addThrowRef(ExpressionType exn, Stack&) 
     patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
     patch->effects.terminal = true;
     patch->append(instanceValue(), ValueRep::reg(GPRInfo::argumentGPR0));
-    Value* exception = get(exn);
+    Value* exception = get(exnref);
     Value* exceptionLo = m_currentBlock->appendNew<Value>(m_proc, Trunc, origin(), exception);
     Value* exceptionHi = m_currentBlock->appendNew<Value>(m_proc, TruncHigh, origin(), exception);
     patch->append(exceptionLo, ValueRep::reg(GPRInfo::argumentGPR2));
@@ -4661,7 +4661,7 @@ auto WARN_UNUSED_RETURN OMGIRGenerator::addThrowRef(ExpressionType exn, Stack&) 
         m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), exception, constant(Wasm::toB3Type(exnrefType()), JSValue::encode(jsNull()))));
 
     check->setGenerator([=, this, origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        this->emitExceptionCheck(jit, origin, ExceptionType::NullExnReference);
+        this->emitExceptionCheck(jit, origin, ExceptionType::NullExnrefReference);
     });
     PatchpointExceptionHandle handle = preparePatchpointForExceptions(m_currentBlock, patch);
     patch->setGenerator([this, handle, origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
@@ -5778,12 +5778,19 @@ auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndexSpace, const TypeDe
             if (handle)
                 handle->generate(jit, params, this);
 
-            auto calleeMove = jit.storeWasmCalleeCalleePatchable(isTailCall ? sizeof(CallerFrameAndPC) - prologueStackPointerDelta() : 0);
+            ASSERT(!m_info.isImportedFunctionFromFunctionIndexSpace(functionIndexSpace));
+            RefPtr<IPIntCallee> callee;
+            {
+                Locker locker { m_calleeGroup.m_lock };
+                callee = m_calleeGroup.ipintCalleeFromFunctionIndexSpace(locker, functionIndexSpace);
+            }
+            jit.storeWasmCalleeToCalleeCallFrame(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(callee.get())), isTailCall ? sizeof(CallerFrameAndPC) - prologueStackPointerDelta() : 0);
             auto call = isTailCall ? jit.threadSafePatchableNearTailCall() : jit.threadSafePatchableNearCall();
 
-            jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndexSpace, calleeMove](LinkBuffer& linkBuffer) {
-                unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndexSpace, linkBuffer.locationOf<WasmEntryPtrTag>(calleeMove) });
+            jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndexSpace](LinkBuffer& linkBuffer) {
+                unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndexSpace });
             });
+            jit.addPtr(CCallHelpers::TrustedImm32(-params.code().frameSize()), GPRInfo::callFrameRegister, MacroAssembler::stackPointerRegister);
         });
     };
 

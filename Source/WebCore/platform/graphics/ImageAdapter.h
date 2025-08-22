@@ -29,6 +29,7 @@
 OBJC_CLASS NSImage;
 #endif
 
+#include <wtf/Platform.h>
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 OBJC_CLASS NSAdaptiveImageGlyph;
 #endif

@@ -30,6 +30,7 @@
 #include <WebCore/Node.h>
 #include <WebCore/PointerEventTypeNames.h>
 #include <WebCore/PointerID.h>
+#include <wtf/Platform.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)

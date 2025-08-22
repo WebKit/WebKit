@@ -57,7 +57,7 @@ JSValue Global::get(JSGlobalObject* globalObject) const
     case TypeKind::V128:
         throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Cannot get value of v128 global"_s));
         return { };
-    case TypeKind::Exn:
+    case TypeKind::Exnref:
     case TypeKind::Externref:
     case TypeKind::Funcref:
     case TypeKind::Ref:

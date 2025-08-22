@@ -38,6 +38,7 @@ messages -> IPCStreamTester Stream {
     CheckAutoreleasePool() -> (int32_t previousUseCount) Synchronous
     AsyncPing(uint32_t value) -> (uint32_t nextValue)
     EmptyMessage()
+    CheckInvalidMessages() -> (uint32_t invalidMessages) Synchronous
 }
 
 #endif

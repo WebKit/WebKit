@@ -30,9 +30,8 @@
 #include <WebCore/ContextDestructionObserverInlines.h>
 #include <WebCore/DOMHighResTimeStamp.h>
 #include <WebCore/DOMWindow.h>
-#include <WebCore/EventNames.h>
 #include <WebCore/EventTargetInterfaces.h>
-#include <WebCore/PerformanceEventTiming.h>
+#include <WebCore/PerformanceEventTimingCandidate.h>
 #include <WebCore/PushSubscriptionOwner.h>
 #include <WebCore/Supplementable.h>
 #include <WebCore/WindowOrWorkerGlobalScope.h>
@@ -40,6 +39,7 @@
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/Platform.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -281,9 +281,10 @@ public:
     void finishedLoading();
 
     // EventTiming API
-    PerformanceEventTiming::Candidate initializeEventTimingEntry(const Event&, EventTypeInfo);
-    void finalizeEventTimingEntry(const PerformanceEventTiming::Candidate&, const Event&);
+    PerformanceEventTimingCandidate initializeEventTimingEntry(const Event&, EventType);
+    void finalizeEventTimingEntry(PerformanceEventTimingCandidate&, const Event&);
     void dispatchPendingEventTimingEntries();
+    uint64_t interactionCount() { return m_interactionCount; }
 
     // HTML 5 key/value storage
     ExceptionOr<Storage*> sessionStorage();
@@ -396,6 +397,12 @@ private:
     void failedToRegisterDeviceMotionEventListener();
 #endif
 
+    EventTimingInteractionID computeInteractionID(const Event&, EventType);
+    EventTimingInteractionID currentInteractionID();
+    EventTimingInteractionID& ensureUserInteractionValue();
+    EventTimingInteractionID generateInteractionID();
+    EventTimingInteractionID generateInteractionIDWithoutIncreasingInteractionCount();
+
     bool isSameSecurityOriginAsMainFrame() const;
 
 #if ENABLE(GAMEPAD)
@@ -438,7 +445,18 @@ private:
     mutable RefPtr<CloseWatcherManager> m_closeWatcherManager;
 
     // Equivalent to the list of PerformanceEventTiming objects mentioned in https://www.w3.org/TR/event-timing/#sec-modifications-HTML :
-    Vector<PerformanceEventTiming::Candidate, 6> m_performanceEventTimingCandidates;
+    Vector<PerformanceEventTimingCandidate, 6> m_performanceEventTimingCandidates;
+
+    // FIXME: support multiple pointers by replacing std::optional
+    // with map objects using PointerID as key:
+    Markable<EventTimingInteractionID> m_pointerMap;
+    std::optional<PerformanceEventTimingCandidate> m_pendingPointerDown;
+
+    bool m_contextMenuTriggered { false };
+
+    HashMap<int64_t, PerformanceEventTimingCandidate, IntHash<int64_t>, WTF::SignedWithZeroKeyHashTraits<int64_t>> m_pendingKeyDowns;
+    std::optional<EventTimingInteractionID> m_userInteractionValue;
+    uint64_t m_interactionCount { 0 };
 
     String m_status;
 

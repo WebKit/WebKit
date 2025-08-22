@@ -21,6 +21,8 @@
 
 #pragma once
 
+#import <wtf/Platform.h>
+
 #if PLATFORM(MAC)
 
 #import "RenderThemeCocoa.h"
@@ -133,7 +135,7 @@ private:
     bool hasSwitchHapticFeedback(SwitchTrigger trigger) const final { return trigger == SwitchTrigger::PointerTracking; }
 
     void adjustListButtonStyle(RenderStyle&, const Element*) const final;
-    
+
 #if ENABLE(SERVICE_CONTROLS)
     void adjustImageControlsButtonStyle(RenderStyle&, const Element*) const final;
 #endif

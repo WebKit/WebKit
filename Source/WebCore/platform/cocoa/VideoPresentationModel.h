@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
 #include <WebCore/AudioSession.h>

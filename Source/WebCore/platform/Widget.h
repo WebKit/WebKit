@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if PLATFORM(IOS_FAMILY)
 #ifndef NSView
 #define NSView WAKView

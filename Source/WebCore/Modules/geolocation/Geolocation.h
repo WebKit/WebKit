@@ -36,7 +36,7 @@
 #include <WebCore/PositionCallback.h>
 #include <WebCore/PositionErrorCallback.h>
 #include <WebCore/PositionOptions.h>
-#include <WebCore/ScriptWrappable.h>
+#include <WebCore/ScriptWrappableInlines.h>
 #include <WebCore/Timer.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/HashMap.h>

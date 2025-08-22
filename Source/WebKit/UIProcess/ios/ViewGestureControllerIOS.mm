@@ -494,6 +494,11 @@ bool ViewGestureController::completeSimulatedSwipeInDirectionForTesting(SwipeDir
     return true;
 }
 
+WebBackForwardList* ViewGestureController::backForwardListForNavigation() const
+{
+    return &m_webPageProxyForBackForwardListForCurrentSwipe->backForwardList();
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

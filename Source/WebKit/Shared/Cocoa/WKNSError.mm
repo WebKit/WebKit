@@ -32,6 +32,9 @@
 
 - (NSObject *)_web_createTarget
 {
+    RefPtr underlyingError = downcast<API::Error>(&self._apiObject)->underlyingError();
+    if (underlyingError)
+        return [(__bridge NSError *)downcast<API::Error>(&self._apiObject)->platformError().cfError((__bridge CFErrorRef)wrapper(*underlyingError)) copy];
     return [(__bridge NSError *)downcast<API::Error>(&self._apiObject)->platformError().cfError() copy];
 }
 

@@ -27,6 +27,7 @@
 
 #include <WebCore/IntRect.h>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)

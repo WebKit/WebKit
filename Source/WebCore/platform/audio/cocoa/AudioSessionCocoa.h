@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if USE(AUDIO_SESSION) && PLATFORM(COCOA)
 
 #include <WebCore/AudioSession.h>

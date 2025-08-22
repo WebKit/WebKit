@@ -28,6 +28,7 @@
 
 #include <WebCore/Icon.h>
 #include <WebCore/RenderTheme.h>
+#include <wtf/Platform.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSDateComponentsFormatter;

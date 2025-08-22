@@ -31,6 +31,7 @@
 #include <WebCore/RenderObjectEnums.h>
 #include <WebCore/RenderStyleConstants.h>
 #include <wtf/CheckedPtr.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WTF {

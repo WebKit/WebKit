@@ -445,7 +445,7 @@ public:
     FunctionCodeIndex functionIndex() const { return m_functionIndex; }
     void setEntrypoint(CodePtr<WasmEntryPtrTag>);
     const uint8_t* bytecode() const { return m_bytecode; }
-    const uint8_t* metadata() const { return m_metadata; }
+    const uint8_t* metadata() const { return m_metadata.span().data(); }
 
     unsigned numLocals() const { return m_numLocals; }
     unsigned localSizeToAlloc() const { return m_localSizeToAlloc; }
@@ -473,12 +473,9 @@ private:
 
     const uint8_t* m_bytecode;
     const uint8_t* m_bytecodeEnd;
-    Vector<uint8_t> m_metadataVector;
-    const uint8_t* m_metadata;
+    Vector<uint8_t> m_metadata;
     Vector<uint8_t> m_argumINTBytecode;
-    const uint8_t* m_argumINTBytecodePointer;
     Vector<uint8_t> m_uINTBytecode;
-    const uint8_t* m_uINTBytecodePointer;
 
     unsigned m_highestReturnStackOffset;
 

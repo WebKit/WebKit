@@ -30,6 +30,7 @@
 #include <WebCore/GraphicsTypes.h>
 #include <WebCore/HTMLElement.h>
 #include <WebCore/MediaQuery.h>
+#include <wtf/Platform.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

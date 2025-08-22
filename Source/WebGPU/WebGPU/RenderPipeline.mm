@@ -259,38 +259,56 @@ static MTLCompareFunction convertToMTLCompare(WGPUCompareFunction comparison)
 static MTLVertexFormat vertexFormat(WGPUVertexFormat vertexFormat)
 {
     switch (vertexFormat) {
+    case WGPUVertexFormat_Uint8:
+        return MTLVertexFormatUChar;
     case WGPUVertexFormat_Uint8x2:
         return MTLVertexFormatUChar2;
     case WGPUVertexFormat_Uint8x4:
         return MTLVertexFormatUChar4;
+    case WGPUVertexFormat_Sint8:
+        return MTLVertexFormatChar;
     case WGPUVertexFormat_Sint8x2:
         return MTLVertexFormatChar2;
     case WGPUVertexFormat_Sint8x4:
         return MTLVertexFormatChar4;
+    case WGPUVertexFormat_Unorm8:
+        return MTLVertexFormatUCharNormalized;
     case WGPUVertexFormat_Unorm8x2:
         return MTLVertexFormatUChar2Normalized;
     case WGPUVertexFormat_Unorm8x4:
         return MTLVertexFormatUChar4Normalized;
+    case WGPUVertexFormat_Snorm8:
+        return MTLVertexFormatCharNormalized;
     case WGPUVertexFormat_Snorm8x2:
         return MTLVertexFormatChar2Normalized;
     case WGPUVertexFormat_Snorm8x4:
         return MTLVertexFormatChar4Normalized;
+    case WGPUVertexFormat_Uint16:
+        return MTLVertexFormatUShort;
     case WGPUVertexFormat_Uint16x2:
         return MTLVertexFormatUShort2;
     case WGPUVertexFormat_Uint16x4:
         return MTLVertexFormatUShort4;
+    case WGPUVertexFormat_Sint16:
+        return MTLVertexFormatShort;
     case WGPUVertexFormat_Sint16x2:
         return MTLVertexFormatShort2;
     case WGPUVertexFormat_Sint16x4:
         return MTLVertexFormatShort4;
+    case WGPUVertexFormat_Unorm16:
+        return MTLVertexFormatUShortNormalized;
     case WGPUVertexFormat_Unorm16x2:
         return MTLVertexFormatUShort2Normalized;
     case WGPUVertexFormat_Unorm16x4:
         return MTLVertexFormatUShort4Normalized;
+    case WGPUVertexFormat_Snorm16:
+        return MTLVertexFormatShortNormalized;
     case WGPUVertexFormat_Snorm16x2:
         return MTLVertexFormatShort2Normalized;
     case WGPUVertexFormat_Snorm16x4:
         return MTLVertexFormatShort4Normalized;
+    case WGPUVertexFormat_Float16:
+        return MTLVertexFormatHalf;
     case WGPUVertexFormat_Float16x2:
         return MTLVertexFormatHalf2;
     case WGPUVertexFormat_Float16x4:
@@ -319,8 +337,10 @@ static MTLVertexFormat vertexFormat(WGPUVertexFormat vertexFormat)
         return MTLVertexFormatInt3;
     case WGPUVertexFormat_Sint32x4:
         return MTLVertexFormatInt4;
-    case WGPUVertexFormat_Unorm10_10_10_2:
+    case WGPUVertexFormat_Unorm1010102:
         return MTLVertexFormatUInt1010102Normalized;
+    case WGPUVertexFormat_Unorm8x4Bgra:
+        return MTLVertexFormatUChar4Normalized_BGRA;
     case WGPUVertexFormat_Force32:
     case WGPUVertexFormat_Undefined:
         ASSERT_NOT_REACHED();
@@ -331,38 +351,56 @@ static MTLVertexFormat vertexFormat(WGPUVertexFormat vertexFormat)
 static size_t vertexFormatSize(WGPUVertexFormat vertexFormat)
 {
     switch (vertexFormat) {
+    case WGPUVertexFormat_Uint8:
+        return 1;
     case WGPUVertexFormat_Uint8x2:
         return 2;
     case WGPUVertexFormat_Uint8x4:
         return 4;
+    case WGPUVertexFormat_Sint8:
+        return 1;
     case WGPUVertexFormat_Sint8x2:
         return 2;
     case WGPUVertexFormat_Sint8x4:
         return 4;
+    case WGPUVertexFormat_Unorm8:
+        return 1;
     case WGPUVertexFormat_Unorm8x2:
         return 2;
     case WGPUVertexFormat_Unorm8x4:
         return 4;
+    case WGPUVertexFormat_Snorm8:
+        return 1;
     case WGPUVertexFormat_Snorm8x2:
         return 2;
     case WGPUVertexFormat_Snorm8x4:
         return 4;
+    case WGPUVertexFormat_Uint16:
+        return 2;
     case WGPUVertexFormat_Uint16x2:
         return 4;
     case WGPUVertexFormat_Uint16x4:
         return 8;
+    case WGPUVertexFormat_Sint16:
+        return 2;
     case WGPUVertexFormat_Sint16x2:
         return 4;
     case WGPUVertexFormat_Sint16x4:
         return 8;
+    case WGPUVertexFormat_Unorm16:
+        return 2;
     case WGPUVertexFormat_Unorm16x2:
         return 4;
     case WGPUVertexFormat_Unorm16x4:
         return 8;
+    case WGPUVertexFormat_Snorm16:
+        return 2;
     case WGPUVertexFormat_Snorm16x2:
         return 4;
     case WGPUVertexFormat_Snorm16x4:
         return 8;
+    case WGPUVertexFormat_Float16:
+        return 2;
     case WGPUVertexFormat_Float16x2:
         return 4;
     case WGPUVertexFormat_Float16x4:
@@ -391,7 +429,9 @@ static size_t vertexFormatSize(WGPUVertexFormat vertexFormat)
         return 12;
     case WGPUVertexFormat_Sint32x4:
         return 16;
-    case WGPUVertexFormat_Unorm10_10_10_2:
+    case WGPUVertexFormat_Unorm1010102:
+        return 4;
+    case WGPUVertexFormat_Unorm8x4Bgra:
         return 4;
     case WGPUVertexFormat_Force32:
     case WGPUVertexFormat_Undefined:
@@ -421,38 +461,56 @@ static MTLVertexStepFunction stepFunction(WGPUVertexStepMode stepMode, auto arra
 static ASCIILiteral name(WGPUVertexFormat format)
 {
     switch (format) {
+    case WGPUVertexFormat_Uint8:
+        return "UChar"_s;
     case WGPUVertexFormat_Uint8x2:
         return "UChar2"_s;
     case WGPUVertexFormat_Uint8x4:
         return "UChar4"_s;
+    case WGPUVertexFormat_Sint8:
+        return "Char"_s;
     case WGPUVertexFormat_Sint8x2:
         return "Char2"_s;
     case WGPUVertexFormat_Sint8x4:
         return "Char4"_s;
+    case WGPUVertexFormat_Unorm8:
+        return "UCharNormalized"_s;
     case WGPUVertexFormat_Unorm8x2:
         return "UChar2Normalized"_s;
     case WGPUVertexFormat_Unorm8x4:
         return "UChar4Normalized"_s;
+    case WGPUVertexFormat_Snorm8:
+        return "CharNormalized"_s;
     case WGPUVertexFormat_Snorm8x2:
         return "Char2Normalized"_s;
     case WGPUVertexFormat_Snorm8x4:
         return "Char4Normalized"_s;
+    case WGPUVertexFormat_Uint16:
+        return "UShort"_s;
     case WGPUVertexFormat_Uint16x2:
         return "UShort2"_s;
     case WGPUVertexFormat_Uint16x4:
         return "UShort4"_s;
+    case WGPUVertexFormat_Sint16:
+        return "Short"_s;
     case WGPUVertexFormat_Sint16x2:
         return "Short2"_s;
     case WGPUVertexFormat_Sint16x4:
         return "Short4"_s;
+    case WGPUVertexFormat_Unorm16:
+        return "UShortNormalized"_s;
     case WGPUVertexFormat_Unorm16x2:
         return "UShort2Normalized"_s;
     case WGPUVertexFormat_Unorm16x4:
         return "UShort4Normalized"_s;
+    case WGPUVertexFormat_Snorm16:
+        return "ShortNormalized"_s;
     case WGPUVertexFormat_Snorm16x2:
         return "Short2Normalized"_s;
     case WGPUVertexFormat_Snorm16x4:
         return "Short4Normalized"_s;
+    case WGPUVertexFormat_Float16:
+        return "Half"_s;
     case WGPUVertexFormat_Float16x2:
         return "Half2"_s;
     case WGPUVertexFormat_Float16x4:
@@ -481,8 +539,10 @@ static ASCIILiteral name(WGPUVertexFormat format)
         return "Int3"_s;
     case WGPUVertexFormat_Sint32x4:
         return "Int4"_s;
-    case WGPUVertexFormat_Unorm10_10_10_2:
+    case WGPUVertexFormat_Unorm1010102:
         return "UInt1010102Normalized"_s;
+    case WGPUVertexFormat_Unorm8x4Bgra:
+        return "Unorm8x4Bgra"_s;
     case WGPUVertexFormat_Force32:
     case WGPUVertexFormat_Undefined:
         ASSERT_NOT_REACHED();
@@ -500,8 +560,10 @@ enum class WGPUVertexFormatType {
 static constexpr WGPUVertexFormatType formatType(WGPUVertexFormat format)
 {
     switch (format) {
+    case WGPUVertexFormat_Uint8:
     case WGPUVertexFormat_Uint8x2:
     case WGPUVertexFormat_Uint8x4:
+    case WGPUVertexFormat_Uint16:
     case WGPUVertexFormat_Uint16x2:
     case WGPUVertexFormat_Uint16x4:
     case WGPUVertexFormat_Uint32:
@@ -510,8 +572,10 @@ static constexpr WGPUVertexFormatType formatType(WGPUVertexFormat format)
     case WGPUVertexFormat_Uint32x4:
         return WGPUVertexFormatType::UnsignedInt;
 
+    case WGPUVertexFormat_Sint8:
     case WGPUVertexFormat_Sint8x2:
     case WGPUVertexFormat_Sint8x4:
+    case WGPUVertexFormat_Sint16:
     case WGPUVertexFormat_Sint16x2:
     case WGPUVertexFormat_Sint16x4:
     case WGPUVertexFormat_Sint32:
@@ -520,21 +584,27 @@ static constexpr WGPUVertexFormatType formatType(WGPUVertexFormat format)
     case WGPUVertexFormat_Sint32x4:
         return WGPUVertexFormatType::SignedInt;
 
+    case WGPUVertexFormat_Unorm8:
     case WGPUVertexFormat_Unorm8x2:
     case WGPUVertexFormat_Unorm8x4:
+    case WGPUVertexFormat_Snorm8:
     case WGPUVertexFormat_Snorm8x2:
     case WGPUVertexFormat_Snorm8x4:
+    case WGPUVertexFormat_Unorm16:
     case WGPUVertexFormat_Unorm16x2:
     case WGPUVertexFormat_Unorm16x4:
+    case WGPUVertexFormat_Snorm16:
     case WGPUVertexFormat_Snorm16x2:
     case WGPUVertexFormat_Snorm16x4:
+    case WGPUVertexFormat_Float16:
     case WGPUVertexFormat_Float16x2:
     case WGPUVertexFormat_Float16x4:
     case WGPUVertexFormat_Float32:
     case WGPUVertexFormat_Float32x2:
     case WGPUVertexFormat_Float32x3:
     case WGPUVertexFormat_Float32x4:
-    case WGPUVertexFormat_Unorm10_10_10_2:
+    case WGPUVertexFormat_Unorm1010102:
+    case WGPUVertexFormat_Unorm8x4Bgra:
         return WGPUVertexFormatType::Float;
 
     case WGPUVertexFormat_Force32:
@@ -606,12 +676,12 @@ static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState, 
                     return nil;
                 }
             } else if (offsetPlusFormatSize.value() > buffer.arrayStride) {
-                *error = @"attribute.offset + formatSize > buffer.arrayStride";
+                *error = [NSString stringWithFormat:@"attribute.offset(%llu) + formatSize(%zu) > buffer.arrayStride(%llu)", attribute.offset, formatSize, buffer.arrayStride];
                 return nil;
             }
 
             if (attribute.offset % std::min<size_t>(4, formatSize)) {
-                *error = @"attribute.offset + formatSize > buffer.arrayStride";
+                *error = [NSString stringWithFormat:@"attribute.offset(%llu) mod std::min<size_t>(4, formatSize)(%lu) is not zero", attribute.offset, std::min<size_t>(4, formatSize)];
                 return nil;
             }
 

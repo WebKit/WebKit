@@ -1,9 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body>
 
 <div tabindex=0 id="grid" role="grid" aria-readonly="true">
     <div role="presentation">
@@ -36,32 +37,33 @@
     </div>
 </div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+var output = "This tests that an ARIA grid with a hierarchy that ignores render elements in between will still expose the correct elements.\n\n";
 
-    description("This tests that an ARIA grid with a hierarchy that ignores render elements in between will still expose the correct elements.");
+if (window.accessibilityController) {
+    var grid = accessibilityController.accessibleElementById("grid");
+    output += expect("grid.childrenCount", "8");
 
-    if (window.accessibilityController) {
-          // this text field should be required.
-          document.getElementById("grid").focus();
-          var grid = accessibilityController.focusedElement;
+    var rowOne = grid.childAtIndex(0);
+    output += expect("rowOne.role", "'AXRole: AXRow'");
+    var rowTwo = grid.childAtIndex(1);
+    output += expect("rowTwo.role", "'AXRole: AXRow'");
+    output += expect("grid.childAtIndex(3).role", "'AXRole: AXColumn'");
 
-          shouldBe("grid.childrenCount", "6");
-          shouldBe("grid.childAtIndex(0).role", "'AXRole: AXRow'");
-          shouldBe("grid.childAtIndex(1).role", "'AXRole: AXColumn'");
+    output += expect("rowOne.childrenCount", "5");
+    output += expect("rowOne.childAtIndex(0).role", "'AXRole: AXCell'");
+    output += expect("rowOne.childAtIndex(1).role", "'AXRole: AXCell'");
+    output += expect("rowOne.childAtIndex(1).childAtIndex(0).role", "'AXRole: AXStaticText'");
+    output += expect("rowOne.childAtIndex(1).childAtIndex(0).stringValue", "'AXValue: Name'");
 
-          shouldBe("grid.childAtIndex(0).childrenCount", "4");
-          shouldBe("grid.childAtIndex(0).childAtIndex(0).role", "'AXRole: AXCell'");
+    output += expect("rowTwo.childrenCount", "4");
+    output += expect("rowTwo.childAtIndex(0).role", "'AXRole: AXCell'");
+    output += expect("rowTwo.childAtIndex(0).childAtIndex(0).role", "'AXRole: AXStaticText'");
+    output += expect("rowTwo.childAtIndex(0).childAtIndex(0).stringValue", "'AXValue: 1'");
 
-          shouldBe("grid.childAtIndex(0).childAtIndex(0).role", "'AXRole: AXCell'");
-          shouldBe("grid.childAtIndex(0).childAtIndex(0).childAtIndex(0).role", "'AXRole: AXStaticText'");
-          shouldBe("grid.childAtIndex(0).childAtIndex(0).childAtIndex(0).stringValue", "'AXValue: 1'");
-
-    }
+    debug(output);
+}
 </script>
-
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
+

@@ -27,6 +27,7 @@
 
 #include <CoreVideo/CoreVideo.h>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/Platform.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/StdLibExtras.h>
 

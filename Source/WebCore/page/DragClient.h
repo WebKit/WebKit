@@ -30,6 +30,7 @@
 #include <WebCore/DragItem.h>
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntPoint.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

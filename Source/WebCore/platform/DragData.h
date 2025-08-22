@@ -32,6 +32,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/OptionSet.h>
+#include <wtf/Platform.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

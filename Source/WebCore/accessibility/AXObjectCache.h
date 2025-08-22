@@ -36,6 +36,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/Platform.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 
@@ -54,7 +55,6 @@ class AXRemoteFrame;
 class AccessibilityNodeObject;
 class AccessibilityObject;
 class AccessibilityRenderObject;
-class AccessibilityTable;
 class AccessibilityTableCell;
 class Document;
 class HTMLAreaElement;
@@ -347,7 +347,7 @@ public:
         , WeakHashSet<Element, WeakPtrImplWithEventTargetData>
         , WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData>
         , WeakHashSet<AccessibilityObject>
-        , WeakHashSet<AccessibilityTable>
+        , WeakHashSet<AccessibilityNodeObject>
         , WeakHashSet<AccessibilityTableCell>
         , WeakListHashSet<Node, WeakPtrImplWithEventTargetData>
         , WeakListHashSet<Element, WeakPtrImplWithEventTargetData>
@@ -517,7 +517,7 @@ public:
     void deferRecomputeIsIgnoredIfNeeded(Element*);
     void deferRecomputeIsIgnored(Element*);
     void deferRecomputeTableIsExposed(Element*);
-    void deferRecomputeTableCellSlots(AccessibilityTable&);
+    void deferRecomputeTableCellSlots(AccessibilityNodeObject&);
     void deferTextChangedIfNeeded(Node*);
     void deferSelectedChildrenChangedIfNeeded(Element&);
     WEBCORE_EXPORT void performDeferredCacheUpdate(ForceLayout);
@@ -685,7 +685,7 @@ private:
     void handleFocusedUIElementChanged(Element* oldFocus, Element* newFocus, UpdateModal = UpdateModal::Yes);
     void handleMenuListValueChanged(Element&);
     void handleTextChanged(AccessibilityObject*);
-    void handleRecomputeCellSlots(AccessibilityTable&);
+    void handleRecomputeCellSlots(AccessibilityNodeObject&);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void handleRowspanChanged(AccessibilityTableCell&);
 #endif
@@ -801,7 +801,7 @@ private:
     WeakHashSet<AccessibilityObject> m_deferredRecomputeActiveSummaryList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredRecomputeIsIgnoredList;
     WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData> m_deferredRecomputeTableIsExposedList;
-    WeakHashSet<AccessibilityTable> m_deferredRecomputeTableCellSlotsList;
+    WeakHashSet<AccessibilityNodeObject> m_deferredRecomputeTableCellSlotsList;
     WeakHashSet<AccessibilityTableCell> m_deferredRowspanChanges;
     WeakListHashSet<Node, WeakPtrImplWithEventTargetData> m_deferredTextChangedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredSelectedChildredChangedList;

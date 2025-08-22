@@ -427,3 +427,19 @@ const maxValue = new Temporal.Instant(86400_0000_0000_000_000_000n);
         shouldThrow(() => epoch.subtract({ [unit]: -Number.MAX_VALUE }), RangeError);
     });
 }
+
+// since() and until()
+{
+    const earlier = Temporal.Instant.from("1976-11-18T15:23:30.123456789Z");
+    const later = Temporal.Instant.from("2019-10-29T10:46:38.271986102Z");
+    const diff = later.since(earlier);
+    shouldBe(diff.nanoseconds, 313);
+    shouldBe(diff.microseconds, 529);
+    shouldBe(diff.milliseconds, 148);
+    shouldBe(diff.seconds, 1355167388);
+    const diff1 = earlier.until(later);
+    shouldBe(diff1.nanoseconds, diff.nanoseconds);
+    shouldBe(diff1.microseconds, diff.microseconds);
+    shouldBe(diff1.milliseconds, diff.milliseconds);
+    shouldBe(diff1.seconds, diff.seconds);
+}

@@ -1035,7 +1035,7 @@ bool MediaPlayerPrivateWebM::isReadyForMoreSamples(TrackID trackId)
 {
     if (isEnabledVideoTrackID(trackId)) {
 #if PLATFORM(IOS_FAMILY)
-        if (m_displayLayerWasInterrupted)
+        if (m_layerRequiresFlush)
             return false;
 #endif
         return protectedVideoRenderer()->isReadyForMoreMediaData();
@@ -1301,10 +1301,10 @@ void MediaPlayerPrivateWebM::flush()
 void MediaPlayerPrivateWebM::flushIfNeeded()
 {
 #if PLATFORM(IOS_FAMILY)
-    if (!m_displayLayerWasInterrupted)
+    if (!m_layerRequiresFlush)
         return;
 
-    m_displayLayerWasInterrupted = false;
+    m_layerRequiresFlush = false;
 #endif
 
     if (m_videoTracks.size())
@@ -1359,12 +1359,22 @@ void MediaPlayerPrivateWebM::addTrackBuffer(TrackID trackId, RefPtr<MediaDescrip
     m_trackBufferMap.try_emplace(trackId, WTFMove(trackBuffer));
 }
 
+void MediaPlayerPrivateWebM::destroyVideoLayerIfNeeded()
+{
+    if (!m_needsDestroyVideoLayer)
+        return;
+    m_needsDestroyVideoLayer = false;
+    m_videoLayerManager->didDestroyVideoLayer();
+}
+
 void MediaPlayerPrivateWebM::ensureLayer()
 {
     if (m_sampleBufferDisplayLayer)
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER);
+
+    destroyVideoLayerIfNeeded();
 
     m_sampleBufferDisplayLayer = adoptNS([PAL::allocAVSampleBufferDisplayLayerInstance() init]);
     if (!m_sampleBufferDisplayLayer)
@@ -1460,6 +1470,7 @@ void MediaPlayerPrivateWebM::destroyLayer()
 
     m_videoLayerManager->didDestroyVideoLayer();
     m_sampleBufferDisplayLayer = nullptr;
+    m_needsDestroyVideoLayer = false;
 }
 
 void MediaPlayerPrivateWebM::ensureVideoRenderer()
@@ -1637,22 +1648,6 @@ bool MediaPlayerPrivateWebM::isEnabledVideoTrackID(TrackID trackID) const
 bool MediaPlayerPrivateWebM::hasSelectedVideo() const
 {
     return !!m_enabledVideoTrackID;
-}
-
-void MediaPlayerPrivateWebM::videoRendererDidReceiveError(WebSampleBufferVideoRendering *renderer, NSError *error)
-{
-#if PLATFORM(IOS_FAMILY)
-    if (renderer.status == AVQueuedSampleBufferRenderingStatusFailed && [error.domain isEqualToString:@"AVFoundationErrorDomain"] && error.code == AVErrorOperationInterrupted) {
-        m_displayLayerWasInterrupted = true;
-        return;
-    }
-#else
-    UNUSED_PARAM(renderer);
-    UNUSED_PARAM(error);
-#endif
-    setNetworkState(MediaPlayer::NetworkState::DecodeError);
-    setReadyState(MediaPlayer::ReadyState::HaveNothing);
-    m_errored = true;
 }
 
 void MediaPlayerPrivateWebM::audioRendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError*)
@@ -1890,7 +1885,7 @@ void MediaPlayerPrivateWebM::setVideoRenderer(WebSampleBufferVideoRendering *ren
     m_videoRenderer = videoRenderer;
     videoRenderer->setPreferences(VideoMediaSampleRendererPreference::PrefersDecompressionSession);
     videoRenderer->setTimebase([m_synchronizer timebase]);
-    videoRenderer->notifyWhenDecodingErrorOccurred([weakThis = WeakPtr { *this }](OSStatus) {
+    videoRenderer->notifyWhenDecodingErrorOccurred([weakThis = WeakPtr { *this }](NSError *) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -1928,6 +1923,7 @@ void MediaPlayerPrivateWebM::stageVideoRenderer(WebSampleBufferVideoRendering *r
         switch (acceleratedVideoMode()) {
         case AcceleratedVideoMode::Layer:
             renderersToExpire.append(std::exchange(m_sampleBufferVideoRenderer, { }));
+            m_needsDestroyVideoLayer = true;
             break;
         case AcceleratedVideoMode::VideoRenderer:
             if (m_sampleBufferDisplayLayer)
@@ -2020,6 +2016,7 @@ void MediaPlayerPrivateWebM::isInFullscreenOrPictureInPictureChanged(bool isInFu
     ALWAYS_LOG(LOGIDENTIFIER, isInFullscreenOrPictureInPicture);
     if (!m_usingLinearMediaPlayer)
         return;
+    destroyVideoLayerIfNeeded();
     updateDisplayLayer();
 #else
     UNUSED_PARAM(isInFullscreenOrPictureInPicture);
@@ -2030,7 +2027,7 @@ void MediaPlayerPrivateWebM::setLayerRequiresFlush()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 #if PLATFORM(IOS_FAMILY)
-    m_displayLayerWasInterrupted = true;
+    m_layerRequiresFlush = true;
     if (m_applicationIsActive)
         flushIfNeeded();
 #else

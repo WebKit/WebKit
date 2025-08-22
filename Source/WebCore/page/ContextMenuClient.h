@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(CONTEXT_MENUS)
 
 #include <wtf/Forward.h>

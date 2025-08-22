@@ -10354,14 +10354,14 @@ void Document::orientationChanged(IntDegrees orientation)
 {
     LOG(Events, "Document %p orientationChanged - orientation %d", this, orientation);
     dispatchWindowEvent(Event::create(eventNames().orientationchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
-    if (CheckedPtr notifier = m_orientationNotifier.get())
-        notifier->orientationChanged(orientation);
+    if (m_orientationNotifier)
+        m_orientationNotifier->orientationChanged(orientation);
 }
 
 OrientationNotifier& Document::orientationNotifier()
 {
     if (!m_orientationNotifier)
-        m_orientationNotifier = makeUnique<OrientationNotifier>(currentOrientation(frame()));
+        lazyInitialize(m_orientationNotifier, makeUnique<OrientationNotifier>(currentOrientation(frame())));
     return *m_orientationNotifier;
 }
 
@@ -10512,11 +10512,6 @@ std::optional<PageIdentifier> Document::pageID() const
     if (auto* page = this->page())
         return page->identifier();
     return std::nullopt;
-}
-
-std::optional<FrameIdentifier> Document::frameID() const
-{
-    return m_frameIdentifier;
 }
 
 void Document::registerArticleElement(Element& article)

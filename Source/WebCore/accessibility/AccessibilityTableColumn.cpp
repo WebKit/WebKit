@@ -30,7 +30,6 @@
 #include "AccessibilityTableColumn.h"
 
 #include "AXObjectCache.h"
-#include "AccessibilityTable.h"
 
 namespace WebCore {
 
@@ -91,8 +90,8 @@ void AccessibilityTableColumn::addChildren()
     ASSERT(!m_childrenInitialized);
     m_childrenInitialized = true;
 
-    RefPtr parentTable = dynamicDowncast<AccessibilityTable>(m_parent.get());
-    if (!parentTable || !parentTable->isExposable())
+    RefPtr parentTable = dynamicDowncast<AccessibilityNodeObject>(m_parent.get());
+    if (!parentTable || !parentTable->isExposableTable())
         return;
 
     int numRows = parentTable->rowCount();

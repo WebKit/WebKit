@@ -575,7 +575,7 @@ void GPUConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::
 
 void GPUConnectionToWebProcess::terminateWebProcess()
 {
-    gpuProcess().protectedParentProcessConnection()->send(Messages::GPUProcessProxy::TerminateWebProcess(m_webProcessIdentifier), 0);
+    gpuProcess().terminateWebProcess(m_webProcessIdentifier);
 }
 
 void GPUConnectionToWebProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)

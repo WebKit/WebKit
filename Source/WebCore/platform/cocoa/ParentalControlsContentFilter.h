@@ -53,13 +53,16 @@ public:
     ContentFilterUnblockHandler unblockHandler() const override;
 #endif
     
+#if HAVE(WEBCONTENTRESTRICTIONS)
+    void didReceiveAllowDecisionOnQueue(bool isAllowed, NSData *);
+#endif
+
 private:
     explicit ParentalControlsContentFilter(const PlatformContentFilter::FilterParameters&);
     bool enabled() const;
 
     void updateFilterState();
 #if HAVE(WEBCONTENTRESTRICTIONS)
-    void didReceiveAllowDecisionOnQueue(bool isAllowed, NSData *);
     void updateFilterStateOnMain();
 #endif
 

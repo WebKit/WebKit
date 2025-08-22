@@ -2,8 +2,6 @@
 
 #pragma once
 
-#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
-
 #include <optional>
 
 namespace WebCore {
@@ -34,5 +32,3 @@ struct ContentRuleListMatchedRule {
 };
 
 } // namespace WebCore
-
-#endif

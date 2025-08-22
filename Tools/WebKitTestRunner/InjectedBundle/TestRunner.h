@@ -392,15 +392,6 @@ public:
     // Contextual menu actions
     void setAllowedMenuActions(JSContextRef, JSValueRef);
 
-    void installDidBeginSwipeCallback(JSContextRef, JSValueRef);
-    void installWillEndSwipeCallback(JSContextRef, JSValueRef);
-    void installDidEndSwipeCallback(JSContextRef, JSValueRef);
-    void installDidRemoveSwipeSnapshotCallback(JSContextRef, JSValueRef);
-    void callDidBeginSwipeCallback();
-    void callWillEndSwipeCallback();
-    void callDidEndSwipeCallback();
-    void callDidRemoveSwipeSnapshotCallback();
-
     void clearTestRunnerCallbacks();
 
     void accummulateLogsForChannel(JSStringRef channel);

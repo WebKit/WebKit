@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/Color.h>
+#include <wtf/Platform.h>
 
 namespace WebCore {
 

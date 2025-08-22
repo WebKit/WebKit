@@ -25,6 +25,8 @@
 
 #pragma once
 
+#import <wtf/Platform.h>
+
 #if ENABLE(DATA_DETECTION) && PLATFORM(MAC)
 
 #import "GraphicsLayer.h"

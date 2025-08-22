@@ -1650,7 +1650,7 @@ void KeyframeEffect::didChangeTargetStyleable(const std::optional<const Styleabl
         newTargetStyleable->ensureKeyframeEffectStack().addEffect(*this);
 }
 
-OptionSet<AnimationImpact> KeyframeEffect::apply(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext)
+OptionSet<AnimationImpact> KeyframeEffect::apply(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, EndpointInclusiveActiveInterval endpointInclusiveActiveInterval)
 {
     OptionSet<AnimationImpact> impact;
     if (!m_target)
@@ -1658,7 +1658,7 @@ OptionSet<AnimationImpact> KeyframeEffect::apply(RenderStyle& targetStyle, const
 
     updateBlendingKeyframes(targetStyle, resolutionContext);
 
-    auto computedTiming = getComputedTiming();
+    auto computedTiming = getComputedTiming(UseCachedCurrentTime::Yes, endpointInclusiveActiveInterval);
 
     if (m_phaseAtLastApplication != computedTiming.phase) {
         m_phaseAtLastApplication = computedTiming.phase;

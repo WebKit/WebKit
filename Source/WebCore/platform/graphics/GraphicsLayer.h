@@ -50,6 +50,7 @@
 #include <WebCore/WindRule.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 

@@ -25,6 +25,7 @@
 #pragma once
 
 #include <WebCore/NotificationDirection.h>
+#include <wtf/Platform.h>
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS NSDictionary;

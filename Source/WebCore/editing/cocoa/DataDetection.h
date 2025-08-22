@@ -25,6 +25,8 @@
 
 #pragma once
 
+#import <wtf/Platform.h>
+
 #if ENABLE(DATA_DETECTION)
 
 #import "DataDetectorType.h"

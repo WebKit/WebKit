@@ -30,6 +30,7 @@
 #import "config.h"
 #import "WKWebExtensionControllerInternal.h"
 
+#import "WKNSError.h"
 #import "WKWebExtensionContextInternal.h"
 #import "WKWebExtensionControllerConfigurationInternal.h"
 #import "WKWebExtensionDataRecordInternal.h"
@@ -79,14 +80,36 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionController, WebExtensionCont
 {
     NSParameterAssert([extensionContext isKindOfClass:WKWebExtensionContext.class]);
 
-    return Ref { *_webExtensionController }->load(Ref { extensionContext._webExtensionContext }, outError);
+    if (outError)
+        *outError = nil;
+
+    auto loadResult = Ref { *_webExtensionController }->load(Ref { extensionContext._webExtensionContext });
+
+    if (!loadResult) {
+        if (outError)
+            *outError = wrapper(loadResult.error());
+        return false;
+    }
+
+    return loadResult.value();
 }
 
 - (BOOL)unloadExtensionContext:(WKWebExtensionContext *)extensionContext error:(NSError **)outError
 {
     NSParameterAssert([extensionContext isKindOfClass:WKWebExtensionContext.class]);
 
-    return Ref { *_webExtensionController }->unload(Ref { extensionContext._webExtensionContext }, outError);
+    if (outError)
+        *outError = nil;
+
+    auto unloadResult = Ref { *_webExtensionController }->unload(Ref { extensionContext._webExtensionContext });
+
+    if (!unloadResult) {
+        if (outError)
+            *outError = wrapper(unloadResult.error());
+        return false;
+    }
+
+    return unloadResult.value();
 }
 
 - (WKWebExtensionContext *)extensionContextForExtension:(WKWebExtension *)extension

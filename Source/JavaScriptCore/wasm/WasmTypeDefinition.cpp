@@ -1103,13 +1103,13 @@ bool TypeInformation::castReference(JSValue refValue, bool allowNull, TypeIndex 
             return jsDynamicCast<WebAssemblyFunctionBase*>(refValue);
         case TypeKind::Eqref:
             return (refValue.isInt32() && refValue.asInt32() <= maxI31ref && refValue.asInt32() >= minI31ref) || jsDynamicCast<JSWebAssemblyArray*>(refValue) || jsDynamicCast<JSWebAssemblyStruct*>(refValue);
-        case TypeKind::Exn:
-            // Exn and Nullexn are in a different heap hierarchy
+        case TypeKind::Exnref:
+            // Exnref and Noexnref are in a different heap hierarchy
             return jsDynamicCast<JSWebAssemblyException*>(refValue);
-        case TypeKind::Nullexn:
-        case TypeKind::Nullref:
-        case TypeKind::Nullfuncref:
-        case TypeKind::Nullexternref:
+        case TypeKind::Noexnref:
+        case TypeKind::Noneref:
+        case TypeKind::Nofuncref:
+        case TypeKind::Noexternref:
             return false;
         case TypeKind::I31ref:
             return refValue.isInt32() && refValue.asInt32() <= maxI31ref && refValue.asInt32() >= minI31ref;
@@ -1186,7 +1186,7 @@ bool Type::definitelyIsCellOrNull() const
         case TypeKind::Funcref:
         case TypeKind::Arrayref:
         case TypeKind::Structref:
-        case TypeKind::Exn:
+        case TypeKind::Exnref:
             return true;
         default:
             return false;

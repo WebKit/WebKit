@@ -30,6 +30,7 @@
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <span>
 #include <wtf/Compiler.h>
+#include <wtf/Platform.h>
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(COCOA) && defined(__OBJC__)

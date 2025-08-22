@@ -131,6 +131,8 @@ void UIGamepadProvider::platformGamepadDisconnected(PlatformGamepad& gamepad)
 #if PLATFORM(COCOA)
         auto reason = makeString("Unknown platform gamepad disconnect: Index "_s, gamepad.index(), " with "_s, m_gamepads.size(), " known gamepads"_s);
         os_fault_with_payload(OS_REASON_WEBKIT, 0, nullptr, 0, reason.utf8().data(), 0);
+#else
+        RELEASE_LOG_ERROR(Gamepad, "Unknown platform gamepad disconnect: Index %zu with %zu known gamepads", gamepad.index(), m_gamepads.size());
 #endif
         return;
     }

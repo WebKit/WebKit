@@ -80,8 +80,8 @@ RetainPtr<id> JavaScriptEvaluationResult::ObjCInserter::toID(Value&& root)
         RetainPtr dictionary = adoptNS([[NSMutableDictionary alloc] initWithCapacity:map.size()]);
         m_dictionaries.append({ WTFMove(map), dictionary });
         return dictionary;
-    }, [] (JSHandleInfo&& info) -> RetainPtr<id> {
-        return wrapper(API::JSHandle::create(WTFMove(info)));
+    }, [] (UniqueRef<JSHandleInfo>&& info) -> RetainPtr<id> {
+        return wrapper(API::JSHandle::create(WTFMove(info.get())));
     }, [] (UniqueRef<WebCore::SerializedNode>&& serializedNode) -> RetainPtr<id> {
         return wrapper(API::SerializedNode::create(WTFMove(serializedNode.get())).get());
     });
@@ -161,7 +161,7 @@ auto JavaScriptEvaluationResult::ObjCExtractor::toValue(id object) -> Value
         return makeUniqueRef<WebCore::SerializedNode>(((_WKSerializedNode *)object)->_node->coreSerializedNode());
 
     if ([object isKindOfClass:_WKJSHandle.class])
-        return JSHandleInfo { ((_WKJSHandle *)object)->_ref->info() };
+        return makeUniqueRef<JSHandleInfo>(((_WKJSHandle *)object)->_ref->info());
 
     // This object has been null checked and went through isSerializable which only supports these types.
     ASSERT_NOT_REACHED();

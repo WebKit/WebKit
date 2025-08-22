@@ -43,7 +43,6 @@
 #include "AXTreeStoreInlines.h"
 #include "AXUtilities.h"
 #include "AccessibilityImageMapLink.h"
-#include "AccessibilityLabel.h"
 #include "AccessibilityListBoxOption.h"
 #include "AccessibilityMathMLElement.h"
 #include "AccessibilityMenuList.h"
@@ -56,7 +55,6 @@
 #include "AccessibilityScrollbar.h"
 #include "AccessibilitySlider.h"
 #include "AccessibilitySpinButton.h"
-#include "AccessibilityTable.h"
 #include "AccessibilityTableCell.h"
 #include "AccessibilityTableColumn.h"
 #include "AccessibilityTableHeaderContainer.h"
@@ -589,11 +587,6 @@ static bool isAccessibilityTreeItem(Element& element)
     return hasRole(element, "treeitem"_s);
 }
 
-static bool isAccessibilityTable(Node* node)
-{
-    return is<HTMLTableElement>(node);
-}
-
 static bool isAccessibilityTableRow(Node* node)
 {
     return is<HTMLTableRowElement>(node);
@@ -602,11 +595,6 @@ static bool isAccessibilityTableRow(Node* node)
 static bool isAccessibilityTableCell(Node* node)
 {
     return is<HTMLTableCellElement>(node);
-}
-
-static bool isAccessibilityARIATable(Element& element)
-{
-    return hasTableRole(element);
 }
 
 static bool isAccessibilityARIAGridRow(Element& element)
@@ -619,11 +607,6 @@ static bool isAccessibilityARIAGridCell(Element& element)
     return hasCellARIARole(element);
 }
 
-static bool shouldCreateAccessibilityLabel(Element& element)
-{
-    return is<HTMLLabelElement>(element) && hasRole(element, nullAtom());
-}
-
 Ref<AccessibilityRenderObject> AXObjectCache::createObjectFromRenderer(RenderObject& renderer)
 {
     RefPtr node = renderer.node();
@@ -631,8 +614,6 @@ Ref<AccessibilityRenderObject> AXObjectCache::createObjectFromRenderer(RenderObj
         // Lists shouldn't fallthrough to table components, so explicitly create a render object.
         if (AXListHelpers::isAccessibilityList(*element))
             return AccessibilityRenderObject::create(AXID::generate(), renderer, *this);
-        if (isAccessibilityARIATable(*element))
-            return AccessibilityTable::create(AXID::generate(), renderer, *this, /* isARIATable */ true);
         if (isAccessibilityARIAGridRow(*element))
             return AccessibilityTableRow::create(AXID::generate(), renderer, *this, /* isARIAGridRow */ true);
         if (isAccessibilityARIAGridCell(*element))
@@ -642,9 +623,6 @@ Ref<AccessibilityRenderObject> AXObjectCache::createObjectFromRenderer(RenderObj
             return AccessibilityTree::create(AXID::generate(), renderer, *this);
         if (isAccessibilityTreeItem(*element))
             return AccessibilityTreeItem::create(AXID::generate(), renderer, *this);
-
-        if (shouldCreateAccessibilityLabel(*element))
-            return AccessibilityLabel::create(AXID::generate(), renderer, *this);
     }
 
     if (renderer.isRenderOrLegacyRenderSVGRoot())
@@ -674,11 +652,6 @@ Ref<AccessibilityRenderObject> AXObjectCache::createObjectFromRenderer(RenderObj
     // FIXME: Consider removing this with https://bugs.webkit.org/show_bug.cgi?id=282117.
     isAnonymous = renderer.isAnonymous();
 #endif
-    // Some websites put display:table on tbody / thead / tfoot, resulting in a RenderTable being generated.
-    // We don't want to consider these tables (since they are typically wrapped by an actual <table> element),
-    // so only create an AccessibilityTable when !is<HTMLTableSectionElement>.
-    if ((is<RenderTable>(renderer) && !isAnonymous && !is<HTMLTableSectionElement>(node.get())) || isAccessibilityTable(node.get()))
-        return AccessibilityTable::create(AXID::generate(), renderer, *this);
     if ((is<RenderTableRow>(renderer) && !isAnonymous) || isAccessibilityTableRow(node.get()))
         return AccessibilityTableRow::create(AXID::generate(), renderer, *this);
     if ((is<RenderTableCell>(renderer) && !isAnonymous) || isAccessibilityTableCell(node.get()))
@@ -702,8 +675,6 @@ Ref<AccessibilityNodeObject> AXObjectCache::createFromNode(Node& node)
         // Lists shouldn't fallthrough to table components, so explicitly create a render object.
         if (AXListHelpers::isAccessibilityList(*element))
             return AccessibilityRenderObject::create(AXID::generate(), *element, *this);
-        if (isAccessibilityTable(element.get()))
-            return AccessibilityTable::create(AXID::generate(), *element, *this);
         if (isAccessibilityTableRow(element.get()))
             return AccessibilityTableRow::create(AXID::generate(), *element, *this);
         if (isAccessibilityTableCell(element.get()))
@@ -712,8 +683,6 @@ Ref<AccessibilityNodeObject> AXObjectCache::createFromNode(Node& node)
             return AccessibilityTree::create(AXID::generate(), *element, *this);
         if (isAccessibilityTreeItem(*element))
             return AccessibilityTreeItem::create(AXID::generate(), *element, *this);
-        if (isAccessibilityARIATable(*element))
-            return AccessibilityTable::create(AXID::generate(), *element, *this, /* isARIATable */ true);
         if (isAccessibilityARIAGridRow(*element))
             return AccessibilityTableRow::create(AXID::generate(), *element, *this, /* isARIAGridRow */ true);
         if (isAccessibilityARIAGridCell(*element))
@@ -724,8 +693,6 @@ Ref<AccessibilityNodeObject> AXObjectCache::createFromNode(Node& node)
             return AccessibilityProgressIndicator::create(AXID::generate(), *element, *this);
         if (is<SVGElement>(*element))
             return AccessibilitySVGObject::create(AXID::generate(), *element, *this);
-        if (shouldCreateAccessibilityLabel(*element))
-            return AccessibilityLabel::create(AXID::generate(), *element, *this);
     }
     return AccessibilityRenderObject::create(AXID::generate(), node, *this);
 }
@@ -1342,10 +1309,10 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
     } else if (auto* menuListPopup = dynamicDowncast<AccessibilityMenuListPopup>(object)) {
         menuListPopup->handleChildrenChanged();
         return;
-    } else if (auto* axTable = dynamicDowncast<AccessibilityTable>(object))
-        deferRecomputeTableCellSlots(*axTable);
+    } else if (auto* nodeObject = dynamicDowncast<AccessibilityNodeObject>(object); nodeObject && nodeObject->isTable())
+        deferRecomputeTableCellSlots(*nodeObject);
     else if (auto* axRow = dynamicDowncast<AccessibilityTableRow>(object)) {
-        if (RefPtr parentTable = axRow->parentTable())
+        if (RefPtr parentTable = dynamicDowncast<AccessibilityNodeObject>(axRow->parentTable()))
             deferRecomputeTableCellSlots(*parentTable);
     } else if (auto* scrollView = dynamicDowncast<AccessibilityScrollView>(object)) {
         // When the children of an iframe change, e.g., because its visibility changes,
@@ -1411,7 +1378,7 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
         object.updateRole();
 }
 
-void AXObjectCache::handleRecomputeCellSlots(AccessibilityTable& axTable)
+void AXObjectCache::handleRecomputeCellSlots(AccessibilityNodeObject& axTable)
 {
     axTable.setCellSlotsDirty();
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -1773,9 +1740,7 @@ void AXObjectCache::handleRowCountChanged(AccessibilityObject* axObject, Documen
     if (!axObject)
         return;
 
-    if (auto* axTable = dynamicDowncast<AccessibilityTable>(axObject))
-        axTable->recomputeIsExposable();
-
+    axObject->recomputeIsExposableIfNecessary();
     postNotification(axObject, document, AXNotification::RowCountChanged);
 }
 
@@ -1915,7 +1880,7 @@ void AXObjectCache::onScrollbarFrameRectChange(const Scrollbar& scrollbar)
         return;
 
     if (RefPtr axScrollbar = get(const_cast<Scrollbar*>(&scrollbar)))
-        m_geometryManager->cacheRect(axScrollbar->objectID(), enclosingIntRect(axScrollbar->relativeFrame()));
+        std::ignore = m_geometryManager->cacheRectIfNeeded(axScrollbar->objectID(), enclosingIntRect(axScrollbar->relativeFrame()));
 #else
     UNUSED_PARAM(scrollbar);
 #endif
@@ -2772,14 +2737,6 @@ void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomStr
         postPlatformNotification(*target, AXNotification::SelectedCellsChanged);
 }
 
-static bool isTableOrRowRole(const AtomString& attrValue)
-{
-    return attrValue == "table"_s
-        || attrValue == "grid"_s
-        || attrValue == "treegrid"_s
-        || attrValue == "row"_s;
-}
-
 void AXObjectCache::handleRoleChanged(Element& element, const AtomString& oldValue, const AtomString& newValue)
 {
     AXTRACE("AXObjectCache::handleRoleChanged"_s);
@@ -2793,8 +2750,7 @@ void AXObjectCache::handleRoleChanged(Element& element, const AtomString& oldVal
     // The class of an AX object created for an Element depends on the role attribute of that Element.
     // Thus when the role changes, remove the existing AX object and force a ChildrenChanged on the parent
     // so that the object is re-created.
-    if (oldValue.isEmpty() || isTableOrRowRole(oldValue)
-        || newValue.isEmpty() || isTableOrRowRole(newValue)) {
+    if (oldValue.isEmpty() || oldValue == "row"_s || newValue.isEmpty() || newValue == "row"_s) {
         if (auto* parent = object->parentObject()) {
             remove(element);
             childrenChanged(parent);
@@ -2818,6 +2774,11 @@ void AXObjectCache::handleRoleChanged(AccessibilityObject& axObject, Accessibili
 #else
     UNUSED_PARAM(oldRole);
 #endif // PLATFORM(MAC)
+
+    if (axObject.needsRareData()) {
+        // A role change may have caused an object gain the need for rare data, so handle that here.
+        axObject.ensureRareData();
+    }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     postNotification(axObject, AXNotification::RoleChanged);
@@ -2910,7 +2871,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
             if (auto* tablePartElement = dynamicDowncast<HTMLTablePartElement>(element))
                 deferRecomputeTableIsExposed(const_cast<HTMLTableElement*>(tablePartElement->findParentTable().get()));
         } else if (RefPtr axCell = dynamicDowncast<AccessibilityTableCell>(getOrCreate(element))) {
-            if (RefPtr parentTable = axCell->parentTable()) {
+            if (RefPtr parentTable = dynamicDowncast<AccessibilityNodeObject>(axCell->parentTable())) {
                 if (properties.contains(TableProperty::Exposed) && !parentTable->isAriaTable())
                     deferRecomputeTableIsExposed(parentTable->element());
                 if (properties.contains(TableProperty::CellSlots))
@@ -4642,8 +4603,8 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
 
     AXLOGDeferredCollection("RecomputeTableIsExposedList"_s, m_deferredRecomputeTableIsExposedList);
     m_deferredRecomputeTableIsExposedList.forEach([this] (auto& tableElement) {
-        if (auto* axTable = dynamicDowncast<AccessibilityTable>(get(&tableElement)))
-            axTable->recomputeIsExposable();
+        if (RefPtr axObject = get(&tableElement))
+            axObject->recomputeIsExposableIfNecessary();
     });
     m_deferredRecomputeTableIsExposedList.clear();
 
@@ -5010,7 +4971,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<Ref<AccessibilityO
             break;
         case AXNotification::TextUnderElementChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { AXProperty::AccessibilityText });
-            if (notification.first->isAccessibilityLabelInstance() || notification.first->role() == AccessibilityRole::TextField)
+            if (notification.first->isNativeLabel() || notification.first->role() == AccessibilityRole::TextField)
                 tree->queueNodeUpdate(notification.first->objectID(), { AXProperty::StringValue });
             break;
 #if ENABLE(AX_THREAD_TEXT_APIS)
@@ -5094,8 +5055,22 @@ void AXObjectCache::onPaint(const RenderObject& renderer, IntRect&& paintRect) c
     if (!m_pageID)
         return;
 
-    if (std::optional axID = getAXID(const_cast<RenderObject&>(renderer)))
-        m_geometryManager->cacheRect(*axID, WTFMove(paintRect));
+    if (std::optional axID = getAXID(const_cast<RenderObject&>(renderer))) {
+        bool cachedNewRect = m_geometryManager->cacheRectIfNeeded(*axID, WTFMove(paintRect));
+
+        if (cachedNewRect) {
+            auto* renderImage = dynamicDowncast<RenderImage>(renderer);
+            if (RefPtr imageMap = renderImage ? renderImage->imageMap() : nullptr) {
+                // <area> elements have no renderers and thus will never be painted themselves.
+                // If the image was repainted in a new location, the associated area elements
+                // probably need new rects cached too.
+                for (Ref area : descendantsOfType<HTMLAreaElement>(*imageMap)) {
+                    if (RefPtr areaObject = get(area.get()))
+                        std::ignore = m_geometryManager->cacheRectIfNeeded(areaObject->objectID(), snappedIntRect(LayoutRect(areaObject->relativeFrame())));
+                }
+            }
+        }
+    }
 }
 
 void AXObjectCache::onPaint(const Widget& widget, IntRect&& paintRect) const
@@ -5103,7 +5078,7 @@ void AXObjectCache::onPaint(const Widget& widget, IntRect&& paintRect) const
     if (!m_pageID)
         return;
     if (std::optional axID = m_widgetObjectMapping.getOptional(const_cast<Widget&>(widget)))
-        m_geometryManager->cacheRect(*axID, WTFMove(paintRect));
+        std::ignore = m_geometryManager->cacheRectIfNeeded(*axID, WTFMove(paintRect));
 }
 
 void AXObjectCache::onPaint(const RenderText& renderText, size_t lineIndex)
@@ -5161,7 +5136,7 @@ void AXObjectCache::deferRecomputeTableIsExposed(Element* element)
         m_performCacheUpdateTimer.startOneShot(0_s);
 }
 
-void AXObjectCache::deferRecomputeTableCellSlots(AccessibilityTable& axTable)
+void AXObjectCache::deferRecomputeTableCellSlots(AccessibilityNodeObject& axTable)
 {
     m_deferredRecomputeTableCellSlotsList.add(axTable);
     if (!m_performCacheUpdateTimer.isActive())

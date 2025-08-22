@@ -1792,7 +1792,7 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
         patchpoint->setGenerator([prepareForCall = prepareForCall, patchArgsIndex](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             prepareForCall->run(jit, params);
-            jit.storeWasmCalleeCallee(params[patchArgsIndex + 1].gpr(), sizeof(CallerFrameAndPC) - prologueStackPointerDelta());
+            jit.storeWasmCalleeToCalleeCallFrame(params[patchArgsIndex + 1].gpr(), sizeof(CallerFrameAndPC) - prologueStackPointerDelta());
             jit.farJump(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
         });
         return { };
@@ -1818,7 +1818,7 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
         if (handle)
             handle->generate(jit, params, this);
 
-        jit.storeWasmCalleeCallee(params[patchArgsIndex + 1].gpr());
+        jit.storeWasmCalleeToCalleeCallFrame(params[patchArgsIndex + 1].gpr());
         jit.call(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
         // Restore the stack pointer since it may have been lowered if our callee did a tail call.
         jit.addPtr(CCallHelpers::TrustedImm32(-params.code().frameSize()), GPRInfo::callFrameRegister, MacroAssembler::stackPointerRegister);
@@ -3665,13 +3665,13 @@ void OMGIRGenerator::emitRefTestOrCast(CastKind castKind, TypedExpression refere
         case Wasm::TypeKind::Funcref:
         case Wasm::TypeKind::Externref:
         case Wasm::TypeKind::Anyref:
-        case Wasm::TypeKind::Exn:
+        case Wasm::TypeKind::Exnref:
             // Casts to these types cannot fail as they are the top types of their respective hierarchies, and static type-checking does not allow cross-hierarchy casts.
             break;
-        case Wasm::TypeKind::Nullref:
-        case Wasm::TypeKind::Nullfuncref:
-        case Wasm::TypeKind::Nullexternref:
-        case Wasm::TypeKind::Nullexn:
+        case Wasm::TypeKind::Noneref:
+        case Wasm::TypeKind::Nofuncref:
+        case Wasm::TypeKind::Noexternref:
+        case Wasm::TypeKind::Noexnref:
             // Casts to any bottom type should always fail.
             if (castKind == CastKind::Cast) {
                 B3::PatchpointValue* throwException = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
@@ -3729,43 +3729,55 @@ void OMGIRGenerator::emitRefTestOrCast(CastKind castKind, TypedExpression refere
         }
     } else {
         Wasm::TypeDefinition& signature = m_info.typeSignatures[toHeapType];
-        BasicBlock* slowPath = m_proc.addBlock();
-
-        Value* rtt;
-        if (signature.expand().is<Wasm::FunctionSignature>())
-            rtt = emitLoadRTTFromFuncref(value);
-        else {
-            // The cell check is only needed for non-functions, as the typechecker does not allow non-Cell values for funcref casts.
-            if (!reference.type().definitelyIsCellOrNull())
-                emitCheckOrBranchForCast(castKind, m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), value, constant(Int64, JSValue::NotCellMask)), castFailure, falseBlock);
-            if (!reference.type().definitelyIsWasmGCObjectOrNull()) {
-                Value* jsType = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), value, safeCast<int32_t>(JSCell::typeInfoTypeOffset()));
-                emitCheckOrBranchForCast(castKind, m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), jsType, constant(Int32, JSType::WebAssemblyGCObjectType)), castFailure, falseBlock);
-            }
-            rtt = emitLoadRTTFromObject(value);
-        }
-
         Ref targetRTT = m_info.rtts[toHeapType];
-        auto* targetRTTPointer = constant(pointerType(), std::bit_cast<uintptr_t>(targetRTT.ptr()));
-        BasicBlock* equalBlock;
-        if (castKind == CastKind::Cast)
-            equalBlock = continuation;
-        else
-            equalBlock = trueBlock;
-        m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), rtt, targetRTTPointer), FrequentedBlock(equalBlock), FrequentedBlock(slowPath));
-        equalBlock->addPredecessor(m_currentBlock);
-        slowPath->addPredecessor(m_currentBlock);
 
-        m_currentBlock = slowPath;
-        if (signature.isFinalType()) {
-            // If signature is final type and pointer equality failed, this value must not be a subtype.
-            emitCheckOrBranchForCast(castKind, constant(Int32, 1), castFailure, falseBlock);
-        } else {
-            auto* displaySizeExcludingThis = m_currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, Int32, origin(), rtt, safeCast<int32_t>(RTT::offsetOfDisplaySizeExcludingThis()));
-            emitCheckOrBranchForCast(castKind, m_currentBlock->appendNew<Value>(m_proc, BelowEqual, origin(), displaySizeExcludingThis, constant(Int32, targetRTT->displaySizeExcludingThis())), castFailure, falseBlock);
-            auto* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, pointerType(), origin(), rtt, safeCast<uint32_t>(RTT::offsetOfData() + targetRTT->displaySizeExcludingThis() * sizeof(const RTT*)));
-            emitCheckOrBranchForCast(castKind, m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), pointer, targetRTTPointer), castFailure, falseBlock);
-        }
+        ([&] {
+            Value* structure = nullptr;
+            Value* rtt;
+            if (signature.expand().is<Wasm::FunctionSignature>())
+                rtt = emitLoadRTTFromFuncref(value);
+            else {
+                // The cell check is only needed for non-functions, as the typechecker does not allow non-Cell values for funcref casts.
+                if (!reference.type().definitelyIsCellOrNull())
+                    emitCheckOrBranchForCast(castKind, m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), value, constant(Int64, JSValue::NotCellMask)), castFailure, falseBlock);
+                if (!reference.type().definitelyIsWasmGCObjectOrNull()) {
+                    Value* jsType = m_currentBlock->appendNew<MemoryValue>(m_proc, Load8Z, Int32, origin(), value, safeCast<int32_t>(JSCell::typeInfoTypeOffset()));
+                    emitCheckOrBranchForCast(castKind, m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), jsType, constant(Int32, JSType::WebAssemblyGCObjectType)), castFailure, falseBlock);
+                }
+                Value* structureID = m_currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, Int32, origin(), value, safeCast<int32_t>(JSCell::structureIDOffset()));
+                structure = decodeNonNullStructure(structureID);
+                if (targetRTT->displaySizeExcludingThis() < WebAssemblyGCStructure::inlinedTypeDisplaySize) {
+                    auto* targetRTTPointer = constant(pointerType(), std::bit_cast<uintptr_t>(targetRTT.ptr()));
+                    auto* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, pointerType(), origin(), structure, safeCast<uint32_t>(WebAssemblyGCStructure::offsetOfInlinedTypeDisplay() + targetRTT->displaySizeExcludingThis() * sizeof(const RTT*)));
+                    emitCheckOrBranchForCast(castKind, m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), pointer, targetRTTPointer), castFailure, falseBlock);
+                    return;
+                }
+
+                rtt = m_currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, pointerType(), origin(), structure, safeCast<int32_t>(WebAssemblyGCStructure::offsetOfRTT()));
+            }
+
+            auto* targetRTTPointer = constant(pointerType(), std::bit_cast<uintptr_t>(targetRTT.ptr()));
+            BasicBlock* equalBlock;
+            if (castKind == CastKind::Cast)
+                equalBlock = continuation;
+            else
+                equalBlock = trueBlock;
+            BasicBlock* slowPath = m_proc.addBlock();
+            m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), rtt, targetRTTPointer), FrequentedBlock(equalBlock), FrequentedBlock(slowPath));
+            equalBlock->addPredecessor(m_currentBlock);
+            slowPath->addPredecessor(m_currentBlock);
+
+            m_currentBlock = slowPath;
+            if (signature.isFinalType()) {
+                // If signature is final type and pointer equality failed, this value must not be a subtype.
+                emitCheckOrBranchForCast(castKind, constant(Int32, 1), castFailure, falseBlock);
+            } else {
+                auto* displaySizeExcludingThis = m_currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, Int32, origin(), rtt, safeCast<int32_t>(RTT::offsetOfDisplaySizeExcludingThis()));
+                emitCheckOrBranchForCast(castKind, m_currentBlock->appendNew<Value>(m_proc, BelowEqual, origin(), displaySizeExcludingThis, constant(Int32, targetRTT->displaySizeExcludingThis())), castFailure, falseBlock);
+                auto* pointer = m_currentBlock->appendNew<MemoryValue>(m_proc, B3::Load, pointerType(), origin(), rtt, safeCast<uint32_t>(RTT::offsetOfData() + targetRTT->displaySizeExcludingThis() * sizeof(const RTT*)));
+                emitCheckOrBranchForCast(castKind, m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), pointer, targetRTTPointer), castFailure, falseBlock);
+            }
+        }());
     }
 
     if (castKind == CastKind::Cast) {
@@ -4398,7 +4410,7 @@ auto OMGIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
             ASSERT(&data != &block);
             Variable* exceptionVariable = ControlType::isAnyCatch(data) ? data.exception() : nullptr;
             connectValuesAtEntrypoint(indexInBuffer, pointer, expressionStack, exceptionVariable);
-            if (Options::useWasmIPInt() && ControlType::isTry(data))
+            if (ControlType::isTry(data))
                 ++indexInBuffer;
         }
         connectValuesAtEntrypoint(indexInBuffer, pointer, enclosingStack, nullptr);
@@ -4718,7 +4730,7 @@ auto OMGIRGenerator::emitCatchTableImpl(ControlData& data, const ControlData::Tr
         Variable* var = m_proc.addVariable(wasmRefType());
         set(var, exception);
         push(exception);
-        resultStack.constructAndAppend(Type { TypeKind::RefNull, static_cast<TypeIndex>(TypeKind::Exn) }, var);
+        resultStack.constructAndAppend(Type { TypeKind::RefNull, static_cast<TypeIndex>(TypeKind::Exnref) }, var);
     }
 
     auto& targetControl = m_parser->resolveControlRef(target.target).controlData;
@@ -4778,7 +4790,7 @@ auto OMGIRGenerator::addThrow(unsigned exceptionIndex, ArgumentList& args, Stack
     return { };
 }
 
-auto WARN_UNUSED_RETURN OMGIRGenerator::addThrowRef(TypedExpression exn, Stack&) -> PartialResult
+auto WARN_UNUSED_RETURN OMGIRGenerator::addThrowRef(TypedExpression exnref, Stack&) -> PartialResult
 {
     TRACE_CF("THROW_REF");
 
@@ -4786,11 +4798,11 @@ auto WARN_UNUSED_RETURN OMGIRGenerator::addThrowRef(TypedExpression exn, Stack&)
     patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
     patch->effects.terminal = true;
     patch->append(instanceValue(), ValueRep::reg(GPRInfo::argumentGPR0));
-    Value* exception = get(exn);
+    Value* exception = get(exnref);
     patch->append(exception , ValueRep::reg(GPRInfo::argumentGPR1));
 
-    if (exn.type().isNullable())
-        emitNullCheck(exception, ExceptionType::NullExnReference);
+    if (exnref.type().isNullable())
+        emitNullCheck(exception, ExceptionType::NullExnrefReference);
 
     PatchpointExceptionHandle handle = preparePatchpointForExceptions(m_currentBlock, patch);
     patch->setGenerator([this, handle, origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
@@ -5783,11 +5795,17 @@ auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndexSpace, const TypeDe
             if (handle)
                 handle->generate(jit, params, this);
 
-            auto calleeMove = jit.storeWasmCalleeCalleePatchable(isTailCall ? sizeof(CallerFrameAndPC) - prologueStackPointerDelta() : 0);
+            ASSERT(!m_info.isImportedFunctionFromFunctionIndexSpace(functionIndexSpace));
+            RefPtr<IPIntCallee> callee;
+            {
+                Locker locker { m_calleeGroup.m_lock };
+                callee = m_calleeGroup.ipintCalleeFromFunctionIndexSpace(locker, functionIndexSpace);
+            }
+            jit.storeWasmCalleeToCalleeCallFrame(CCallHelpers::TrustedImmPtr(CalleeBits::boxNativeCallee(callee.get())), isTailCall ? sizeof(CallerFrameAndPC) - prologueStackPointerDelta() : 0);
             auto call = isTailCall ? jit.threadSafePatchableNearTailCall() : jit.threadSafePatchableNearCall();
 
-            jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndexSpace, calleeMove](LinkBuffer& linkBuffer) {
-                unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndexSpace, linkBuffer.locationOf<WasmEntryPtrTag>(calleeMove) });
+            jit.addLinkTask([unlinkedWasmToWasmCalls, call, functionIndexSpace](LinkBuffer& linkBuffer) {
+                unlinkedWasmToWasmCalls->append({ linkBuffer.locationOfNearCall<WasmEntryPtrTag>(call), functionIndexSpace });
             });
             jit.addPtr(CCallHelpers::TrustedImm32(-params.code().frameSize()), GPRInfo::callFrameRegister, MacroAssembler::stackPointerRegister);
         });

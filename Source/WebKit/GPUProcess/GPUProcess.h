@@ -174,6 +174,7 @@ public:
     void registerFonts(Vector<SandboxExtension::Handle>&&);
 #endif
 
+    void terminateWebProcess(WebCore::ProcessIdentifier);
 private:
     void lowMemoryHandler(Critical, Synchronous);
 

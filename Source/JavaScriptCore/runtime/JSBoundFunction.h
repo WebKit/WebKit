@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSCellButterfly.h>
 #include <JavaScriptCore/JSFunction.h>
-#include <JavaScriptCore/JSImmutableButterfly.h>
 
 namespace JSC {
 
@@ -114,7 +114,7 @@ public:
             return;
         }
         for (unsigned index = 0; index < length; ++index) {
-            if (func(jsCast<JSImmutableButterfly*>(m_boundArgs[0].get())->get(index)) == IterationStatus::Done)
+            if (func(jsCast<JSCellButterfly*>(m_boundArgs[0].get())->get(index)) == IterationStatus::Done)
                 return;
         }
     }

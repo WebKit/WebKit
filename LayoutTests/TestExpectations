@@ -1206,6 +1206,10 @@ imported/w3c/web-platform-tests/webauthn/remote-desktop-client-override.tentativ
 # This test adds a lot of iframes and is slow to run.
 fast/dom/connected-subframe-counter-overflow.html [ Slow ]
 
+# These tests normally timeout on mac-AS-debug-wk2.
+fast/dom/DOMURL/url-very-large-username-no-crash.html [ Slow ]
+fast/dom/DOMURL/url-very-large-password-no-crash.html [ Slow ]
+
 http/wpt/service-workers/basic-fetch-with-contentfilter-allow-after-adding-data.html [ Skip ]
 http/wpt/service-workers/basic-fetch-with-contentfilter.https.html [ Skip ]
 
@@ -1373,32 +1377,29 @@ imported/w3c/web-platform-tests/resource-timing/fetch-cross-origin-redirect.http
 
 # Flaky timing tests:
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/click-timing.html [ Pass Failure ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/crossiframe.html [ Pass Failure ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-click.html [ Pass Failure ]
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/timingconditions.html [ Pass Failure ]
 
-# Requires interactionId:
-webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/crossiframe.html [ Skip ]
-webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/first-input-interactionid-click.html [ Skip ]
-webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/first-input-interactionid-key.html [ Skip ]
-webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/first-input-interactionid-tap.html [ Skip ]
-webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-aux-pointerdown.html [ Skip ]
+# Timing out (missing auxclick automation?):
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-aux-pointerdown-and-pointerdown.html [ Skip ]
-webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-auxclick.html [ Skip ]
-webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-click.html [ Skip ]
-webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-keyboard-event-simulated-click-checkbox-space.html [ Skip ]
-webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-keyboard-event-simulated-click-link-enter.html [ Skip ]
-webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-keyboard-event-simulated-click-button-space.html [ Skip ]
-webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-keypress.html [ Skip ]
-webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-orphan-pointerup.html [ Skip ]
-webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-press-key-as-input.html [ Skip ]
-webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-press-key-no-effect.html [ Skip ]
-webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-tap.html [ Skip ]
-webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/retrieve-firstInput.html [ Skip ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-aux-pointerdown.html [ Skip ]
+
+# Fail on local machine, pass on EWS. Probably flaky timing:
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-keyboard-event-simulated-click-checkbox-space.html [ Pass Failure ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-keyboard-event-simulated-click-link-enter.html [ Pass Failure ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-keyboard-event-simulated-click-button-space.html [ Pass Failure ]
 
 # No browser passes, test is likely outdated:
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/modal-dialog-interrupt-paint.html [ Skip ]
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/TapToStopFling.html [ Skip ]
 
-# Problems with event automation:
+# Missing tap automation, times out:
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-tap.html [ Skip ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interaction-count-tap.html [ Skip ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/first-input-interactionid-tap.html [ Skip ]
+
+# Missing automation:
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/event-click-visibilitychange.html [ Skip ]
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/selection-autoscroll.html [ Skip ]
 
@@ -1421,6 +1422,7 @@ webkit.org/b/247283 imported/w3c/web-platform-tests/fetch/metadata/generated/css
 # Fetch features that are not implemented.
 imported/w3c/web-platform-tests/fetch/corb [ Skip ]
 imported/w3c/web-platform-tests/fetch/sec-metadata [ Skip ]
+imported/w3c/web-platform-tests/fetch/private-network-access/mixed-content-fetch.tentative.https.window.html [ Skip ]
 
 # These fetch tests time out on ports without web-platform.test domain working (not glib).
 imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination.https.html [ Skip ]
@@ -2847,7 +2849,6 @@ webkit.org/b/153161 http/tests/security/contentSecurityPolicy/register-bypassing
 webkit.org/b/153162 http/tests/security/contentSecurityPolicy/report-multiple-violations-01.py [ Failure ]
 webkit.org/b/153162 http/tests/security/contentSecurityPolicy/report-multiple-violations-02.py [ Failure ]
 webkit.org/b/154522 http/tests/security/contentSecurityPolicy/1.1/securitypolicyviolation-base-uri-deny.html
-webkit.org/b/158480 http/tests/websocket/tests/hybi/upgrade-simple-ws.html [ Skip ]
 
 # WK CSP extension support is WebKit2 only
 http/tests/security/contentSecurityPolicy/extensions [ Skip ]
@@ -4585,9 +4586,6 @@ webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-posi
 webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/vrl-ltr-rtl.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/vrl-rtl-ltr.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/203451 imported/w3c/web-platform-tests/css/css-position/static-position/vrl-rtl-rtl.html [ ImageOnlyFailure ]
-
-webkit.org/b/254666 [ Debug ] imported/w3c/web-platform-tests/css/css-position/position-absolute-crash-chrome-005.html [ Skip ]
-webkit.org/b/254666 [ Debug ] fast/block/positioning/static_out_of_flow_inside_layout_boundary.html [ Skip ]
 
 webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/display-change-object-iframe.html [ ImageOnlyFailure ]
 webkit.org/b/203606 imported/w3c/web-platform-tests/css/css-display/display-flow-root-list-item-001.html [ ImageOnlyFailure ]
@@ -6612,13 +6610,17 @@ imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/fal
 # Missing counter-style integration with symbols() rdar://106084071
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/symbols-function.html [ ImageOnlyFailure ]
 
+webkit.org/b/297734 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/descriptor-calc.html [ ImageOnlyFailure ]
+
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-suffix.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/counter-hebrew-nested.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/counter-japanese-formal.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/japanese-informal/counter-japanese-informal.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/counter-korean-hangul-formal.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-formal/counter-korean-hanja-formal.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/counter-korean-hanja-informal.html [ ImageOnlyFailure ]
+
+# Missing support for extended range
+imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/counter-korean-hanja-informal-extended.html
+imported/w3c/web-platform-tests/css/css-counter-styles/japanese-informal/counter-japanese-informal-extended.html
+imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/counter-japanese-formal-extended.html
+imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-formal/counter-korean-hanja-formal-extended.html
+imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/counter-korean-hangul-formal-extended.html
 imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/counter-simp-chinese-formal.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/counter-simp-chinese-informal.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/counter-trad-chinese-formal.html [ ImageOnlyFailure ]

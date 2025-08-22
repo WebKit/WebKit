@@ -34,6 +34,7 @@
 #include <WebCore/Scrollbar.h>
 #include <WebCore/Widget.h>
 #include <wtf/HashSet.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 

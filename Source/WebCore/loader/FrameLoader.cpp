@@ -2474,12 +2474,14 @@ IGNORE_GCC_WARNINGS_END
         frame->protectedDocument()->resume(ReasonForSuspension::BackForwardCache);
 
         // Force a layout to update view size and thereby update scrollbars.
+        auto shouldForceLayout = [&] {
 #if PLATFORM(IOS_FAMILY)
-        if (!m_client->forceLayoutOnRestoreFromBackForwardCache())
-            frame->protectedView()->forceLayout();
-#else
-        frame->protectedView()->forceLayout();
+            return !m_client->forceLayoutOnRestoreFromBackForwardCache();
 #endif
+            return true;
+        };
+        if (RefPtr view = frame->view(); view && shouldForceLayout())
+            view->forceLayout();
 
         // Main resource delegates were already sent, so we skip the first response here.
         RefPtr documentLoader = m_documentLoader;

@@ -28,6 +28,7 @@
 #include <WebCore/CryptoKey.h>
 #include <WebCore/CryptoKeyPair.h>
 
+#include <wtf/Platform.h>
 #if OS(DARWIN) && !PLATFORM(GTK)
 #include <WebCore/CommonCryptoUtilities.h>
 #if HAVE(SWIFT_CPP_INTEROP)

@@ -568,16 +568,13 @@
                 "cursive",
                 "fantasy",
                 "monospace",
+                "math",
                 {
                     "value": "system-ui",
                     "status": "unimplemented"
                 },
                 {
                     "value": "emoji",
-                    "status": "unimplemented"
-                },
-                {
-                    "value": "math",
                     "status": "unimplemented"
                 },
                 {

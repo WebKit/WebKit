@@ -96,6 +96,7 @@ typedef void* PlatformScrollEvent;
 namespace WebKit {
 
 class ViewSnapshot;
+class WebBackForwardList;
 class WebBackForwardListItem;
 class WebPageProxy;
 class WebProcessProxy;
@@ -228,6 +229,10 @@ private:
     void resetState();
 
     void didStartProvisionalOrSameDocumentLoadForMainFrame();
+
+#if PLATFORM(COCOA)
+    WebBackForwardList* backForwardListForNavigation() const;
+#endif
 
     class SnapshotRemovalTracker : public CanMakeCheckedPtr<SnapshotRemovalTracker> {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(SnapshotRemovalTracker);
@@ -363,7 +368,9 @@ private:
     GRefPtr<GtkStyleContext> createStyleContext(const char*);
 #endif
 
+#if PLATFORM(COCOA)
     RefPtr<WebBackForwardListItem> itemForSwipeDirection(SwipeDirection) const;
+#endif
 
     WeakPtr<WebPageProxy> m_webPageProxy;
     WebPageProxyIdentifier m_webPageProxyIdentifier;

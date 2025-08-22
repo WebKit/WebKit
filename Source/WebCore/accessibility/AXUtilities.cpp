@@ -35,6 +35,7 @@
 #include "HTMLNames.h"
 #include "Node.h"
 #include "RenderImage.h"
+#include "RenderTreeBuilder.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -65,6 +66,13 @@ NodeName elementName(Node& node)
 {
     auto* element = dynamicDowncast<Element>(node);
     return element ? element->elementName() : ElementName::Unknown;
+}
+
+const RenderStyle* safeStyleFrom(Element& element)
+{
+    // We cannot resolve style (as computedStyle() does) if we are downstream of an existing render tree
+    // update. Otherwise, a RELEASE_ASSERT preventing re-entrancy will be hit inside RenderTreeBuilder.
+    return RenderTreeBuilder::current() ? element.existingComputedStyle() : element.computedStyle();
 }
 
 bool hasAccNameAttribute(Element& element)

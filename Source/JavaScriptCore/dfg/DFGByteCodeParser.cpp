@@ -65,7 +65,7 @@
 #include "JSArrayIterator.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
-#include "JSImmutableButterfly.h"
+#include "JSCellButterfly.h"
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseConstructor.h"
 #include "JSIteratorHelper.h"
@@ -7003,12 +7003,12 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_new_array_buffer: {
             auto bytecode = currentInstruction->as<OpNewArrayBuffer>();
-            // Unfortunately, we can't allocate a new JSImmutableButterfly if the profile tells us new information because we
+            // Unfortunately, we can't allocate a new JSCellButterfly if the profile tells us new information because we
             // cannot allocate from compilation threads.
             FrozenValue* frozen = get(VirtualRegister(bytecode.m_immutableButterfly))->constant();
             WTF::dependentLoadLoadFence();
 
-            JSImmutableButterfly* immutableButterfly = frozen->cast<JSImmutableButterfly*>();
+            JSCellButterfly* immutableButterfly = frozen->cast<JSCellButterfly*>();
             NewArrayBufferData data { };
             unsigned vectorLengthHint = immutableButterfly->toButterfly()->vectorLength();
 
@@ -7016,21 +7016,22 @@ void ByteCodeParser::parseBlock(unsigned limit)
             // Let's use non CoW array in this case.
             if (!immutableButterfly->length() && vectorLengthHint) {
                 IndexingType indexingType = immutableButterfly->indexingType();
-                if (isCopyOnWrite(indexingType)) {
-                    switch (indexingType) {
-                    case CopyOnWriteArrayWithInt32:
-                        indexingType = ArrayWithInt32;
-                        break;
-                    case CopyOnWriteArrayWithDouble:
-                        indexingType = ArrayWithDouble;
-                        break;
-                    case CopyOnWriteArrayWithContiguous:
-                        indexingType = ArrayWithContiguous;
-                        break;
-                    }
-                    set(bytecode.m_dst, addToGraph(Node::VarArg, NewArray, OpInfo(indexingType), OpInfo(vectorLengthHint)));
-                    NEXT_OPCODE(op_new_array_buffer);
+                switch (indexingType) {
+                case CopyOnWriteArrayWithInt32:
+                    indexingType = ArrayWithInt32;
+                    break;
+                case CopyOnWriteArrayWithDouble:
+                    indexingType = ArrayWithDouble;
+                    break;
+                case CopyOnWriteArrayWithContiguous:
+                    indexingType = ArrayWithContiguous;
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("immutableButterfly indexing type should be CoW");
+                    break;
                 }
+                set(bytecode.m_dst, addToGraph(Node::VarArg, NewArray, OpInfo(indexingType), OpInfo(vectorLengthHint)));
+                NEXT_OPCODE(op_new_array_buffer);
             }
 
             data.indexingMode = immutableButterfly->indexingMode();

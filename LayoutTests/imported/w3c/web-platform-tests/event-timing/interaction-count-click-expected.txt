@@ -1,5 +1,5 @@
 Click me
 Click me
 
-FAIL EventTiming: verify interactionCount for click interaction step_wait_func: interactionCount did not increase enough Timed out waiting on condition
+PASS EventTiming: verify interactionCount for click interaction
 

@@ -1,5 +1,5 @@
 Click me
 No, click me!
 
-FAIL Event Timing: events from programmatic click are not observed assert_equals: There should be a single first-input entry expected 1 but got 0
+PASS Event Timing: events from programmatic click are not observed
 

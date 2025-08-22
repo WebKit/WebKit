@@ -28,12 +28,18 @@
 #include "RemoteGraphicsContextGL.h"
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(GRAPHICS_LAYER_WC)
+
 #include "GPUConnectionToWebProcess.h"
 #include "WCContentBufferManager.h"
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 class RemoteGraphicsContextGLWC final : public RemoteGraphicsContextGL {
+    WTF_MAKE_TZONE_ALLOCATED(RemoteGraphicsContextGLWC);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RemoteGraphicsContextGLWC);
+
 public:
     RemoteGraphicsContextGLWC(GPUConnectionToWebProcess&, GraphicsContextGLIdentifier, RemoteRenderingBackend&, Ref<IPC::StreamServerConnection>&&);
     ~RemoteGraphicsContextGLWC() final = default;
@@ -44,6 +50,8 @@ public:
 private:
     WebCore::ProcessIdentifier m_webProcessIdentifier;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteGraphicsContextGLWC);
 
 Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::GraphicsContextGLAttributes&& attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& streamConnection)
 {

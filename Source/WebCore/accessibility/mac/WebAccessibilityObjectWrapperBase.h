@@ -31,6 +31,7 @@
 #import <WebCore/CocoaAccessibilityConstants.h>
 #import <WebCore/FontPlatformData.h>
 #import <wtf/Markable.h>
+#import <wtf/Platform.h>
 #import <wtf/RefPtr.h>
 #import <wtf/WeakPtr.h>
 

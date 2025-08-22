@@ -81,7 +81,7 @@ class IncrementalSweeper;
 class JITStubRoutine;
 class JITStubRoutineSet;
 class JSCell;
-class JSImmutableButterfly;
+class JSCellButterfly;
 class JSRopeString;
 class JSString;
 class JSValue;
@@ -597,7 +597,7 @@ public:
     
     Seconds totalGCTime() const { return m_totalGCTime; }
 
-    UncheckedKeyHashMap<JSImmutableButterfly*, JSString*> immutableButterflyToStringCache;
+    UncheckedKeyHashMap<JSCellButterfly*, JSString*> immutableButterflyToStringCache;
 
     bool isMarkingForGCVerifier() const { return m_isMarkingForGCVerifier; }
 
@@ -1069,7 +1069,7 @@ public:
     // Subspaces
     CompleteSubspace primitiveGigacageAuxiliarySpace; // Typed arrays, strings, bitvectors, etc go here.
     CompleteSubspace auxiliarySpace; // Butterflies, arrays of JSValues, etc go here.
-    CompleteSubspace immutableButterflyAuxiliarySpace; // JSImmutableButterfly goes here.
+    CompleteSubspace immutableButterflyAuxiliarySpace; // JSCellButterfly goes here.
 
     // We make cross-cutting assumptions about typed arrays being in the primitive Gigacage and butterflies
     // being in the JSValue gigacage. For some types, it's super obvious where they should go, and so we

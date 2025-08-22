@@ -36,6 +36,7 @@
 #include <WebCore/VisibleSelection.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

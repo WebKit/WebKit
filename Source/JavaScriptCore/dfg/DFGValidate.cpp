@@ -413,7 +413,7 @@ public:
                     VALIDATE((node), node->vectorLengthHint() >= node->numChildren());
                     break;
                 case NewArrayBuffer:
-                    VALIDATE((node), node->vectorLengthHint() >= node->castOperand<JSImmutableButterfly*>()->length());
+                    VALIDATE((node), node->vectorLengthHint() >= node->castOperand<JSCellButterfly*>()->length());
                     break;
                 case GetByVal:
                     switch (node->arrayMode().type()) {
@@ -950,7 +950,7 @@ private:
 
                 case PhantomNewArrayBuffer:
                     VALIDATE((node), m_graph.m_form == SSA);
-                    VALIDATE((node), node->vectorLengthHint() >= node->castOperand<JSImmutableButterfly*>()->length());
+                    VALIDATE((node), node->vectorLengthHint() >= node->castOperand<JSCellButterfly*>()->length());
                     break;
 
                 case NewArrayWithSpread: {

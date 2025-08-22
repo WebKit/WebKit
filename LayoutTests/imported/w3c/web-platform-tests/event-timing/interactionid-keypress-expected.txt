@@ -1,4 +1,4 @@
 
 
-FAIL Event Timing: compare event timing interactionId for keypress. assert_implements: Event Timing is not supported. undefined
+FAIL Event Timing: compare event timing interactionId for keypress. assert_greater_than: Should have a non-trivial interactionId expected a number greater than 0 but got 0
 

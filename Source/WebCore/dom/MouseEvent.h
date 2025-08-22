@@ -29,6 +29,7 @@
 #include <WebCore/MouseEventTypes.h>
 #include <WebCore/MouseRelatedEvent.h>
 
+#include <wtf/Platform.h>
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
 #include "PlatformTouchEventIOS.h"
 #endif

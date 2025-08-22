@@ -21,6 +21,7 @@
 #include "GLDisplay.h"
 
 #include "GLContext.h"
+#include <wtf/Locker.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/StringView.h>
 
@@ -186,48 +187,41 @@ static Vector<GLDisplay::DMABufFormat> queryDMABufFormats(EGLDisplay eglDisplay,
 
 const Vector<GLDisplay::DMABufFormat>& GLDisplay::dmabufFormats()
 {
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [this] {
-        if (m_display == EGL_NO_DISPLAY)
-            return;
-
-        if (!m_extensions.EXT_image_dma_buf_import)
-            return;
-
-        // For now we only support formats that can be created with a single GBM buffer for all planes.
-        static const Vector<EGLint> s_supportedFormats = {
-            DRM_FORMAT_XRGB8888, DRM_FORMAT_RGBX8888, DRM_FORMAT_XBGR8888, DRM_FORMAT_BGRX8888,
-            DRM_FORMAT_ARGB8888, DRM_FORMAT_RGBA8888, DRM_FORMAT_ABGR8888, DRM_FORMAT_BGRA8888,
-            DRM_FORMAT_RGB565,
-            DRM_FORMAT_XRGB2101010, DRM_FORMAT_XBGR2101010, DRM_FORMAT_ARGB2101010, DRM_FORMAT_ABGR2101010,
-            DRM_FORMAT_XRGB16161616F, DRM_FORMAT_XBGR16161616F, DRM_FORMAT_ARGB16161616F, DRM_FORMAT_ABGR16161616F
-        };
-        m_dmabufFormats = queryDMABufFormats(m_display, s_supportedFormats, m_extensions.EXT_image_dma_buf_import_modifiers);
-    });
+    Locker locker { m_dmabufFormatsLock };
+    if (!m_dmabufFormatsInitialized) {
+        if (m_display != EGL_NO_DISPLAY && m_extensions.EXT_image_dma_buf_import) {
+            // For now we only support formats that can be created with a single GBM buffer for all planes.
+            static const Vector<EGLint> s_supportedFormats = {
+                DRM_FORMAT_XRGB8888, DRM_FORMAT_RGBX8888, DRM_FORMAT_XBGR8888, DRM_FORMAT_BGRX8888,
+                DRM_FORMAT_ARGB8888, DRM_FORMAT_RGBA8888, DRM_FORMAT_ABGR8888, DRM_FORMAT_BGRA8888,
+                DRM_FORMAT_RGB565,
+                DRM_FORMAT_XRGB2101010, DRM_FORMAT_XBGR2101010, DRM_FORMAT_ARGB2101010, DRM_FORMAT_ABGR2101010,
+                DRM_FORMAT_XRGB16161616F, DRM_FORMAT_XBGR16161616F, DRM_FORMAT_ARGB16161616F, DRM_FORMAT_ABGR16161616F
+            };
+            m_dmabufFormats = queryDMABufFormats(m_display, s_supportedFormats, m_extensions.EXT_image_dma_buf_import_modifiers);
+        }
+        m_dmabufFormatsInitialized = true;
+    }
     return m_dmabufFormats;
 }
 
 #if USE(GSTREAMER)
 const Vector<GLDisplay::DMABufFormat>& GLDisplay::dmabufFormatsForVideo()
 {
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [this] {
-        if (m_display == EGL_NO_DISPLAY)
-            return;
-
-        if (!m_extensions.EXT_image_dma_buf_import)
-            return;
-
-        // Formats supported by the texture mapper.
-        // FIXME: add support for YUY2, YVYU, UYVY, VYUY, AYUV.
-        static const Vector<EGLint> s_supportedFormats = {
-            DRM_FORMAT_XRGB8888, DRM_FORMAT_XBGR8888, DRM_FORMAT_ARGB8888, DRM_FORMAT_ABGR8888,
-            DRM_FORMAT_YUV420, DRM_FORMAT_YVU420, DRM_FORMAT_NV12, DRM_FORMAT_NV21,
-            DRM_FORMAT_YUV444, DRM_FORMAT_YUV411, DRM_FORMAT_YUV422, DRM_FORMAT_P010
-        };
-
-        m_dmabufFormatsForVideo = queryDMABufFormats(m_display, s_supportedFormats, m_extensions.EXT_image_dma_buf_import_modifiers);
-    });
+    Locker locker { m_dmabufFormatsForVideoLock };
+    if (!m_dmabufFormatsForVideoInitialized) {
+        if (m_display != EGL_NO_DISPLAY && m_extensions.EXT_image_dma_buf_import) {
+            // Formats supported by the texture mapper.
+            // FIXME: add support for YUY2, YVYU, UYVY, VYUY, AYUV.
+            static const Vector<EGLint> s_supportedFormats = {
+                DRM_FORMAT_XRGB8888, DRM_FORMAT_XBGR8888, DRM_FORMAT_ARGB8888, DRM_FORMAT_ABGR8888,
+                DRM_FORMAT_YUV420, DRM_FORMAT_YVU420, DRM_FORMAT_NV12, DRM_FORMAT_NV21,
+                DRM_FORMAT_YUV444, DRM_FORMAT_YUV411, DRM_FORMAT_YUV422, DRM_FORMAT_P010
+            };
+            m_dmabufFormatsForVideo = queryDMABufFormats(m_display, s_supportedFormats, m_extensions.EXT_image_dma_buf_import_modifiers);
+        }
+        m_dmabufFormatsForVideoInitialized = true;
+    }
     return m_dmabufFormatsForVideo;
 }
 #endif

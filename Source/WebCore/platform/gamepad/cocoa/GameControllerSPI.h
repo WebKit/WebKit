@@ -27,6 +27,7 @@
 
 DECLARE_SYSTEM_HEADER
 
+#import <wtf/Platform.h>
 #if ENABLE(GAMEPAD) && PLATFORM(COCOA)
 
 #import <GameController/GCController.h>

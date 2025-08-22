@@ -53,7 +53,7 @@ namespace JSC {
     \
     macro(CodeBlockType, SpecCellOther) \
     \
-    macro(JSImmutableButterflyType, SpecCellOther) \
+    macro(JSCellButterflyType, SpecCellOther) \
     macro(JSSourceCodeType, SpecCellOther) \
     macro(JSScriptFetcherType, SpecCellOther) \
     macro(JSScriptFetchParametersType, SpecCellOther) \

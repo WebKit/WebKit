@@ -1201,32 +1201,6 @@ imported/w3c/web-platform-tests/css/css-transforms/transform3d-scale-004.html [ 
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-sorting-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-transforms/transform3d-translate3d-001.html [ Pass ]
 
-webkit.org/b/251527 imported/w3c/web-platform-tests/css/css-scroll-snap/selection-target.html [ Failure ]
-
-webkit.org/b/251528 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-uneditable.html [ Failure ]
-webkit.org/b/251528 imported/w3c/web-platform-tests/inert/inert-node-is-uneditable.html [ Failure ]
-
-webkit.org/b/251529 imported/w3c/web-platform-tests/shadow-dom/accesskey.tentative.html [ Failure ]
-
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/delegatesFocus-highlight-sibling.html [ Failure ]
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation.html [ Failure ]
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-fallback-default-tabindex.html [ Failure ]
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-fallback.html [ Failure ]
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-nested-2levels.html [ Failure ]
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-nested-delegatesFocus.html [ Failure ]
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-nested-fallback.html [ Failure ]
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-nested.html [ Failure ]
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-shadow-in-fallback.html [ Failure ]
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-shadow-in-slot.html [ Failure ]
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slots.html [ Failure ]
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slots-in-slot.html [ Failure ]
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-with-tabindex.html [ Failure ]
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-with-delegatesFocus.html [ Failure ]
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-nested-slots.html [ Failure ]
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-reverse-unassignable-slot.html [ Failure ]
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-reverse-unassigned-slot.html [ Failure ]
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-with-negative-index.html [ Failure ]
-
 imported/w3c/web-platform-tests/focus/activeelement-after-nested-loses-focus.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2135,7 +2109,6 @@ imported/w3c/web-platform-tests/fetch/private-network-access/xhr.https.window.ht
 imported/w3c/web-platform-tests/fetch/private-network-access/iframe.tentative.https.window.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/private-network-access/xhr.window.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/private-network-access/nested-worker.https.window.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/fetch/private-network-access/mixed-content-fetch.tentative.https.window.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/private-network-access/preflight-cache.https.window.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/private-network-access/worker-fetch.window.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/private-network-access/worker-fetch.https.window.html [ DumpJSConsoleLogInStdErr ]
@@ -3751,7 +3724,12 @@ webkit.org/b/199009 fast/text/variations/optical-sizing-units.html [ ImageOnlyFa
 # Timeout since https://commits.webkit.org/295725@main.
 webkit.org/b/199001 accessibility/set-selected-text-range-after-newline.html [ Skip ]
 
+# Test expects a timeout of 20s.
+imported/w3c/web-platform-tests/websockets/keeping-connection-open/001.html?wss [ Slow ]
+
 # Issues with WebSockets, many due to macOS/iOS and "glib" dealing with console messages differently
+webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/constructor/011.html?default [ Failure ]
+webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/constructor/011.html?wss [ Failure ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-1005.any.worker.html?wss [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-2999-reason.any.html?wss [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Close-2999-reason.any.worker.html?wss [ Failure Pass ]
@@ -3778,24 +3756,16 @@ webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Create-blocked-po
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Create-blocked-port.any.worker.html?wss [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Create-extensions-empty.any.html?wss [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Create-extensions-empty.any.worker.html?wss [ Failure Pass ]
-webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/Create-invalid-urls.any.html [ Failure ]
-webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/Create-invalid-urls.any.worker.html [ Failure ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Create-valid-url-array-protocols.any.html?wss [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/Create-valid-url-array-protocols.any.worker.html?wss [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/multi-globals/message-received.html?wss [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/unload-a-document/003.html?wss [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/unload-a-document/004.html?wss [ Failure Pass ]
-webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/constructor/011.html?default [ Failure ]
-webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/constructor/011.html?wss [ Failure ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/constructor/016.html?wss [ Failure Pass ]
-webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-basic.html?wss [ Failure Pass Timeout ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/readyState/008.html?wss [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/send/005.html?wss [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/send/008.html?wss [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/send/010.html?wss [ Failure Pass ]
-webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/keeping-connection-open/001.html?wss [ Failure ]
-webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/opening-handshake/003.html?default [ Failure ]
-webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/opening-handshake/003.html?wss [ Failure ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/opening-handshake/003-sets-origin.worker.html?wss [ Failure Pass ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/opening-handshake/005.html?wss [ Failure Pass ]
 
@@ -4226,6 +4196,7 @@ imported/w3c/web-platform-tests/css/css-color/body-opacity-0-to-1-stacking-conte
 
 # Flakily crashing on GTK and WPE bots
 webkit.org/b/262949 media/media-garbage-collection.html [ Pass Crash Timeout Failure ]
+webkit.org/b/286131 imported/w3c/web-platform-tests/css/css-transforms/transform-box/cssbox-content-box-002.html [ Pass Crash ]
 
 imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/input/snap-area-overflow-boundary.html [ Skip ]

@@ -27,6 +27,7 @@
 #define SuddenTermination_h
 
 #include <wtf/Noncopyable.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

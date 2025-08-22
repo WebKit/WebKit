@@ -43,12 +43,17 @@ typedef struct _GVariant GVariant;
 typedef struct _JSCValue JSCValue;
 #endif
 
+namespace WebCore {
+struct SerializedNode;
+}
+
 namespace API {
 class Object;
 }
 
 namespace WebKit {
 
+struct JSHandleInfo;
 struct JSObjectIDType;
 using JSObjectID = ObjectIdentifier<JSObjectIDType>;
 
@@ -64,7 +69,7 @@ public:
         Seconds,
         Vector<JSObjectID>,
         ObjectMap,
-        JSHandleInfo,
+        UniqueRef<JSHandleInfo>,
         UniqueRef<WebCore::SerializedNode>
     >;
     using Map = HashMap<JSObjectID, Value>;

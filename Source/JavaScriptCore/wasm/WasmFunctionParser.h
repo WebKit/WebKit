@@ -2713,20 +2713,20 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             if (typeIndexIsType(resultTypeIndex)) {
                 switch (static_cast<TypeKind>(heapType)) {
                 case TypeKind::Funcref:
-                case TypeKind::Nullfuncref:
+                case TypeKind::Nofuncref:
                     WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), funcrefType()), opName, " to type "_s, ref.type(), " expected a funcref"_s);
                     break;
                 case TypeKind::Externref:
-                case TypeKind::Nullexternref:
+                case TypeKind::Noexternref:
                     WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), externrefType()), opName, " to type "_s, ref.type(), " expected an externref"_s);
                     break;
-                case TypeKind::Exn:
-                case TypeKind::Nullexn:
-                    WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), exnrefType()), opName, " to type "_s, ref.type(), " expected an exn"_s);
+                case TypeKind::Exnref:
+                case TypeKind::Noexnref:
+                    WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), exnrefType()), opName, " to type "_s, ref.type(), " expected an exnref"_s);
                     break;
                 case TypeKind::Eqref:
                 case TypeKind::Anyref:
-                case TypeKind::Nullref:
+                case TypeKind::Noneref:
                 case TypeKind::I31ref:
                 case TypeKind::Arrayref:
                 case TypeKind::Structref:
@@ -3509,7 +3509,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             }
             if (catchTarget.type == CatchKind::CatchRef || catchTarget.type == CatchKind::CatchAllRef) {
                 ExpressionType exp;
-                results.constructAndAppend(Type { TypeKind::Ref, static_cast<TypeIndex>(TypeKind::Exn) }, exp);
+                results.constructAndAppend(Type { TypeKind::Ref, static_cast<TypeIndex>(TypeKind::Exnref) }, exp);
             }
 
             WASM_VALIDATOR_FAIL_IF(results.size() != target.branchTargetArity());
@@ -3574,11 +3574,11 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     }
 
     case ThrowRef: {
-        TypedExpression exn;
-        WASM_TRY_POP_EXPRESSION_STACK_INTO(exn, "exception reference"_s);
-        WASM_VALIDATOR_FAIL_IF(!isSubtype(exn.type(), exnrefType()), "throw_ref expected an exception reference"_s);
+        TypedExpression exnref;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(exnref, "exception reference"_s);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(exnref.type(), exnrefType()), "throw_ref expected an exception reference"_s);
 
-        WASM_TRY_ADD_TO_CONTEXT(addThrowRef(exn, m_expressionStack));
+        WASM_TRY_ADD_TO_CONTEXT(addThrowRef(exnref, m_expressionStack));
         m_unreachableBlocks = 1;
         return { };
     }

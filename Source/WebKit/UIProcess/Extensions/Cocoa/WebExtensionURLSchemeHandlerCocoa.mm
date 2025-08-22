@@ -120,7 +120,7 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
         RefPtr<API::Error> error;
         RefPtr resourceData = extension->resourceDataForPath(requestURL.path().toString(), error);
         if (!resourceData || error) {
-            extensionContext->recordErrorIfNeeded(wrapper(error));
+            extensionContext->recordErrorIfNeeded(error);
             task->didComplete([NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist userInfo:nil]);
             return;
         }

@@ -28,6 +28,7 @@
 #include <WebCore/GlyphBuffer.h>
 #include <WebCore/TextSpacing.h>
 #include <wtf/HashSet.h>
+#include <wtf/Platform.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>

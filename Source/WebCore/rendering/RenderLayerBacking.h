@@ -32,6 +32,7 @@
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderLayerCompositor.h>
 #include <WebCore/ScrollingCoordinator.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakListHashSet.h>
 

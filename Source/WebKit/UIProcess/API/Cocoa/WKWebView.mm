@@ -3022,6 +3022,7 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
 
 - (void)_updateScrollGeometryWithContentOffset:(CGPoint)contentOffset contentSize:(CGSize)contentSize
 {
+#if ENABLE(SWIFTUI)
     CGSize containerSize = self.frame.size;
     auto contentInsets = _page->obscuredContentInsets();
 #if PLATFORM(IOS_FAMILY)
@@ -3042,6 +3043,7 @@ WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContai
 
     _currentScrollGeometry = newScrollGeometry;
     [uiDelegate _webView:self geometryDidChange:newScrollGeometry.get()];
+#endif // ENABLE(SWIFTUI)
 }
 
 - (void)_updateFixedContainerEdges:(const WebCore::FixedContainerEdges&)edges
@@ -3830,10 +3832,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     RefPtr frame = WebKit::WebFrameProxy::webFrame(*frameID);
     if (!frame)
         return completionHandler(nil);
-    frame->getFrameInfo([completionHandler = makeBlockPtr(completionHandler), page = RefPtr { _page.get() }] (auto&& data) mutable {
+    frame->getFrameInfo([completionHandler = makeBlockPtr(completionHandler)] (auto&& data) mutable {
         if (!data)
             return completionHandler(nil);
-        completionHandler(wrapper(API::FrameInfo::create(WTFMove(*data), WTFMove(page))).get());
+        completionHandler(wrapper(API::FrameInfo::create(WTFMove(*data))).get());
     });
 }
 
@@ -4276,15 +4278,15 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     });
 }
 
-- (void)_hitTestAtPoint:(CGPoint)point inFrameCoordinateSpace:(WKFrameInfo *)frame completionHandler:(void (^)(_WKJSHandle *, WKFrameInfo *, NSError *))completionHandler
+- (void)_hitTestAtPoint:(CGPoint)point inFrameCoordinateSpace:(WKFrameInfo *)frame completionHandler:(void (^)(_WKJSHandle *, NSError *))completionHandler
 {
     RefPtr mainFrame = _page->mainFrame();
     if (!frame && !mainFrame)
-        return completionHandler(nil, nil, unknownError().get());
-    _page->hitTestAtPoint(frame ? frame->_frameInfo->frameInfoData().frameID : mainFrame->frameID(), point, [completionHandler = makeBlockPtr(completionHandler), page = RefPtr { _page.get() }] (auto&& result) mutable {
+        return completionHandler(nil, unknownError().get());
+    _page->hitTestAtPoint(frame ? frame->_frameInfo->frameInfoData().frameID : mainFrame->frameID(), point, [completionHandler = makeBlockPtr(completionHandler)] (auto&& result) mutable {
         if (!result)
-            return completionHandler(nil, nil, unknownError().get());
-        completionHandler(wrapper(API::JSHandle::create(WTFMove(result->node))).get(), wrapper(API::FrameInfo::create(WTFMove(result->frame), WTFMove(page))).get(), nil);
+            return completionHandler(nil, unknownError().get());
+        completionHandler(wrapper(API::JSHandle::create(WTFMove(*result))).get(), nil);
     });
 }
 
@@ -5695,8 +5697,8 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
             }
 
             auto checker = WebKit::CompletionHandlerCallChecker::create(inputDelegate.get(), @selector(_webView:willSubmitFormValues:frameInfo:sourceFrameInfo:userObject:submissionHandler:));
-            auto frameInfo = wrapper(API::FrameInfo::create(WTFMove(frameInfoData), &page));
-            auto sourceFrameInfo = wrapper(API::FrameInfo::create(WTFMove(sourceFrameInfoData), &page));
+            auto frameInfo = wrapper(API::FrameInfo::create(WTFMove(frameInfoData)));
+            auto sourceFrameInfo = wrapper(API::FrameInfo::create(WTFMove(sourceFrameInfoData)));
             [inputDelegate _webView:webView.get() willSubmitFormValues:valueMap.get() frameInfo:frameInfo.get() sourceFrameInfo:sourceFrameInfo.get() userObject:userObject.get() submissionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] () mutable {
                 if (checker->completionHandlerHasBeenCalled())
                     return;

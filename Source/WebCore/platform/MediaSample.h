@@ -32,6 +32,7 @@
 #include <WebCore/SharedBuffer.h>
 #include <functional>
 #include <wtf/MediaTime.h>
+#include <wtf/Platform.h>
 #include <wtf/PrintStream.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/AtomString.h>

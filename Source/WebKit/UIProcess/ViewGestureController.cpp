@@ -144,17 +144,21 @@ ViewGestureController* ViewGestureController::controllerForGesture(WebPageProxyI
     return gestureControllerIter->value.ptr();
 }
 
+#if PLATFORM(COCOA)
+
 RefPtr<WebBackForwardListItem> ViewGestureController::itemForSwipeDirection(SwipeDirection direction) const
 {
-    RefPtr page = m_webPageProxy.get();
-    if (!page)
+    RefPtr backForwardList = backForwardListForNavigation();
+    if (!backForwardList)
         return { };
 
     if (direction == SwipeDirection::Back)
-        return page->backForwardList().goBackItemSkippingItemsWithoutUserGesture();
+        return backForwardList->goBackItemSkippingItemsWithoutUserGesture();
 
-    return page->backForwardList().goForwardItemSkippingItemsWithoutUserGesture();
+    return backForwardList->goForwardItemSkippingItemsWithoutUserGesture();
 }
+
+#endif
 
 ViewGestureController::GestureID ViewGestureController::takeNextGestureID()
 {

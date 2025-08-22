@@ -26,7 +26,7 @@
 #pragma once
 
 #include <JavaScriptCore/HashMapHelper.h>
-#include <JavaScriptCore/JSImmutableButterfly.h>
+#include <JavaScriptCore/JSCellButterfly.h>
 #include <JavaScriptCore/JSObject.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -103,12 +103,12 @@ class OrderedHashTable;
 // - DeletedEntries: An array of the previously deleted entries used for updating iterator's index.
 // - ClearedTableSentinel: The sentinel to indicate whether the obsolete table is retired due to a clearance.
 //
-// Note that all elements in the JSImmutableButterfly are in JSValue type. However, only the key and value in the DataTable are real JSValues.
+// Note that all elements in the JSCellButterfly are in JSValue type. However, only the key and value in the DataTable are real JSValues.
 // The others are used as unsigned integers wrapped by JSValue.
 template<typename Traits>
 class OrderedHashTableHelper {
 public:
-    using Storage = JSImmutableButterfly;
+    using Storage = JSCellButterfly;
     using Helper = OrderedHashTableHelper<Traits>;
     using HashTable = OrderedHashTable<Traits>;
     using TableSize = uint32_t;
@@ -223,7 +223,8 @@ public:
 
     ALWAYS_INLINE static Storage* tryCreate(VM& vm, int length)
     {
-        return Storage::tryCreate(vm, vm.immutableButterflyStructure(CopyOnWriteArrayWithContiguous), length);
+        // FIXME: Why is this CopyOnWrite? We definitely modify it...
+        return Storage::tryCreate(vm, vm.cellButterflyStructure(CopyOnWriteArrayWithContiguous), length);
     }
     ALWAYS_INLINE static Storage* tryCreate(JSGlobalObject* globalObject, TableSize aliveEntryCount = 0, TableSize deletedEntryCount = 0, TableSize capacity = InitialCapacity)
     {

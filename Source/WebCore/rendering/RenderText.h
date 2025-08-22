@@ -30,6 +30,7 @@
 #include <WebCore/Text.h>
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
+#include <wtf/Platform.h>
 #include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {

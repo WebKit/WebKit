@@ -26,6 +26,7 @@
 #ifndef MediaPlaybackTargetPickerMock_h
 #define MediaPlaybackTargetPickerMock_h
 
+#include <wtf/Platform.h>
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 #include <WebCore/MediaPlaybackTargetContext.h>

@@ -78,6 +78,7 @@
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/BarcodeDetectorInterface.h>
 #include <WebCore/ColorChooser.h>
+#include <WebCore/ContentRuleListMatchedRule.h>
 #include <WebCore/ContentRuleListResults.h>
 #include <WebCore/CookieConsentDecisionResult.h>
 #include <WebCore/DataListSuggestionPicker.h>
@@ -173,10 +174,6 @@
 #if ENABLE(DAMAGE_TRACKING)
 #include "LayerTreeHost.h"
 #include <WebCore/Damage.h>
-#endif
-
-#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
-#include <WebCore/ContentRuleListMatchedRule.h>
 #endif
 
 namespace WebKit {
@@ -1369,13 +1366,13 @@ void WebChromeClient::contentRuleListNotification(const URL& url, const ContentR
 #endif
 }
 
-#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
 void WebChromeClient::contentRuleListMatchedRule(const WebCore::ContentRuleListMatchedRule& matchedRule)
 {
+#if ENABLE(CONTENT_EXTENSIONS)
     if (RefPtr page = m_page.get())
         page->send(Messages::WebPageProxy::ContentRuleListMatchedRule(matchedRule));
-}
 #endif
+}
 
 bool WebChromeClient::layerTreeStateIsFrozen() const
 {

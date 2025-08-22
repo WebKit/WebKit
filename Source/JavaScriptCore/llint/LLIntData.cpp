@@ -126,7 +126,7 @@ void initialize()
     llint_entry(opcodeMap, opcodeMapWide16, opcodeMapWide32);
 
 #if ENABLE(WEBASSEMBLY)
-    if (Options::useWasmIPInt())
+    if (Options::useWasm())
         IPInt::initialize();
 #endif
 
@@ -157,7 +157,7 @@ void initialize()
 #endif
 
 #if ENABLE(WEBASSEMBLY)
-    if (Options::useWasmIPInt())
+    if (Options::useWasm())
         IPInt::verifyInitialization();
 #endif
 

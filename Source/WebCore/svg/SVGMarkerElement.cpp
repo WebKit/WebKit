@@ -166,6 +166,12 @@ void SVGMarkerElement::setOrientToAngle(const SVGAngle& angle)
     invalidateMarkerResource();
 }
 
+void SVGMarkerElement::setOrientToAutoStartReverse()
+{
+    Ref { m_orientType }->setBaseVal(SVGMarkerOrientAutoStartReverse);
+    invalidateMarkerResource();
+}
+
 RenderPtr<RenderElement> SVGMarkerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     if (document().settings().layerBasedSVGEngineEnabled())

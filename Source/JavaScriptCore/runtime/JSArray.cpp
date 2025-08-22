@@ -1005,9 +1005,9 @@ JSString* JSArray::fastToString(JSGlobalObject* globalObject)
         const LChar comma = ',';
 
         bool isCoW = isCopyOnWrite(this->indexingMode());
-        JSImmutableButterfly* immutableButterfly = nullptr;
+        JSCellButterfly* immutableButterfly = nullptr;
         if (isCoW) {
-            immutableButterfly = JSImmutableButterfly::fromButterfly(this->butterfly());
+            immutableButterfly = JSCellButterfly::fromButterfly(this->butterfly());
             auto iter = vm.heap.immutableButterflyToStringCache.find(immutableButterfly);
             if (iter != vm.heap.immutableButterflyToStringCache.end())
                 return iter->value;
@@ -1019,7 +1019,7 @@ JSString* JSArray::fastToString(JSGlobalObject* globalObject)
         RETURN_IF_EXCEPTION(scope, { });
 
         if (!sawHoles && !genericCase && result && isCoW) {
-            ASSERT(JSImmutableButterfly::fromButterfly(this->butterfly()) == immutableButterfly);
+            ASSERT(JSCellButterfly::fromButterfly(this->butterfly()) == immutableButterfly);
             vm.heap.immutableButterflyToStringCache.add(immutableButterfly, jsCast<JSString*>(result));
         }
 

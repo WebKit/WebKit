@@ -27,6 +27,7 @@
 #pragma once
 
 #include <wtf/EnumTraits.h>
+#include <wtf/Platform.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 

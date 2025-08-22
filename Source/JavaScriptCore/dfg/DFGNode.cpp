@@ -32,7 +32,7 @@
 #include "DFGGraph.h"
 #include "DFGPromotedHeapLocation.h"
 #include "DOMJITSignature.h"
-#include "JSImmutableButterfly.h"
+#include "JSCellButterfly.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -252,8 +252,8 @@ void Node::convertToNewArrayBuffer(FrozenValue* immutableButterfly)
 {
     setOpAndDefaultFlags(NewArrayBuffer);
     NewArrayBufferData data { };
-    data.indexingMode = immutableButterfly->cast<JSImmutableButterfly*>()->indexingMode();
-    data.vectorLengthHint = immutableButterfly->cast<JSImmutableButterfly*>()->toButterfly()->vectorLength();
+    data.indexingMode = immutableButterfly->cast<JSCellButterfly*>()->indexingMode();
+    data.vectorLengthHint = immutableButterfly->cast<JSCellButterfly*>()->toButterfly()->vectorLength();
     children.reset();
     m_opInfo = immutableButterfly;
     m_opInfo2 = data.asQuadWord;

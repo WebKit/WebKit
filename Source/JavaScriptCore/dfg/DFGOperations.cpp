@@ -58,7 +58,7 @@
 #include "JSBoundFunction.h"
 #include "JSGenericTypedArrayViewConstructorInlines.h"
 #include "JSGenericTypedArrayViewInlines.h"
-#include "JSImmutableButterfly.h"
+#include "JSCellButterfly.h"
 #include "JSInternalPromise.h"
 #include "JSInternalPromiseConstructor.h"
 #include "JSIteratorHelper.h"
@@ -2240,7 +2240,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayBuffer, JSCell*, (VM* vmPointer, Struc
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(!arrayStructure->outOfLineCapacity());
-    auto* immutableButterfly = jsCast<JSImmutableButterfly*>(immutableButterflyCell);
+    auto* immutableButterfly = jsCast<JSCellButterfly*>(immutableButterflyCell);
     ASSERT(arrayStructure->indexingMode() == immutableButterfly->indexingMode() || hasAnyArrayStorage(arrayStructure->indexingMode()));
     auto* result = CommonSlowPaths::allocateNewArrayBuffer(vm, arrayStructure, immutableButterfly);
     ASSERT(result->indexingMode() == result->structure()->indexingMode());
@@ -4134,7 +4134,7 @@ JSC_DEFINE_JIT_OPERATION(operationCopyOnWriteArrayIndexOfString, UCPUStrictInt32
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (JSImmutableButterfly::isOnlyAtomStringsStructure(vm, butterfly)) {
+    if (JSCellButterfly::isOnlyAtomStringsStructure(vm, butterfly)) {
         auto search = searchElement->toAtomString(globalObject);
         OPERATION_RETURN_IF_EXCEPTION(scope, 0);
 
@@ -4394,7 +4394,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayWithSpreadSlow, JSCell*, (JSGlobalObje
     CheckedUint32 checkedLength = 0;
     for (unsigned i = 0; i < numItems; i++) {
         JSValue value = JSValue::decode(values[i]);
-        if (JSImmutableButterfly* array = jsDynamicCast<JSImmutableButterfly*>(value))
+        if (JSCellButterfly* array = jsDynamicCast<JSCellButterfly*>(value))
             checkedLength += array->publicLength();
         else
             ++checkedLength;
@@ -4423,7 +4423,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayWithSpreadSlow, JSCell*, (JSGlobalObje
     unsigned index = 0;
     for (unsigned i = 0; i < numItems; i++) {
         JSValue value = JSValue::decode(values[i]);
-        if (JSImmutableButterfly* array = jsDynamicCast<JSImmutableButterfly*>(value)) {
+        if (JSCellButterfly* array = jsDynamicCast<JSCellButterfly*>(value)) {
             // We are spreading.
             for (unsigned i = 0; i < array->publicLength(); i++) {
                 result->putDirectIndex(globalObject, index, array->get(i));
@@ -4448,7 +4448,7 @@ JSC_DEFINE_JIT_OPERATION(operationCreateImmutableButterfly, JSCell*, (JSGlobalOb
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (JSImmutableButterfly* result = JSImmutableButterfly::tryCreate(vm, vm.immutableButterflyStructure(CopyOnWriteArrayWithContiguous), length))
+    if (JSCellButterfly* result = JSCellButterfly::tryCreate(vm, vm.cellButterflyStructure(CopyOnWriteArrayWithContiguous), length))
         OPERATION_RETURN(scope, result);
 
     throwOutOfMemoryError(globalObject, scope);
@@ -4485,7 +4485,7 @@ JSC_DEFINE_JIT_OPERATION(operationSpreadGeneric, JSCell*, (JSGlobalObject* globa
         array = jsCast<JSArray*>(arrayResult);
     }
 
-    OPERATION_RETURN(scope, JSImmutableButterfly::createFromArray(globalObject, vm, array));
+    OPERATION_RETURN(scope, JSCellButterfly::createFromArray(globalObject, vm, array));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationSpreadFastArray, JSCell*, (JSGlobalObject* globalObject, JSCell* cell))
@@ -4499,7 +4499,7 @@ JSC_DEFINE_JIT_OPERATION(operationSpreadFastArray, JSCell*, (JSGlobalObject* glo
     JSArray* array = jsCast<JSArray*>(cell);
     ASSERT(array->isIteratorProtocolFastAndNonObservable());
 
-    OPERATION_RETURN(scope, JSImmutableButterfly::createFromArray(globalObject, vm, array));
+    OPERATION_RETURN(scope, JSCellButterfly::createFromArray(globalObject, vm, array));
 }
 
 static ALWAYS_INLINE JSObject* newArrayWithSpeciesImpl(JSGlobalObject* globalObject, uint64_t length, JSObject* array, IndexingType indexingType)

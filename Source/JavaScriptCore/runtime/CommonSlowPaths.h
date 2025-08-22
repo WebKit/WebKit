@@ -30,7 +30,7 @@
 #include "DirectArguments.h"
 #include "ExceptionHelpers.h"
 #include "FunctionCodeBlock.h"
-#include "JSImmutableButterfly.h"
+#include "JSCellButterfly.h"
 #include "JSPropertyNameEnumerator.h"
 #include "ScopedArguments.h"
 #include "SlowPathFunction.h"
@@ -229,7 +229,7 @@ static ALWAYS_INLINE void putDirectAccessorWithReify(VM& vm, JSGlobalObject* glo
     baseObject->putDirectAccessor(globalObject, propertyName, accessor, attribute);
 }
 
-inline JSArray* allocateNewArrayBuffer(VM& vm, Structure* structure, JSImmutableButterfly* immutableButterfly)
+inline JSArray* allocateNewArrayBuffer(VM& vm, Structure* structure, JSCellButterfly* immutableButterfly)
 {
     JSGlobalObject* globalObject = structure->globalObject();
     Structure* originalStructure = globalObject->originalArrayStructureForIndexingType(immutableButterfly->indexingMode());

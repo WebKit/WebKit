@@ -80,6 +80,9 @@ public:
     // Extract a serialized value for the specified custom property.
     String customPropertyValueSerialization(const AtomString& propertyName, const CSS::SerializationContext&) const;
 
+    // Extract a serialized value for the specified custom property using the provided RenderStyle and RenderElement.
+    String customPropertyValueSerializationInStyle(const RenderStyle&, const AtomString& propertyName, const CSS::SerializationContext&) const;
+
     // Helper methods for HTML editing.
     Ref<MutableStyleProperties> copyProperties(std::span<const CSSPropertyID>) const;
     Ref<MutableStyleProperties> copyProperties() const;

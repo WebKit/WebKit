@@ -43,6 +43,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/Platform.h>
 #include <wtf/Seconds.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -145,9 +146,7 @@ struct AppHighlight;
 struct ApplePayAMSUIRequest;
 struct CharacterRange;
 struct ContactsRequestData;
-#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
 struct ContentRuleListMatchedRule;
-#endif
 struct ContentRuleListResults;
 struct DataDetectorElementInfo;
 struct DateTimeChooserParameters;
@@ -558,10 +557,7 @@ public:
     virtual void disableSuddenTermination() { }
 
     virtual void contentRuleListNotification(const URL&, const ContentRuleListResults&) { };
-
-#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
     virtual void contentRuleListMatchedRule(const ContentRuleListMatchedRule&) { };
-#endif
 
 #if PLATFORM(WIN)
     virtual void AXStartFrameLoad() = 0;

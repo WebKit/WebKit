@@ -66,10 +66,6 @@ struct JumpTableEntry;
     } while (false)
 
 class FunctionIPIntMetadataGenerator {
-    struct MetadataBufferMalloc final : public FastMalloc {
-        static constexpr ALWAYS_INLINE size_t nextCapacity(size_t capacity) { return capacity + capacity; }
-    };
-
     WTF_MAKE_TZONE_ALLOCATED(FunctionIPIntMetadataGenerator);
     WTF_MAKE_NONCOPYABLE(FunctionIPIntMetadataGenerator);
 
@@ -98,6 +94,9 @@ public:
     unsigned addSignature(const TypeDefinition&);
 
 private:
+    struct MetadataBufferMalloc final : public FastMalloc {
+        static constexpr ALWAYS_INLINE size_t nextCapacity(size_t capacity) { return capacity + capacity; }
+    };
     using MetadataBuffer = Vector<uint8_t, 0, UnsafeVectorOverflow, 16, MetadataBufferMalloc>;
 
     inline void addBlankSpace(size_t);

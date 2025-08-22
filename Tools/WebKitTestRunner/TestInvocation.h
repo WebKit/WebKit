@@ -69,11 +69,6 @@ public:
     static void dumpWebProcessUnresponsiveness(const char* errorMessage);
     void outputText(const String&);
 
-    void didBeginSwipe();
-    void willEndSwipe();
-    void didEndSwipe();
-    void didRemoveSwipeSnapshot();
-
     void notifyDownloadDone();
 
     void dumpResourceLoadStatistics();

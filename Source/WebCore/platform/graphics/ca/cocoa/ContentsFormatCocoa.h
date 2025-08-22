@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import <wtf/Platform.h>
 #if PLATFORM(COCOA)
 
 #import "ContentsFormat.h"

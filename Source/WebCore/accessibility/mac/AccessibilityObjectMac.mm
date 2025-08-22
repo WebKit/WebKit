@@ -28,7 +28,6 @@
 
 #import "AXObjectCache.h"
 #import "AXRemoteFrame.h"
-#import "AccessibilityLabel.h"
 #import "ColorCocoa.h"
 #import "CompositionHighlight.h"
 #import "CompositionUnderline.h"

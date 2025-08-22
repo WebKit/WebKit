@@ -400,8 +400,8 @@ end
     end)
     forEachWasmArgumentFPR(macro (index, fpr1, fpr2)
         const base = -(NumberOfWasmArgumentGPRs + CalleeSaveSpaceAsVirtualRegisters + 2) * MachineRegisterSize
-        storev fpr2, base - (index + 1) * VectorRegisterSize[cfr]
         storev fpr1, base - (index + 0) * VectorRegisterSize[cfr]
+        storev fpr2, base - (index + 1) * VectorRegisterSize[cfr]
     end)
 
     slow_path()
@@ -420,8 +420,8 @@ end
     end)
     forEachWasmArgumentFPR(macro (index, fpr1, fpr2)
         const base = -(NumberOfWasmArgumentGPRs + CalleeSaveSpaceAsVirtualRegisters + 2) * MachineRegisterSize
-        loadv base - (index + 1) * VectorRegisterSize[cfr], fpr2
         loadv base - (index + 0) * VectorRegisterSize[cfr], fpr1
+        loadv base - (index + 1) * VectorRegisterSize[cfr], fpr2
     end)
 
     restoreCalleeSavesUsedByWasm()

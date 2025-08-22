@@ -83,10 +83,10 @@ private:
     Vector<Ref<PerformanceEntry>> m_entriesToDeliver;
     const Ref<PerformanceObserverCallback> m_callback;
     OptionSet<PerformanceEntry::Type> m_typeFilter;
+    Seconds m_durationThreshold;
     bool m_registered { false };
     bool m_isTypeObserver { false };
     bool m_hasNavigationTiming { false };
-    Seconds m_durationThreshold = PerformanceEventTiming::defaultDurationThreshold;
 };
 
 } // namespace WebCore

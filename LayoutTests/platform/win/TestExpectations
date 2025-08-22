@@ -1977,6 +1977,14 @@ imported/w3c/web-platform-tests/event-timing/interaction-count-tap.html [ Crash 
 imported/w3c/web-platform-tests/event-timing/interaction-count-click.html [ Skip ]
 imported/w3c/web-platform-tests/event-timing/interaction-count-press-key.html [ Skip ]
 
+# Timeout:
+imported/w3c/web-platform-tests/event-timing/interactionid-orphan-pointerup.html [ Skip ]
+
+# Fail with AccessDeniedAccess
+imported/w3c/web-platform-tests/event-timing/contextmenu.html [ Skip ]
+imported/w3c/web-platform-tests/event-timing/interactionid-auxclick.html [ Skip ]
+imported/w3c/web-platform-tests/event-timing/first-input-interactionid-key.html [ Skip ]
+
 compositing/video [ Skip ]
 editing/pasteboard [ Skip ]
 fast/attachment [ Skip ]

@@ -147,10 +147,10 @@ bool AXSearchManager::matchForSearchKeyAtIndex(Ref<AXCoreObject> axObject, const
             && !axObject->hasSameStyle(*criteria.startObject);
     case AccessibilitySearchKey::TableSameLevel:
         return criteria.startObject
-            && axObject->isTable() && axObject->isExposable()
+            && axObject->isExposableTable()
             && axObject->tableLevel() == criteria.startObject->tableLevel();
     case AccessibilitySearchKey::Table:
-        return axObject->isTable() && axObject->isExposable();
+        return axObject->isExposableTable();
     case AccessibilitySearchKey::TextField:
         return axObject->isTextControl();
     case AccessibilitySearchKey::Underline:
@@ -223,7 +223,7 @@ static void appendChildrenToArray(Ref<AXCoreObject> object, bool isForward, RefP
     // The rows from the table should be queried, since those are direct descendants of the table, and they contain content.
     // FIXME: Unlike AXCoreObject::children(), AXCoreObject::rows() returns a copy, not a const-reference. This can be wasteful
     // for tables with lots of rows and probably should be changed.
-    const auto& searchChildren = object->isTable() && object->isExposable() ? object->rows() : object->unignoredChildren();
+    const auto& searchChildren = object->isExposableTable() ? object->rows() : object->unignoredChildren();
 
     size_t childrenSize = searchChildren.size();
 

@@ -897,8 +897,8 @@ public:
     }
 
     // This function is used to store the wasm callee in case this function hasn't tiered up yet.
-    // The LLInt/IPInt is going to expect this so that the common entrypoint can read bytecode/metadata.
-    void storeWasmCalleeCallee(RegisterID value, int offset = 0)
+    // The IPInt is going to expect this so that the common entrypoint can read bytecode/metadata.
+    void storeWasmCalleeToCalleeCallFrame(RegisterID value, int offset = 0)
     {
         JIT_COMMENT(*this, "< Store Callee's wasm callee");
         auto addr = CCallHelpers::addressOfCalleeCalleeFromCallerPerspective(offset);
@@ -912,30 +912,29 @@ public:
 #endif
     }
 
-    void storeWasmCalleeCallee(const CalleeBits* boxedWasmCalleeLoadLocation)
+    void storeWasmCalleeToCalleeCallFrame(const CalleeBits* boxedWasmCalleeLoadLocation)
     {
         ASSERT(boxedWasmCalleeLoadLocation);
         JIT_COMMENT(*this, "> ", RawPointer(boxedWasmCalleeLoadLocation->asNativeCallee()));
         move(TrustedImmPtr(boxedWasmCalleeLoadLocation->rawPtr()), scratchRegister());
-        storeWasmCalleeCallee(scratchRegister());
+        storeWasmCalleeToCalleeCallFrame(scratchRegister());
     }
 
-    DataLabelPtr storeWasmCalleeCalleePatchable(int offset = 0)
+    void storeWasmCalleeToCalleeCallFrame(TrustedImmPtr imm, int offset = 0)
     {
-        JIT_COMMENT(*this, "Store Callee's wasm callee (patchable)");
-        auto patch = moveWithPatch(TrustedImmPtr(nullptr), scratchRegister());
+        JIT_COMMENT(*this, "Store Callee's wasm callee");
         auto addr = CCallHelpers::addressOfCalleeCalleeFromCallerPerspective(offset);
 #if USE(JSVALUE64)
-        storePtr(scratchRegister(), addr);
+        store64(imm, addr);
 #elif USE(JSVALUE32_64)
+        move(imm, scratchRegister());
         store32(scratchRegister(), addr.withOffset(PayloadOffset));
         store32(TrustedImm32(JSValue::NativeCalleeTag), addr.withOffset(TagOffset));
 #else
 #error "Unsupported configuration"
 #endif
-        return patch;
     }
-    
+
     // These operations clobber all volatile registers. They assume that there is room on the top of
     // stack to marshall call arguments.
     void logShadowChickenProloguePacket(GPRReg shadowPacket, GPRReg scratch1, GPRReg scope);

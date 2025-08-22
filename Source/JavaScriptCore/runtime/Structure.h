@@ -697,9 +697,9 @@ public:
     bool canCachePropertyNameEnumerator(VM&) const;
     bool canAccessPropertiesQuicklyForEnumeration() const;
 
-    JSImmutableButterfly* cachedPropertyNames(CachedPropertyNamesKind) const;
-    JSImmutableButterfly* cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind) const;
-    void setCachedPropertyNames(VM&, CachedPropertyNamesKind, JSImmutableButterfly*);
+    JSCellButterfly* cachedPropertyNames(CachedPropertyNamesKind) const;
+    JSCellButterfly* cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind) const;
+    void setCachedPropertyNames(VM&, CachedPropertyNamesKind, JSCellButterfly*);
     bool canCacheOwnPropertyNames() const;
 
     void getPropertyNamesFromStructure(VM&, PropertyNameArray&, DontEnumPropertiesMode);

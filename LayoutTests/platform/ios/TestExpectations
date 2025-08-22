@@ -2313,6 +2313,7 @@ fast/dom/linkify-phone-numbers.html [ Pass ]
 
 accessibility/table-exposure-updates-dynamically.html [ Pass ]
 accessibility/accessibility-node-reparent.html [ Pass ]
+accessibility/area-element-bounding-box.html [ Pass ]
 accessibility/aria-braillelabel.html [ Pass ]
 accessibility/aria-brailleroledescription.html [ Pass ]
 accessibility/aria-checked-mixed-value.html [ Pass ]
@@ -4496,11 +4497,22 @@ webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/buffered-flag.h
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/click-timing.html [ Skip ]
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/click.html [ Skip ]
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/contextmenu.html [ Skip ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/crossiframe.html [ Skip ]
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/dblclick.html [ Skip ]
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/disconnect-target.html [ Skip ]
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/duration-with-target-low.html [ Skip ]
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/event-retarget.html [ Skip ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/first-input-interactionid-click.html [ Skip ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/first-input-interactionid-key.html [ Skip ]
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/first-input-shadow-dom.html [ Skip ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interaction-count-click.html [ Skip ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interaction-count-press-key.html [ Skip ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-auxclick.html [ Skip ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-click.html [ Skip ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-keypress.html [ Skip ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-orphan-pointerup.html [ Skip ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-press-key-as-input.html [ Skip ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/interactionid-press-key-no-effect.html [ Skip ]
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/keydown.html [ Skip ]
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/keyup.html [ Skip ]
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/large-duration-threshold.html [ Skip ]
@@ -4520,6 +4532,7 @@ webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/pointerover.htm
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/pointerup.html [ Skip ]
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/programmatic-click-not-observed.html [ Skip ]
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/retrievability.html [ Skip ]
+webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/retrieve-firstInput.html [ Skip ]
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/shadow-dom-null-target.html [ Skip ]
 webkit.org/b/214677 imported/w3c/web-platform-tests/event-timing/toJSON.html [ Skip ]
 
@@ -7966,6 +7979,8 @@ imported/w3c/web-platform-tests/css/css-ui/button-author-level-padding-applies.h
 # Window inactive appearance is only used on macOS.
 fast/forms/form-control-refresh/checkbox-radio-inactive-appearance-dark-bg-light-color-scheme.html [ Skip ]
 fast/forms/form-control-refresh/checkbox-radio-inactive-appearance-light-bg-dark-color-scheme.html [ Skip ]
+fast/forms/form-control-refresh/progress-window-inactive-state-dark-mode.html [ Skip ]
+fast/forms/form-control-refresh/progress-window-inactive-state-light-mode.html [ Skip ]
 
 # rdar://155348715 (REGRESSION (Liquid Glass): [ iOS 26 ] 72 WPT/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-*.html tests are constantly failing (IMAGE).)
 # Explicit pass expectations for many of these tests are set above. Uncomment that block once this is resolved.
@@ -8131,13 +8146,14 @@ fast/forms/input-password-logical-widths.html [ Failure ]
 
 webkit.org/b/296338 http/tests/site-isolation/fullscreen.html [ Pass Failure ]
 
-# webkit.org/b/296017 6x imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image (layout-tests) are flakey image failures
+# webkit.org/b/296017 7x imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image (layout-tests) are flakey image failures
 [ Release ] imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-006.html [ Pass ImageOnlyFailure ]
 [ Release ] imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-022.html [ Pass ImageOnlyFailure ]
 [ Release ] imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-021.html [ Pass ImageOnlyFailure ]
 [ Release ] imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-007.html [ Pass ImageOnlyFailure ]
 [ Release ] imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-026.html [ Pass ImageOnlyFailure ]
 [ Release ] imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-014.html [ Pass ImageOnlyFailure ]
+[ Release ] imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-003.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/296389 [ Release ] http/tests/dom/noreferrer-window-not-targetable.html [ Pass Failure ]
 
@@ -8208,13 +8224,11 @@ webkit.org/b/297251 [ Release ] fast/mediastream/getUserMedia-echoCancellation.h
 
 webkit.org/b/297346 workers/message-port-gc.html [ Crash ]
 
-webkit.org/b/297364 imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-create.https.html [ Failure ]
-
 # webkit.org/b/297405 2x imported/w3c/web-platform-tests/css/css-flexbox/ (layout-tests) tests are constant image failures 
 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-002.xhtml [ Failure ]
 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-rtl-001.xhtml [ Failure ]
 
-webkit.org/b/297462 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-size-containment-001.html [ Failure ]
+webkit.org/b/297462 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-size-containment-001.html [ Failure ]
 
 webkit.org/b/295599 [ Release ] http/tests/webcodecs/audio-decoder-callbacks-do-not-leak.html [ Pass Failure ]
 webkit.org/b/286318 http/tests/iframe-monitor [ Pass ]
@@ -8234,3 +8248,5 @@ http/tests/iframe-monitor/dark-mode.html [ Timeout ]
 webkit.org/b/261344 [ Release ] requestidlecallback/requestidlecallback-does-not-block-timer.html [ Pass Failure ]
 
 webkit.org/b/297669 [ Release ] http/tests/site-isolation/edge-sampling-viewport-constrained-object.html [ Pass Failure ]
+
+webkit.org/b/297674 [ Release ] http/wpt/mediarecorder/MediaRecorder-matroska-AV-audio-video-dataavailable.html [ Pass Failure ]

@@ -1733,7 +1733,7 @@ void Page::setDeviceScaleFactor(float scaleFactor)
     pageOverlayController().didChangeDeviceScaleFactor();
 }
 
-void Page::screenPropertiesDidChange()
+void Page::screenPropertiesDidChange(bool affectsStyle)
 {
 #if ENABLE(VIDEO)
     auto mode = preferredDynamicRangeMode(protectedMainFrame()->protectedVirtualView().get());
@@ -1747,7 +1747,8 @@ void Page::screenPropertiesDidChange()
 
     updateScreenSupportedContentsFormats();
 
-    setNeedsRecalcStyleInAllFrames();
+    if (affectsStyle)
+        setNeedsRecalcStyleInAllFrames();
 
     forEachRenderableDocument([this] (Document& document) {
         document.screenPropertiesDidChange(m_displayID);

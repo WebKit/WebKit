@@ -103,7 +103,7 @@ void RemoteGPU::workQueueInitialize()
     assertIsCurrent(workQueue());
     Ref workQueue = m_workQueue;
     RefPtr streamConnection = m_streamConnection;
-    streamConnection->open(workQueue);
+    streamConnection->open(*this, workQueue);
     streamConnection->startReceivingMessages(*this, Messages::RemoteGPU::messageReceiverName(), m_identifier.toUInt64());
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
@@ -136,6 +136,16 @@ void RemoteGPU::workQueueUninitialize()
     Ref { m_objectHeap }->clear();
     m_backing = nullptr;
 }
+
+void RemoteGPU::didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName messageName, const Vector<uint32_t>&)
+{
+    RELEASE_LOG_FAULT(IPC, "Received an invalid message '%" PUBLIC_LOG_STRING "' from WebContent process, requesting for it to be terminated.", description(messageName).characters());
+    callOnMainRunLoop([weakGPUConnectionToWebProcess = m_gpuConnectionToWebProcess] {
+        if (RefPtr gpuConnectionToWebProcess = weakGPUConnectionToWebProcess.get())
+            gpuConnectionToWebProcess->terminateWebProcess();
+    });
+}
+
 
 void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, WebGPUIdentifier identifier, CompletionHandler<void(std::optional<RemoteGPURequestAdapterResponse>&&)>&& callback)
 {

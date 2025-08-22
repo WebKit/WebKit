@@ -28,6 +28,7 @@
 #include <WebCore/ModelPlayer.h>
 #include <WebCore/ModelPlayerClient.h>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

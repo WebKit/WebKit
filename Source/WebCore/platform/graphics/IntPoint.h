@@ -27,6 +27,7 @@
 
 #include <WebCore/IntSize.h>
 #include <cmath>
+#include <wtf/Platform.h>
 
 #if USE(CG)
 typedef struct CGPoint CGPoint;

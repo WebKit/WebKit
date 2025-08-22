@@ -28,6 +28,7 @@
 #import <WebCore/Color.h>
 #import <WebCore/TextAttachmentForSerialization.h>
 #import <wtf/ObjectIdentifier.h>
+#import <wtf/Platform.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/URL.h>
 #import <wtf/Vector.h>

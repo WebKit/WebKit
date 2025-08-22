@@ -22,7 +22,7 @@ PASS markerElement.getAttribute('orient') is "auto"
 
 PASS markerElement.orient = 'auto-start-reverse' is "auto-start-reverse"
 PASS markerElement.orient is "auto-start-reverse"
-PASS markerElement.orientType.baseVal is SVGMarkerElement.SVG_MARKER_ORIENT_UNKNOWN
+PASS markerElement.orientType.baseVal is SVGMarkerElement.SVG_MARKER_ORIENT_AUTO_START_REVERSE
 PASS markerElement.orientAngle.baseVal.value is 0
 PASS markerElement.getAttribute('orient') is "auto-start-reverse"
 

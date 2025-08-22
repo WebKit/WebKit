@@ -83,9 +83,9 @@
 #include "JSAsyncGeneratorFunction.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
+#include "JSCellButterfly.h"
 #include "JSGenerator.h"
 #include "JSGeneratorFunction.h"
-#include "JSImmutableButterfly.h"
 #include "JSInternalPromise.h"
 #include "JSIteratorHelper.h"
 #include "JSLexicalEnvironment.h"
@@ -8403,8 +8403,8 @@ IGNORE_CLANG_WARNINGS_END
 
             if (isCopyOnWriteArrayWithContiguous()) {
                 operation = operationCopyOnWriteArrayIndexOfString;
-                LValue targetStructureID = encodeStructureID(weakPointer(vm().immutableButterflyOnlyAtomStringsStructure.get()));
-                LValue butterflyStructureID = m_out.load32(m_out.add(storage, m_out.constIntPtr(-JSImmutableButterfly::offsetOfData())), m_heaps.JSCell_structureID);
+                LValue targetStructureID = encodeStructureID(weakPointer(vm().cellButterflyOnlyAtomStringsStructure.get()));
+                LValue butterflyStructureID = m_out.load32(m_out.add(storage, m_out.constIntPtr(-JSCellButterfly::offsetOfData())), m_heaps.JSCell_structureID);
                 m_out.branch(m_out.equal(butterflyStructureID, targetStructureID), unsure(slowCase), unsure(checkSearchRopeString));
             } else
                 m_out.jump(checkSearchRopeString);
@@ -9183,7 +9183,7 @@ IGNORE_CLANG_WARNINGS_END
 
                 m_out.appendTo(useCacheCase, slowButArrayBufferCase);
                 RegisteredStructure arrayStructure = m_graph.registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(CopyOnWriteArrayWithContiguous));
-                LValue fastArray = allocateObject<JSArray>(arrayStructure, m_out.addPtr(cached, JSImmutableButterfly::offsetOfData()), slowButArrayBufferCase);
+                LValue fastArray = allocateObject<JSArray>(arrayStructure, m_out.addPtr(cached, JSCellButterfly::offsetOfData()), slowButArrayBufferCase);
                 ValueFromBlock fastResult = m_out.anchor(fastArray);
                 m_out.jump(continuation);
 
@@ -9570,7 +9570,7 @@ IGNORE_CLANG_WARNINGS_END
                         immutableButterfly = createContiguousImmutableButterflyFromPhantomCreateRest(globalObject, use->child1().node());
                     }
                 } else {
-                    // If a node is producing JSImmutableButterfly, it must be contiguous.
+                    // If a node is producing JSCellButterfly, it must be contiguous.
                     immutableButterfly = lowCell(use);
                 }
 
@@ -9600,7 +9600,7 @@ IGNORE_CLANG_WARNINGS_END
                 else {
                     Edge& child = m_graph.varArgChild(m_node, i);
                     if (child->op() == PhantomSpread && child->child1()->op() == PhantomNewArrayBuffer)
-                        startLength += child->child1()->castOperand<JSImmutableButterfly*>()->length();
+                        startLength += child->child1()->castOperand<JSCellButterfly*>()->length();
                 }
             }
 
@@ -9651,7 +9651,7 @@ IGNORE_CLANG_WARNINGS_END
                     if (use->op() == PhantomSpread) {
                         if (use->child1()->op() == PhantomNewArrayBuffer) {
                             IndexedAbstractHeap& heap = m_heaps.indexedContiguousProperties;
-                            auto* array = use->child1()->castOperand<JSImmutableButterfly*>();
+                            auto* array = use->child1()->castOperand<JSCellButterfly*>();
                             for (unsigned i = 0; i < array->length(); ++i) {
                                 // Because resulted array from NewArrayWithSpread is always contiguous, we should not generate value
                                 // in Double form even if PhantomNewArrayBuffer's indexingType is ArrayWithDouble.
@@ -9934,7 +9934,7 @@ IGNORE_CLANG_WARNINGS_END
     LValue createContiguousImmutableButterflyFromPhantomNewArrayBuffer(JSGlobalObject* globalObject, Node* newArrayBufferNode)
     {
         ASSERT(newArrayBufferNode->op() == PhantomNewArrayBuffer);
-        auto* immutableButterfly = newArrayBufferNode->castOperand<JSImmutableButterfly*>();
+        auto* immutableButterfly = newArrayBufferNode->castOperand<JSCellButterfly*>();
         if (hasContiguous(immutableButterfly->indexingType()))
             return frozenPointer(newArrayBufferNode->cellOperand());
 
@@ -9943,9 +9943,9 @@ IGNORE_CLANG_WARNINGS_END
 
         ASSERT(immutableButterfly->length() <= MAX_STORAGE_VECTOR_LENGTH);
 
-        LValue fastImmutableButterflyValue = allocateVariableSizedCell<JSImmutableButterfly>(
-            m_out.constIntPtr(JSImmutableButterfly::allocationSize(immutableButterfly->length())),
-            m_graph.m_vm.immutableButterflyStructure(CopyOnWriteArrayWithContiguous), slowAllocation);
+        LValue fastImmutableButterflyValue = allocateVariableSizedCell<JSCellButterfly>(
+            m_out.constIntPtr(JSCellButterfly::allocationSize(immutableButterfly->length())),
+            m_graph.m_vm.cellButterflyStructure(CopyOnWriteArrayWithContiguous), slowAllocation);
         LValue fastImmutableButterflyStorage = toButterfly(fastImmutableButterflyValue);
         m_out.store32(m_out.constInt32(immutableButterfly->length()), fastImmutableButterflyStorage, m_heaps.Butterfly_publicLength);
         m_out.store32(m_out.constInt32(immutableButterfly->length()), fastImmutableButterflyStorage, m_heaps.Butterfly_vectorLength);
@@ -9987,11 +9987,11 @@ IGNORE_CLANG_WARNINGS_END
         static_assert(sizeof(JSValue) == 8 && 1 << 3 == 8, "Assumed in the code below.");
         LValue size = m_out.add(
             m_out.shl(m_out.zeroExtPtr(length), m_out.constInt32(3)),
-            m_out.constIntPtr(JSImmutableButterfly::offsetOfData()));
+            m_out.constIntPtr(JSCellButterfly::offsetOfData()));
         m_out.branch(m_out.above(length, m_out.constInt32(MAX_STORAGE_VECTOR_LENGTH)), rarely(slowAllocation), usually(fastAllocation));
 
         LBasicBlock lastNext = m_out.appendTo(fastAllocation, slowAllocation);
-        LValue fastArrayValue = allocateVariableSizedCell<JSImmutableButterfly>(size, m_graph.m_vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), slowAllocation);
+        LValue fastArrayValue = allocateVariableSizedCell<JSCellButterfly>(size, m_graph.m_vm.cellButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), slowAllocation);
         LValue fastArrayStorage = toButterfly(fastArrayValue);
         m_out.store32(length, fastArrayStorage, m_heaps.Butterfly_vectorLength);
         m_out.store32(length, fastArrayStorage, m_heaps.Butterfly_publicLength);
@@ -10026,7 +10026,7 @@ IGNORE_CLANG_WARNINGS_END
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         if (m_node->child1()->op() == PhantomNewArrayBuffer) {
             ASSERT(m_graph.isWatchingHavingABadTimeWatchpoint(m_node->child1().node()));
-            // FIXME: JSImmutableButterfly::createFromArray should support re-using non contiguous indexing types as well.
+            // FIXME: JSCellButterfly::createFromArray should support re-using non contiguous indexing types as well.
             setJSValue(createContiguousImmutableButterflyFromPhantomNewArrayBuffer(globalObject, m_node->child1().node()));
             return;
         }
@@ -10073,7 +10073,7 @@ IGNORE_CLANG_WARNINGS_END
             m_out.branch(m_out.equal(m_out.bitAnd(indexingMode, m_out.constInt32(IndexingModeMask)), m_out.constInt32(CopyOnWriteArrayWithContiguous)), unsure(copyOnWritePropagation), unsure(preLoop));
 
             m_out.appendTo(copyOnWritePropagation, preLoop);
-            ValueFromBlock sharedResult = m_out.anchor(m_out.add(butterfly, m_out.constIntPtr(-JSImmutableButterfly::offsetOfData())));
+            ValueFromBlock sharedResult = m_out.anchor(m_out.add(butterfly, m_out.constIntPtr(-JSCellButterfly::offsetOfData())));
             m_out.jump(continuation);
 
             m_out.appendTo(preLoop, fastPath);
@@ -10081,11 +10081,11 @@ IGNORE_CLANG_WARNINGS_END
             static_assert(sizeof(JSValue) == 8 && 1 << 3 == 8, "Assumed in the code below.");
             LValue size = m_out.add(
                 m_out.shl(m_out.zeroExtPtr(length), m_out.constInt32(3)),
-                m_out.constIntPtr(JSImmutableButterfly::offsetOfData()));
+                m_out.constIntPtr(JSCellButterfly::offsetOfData()));
             m_out.branch(m_out.above(length, m_out.constInt32(MAX_STORAGE_VECTOR_LENGTH)), rarely(slowPath), usually(fastPath));
 
             m_out.appendTo(fastPath, loopSelection);
-            LValue fastAllocation = allocateVariableSizedCell<JSImmutableButterfly>(size, m_graph.m_vm.immutableButterflyStructure(CopyOnWriteArrayWithContiguous), slowPath);
+            LValue fastAllocation = allocateVariableSizedCell<JSCellButterfly>(size, m_graph.m_vm.cellButterflyStructure(CopyOnWriteArrayWithContiguous), slowPath);
             LValue fastStorage = toButterfly(fastAllocation);
             m_out.store32(length, fastStorage, m_heaps.Butterfly_vectorLength);
             m_out.store32(length, fastStorage, m_heaps.Butterfly_publicLength);
@@ -10152,7 +10152,7 @@ IGNORE_CLANG_WARNINGS_END
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         RegisteredStructure structure = m_graph.registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(
             m_node->indexingMode()));
-        auto* immutableButterfly = m_node->castOperand<JSImmutableButterfly*>();
+        auto* immutableButterfly = m_node->castOperand<JSCellButterfly*>();
 
         if (!globalObject->isHavingABadTime() && !hasAnyArrayStorage(m_node->indexingMode())) {
             LBasicBlock slowPath = m_out.newBlock();
@@ -13042,7 +13042,7 @@ IGNORE_CLANG_WARNINGS_END
                 return;
             }
             case PhantomNewArrayBuffer: {
-                auto* array = target->castOperand<JSImmutableButterfly*>();
+                auto* array = target->castOperand<JSCellButterfly*>();
                 unsigned arrayLength = array->length();
                 staticArgumentCount += arrayLength;
                 Checked<int32_t> offsetCount { 1 };
@@ -13825,7 +13825,7 @@ IGNORE_CLANG_WARNINGS_END
                     }
                 }
 
-                jit.storeWasmCalleeCallee(wasmFunction->boxedWasmCalleeLoadLocation());
+                jit.storeWasmCalleeToCalleeCallFrame(wasmFunction->boxedWasmCalleeLoadLocation());
 
                 // FIXME: Currently we just do an indirect jump. But we should teach the Module
                 // how to repatch us:
@@ -14085,7 +14085,7 @@ IGNORE_CLANG_WARNINGS_END
             }
 
             if (target->op() == PhantomNewArrayBuffer) {
-                auto* array = target->castOperand<JSImmutableButterfly*>();
+                auto* array = target->castOperand<JSCellButterfly*>();
                 for (unsigned i = 0; i < array->length(); i++) {
                     // Because forwarded values are drained as JSValue, we should not generate value
                     // in Double form even if PhantomNewArrayBuffer's indexingType is ArrayWithDouble.
@@ -15122,7 +15122,7 @@ IGNORE_CLANG_WARNINGS_END
 
         LValue hash = lowInt32(m_node->child3());
 
-        // Get the JSImmutableButterfly first.
+        // Get the JSCellButterfly first.
         LValue mapStorage = m_out.loadPtr(map, m_heaps.JSSet_butterfly);
         m_out.branch(m_out.isNull(mapStorage), unsure(notPresentInTable), unsure(indexSetUp));
 
@@ -24796,7 +24796,7 @@ IGNORE_CLANG_WARNINGS_END
 
     LValue toButterfly(LValue immutableButterfly)
     {
-        return m_out.addPtr(immutableButterfly, JSImmutableButterfly::offsetOfData());
+        return m_out.addPtr(immutableButterfly, JSCellButterfly::offsetOfData());
     }
 
     LValue toIntegerOrInfinity(LValue doubleValue)

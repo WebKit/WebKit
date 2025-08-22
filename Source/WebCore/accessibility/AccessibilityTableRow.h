@@ -32,15 +32,13 @@
 
 namespace WebCore {
 
-class AccessibilityTable;
-
 class AccessibilityTableRow : public AccessibilityRenderObject {
 public:
     static Ref<AccessibilityTableRow> create(AXID, RenderObject&, AXObjectCache&, bool isARIAGridRow = false);
     static Ref<AccessibilityTableRow> create(AXID, Node&, AXObjectCache&, bool isARIAGridRow = false);
     virtual ~AccessibilityTableRow();
 
-    AccessibilityTable* parentTable() const;
+    AccessibilityObject* parentTable() const;
 
     void setRowIndex(unsigned);
     unsigned rowIndex() const override { return m_rowIndex; }

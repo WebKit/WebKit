@@ -27,6 +27,7 @@
 
 #include <WebCore/ContentsFormat.h>
 #include <wtf/Forward.h>
+#include <wtf/Platform.h>
 
 #if PLATFORM(MAC)
 OBJC_CLASS NSScreen;
@@ -105,7 +106,7 @@ struct ScreenData;
     
 WEBCORE_EXPORT ScreenProperties collectScreenProperties();
 WEBCORE_EXPORT void setScreenProperties(const ScreenProperties&);
-const ScreenProperties& getScreenProperties();
+WEBCORE_EXPORT const ScreenProperties& getScreenProperties();
 WEBCORE_EXPORT const ScreenData* screenData(PlatformDisplayID screendisplayID);
 WEBCORE_EXPORT PlatformDisplayID primaryScreenDisplayID();
 

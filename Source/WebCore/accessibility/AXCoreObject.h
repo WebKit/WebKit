@@ -42,6 +42,7 @@
 #include <WebCore/Widget.h>
 #include <wtf/HashSet.h>
 #include <wtf/ObjectIdentifier.h>
+#include <wtf/Platform.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -840,7 +841,6 @@ public:
 
     virtual bool isAccessibilityObject() const = 0;
     virtual bool isAccessibilityRenderObject() const = 0;
-    virtual bool isAccessibilityTableInstance() const = 0;
     virtual bool isAXIsolatedObjectInstance() const = 0;
     virtual bool isAXRemoteFrame() const = 0;
 
@@ -884,7 +884,7 @@ public:
 
     // Table support.
     virtual bool isTable() const = 0;
-    virtual bool isExposable() const = 0;
+    virtual bool isExposableTable() const = 0;
     unsigned tableLevel() const;
     bool hasGridRole() const;
     bool hasCellRole() const;
@@ -901,7 +901,7 @@ public:
     virtual AccessibilityChildrenVector visibleRows() = 0;
     AccessibilityChildrenVector selectedCells();
     // Returns an object that contains, as children, all the objects that act as headers.
-    virtual AXCoreObject* headerContainer() = 0;
+    virtual AXCoreObject* tableHeaderContainer() = 0;
     virtual int axColumnCount() const = 0;
     virtual int axRowCount() const = 0;
 
@@ -1901,7 +1901,7 @@ template<typename T>
 T* exposedTableAncestor(const T& object, bool includeSelf = false)
 {
     return findAncestor<T>(object, includeSelf, [] (const T& object) {
-        return object.isTable() && object.isExposable();
+        return object.isExposableTable();
     });
 }
 

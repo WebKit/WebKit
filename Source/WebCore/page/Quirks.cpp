@@ -537,16 +537,6 @@ bool Quirks::needsGMailOverflowScrollQuirk() const
 #endif
 }
 
-// web.skype.com webkit.org/b/275941
-bool Quirks::needsIPadSkypeOverflowScrollQuirk() const
-{
-#if PLATFORM(IOS_FAMILY)
-    return needsQuirks() && m_quirksData.needsIPadSkypeOverflowScrollQuirk;
-#else
-    return false;
-#endif
-}
-
 // FIXME: Remove after the site is fixed, <rdar://problem/50374311>
 // youtube.com rdar://49582231
 bool Quirks::needsYouTubeOverflowScrollQuirk() const
@@ -1192,6 +1182,7 @@ bool Quirks::requiresUserGestureToPauseInPictureInPicture() const
 }
 
 // bbc.co.uk: rdar://126494734
+// bbc.com: rdar://157499149
 bool Quirks::returnNullPictureInPictureElementDuringFullscreenChange() const
 {
     return needsQuirks() && m_quirksData.returnNullPictureInPictureElementDuringFullscreenChangeQuirk;
@@ -1481,7 +1472,6 @@ bool Quirks::needsIPhoneUserAgent(const URL& url)
 
 std::optional<String> Quirks::needsCustomUserAgentOverride(const URL& url, const String& applicationNameForUserAgent)
 {
-
     auto hostDomain = RegistrableDomain(url);
     auto firefoxUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:139.0) Gecko/20100101 Firefox/139.0"_s;
     // FIXME(rdar://83078414): Remove once 101edu.co and aktiv.com removes the unsupported message.
@@ -1495,7 +1485,6 @@ std::optional<String> Quirks::needsCustomUserAgentOverride(const URL& url, const
     if (hostDomain.string() == "tiktok.com"_s)
         return makeStringByReplacingAll(standardUserAgentWithApplicationName(applicationNameForUserAgent), "like Gecko"_s, "like Gecko, like Chrome/136."_s);
 #else
-    UNUSED_PARAM(url);
     UNUSED_PARAM(applicationNameForUserAgent);
 #endif
     return { };
@@ -2106,18 +2095,6 @@ static void handleRalphLaurenQuirks(QuirksData& quirksData, const URL& quirksURL
     quirksData.shouldIgnoreAriaForFastPathContentObservationCheckQuirk = true;
 }
 
-static void handleSkypeQuirks(QuirksData& quirksData, const URL& quirksURL, const String& quirksDomainString, const URL& documentURL)
-{
-    UNUSED_PARAM(quirksDomainString);
-    UNUSED_PARAM(documentURL);
-    auto topDocumentHost = quirksURL.host();
-    if (topDocumentHost != "web.skype.com"_s)
-        return;
-
-    // web.skype.com webkit.org/b/275941
-    quirksData.needsIPadSkypeOverflowScrollQuirk = true;
-}
-
 static void handleSlackQuirks(QuirksData& quirksData, const URL&, const String& quirksDomainString, const URL&)
 {
     if (quirksDomainString != "slack.com"_s)
@@ -2421,8 +2398,9 @@ static void handleBBCQuirks(QuirksData& quirksData, const URL& quirksURL, const 
     UNUSED_PARAM(quirksURL);
     UNUSED_PARAM(documentURL);
 
-    if (quirksDomainString == "bbc.co.uk"_s) {
+    if (quirksDomainString == "bbc.co.uk"_s || quirksDomainString == "bbc.com"_s) {
         // bbc.co.uk rdar://126494734
+        // bbc.com rdar://157499149
         quirksData.returnNullPictureInPictureElementDuringFullscreenChangeQuirk = true;
     }
 }
@@ -3071,9 +3049,6 @@ void Quirks::determineRelevantQuirks()
         { "slack"_s, &handleSlackQuirks },
 #endif
         { "sharepoint"_s, &handleSharePointQuirks },
-#if PLATFORM(IOS_FAMILY)
-        { "skype"_s, &handleSkypeQuirks },
-#endif
         { "soundcloud"_s, &handleSoundCloudQuirks },
 #if ENABLE(TOUCH_EVENTS)
         { "soylent"_s, &handleSoylentQuirks },

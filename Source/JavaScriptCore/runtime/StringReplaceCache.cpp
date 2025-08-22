@@ -27,7 +27,7 @@
 #include "StringReplaceCache.h"
 
 #include "AbstractSlotVisitor.h"
-#include "JSImmutableButterfly.h"
+#include "JSCellButterfly.h"
 #include "RegExp.h"
 
 namespace JSC {

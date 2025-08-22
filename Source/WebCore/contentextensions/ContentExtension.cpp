@@ -63,10 +63,6 @@ uint32_t ContentExtension::findFirstIgnoreRule() const
         if (serializedActions[currentActionIndex] == WTF::alternativeIndexV<IgnorePreviousRulesAction, ActionData> || serializedActions[currentActionIndex] == WTF::alternativeIndexV<IgnoreFollowingRulesAction, ActionData>)
             return currentActionIndex;
         currentActionIndex += DeserializedAction::serializedLength(serializedActions, currentActionIndex);
-#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
-        // FIXME: <rdar://157879177> We shouldn't unconditionally add 4 bytes here to accomodate identifiers, as all rule lists do not serialize identifiers.
-        currentActionIndex += sizeof(uint32_t);
-#endif
     }
     return std::numeric_limits<uint32_t>::max();
 }

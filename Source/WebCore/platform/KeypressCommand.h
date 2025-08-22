@@ -31,6 +31,7 @@
 #include <WebCore/CompositionUnderline.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
+#include <wtf/Platform.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)

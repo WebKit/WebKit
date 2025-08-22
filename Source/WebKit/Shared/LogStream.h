@@ -29,19 +29,16 @@
 #include <wtf/ProcessID.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-#include "IPCSemaphore.h"
 #include "StreamMessageReceiver.h"
+#include "StreamServerConnection.h"
 #else
 #include "MessageReceiver.h"
 #include <wtf/RefCounted.h>
 #endif
-
-namespace IPC {
-class StreamServerConnection;
-struct StreamServerConnectionHandle;
-}
 
 namespace WebKit {
 
@@ -49,21 +46,26 @@ constexpr size_t logCategoryMaxSize = 32;
 constexpr size_t logSubsystemMaxSize = 32;
 constexpr size_t logStringMaxSize = 256;
 
+class WebProcessProxy;
 // Type which receives log messages from another process and invokes the platform logging.
 // The messages are found from generated LogStream.messages.in in build directory,
 // DerivedSources/WebKit/LogStream.messages.in.
 class LogStream final :
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-    public IPC::StreamMessageReceiver
+    public IPC::StreamServerConnection::Client
 #else
     public RefCounted<LogStream>, public IPC::MessageReceiver
 #endif
 {
+    WTF_MAKE_TZONE_ALLOCATED(LogStream);
+#if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(LogStream);
+#endif
 public:
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-    static RefPtr<LogStream> create(IPC::StreamServerConnectionHandle&&, ProcessID, LogStreamIdentifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&&);
+    static RefPtr<LogStream> create(WebProcessProxy&, IPC::StreamServerConnectionHandle&&, LogStreamIdentifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&&);
 #else
-    static Ref<LogStream> create(Ref<IPC::Connection>&&, ProcessID, LogStreamIdentifier);
+    static Ref<LogStream> create(WebProcessProxy&, Ref<IPC::Connection>&&, LogStreamIdentifier);
 #endif
     ~LogStream();
 
@@ -84,11 +86,14 @@ private:
 #else
     using ConnectionType = IPC::Connection;
 #endif
-    LogStream(Ref<ConnectionType>&&, ProcessID, LogStreamIdentifier);
+    LogStream(WebProcessProxy&, Ref<ConnectionType>&&, LogStreamIdentifier);
 
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+    // IPC::StreamServerConnection::Client overrides.
+    void didReceiveInvalidMessage(IPC::StreamServerConnection&, IPC::MessageName, const Vector<uint32_t>&) final;
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 #else
+    // IPC::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 #endif
 
@@ -100,6 +105,7 @@ private:
 
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
     const Ref<IPC::StreamServerConnection> m_connection;
+    WeakPtr<WebProcessProxy> m_process;
 #else
     ThreadSafeWeakPtr<IPC::Connection> m_connection;
 #endif

@@ -72,6 +72,8 @@ public:
     static ISO8601::Duration fromDurationLike(JSGlobalObject*, JSObject*);
     static ISO8601::Duration toISO8601Duration(JSGlobalObject*, JSValue);
 
+    static ISO8601::Duration temporalDurationFromInternal(ISO8601::InternalDuration, TemporalUnit);
+
     static int sign(const ISO8601::Duration&);
     static double round(ISO8601::Duration&, double increment, TemporalUnit, RoundingMode);
     static std::optional<double> balance(ISO8601::Duration&, TemporalUnit largestUnit);

@@ -659,7 +659,7 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
     static Seconds activityStateUpdateTimeout = [] {
         if (RetainPtr<id> value = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitOverrideActivityStateUpdateTimeout"])
             return Seconds([value doubleValue]);
-        return Seconds::fromMilliseconds(250);
+        return 250_ms;
     }();
 
     WeakPtr weakThis { *this };

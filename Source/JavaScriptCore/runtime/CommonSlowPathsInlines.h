@@ -152,15 +152,15 @@ inline void tryCacheGetFromScopeGlobal(
     }
 }
 
-ALWAYS_INLINE JSImmutableButterfly* trySpreadFast(JSGlobalObject* globalObject, JSCell* iterable)
+ALWAYS_INLINE JSCellButterfly* trySpreadFast(JSGlobalObject* globalObject, JSCell* iterable)
 {
     if (isJSArray(iterable)) {
         JSArray* array = jsCast<JSArray*>(iterable);
         if (array->isIteratorProtocolFastAndNonObservable()) {
-            // JSImmutableButterfly::createFromArray does not consult the prototype chain,
+            // JSCellButterfly::createFromArray does not consult the prototype chain,
             // so we must be sure that not consulting the prototype chain would
             // produce the same value during iteration.
-            return JSImmutableButterfly::createFromArray(globalObject, globalObject->vm(), array);
+            return JSCellButterfly::createFromArray(globalObject, globalObject->vm(), array);
         }
         return nullptr;
     }
@@ -168,25 +168,25 @@ ALWAYS_INLINE JSImmutableButterfly* trySpreadFast(JSGlobalObject* globalObject, 
     switch (iterable->type()) {
     case StringType: {
         if (globalObject->isStringPrototypeIteratorProtocolFastAndNonObservable()) [[likely]]
-            return JSImmutableButterfly::createFromString(globalObject, jsCast<JSString*>(iterable));
+            return JSCellButterfly::createFromString(globalObject, jsCast<JSString*>(iterable));
         return nullptr;
     }
     case ClonedArgumentsType: {
         auto* arguments = jsCast<ClonedArguments*>(iterable);
         if (arguments->isIteratorProtocolFastAndNonObservable()) [[likely]]
-            return JSImmutableButterfly::createFromClonedArguments(globalObject, arguments);
+            return JSCellButterfly::createFromClonedArguments(globalObject, arguments);
         return nullptr;
     }
     case DirectArgumentsType: {
         auto* arguments = jsCast<DirectArguments*>(iterable);
         if (arguments->isIteratorProtocolFastAndNonObservable()) [[likely]]
-            return JSImmutableButterfly::createFromDirectArguments(globalObject, arguments);
+            return JSCellButterfly::createFromDirectArguments(globalObject, arguments);
         return nullptr;
     }
     case ScopedArgumentsType: {
         auto* arguments = jsCast<ScopedArguments*>(iterable);
         if (arguments->isIteratorProtocolFastAndNonObservable()) [[likely]]
-            return JSImmutableButterfly::createFromScopedArguments(globalObject, arguments);
+            return JSCellButterfly::createFromScopedArguments(globalObject, arguments);
         return nullptr;
     }
     default:

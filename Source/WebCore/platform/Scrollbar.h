@@ -28,6 +28,7 @@
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/Timer.h>
 #include <WebCore/Widget.h>
+#include <wtf/Platform.h>
 
 namespace WebCore {
 

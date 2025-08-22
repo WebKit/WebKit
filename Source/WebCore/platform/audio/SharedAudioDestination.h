@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
 #if ENABLE(WEB_AUDIO)
 
 #include <WebCore/AudioDestination.h>

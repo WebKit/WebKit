@@ -26,6 +26,7 @@
 #ifndef PlatformViewController_h
 #define PlatformViewController_h
 
+#include <wtf/Platform.h>
 #if PLATFORM(COCOA)
 
 #if PLATFORM(IOS_FAMILY)

@@ -26,6 +26,7 @@
 
 #include <WebCore/CSSValueKeywords.h>
 #include <WebCore/FontDescription.h>
+#include <wtf/Platform.h>
 #include <wtf/RefCountedFixedVector.h>
 
 #if PLATFORM(COCOA)

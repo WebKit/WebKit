@@ -38,7 +38,6 @@ loader/DocumentThreadableLoader.h
 loader/WorkerThreadableLoader.h
 page/FrameSnapshotting.cpp
 page/UndoManager.h
-platform/OrientationNotifier.h
 platform/ScrollAnimator.h
 platform/Scrollbar.h
 platform/ScrollbarsController.h

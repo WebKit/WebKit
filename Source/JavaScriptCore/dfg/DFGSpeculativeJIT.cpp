@@ -60,8 +60,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "JSAsyncGeneratorFunction.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
+#include "JSCellButterfly.h"
 #include "JSGeneratorFunction.h"
-#include "JSImmutableButterfly.h"
 #include "JSIteratorHelper.h"
 #include "JSLexicalEnvironment.h"
 #include "JSMapIterator.h"
@@ -8985,7 +8985,7 @@ void SpeculativeJIT::compileSpread(Node* node)
         and32(TrustedImm32(IndexingModeMask), scratch1GPR);
         auto notShareCase = branch32(NotEqual, scratch1GPR, TrustedImm32(CopyOnWriteArrayWithContiguous));
         loadPtr(Address(argument, JSObject::butterflyOffset()), resultGPR);
-        addPtr(TrustedImm32(-static_cast<ptrdiff_t>(JSImmutableButterfly::offsetOfData())), resultGPR);
+        addPtr(TrustedImm32(-static_cast<ptrdiff_t>(JSCellButterfly::offsetOfData())), resultGPR);
         done.append(jump());
 
         notShareCase.link(this);
@@ -8999,11 +8999,11 @@ void SpeculativeJIT::compileSpread(Node* node)
         slowPath.append(branch32(Above, lengthGPR, TrustedImm32(MAX_STORAGE_VECTOR_LENGTH)));
         static_assert(sizeof(JSValue) == 8 && 1 << 3 == 8, "This is strongly assumed in the code below.");
         lshift32(lengthGPR, TrustedImm32(3), scratch1GPR);
-        add32(TrustedImm32(JSImmutableButterfly::offsetOfData()), scratch1GPR);
+        add32(TrustedImm32(JSCellButterfly::offsetOfData()), scratch1GPR);
 
-        emitAllocateVariableSizedCell<JSImmutableButterfly>(vm(), resultGPR, TrustedImmPtr(m_graph.registerStructure(vm().immutableButterflyStructure(CopyOnWriteArrayWithContiguous))), scratch1GPR, scratch1GPR, scratch2GPR, slowPath, SlowAllocationResult::UndefinedBehavior);
-        static_assert(JSImmutableButterfly::offsetOfPublicLength() + static_cast<ptrdiff_t>(sizeof(uint32_t)) == JSImmutableButterfly::offsetOfVectorLength());
-        storePair32(lengthGPR, lengthGPR, resultGPR, TrustedImm32(JSImmutableButterfly::offsetOfPublicLength()));
+        emitAllocateVariableSizedCell<JSCellButterfly>(vm(), resultGPR, TrustedImmPtr(m_graph.registerStructure(vm().cellButterflyStructure(CopyOnWriteArrayWithContiguous))), scratch1GPR, scratch1GPR, scratch2GPR, slowPath, SlowAllocationResult::UndefinedBehavior);
+        static_assert(JSCellButterfly::offsetOfPublicLength() + static_cast<ptrdiff_t>(sizeof(uint32_t)) == JSCellButterfly::offsetOfVectorLength());
+        storePair32(lengthGPR, lengthGPR, resultGPR, TrustedImm32(JSCellButterfly::offsetOfPublicLength()));
 
         loadPtr(Address(argument, JSObject::butterflyOffset()), scratch1GPR);
 
@@ -9019,7 +9019,7 @@ void SpeculativeJIT::compileSpread(Node* node)
             auto notEmpty = branchIfNotEmpty(scratch2GPR);
             move(TrustedImm64(JSValue::encode(jsUndefined())), scratch2GPR);
             notEmpty.link(this);
-            store64(scratch2GPR, BaseIndex(resultGPR, lengthGPR, TimesEight, JSImmutableButterfly::offsetOfData()));
+            store64(scratch2GPR, BaseIndex(resultGPR, lengthGPR, TimesEight, JSCellButterfly::offsetOfData()));
             branchTest32(NonZero, lengthGPR).linkTo(loopStart, this);
             done.append(jump());
         }
@@ -9036,7 +9036,7 @@ void SpeculativeJIT::compileSpread(Node* node)
             notEmpty.link(this);
             boxDouble(doubleFPR, scratch2GPR);
             doStore.link(this);
-            store64(scratch2GPR, BaseIndex(resultGPR, lengthGPR, TimesEight, JSImmutableButterfly::offsetOfData()));
+            store64(scratch2GPR, BaseIndex(resultGPR, lengthGPR, TimesEight, JSCellButterfly::offsetOfData()));
             branchTest32(NonZero, lengthGPR).linkTo(loopStart, this);
             done.append(jump());
         }
@@ -9240,7 +9240,7 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
             JumpList slowCases;
 
             move(immutableButterflyGPR, butterflyGPR);
-            addPtr(TrustedImm32(JSImmutableButterfly::offsetOfData()), butterflyGPR);
+            addPtr(TrustedImm32(JSCellButterfly::offsetOfData()), butterflyGPR);
 
             emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(structure), butterflyGPR, scratch1GPR, scratch2GPR, slowCases, SlowAllocationResult::UndefinedBehavior);
 
@@ -9266,7 +9266,7 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
                     Edge use = m_graph.varArgChild(node, i);
                     SpeculateCellOperand immutableButterfly(this, use);
                     GPRReg immutableButterflyGPR = immutableButterfly.gpr();
-                    speculationCheck(ExitKind::Overflow, JSValueRegs(), nullptr, branchAdd32(Overflow, Address(immutableButterflyGPR, JSImmutableButterfly::offsetOfPublicLength()), lengthGPR));
+                    speculationCheck(ExitKind::Overflow, JSValueRegs(), nullptr, branchAdd32(Overflow, Address(immutableButterflyGPR, JSCellButterfly::offsetOfPublicLength()), lengthGPR));
                 }
             }
 
@@ -9304,12 +9304,12 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
                 GPRTemporary immutableButterflyLength(this);
                 GPRReg immutableButterflyLengthGPR = immutableButterflyLength.gpr();
 
-                load32(Address(immutableButterflyGPR, JSImmutableButterfly::offsetOfPublicLength()), immutableButterflyLengthGPR);
+                load32(Address(immutableButterflyGPR, JSCellButterfly::offsetOfPublicLength()), immutableButterflyLengthGPR);
                 move(TrustedImm32(0), immutableButterflyIndexGPR);
                 auto done = branchPtr(AboveOrEqual, immutableButterflyIndexGPR, immutableButterflyLengthGPR);
                 auto loopStart = label();
                 load64(
-                    BaseIndex(immutableButterflyGPR, immutableButterflyIndexGPR, TimesEight, JSImmutableButterfly::offsetOfData()),
+                    BaseIndex(immutableButterflyGPR, immutableButterflyIndexGPR, TimesEight, JSCellButterfly::offsetOfData()),
                     itemGPR);
 
                 store64(itemGPR, BaseIndex(storageGPR, indexGPR, TimesEight));
@@ -9816,9 +9816,9 @@ void SpeculativeJIT::compileArrayIndexOfOrArrayIncludes(Node* node)
 
         if (isCopyOnWriteArrayWithContiguous()) {
             operation = operationCopyOnWriteArrayIndexOfString;
-            loadLinkableConstant(LinkableConstant(*this, vm().immutableButterflyOnlyAtomStringsStructure.get()), compareLengthGPR);
+            loadLinkableConstant(LinkableConstant(*this, vm().cellButterflyOnlyAtomStringsStructure.get()), compareLengthGPR);
             emitEncodeStructureID(compareLengthGPR, compareLengthGPR);
-            addPtr(TrustedImm32(-static_cast<ptrdiff_t>(JSImmutableButterfly::offsetOfData())), storageGPR, leftStringGPR);
+            addPtr(TrustedImm32(-static_cast<ptrdiff_t>(JSCellButterfly::offsetOfData())), storageGPR, leftStringGPR);
             slowCase.append(branch32(Equal, Address(leftStringGPR, JSCell::structureIDOffset()), compareLengthGPR));
         }
 
@@ -11836,12 +11836,12 @@ void SpeculativeJIT::speculateDateObject(Edge edge)
     speculateDateObject(edge, operand.gpr());
 }
 
-void SpeculativeJIT::speculateImmutableButterfly(Edge edge, GPRReg cell)
+void SpeculativeJIT::speculateCellButterfly(Edge edge, GPRReg cell)
 {
-    speculateCellType(edge, cell, SpecCellOther, JSImmutableButterflyType);
+    speculateCellType(edge, cell, SpecCellOther, JSCellButterflyType);
 }
 
-void SpeculativeJIT::speculateImmutableButterfly(Edge edge)
+void SpeculativeJIT::speculateCellButterfly(Edge edge)
 {
     if (!needsTypeCheck(edge, SpecCellOther))
         return;
@@ -14209,7 +14209,7 @@ void SpeculativeJIT::compileMapIterationNext(Node* node)
     GPRReg mapStorageGPR = mapStorage.gpr();
     GPRReg entryGPR = entry.gpr();
 
-    speculateImmutableButterfly(node->child1(), mapStorageGPR);
+    speculateCellButterfly(node->child1(), mapStorageGPR);
 
     flushRegisters();
     JSValueRegsFlushedCallResult result(this);
@@ -14226,7 +14226,7 @@ void SpeculativeJIT::compileMapIterationEntry(Node* node)
     SpeculateCellOperand mapStorage(this, node->child1());
     GPRReg mapStorageGPR = mapStorage.gpr();
 
-    speculateImmutableButterfly(node->child1(), mapStorageGPR);
+    speculateCellButterfly(node->child1(), mapStorageGPR);
 
     flushRegisters();
     JSValueRegsFlushedCallResult result(this);
@@ -14243,7 +14243,7 @@ void SpeculativeJIT::compileMapIterationEntryKey(Node* node)
     SpeculateCellOperand mapStorage(this, node->child1());
     GPRReg mapStorageGPR = mapStorage.gpr();
 
-    speculateImmutableButterfly(node->child1(), mapStorageGPR);
+    speculateCellButterfly(node->child1(), mapStorageGPR);
 
     flushRegisters();
     JSValueRegsFlushedCallResult result(this);
@@ -14260,7 +14260,7 @@ void SpeculativeJIT::compileMapIterationEntryValue(Node* node)
     SpeculateCellOperand mapStorage(this, node->child1());
     GPRReg mapStorageGPR = mapStorage.gpr();
 
-    speculateImmutableButterfly(node->child1(), mapStorageGPR);
+    speculateCellButterfly(node->child1(), mapStorageGPR);
 
     flushRegisters();
     JSValueRegsFlushedCallResult result(this);
@@ -14821,7 +14821,7 @@ void SpeculativeJIT::compileStrCat(Node* node)
 void SpeculativeJIT::compileNewArrayBuffer(Node* node)
 {
     JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-    auto* array = node->castOperand<JSImmutableButterfly*>();
+    auto* array = node->castOperand<JSCellButterfly*>();
 
     IndexingType indexingMode = node->indexingMode();
     RegisteredStructure structure = m_graph.registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingMode));
@@ -15124,7 +15124,7 @@ void SpeculativeJIT::compileOwnPropertyKeysVariant(Node* node)
             RegisteredStructure arrayStructure = m_graph.registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(CopyOnWriteArrayWithContiguous));
 
             move(scratchGPR, scratch3GPR);
-            addPtr(TrustedImm32(JSImmutableButterfly::offsetOfData()), scratchGPR);
+            addPtr(TrustedImm32(JSCellButterfly::offsetOfData()), scratchGPR);
 
             emitAllocateJSObject<JSArray>(resultGPR, TrustedImmPtr(arrayStructure), scratchGPR, structureGPR, scratch2GPR, slowButArrayBufferCases, SlowAllocationResult::UndefinedBehavior);
 

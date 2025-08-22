@@ -59,6 +59,7 @@ WebKitBuildbot = function()
             "Apple-Sonoma-Release-Test262-Tests": {heading: "Release Test262 (Tests)"},
             "Apple-Sonoma-AppleSilicon-Debug-JSC-Tests": {heading: "Debug arm64 JSC (Tests)"},
             "Apple-Sonoma-AppleSilicon-Release-JSC-Tests": {heading: "Release arm64 JSC (Tests)"},
+            "Apple-Sonoma-Intel-Release-JSC-Tests": {heading: "Release x86_64 JSC (Tests)"},
         }},
         "Apple-iOS-18-Release-Build": {platform: Dashboard.Platform.iOS18Device, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-iOS-18-Simulator-Release-Build": {platform: Dashboard.Platform.iOS18Simulator, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
