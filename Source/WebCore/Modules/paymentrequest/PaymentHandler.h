@@ -29,6 +29,7 @@
 
 #include "PaymentRequest.h"
 #include "PaymentSessionBase.h"
+#include <wtf/Forward.h>
 #include <wtf/Function.h>
 
 namespace JSC {
@@ -51,14 +52,14 @@ public:
     static bool hasActiveSession(Document&);
 
     virtual ExceptionOr<void> convertData(Document&, JSC::JSValue) = 0;
-    virtual ExceptionOr<void> show(Document&) = 0;
+    virtual void show(Document&, CompletionHandler<void(ExceptionOr<void>&&)>&&) = 0;
     virtual bool canAbortSession() = 0;
     virtual void hide() = 0;
     virtual void canMakePayment(Document&, Function<void(bool)>&& completionHandler) = 0;
     virtual ExceptionOr<void> detailsUpdated(PaymentRequest::UpdateReason, String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) = 0;
     virtual ExceptionOr<void> merchantValidationCompleted(JSC::JSValue&&) = 0;
     virtual ExceptionOr<void> complete(Document&, std::optional<PaymentComplete>&&, String&& serializedData) = 0;
-    virtual ExceptionOr<void> retry(PaymentValidationErrors&&) = 0;
+    virtual void retry(PaymentValidationErrors&&, CompletionHandler<void(ExceptionOr<void>&&)>&&) = 0;
 };
 
 } // namespace WebCore

@@ -130,7 +130,7 @@ private:
     bool canMakePayments() final;
     void canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&&) final;
     void openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&&) final;
-    bool showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&) final;
+    void showPaymentUI(const URL&, Vector<URL>&&, const ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&) final;
     void completeMerchantValidation(const PaymentMerchantSession&) final;
     void completeShippingMethodSelection(std::optional<ApplePayShippingMethodUpdate>&&) final;
     void completeShippingContactSelection(std::optional<ApplePayShippingContactUpdate>&&) final;

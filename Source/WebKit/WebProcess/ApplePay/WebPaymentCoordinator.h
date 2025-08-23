@@ -70,7 +70,7 @@ private:
     bool canMakePayments() override;
     void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&) override;
     void openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&) override;
-    bool showPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&) override;
+    void showPaymentUI(const URL& originatingURL, Vector<URL>&& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&) override;
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&) override;
     void completeShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&&) override;
     void completeShippingContactSelection(std::optional<WebCore::ApplePayShippingContactUpdate>&&) override;

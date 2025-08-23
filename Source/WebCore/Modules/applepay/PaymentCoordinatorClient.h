@@ -55,7 +55,7 @@ public:
     virtual void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&) = 0;
     virtual void openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&) = 0;
 
-    virtual bool showPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLs, const ApplePaySessionPaymentRequest&) = 0;
+    virtual void showPaymentUI(const URL& originatingURL, Vector<URL>&& linkIconURLs, const ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&) = 0;
     virtual void completeMerchantValidation(const PaymentMerchantSession&) = 0;
     virtual void completeShippingMethodSelection(std::optional<ApplePayShippingMethodUpdate>&&) = 0;
     virtual void completeShippingContactSelection(std::optional<ApplePayShippingContactUpdate>&&) = 0;

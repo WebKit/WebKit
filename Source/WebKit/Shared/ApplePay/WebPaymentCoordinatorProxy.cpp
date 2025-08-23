@@ -89,7 +89,7 @@ void WebPaymentCoordinatorProxy::openPaymentSetup(const String& merchantIdentifi
     platformOpenPaymentSetup(merchantIdentifier, domainName, WTFMove(completionHandler));
 }
 
-void WebPaymentCoordinatorProxy::showPaymentUI(WebCore::PageIdentifier destinationID, WebPageProxyIdentifier webPageProxyID, const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest, CompletionHandler<void(bool)>&& completionHandler)
+void WebPaymentCoordinatorProxy::showPaymentUI(WebCore::PageIdentifier destinationID, WebPageProxyIdentifier webPageProxyID, const URL& originatingURL, Vector<URL>&& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (auto& coordinator = activePaymentCoordinatorProxy())
         coordinator->didReachFinalState();
@@ -102,7 +102,7 @@ void WebPaymentCoordinatorProxy::showPaymentUI(WebCore::PageIdentifier destinati
     m_destinationID = destinationID;
     m_state = State::Activating;
 
-    platformShowPaymentUI(webPageProxyID, originatingURL, linkIconURLs, paymentRequest, [weakThis = WeakPtr { *this }](bool result) {
+    platformShowPaymentUI(webPageProxyID, originatingURL, WTFMove(linkIconURLs), paymentRequest, [weakThis = WeakPtr { *this }](bool result) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;

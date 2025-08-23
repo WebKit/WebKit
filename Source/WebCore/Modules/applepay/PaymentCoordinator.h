@@ -73,7 +73,7 @@ public:
 
     bool hasActiveSession() const { return m_activeSession; }
 
-    bool beginPaymentSession(Document&, PaymentSession&, const ApplePaySessionPaymentRequest&);
+    void beginPaymentSession(Document&, PaymentSession&, const ApplePaySessionPaymentRequest&, CompletionHandler<void(bool)>&&);
     void completeMerchantValidation(const PaymentMerchantSession&);
     void completeShippingMethodSelection(std::optional<ApplePayShippingMethodUpdate>&&);
     void completeShippingContactSelection(std::optional<ApplePayShippingContactUpdate>&&);

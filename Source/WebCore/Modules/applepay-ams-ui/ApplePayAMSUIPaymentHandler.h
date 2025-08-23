@@ -31,6 +31,7 @@
 #include "ContextDestructionObserver.h"
 #include "PaymentHandler.h"
 #include "PaymentRequest.h"
+#include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
@@ -70,14 +71,14 @@ private:
 
     // PaymentHandler
     ExceptionOr<void> convertData(Document&, JSC::JSValue) final;
-    ExceptionOr<void> show(Document&) final;
+    void show(Document&, CompletionHandler<void(ExceptionOr<void>&&)>&&) final;
     bool canAbortSession() final { return false; }
     void hide() final;
     void canMakePayment(Document&, Function<void(bool)>&& completionHandler) final;
     ExceptionOr<void> detailsUpdated(PaymentRequest::UpdateReason, String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) final;
     ExceptionOr<void> merchantValidationCompleted(JSC::JSValue&&) final;
     ExceptionOr<void> complete(Document&, std::optional<PaymentComplete>&&, String&& serializedData) final;
-    ExceptionOr<void> retry(PaymentValidationErrors&&) final;
+    void retry(PaymentValidationErrors&&, CompletionHandler<void(ExceptionOr<void>&&)>&&) final;
 
     PaymentRequest::MethodIdentifier m_identifier;
     const Ref<PaymentRequest> m_paymentRequest;

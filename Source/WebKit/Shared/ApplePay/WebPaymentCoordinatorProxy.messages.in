@@ -36,7 +36,7 @@ messages -> WebPaymentCoordinatorProxy {
     CanMakePaymentsWithActiveCard(String merchantIdentifier, String domainName) -> (bool canMakePayments)
     OpenPaymentSetup(String merchantIdentifier, String domainName) -> (bool result)
 
-    ShowPaymentUI(WebCore::PageIdentifier destinationID, WebKit::WebPageProxyIdentifier webPageProxyIdentifier, URL originatingURL, Vector<URL> linkIconURLs, WebCore::ApplePaySessionPaymentRequest paymentRequest) -> (bool result) Synchronous
+    ShowPaymentUI(WebCore::PageIdentifier destinationID, WebKit::WebPageProxyIdentifier webPageProxyIdentifier, URL originatingURL, Vector<URL> linkIconURLs, WebCore::ApplePaySessionPaymentRequest paymentRequest) -> (bool result)
     CompleteMerchantValidation(WebCore::PaymentMerchantSession paymentMerchantSession)
     CompleteShippingMethodSelection(struct std::optional<WebCore::ApplePayShippingMethodUpdate> update)
     CompleteShippingContactSelection(struct std::optional<WebCore::ApplePayShippingContactUpdate> update)

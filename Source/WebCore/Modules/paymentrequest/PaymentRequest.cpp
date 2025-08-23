@@ -426,20 +426,25 @@ void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromis
         return;
     }
 
-    auto exception = selectedPaymentHandler->show(document);
-    if (exception.hasException()) {
-        settleShowPromise(exception.releaseException());
-        return;
-    }
+    selectedPaymentHandler->show(document, [weakThis = WeakPtr { *this }, detailsPromise = WTFMove(detailsPromise), selectedPaymentHandler](ExceptionOr<void>&& exception) mutable {
+        RefPtr strongThis = weakThis.get();
+        if (!strongThis)
+            return;
 
-    ASSERT(!m_activePaymentHandler);
-    m_activePaymentHandler = PaymentHandlerWithPendingActivity { selectedPaymentHandler.releaseNonNull(), makePendingActivity(*this) };
+        if (exception.hasException()) {
+            strongThis->settleShowPromise(exception.releaseException());
+            return;
+        }
 
-    if (!detailsPromise)
-        return;
+        ASSERT(!strongThis->m_activePaymentHandler);
+        strongThis->m_activePaymentHandler = PaymentHandlerWithPendingActivity { selectedPaymentHandler.releaseNonNull(), strongThis->makePendingActivity(*strongThis) };
 
-    exception = updateWith(UpdateReason::ShowDetailsResolved, detailsPromise.releaseNonNull());
-    ASSERT(!exception.hasException());
+        if (!detailsPromise)
+            return;
+
+        exception = strongThis->updateWith(UpdateReason::ShowDetailsResolved, detailsPromise.releaseNonNull());
+        ASSERT(!exception.hasException());
+    });
 }
 
 void PaymentRequest::abortWithException(Exception&& exception)
@@ -817,16 +822,16 @@ ExceptionOr<void> PaymentRequest::complete(Document& document, std::optional<Pay
     return { };
 }
 
-ExceptionOr<void> PaymentRequest::retry(PaymentValidationErrors&& errors)
+void PaymentRequest::retry(PaymentValidationErrors&& errors, CompletionHandler<void(ExceptionOr<void>&&)>&& completionHandler)
 {
     ASSERT(m_state == State::Closed);
     if (!m_activePaymentHandler)
-        return Exception { ExceptionCode::AbortError };
+        return completionHandler(Exception { ExceptionCode::AbortError });
 
     m_state = State::Interactive;
 
     Ref activePaymentHandler = *this->activePaymentHandler();
-    return activePaymentHandler->retry(WTFMove(errors));
+    activePaymentHandler->retry(WTFMove(errors), WTFMove(completionHandler));
 }
 
 void PaymentRequest::cancel()

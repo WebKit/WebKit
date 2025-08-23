@@ -116,7 +116,7 @@ void MockPaymentCoordinator::dispatchIfShowing(Function<void()>&& function)
     });
 }
 
-bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest& request)
+void MockPaymentCoordinator::showPaymentUI(const URL&, Vector<URL>&&, const ApplePaySessionPaymentRequest& request, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (request.shippingContact().pkContact().get())
         m_shippingAddress = request.shippingContact().toApplePayPaymentContact(request.version());
@@ -158,15 +158,17 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
 #endif
 
     RefPtr page = m_page.get();
-    if (!page)
-        return false;
+    if (!page) {
+        completionHandler(false);
+        return;
+    }
 
     ASSERT(m_showCount == m_hideCount);
     ++m_showCount;
-    dispatchIfShowing([page = WTFMove(page)]() {
+    dispatchIfShowing([page = WTFMove(page)] {
         page->protectedPaymentCoordinator()->validateMerchant(URL { "https://webkit.org/"_str });
     });
-    return true;
+    completionHandler(true);
 }
 
 void MockPaymentCoordinator::completeMerchantValidation(const PaymentMerchantSession&)
