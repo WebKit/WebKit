@@ -34,6 +34,8 @@ namespace WebCore {
 enum class RunAsAsyncFunction : bool;
 enum class ForceUserGesture : bool;
 enum class RemoveTransientActivation : bool;
+
+using ScriptExecutionContextIdentifier = ProcessQualified<WTF::UUID>;
 }
 
 namespace WebKit {
@@ -46,6 +48,7 @@ struct RunJavaScriptParameters {
     std::optional<Vector<std::pair<String, JavaScriptEvaluationResult>>> arguments;
     WebCore::ForceUserGesture forceUserGesture;
     WebCore::RemoveTransientActivation removeTransientActivation;
+    std::optional<WebCore::ScriptExecutionContextIdentifier> targetScriptExecutionContext;
 };
 
 }

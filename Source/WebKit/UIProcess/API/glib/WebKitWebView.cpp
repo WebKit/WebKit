@@ -4300,7 +4300,8 @@ void webkitWebViewRunJavascriptWithoutForcedUserGestures(WebKitWebView* webView,
         RunAsAsyncFunction::No,
         std::nullopt,
         ForceUserGesture::No,
-        RemoveTransientActivation::Yes
+        RemoveTransientActivation::Yes,
+        std::nullopt
     };
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), nullptr, RunJavascriptReturnType::JSCValue, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
 }
@@ -4318,7 +4319,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
         RunAsAsyncFunction::No,
         std::nullopt,
         ForceUserGesture::Yes,
-        RemoveTransientActivation::Yes
+        RemoveTransientActivation::Yes,
+        std::nullopt
     };
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, returnType, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
@@ -4465,7 +4467,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
         RunAsAsyncFunction::Yes,
         WTFMove(argumentsVector),
         ForceUserGesture::Yes,
-        RemoveTransientActivation::Yes
+        RemoveTransientActivation::Yes,
+        std::nullopt
     };
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, returnType, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
@@ -4735,7 +4738,8 @@ static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, g
         RunAsAsyncFunction::No,
         std::nullopt,
         ForceUserGesture::Yes,
-        RemoveTransientActivation::Yes
+        RemoveTransientActivation::Yes,
+        std::nullopt
     };
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), nullptr, RunJavascriptReturnType::WebKitJavascriptResult, WTFMove(task));
 }

@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/SourceProvider.h>
 
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <wtf/HashMap.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -46,7 +47,7 @@ enum class RemoveTransientActivation : bool { No, Yes };
 using ArgumentMap = HashMap<String, Function<JSC::JSValue(JSC::JSGlobalObject&)>>;
 
 struct RunJavaScriptParameters {
-    RunJavaScriptParameters(String&& source, JSC::SourceTaintedOrigin taintedness, URL&& sourceURL, RunAsAsyncFunction runAsAsyncFunction, std::optional<ArgumentMap>&& arguments, ForceUserGesture forceUserGesture, RemoveTransientActivation removeTransientActivation)
+    RunJavaScriptParameters(String&& source, JSC::SourceTaintedOrigin taintedness, URL&& sourceURL, RunAsAsyncFunction runAsAsyncFunction, std::optional<ArgumentMap>&& arguments, std::optional<ScriptExecutionContextIdentifier>&& targetScriptExecutionContext, ForceUserGesture forceUserGesture, RemoveTransientActivation removeTransientActivation)
         : source(WTFMove(source))
         , taintedness(taintedness)
         , sourceURL(WTFMove(sourceURL))
@@ -54,10 +55,11 @@ struct RunJavaScriptParameters {
         , arguments(WTFMove(arguments))
         , forceUserGesture(forceUserGesture)
         , removeTransientActivation(removeTransientActivation)
+        , targetScriptExecutionContext(WTFMove(targetScriptExecutionContext))
     {
     }
 
-    RunJavaScriptParameters(const String& source, JSC::SourceTaintedOrigin taintedness, URL&& sourceURL, bool runAsAsyncFunction, std::optional<ArgumentMap>&& arguments, bool forceUserGesture, RemoveTransientActivation removeTransientActivation)
+    RunJavaScriptParameters(const String& source, JSC::SourceTaintedOrigin taintedness, URL&& sourceURL, bool runAsAsyncFunction, std::optional<ArgumentMap>&& arguments, std::optional<ScriptExecutionContextIdentifier>&& targetScriptExecutionContext, bool forceUserGesture, RemoveTransientActivation removeTransientActivation)
         : source(source)
         , taintedness(taintedness)
         , sourceURL(WTFMove(sourceURL))
@@ -65,10 +67,11 @@ struct RunJavaScriptParameters {
         , arguments(WTFMove(arguments))
         , forceUserGesture(forceUserGesture ? ForceUserGesture::Yes : ForceUserGesture::No)
         , removeTransientActivation(removeTransientActivation)
+        , targetScriptExecutionContext(WTFMove(targetScriptExecutionContext))
     {
     }
 
-    RunJavaScriptParameters(String&& source, JSC::SourceTaintedOrigin taintedness, URL&& sourceURL, bool runAsAsyncFunction, std::optional<ArgumentMap>&& arguments, bool forceUserGesture, RemoveTransientActivation removeTransientActivation)
+    RunJavaScriptParameters(String&& source, JSC::SourceTaintedOrigin taintedness, URL&& sourceURL, bool runAsAsyncFunction, std::optional<ArgumentMap>&& arguments, std::optional<ScriptExecutionContextIdentifier>&& targetScriptExecutionContext, bool forceUserGesture, RemoveTransientActivation removeTransientActivation)
         : source(WTFMove(source))
         , taintedness(taintedness)
         , sourceURL(WTFMove(sourceURL))
@@ -76,6 +79,7 @@ struct RunJavaScriptParameters {
         , arguments(WTFMove(arguments))
         , forceUserGesture(forceUserGesture ? ForceUserGesture::Yes : ForceUserGesture::No)
         , removeTransientActivation(removeTransientActivation)
+        , targetScriptExecutionContext(WTFMove(targetScriptExecutionContext))
     {
     }
 
@@ -86,6 +90,7 @@ struct RunJavaScriptParameters {
     std::optional<ArgumentMap> arguments;
     ForceUserGesture forceUserGesture;
     RemoveTransientActivation removeTransientActivation;
+    std::optional<ScriptExecutionContextIdentifier> targetScriptExecutionContext;
 };
 
 } // namespace WebCore

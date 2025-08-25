@@ -379,6 +379,34 @@ TEST(WebKit, GetFrameInfo_detachedFrame)
     EXPECT_EQ(pid, [webView _webProcessIdentifier]);
 }
 
+TEST(WebKit, EvaluateInFrameAfterDocumentChange)
+{
+    auto webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadHTMLString:@"Hello world!"];
+
+    __block bool done = false;
+    __block RetainPtr<_WKFrameTreeNode> mainFrame;
+    [webView _frames:^(_WKFrameTreeNode *mainFrameNode) {
+        EXPECT_NOT_NULL(mainFrameNode);
+        EXPECT_NOT_NULL(mainFrameNode.info);
+        mainFrame = mainFrameNode;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // This WKFrameInfo references the document synchronously loaded above.
+    // Navigate to switch to a new document.
+    [webView synchronouslyLoadHTMLString:@"Goodbye friend!"];
+
+    done = false;
+    [webView callAsyncJavaScript:@"document.innerHTML" arguments:nil inFrame:mainFrame.get().info inContentWorld:WKContentWorld.defaultClientWorld completionHandler:^(id result, NSError *error) {
+        EXPECT_NULL(result);
+        EXPECT_NOT_NULL(error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
 TEST(WebKit, EvaluateJavaScriptInAttachments)
 {
     // Attachments displayed inline are in sandboxed documents.

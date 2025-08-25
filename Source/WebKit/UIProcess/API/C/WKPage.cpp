@@ -2761,6 +2761,8 @@ void WKPageEvaluateJavaScriptInFrame(WKPageRef pageRef, WKFrameInfoRef frame, WK
     CRASH_IF_SUSPENDED;
 
     auto frameID = frame ? std::optional(toImpl(frame)->frameInfoData().frameID) : std::nullopt;
+    auto documentID = frame ? std::optional(toImpl(frame)->frameInfoData().documentID.value()) : std::nullopt;
+
     toProtectedImpl(pageRef)->runJavaScriptInFrameInScriptWorld(WebKit::RunJavaScriptParameters {
         toProtectedImpl(scriptRef)->string(),
         JSC::SourceTaintedOrigin::Untainted,
@@ -2768,7 +2770,8 @@ void WKPageEvaluateJavaScriptInFrame(WKPageRef pageRef, WKFrameInfoRef frame, WK
         WebCore::RunAsAsyncFunction::No,
         std::nullopt,
         WebCore::ForceUserGesture::Yes,
-        RemoveTransientActivation::Yes
+        RemoveTransientActivation::Yes,
+        documentID
     }, frameID, API::ContentWorld::pageContentWorldSingleton(), !!callback, [context, callback] (auto&& result) {
         if (!callback)
             return;
@@ -2794,6 +2797,8 @@ void WKPageCallAsyncJavaScript(WKPageRef page, WKStringRef script, WKDictionaryR
     };
 
     auto frameID = frame ? std::optional(toImpl(frame)->frameInfoData().frameID) : std::nullopt;
+    auto documentID = frame ? std::optional(toImpl(frame)->frameInfoData().documentID.value()) : std::nullopt;
+
     toProtectedImpl(page)->runJavaScriptInFrameInScriptWorld(WebKit::RunJavaScriptParameters {
         toProtectedImpl(script)->string(),
         JSC::SourceTaintedOrigin::Untainted,
@@ -2801,7 +2806,8 @@ void WKPageCallAsyncJavaScript(WKPageRef page, WKStringRef script, WKDictionaryR
         WebCore::RunAsAsyncFunction::Yes,
         extractArguments(toProtectedImpl(arguments).get()),
         WebCore::ForceUserGesture::Yes,
-        RemoveTransientActivation::Yes
+        RemoveTransientActivation::Yes,
+        documentID
     }, frameID, API::ContentWorld::pageContentWorldSingleton(), !!callback, [context, callback] (auto&& result) {
         if (!callback)
             return;
