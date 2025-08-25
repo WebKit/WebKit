@@ -676,6 +676,17 @@ OverscrollBehavior ScrollingTree::mainFrameHorizontalOverscrollBehavior() const
     return m_rootNode ? m_rootNode->horizontalOverscrollBehavior() : OverscrollBehavior::Auto;
 }
 
+NativeScrollbarVisibility ScrollingTree::mainFrameHorizontalScrollbarVisibility() const
+{
+    Locker locker { m_treeLock };
+    return m_rootNode ? m_rootNode->horizontalScrollbarVisibility() : NativeScrollbarVisibility::Visible;
+}
+
+NativeScrollbarVisibility ScrollingTree::mainFrameVerticalScrollbarVisibility() const
+{
+    Locker locker { m_treeLock };
+    return m_rootNode ? m_rootNode->verticalScrollbarVisibility() : NativeScrollbarVisibility::Visible;
+}
 
 ScrollbarWidth ScrollingTree::mainFrameScrollbarWidth() const
 {

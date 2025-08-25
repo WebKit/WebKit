@@ -235,6 +235,8 @@ public:
 
     WEBCORE_EXPORT FloatPoint mainFrameScrollPosition() const;
 
+    WEBCORE_EXPORT NativeScrollbarVisibility mainFrameHorizontalScrollbarVisibility() const;
+    WEBCORE_EXPORT NativeScrollbarVisibility mainFrameVerticalScrollbarVisibility() const;
     WEBCORE_EXPORT ScrollbarWidth mainFrameScrollbarWidth() const;
     WEBCORE_EXPORT std::optional<ScrollbarColor> mainFrameScrollbarColor() const;
 

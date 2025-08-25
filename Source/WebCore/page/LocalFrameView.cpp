@@ -40,6 +40,7 @@
 #include "ContainerNodeInlines.h"
 #include "ContentVisibilityDocumentState.h"
 #include "DebugPageOverlays.h"
+#include "DeprecatedGlobalSettings.h"
 #include "DocumentFullscreen.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
@@ -1685,6 +1686,8 @@ NativeScrollbarVisibility LocalFrameView::horizontalNativeScrollbarVisibility() 
         auto* scrollbar = horizontalScrollbar();
         return Scrollbar::nativeScrollbarVisibility(scrollbar);
     }
+    if (DeprecatedGlobalSettings::mockScrollbarsEnabled())
+        return NativeScrollbarVisibility::HiddenByStyle;
 
     return styleHidesScrollbarWithOrientation(ScrollbarOrientation::Horizontal) ? NativeScrollbarVisibility::HiddenByStyle : NativeScrollbarVisibility::Visible;
 }
@@ -1695,6 +1698,8 @@ NativeScrollbarVisibility LocalFrameView::verticalNativeScrollbarVisibility() co
         auto* scrollbar = verticalScrollbar();
         return Scrollbar::nativeScrollbarVisibility(scrollbar);
     }
+    if (DeprecatedGlobalSettings::mockScrollbarsEnabled())
+        return NativeScrollbarVisibility::HiddenByStyle;
 
     return styleHidesScrollbarWithOrientation(ScrollbarOrientation::Vertical) ? NativeScrollbarVisibility::HiddenByStyle : NativeScrollbarVisibility::Visible;
 }

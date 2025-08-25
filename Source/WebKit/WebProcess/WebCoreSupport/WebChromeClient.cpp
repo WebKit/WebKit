@@ -52,6 +52,7 @@
 #include "RemoteGPUProxy.h"
 #include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxy.h"
+#include "RemoteScrollbarsController.h"
 #include "RemoteTextDetectorProxy.h"
 #include "SharedBufferReference.h"
 #include "UserData.h"
@@ -166,7 +167,6 @@
 #endif
 
 #if PLATFORM(MAC)
-#include "RemoteScrollbarsController.h"
 #include <WebCore/ScrollbarsControllerMock.h>
 #endif
 
@@ -1414,7 +1414,7 @@ RefPtr<WebCore::ScrollingCoordinator> WebChromeClient::createScrollingCoordinato
 
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
 void WebChromeClient::ensureScrollbarsController(Page& corePage, ScrollableArea& area, bool update) const
 {
     RefPtr page = m_page.get();
@@ -1425,7 +1425,9 @@ void WebChromeClient::ensureScrollbarsController(Page& corePage, ScrollableArea&
     auto* currentScrollbarsController = area.existingScrollbarsController();
 
     if (area.mockScrollbarsControllerEnabled() || (update && !currentScrollbarsController)) {
+#if PLATFORM(MAC)
         ASSERT(!currentScrollbarsController || is<ScrollbarsControllerMock>(currentScrollbarsController));
+#endif
         return;
     }
 
@@ -1450,9 +1452,7 @@ void WebChromeClient::ensureScrollbarsController(Page& corePage, ScrollableArea&
         area.setScrollbarsController(makeUnique<RemoteScrollbarsController>(area, corePage.scrollingCoordinator()));
 #endif
 }
-
 #endif
-
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 

@@ -995,10 +995,9 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     [_scrollView setMinimumZoomScale:minimumScaleFactor];
     [_scrollView setMaximumZoomScale:maximumScaleFactor];
     [_scrollView _setZoomEnabledInternal:allowsUserScaling && self._allowsMagnification];
-    if ([_scrollView showsHorizontalScrollIndicator] && [_scrollView showsVerticalScrollIndicator]) {
-        [_scrollView setShowsHorizontalScrollIndicator:(_page->scrollingCoordinatorProxy()->mainFrameScrollbarWidth() != WebCore::ScrollbarWidth::None)];
-        [_scrollView setShowsVerticalScrollIndicator:(_page->scrollingCoordinatorProxy()->mainFrameScrollbarWidth() != WebCore::ScrollbarWidth::None)];
-    }
+
+    [_scrollView setShowsHorizontalScrollIndicator:(_page->scrollingCoordinatorProxy()->mainFrameScrollbarWidth() != WebCore::ScrollbarWidth::None && _page->scrollingCoordinatorProxy()->mainFrameHorizontalScrollbarVisibility() != WebCore::NativeScrollbarVisibility::HiddenByStyle)];
+    [_scrollView setShowsVerticalScrollIndicator:(_page->scrollingCoordinatorProxy()->mainFrameScrollbarWidth() != WebCore::ScrollbarWidth::None && _page->scrollingCoordinatorProxy()->mainFrameHorizontalScrollbarVisibility() != WebCore::NativeScrollbarVisibility::HiddenByStyle)];
 
 #if HAVE(UIKIT_SCROLLBAR_COLOR_SPI)
     auto scrollbarColor = _page->scrollingCoordinatorProxy()->mainFrameScrollbarColor();

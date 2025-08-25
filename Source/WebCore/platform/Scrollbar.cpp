@@ -518,9 +518,9 @@ bool Scrollbar::supportsUpdateOnSecondaryThread() const
 
 NativeScrollbarVisibility Scrollbar::nativeScrollbarVisibility(const Scrollbar* scrollbar)
 {
-    if (scrollbar && scrollbar->isHiddenByStyle())
+    if (DeprecatedGlobalSettings::mockScrollbarsEnabled() || (scrollbar && scrollbar->isHiddenByStyle()))
         return NativeScrollbarVisibility::HiddenByStyle;
-    if (DeprecatedGlobalSettings::mockScrollbarsEnabled() || (scrollbar && scrollbar->isCustomScrollbar()))
+    if (scrollbar && scrollbar->isCustomScrollbar())
         return NativeScrollbarVisibility::ReplacedByCustomScrollbar;
     return NativeScrollbarVisibility::Visible;
 }

@@ -384,8 +384,8 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         UIScrollView *scrollView = this->scrollView();
 
-        [scrollView setShowsHorizontalScrollIndicator:!(scrollingNode().horizontalNativeScrollbarVisibility() == NativeScrollbarVisibility::HiddenByStyle)];
-        [scrollView setShowsVerticalScrollIndicator:!(scrollingNode().verticalNativeScrollbarVisibility() == NativeScrollbarVisibility::HiddenByStyle)];
+        [scrollView setShowsHorizontalScrollIndicator:scrollingNode().horizontalNativeScrollbarVisibility() != NativeScrollbarVisibility::HiddenByStyle];
+        [scrollView setShowsVerticalScrollIndicator:scrollingNode().verticalNativeScrollbarVisibility() != NativeScrollbarVisibility::HiddenByStyle];
         [scrollView setScrollEnabled:scrollingNode().canHaveScrollbars()];
 
         END_BLOCK_OBJC_EXCEPTIONS

@@ -118,6 +118,8 @@ public:
     bool hasScrollableMainFrame() const;
     bool hasScrollableOrZoomedMainFrame() const;
 
+    WebCore::NativeScrollbarVisibility mainFrameHorizontalScrollbarVisibility() const;
+    WebCore::NativeScrollbarVisibility mainFrameVerticalScrollbarVisibility() const;
     WebCore::ScrollbarWidth mainFrameScrollbarWidth() const;
     std::optional<WebCore::ScrollbarColor> mainFrameScrollbarColor() const;
 
