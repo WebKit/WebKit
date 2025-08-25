@@ -318,7 +318,7 @@ ScrollerPairMac::Values ScrollerPairMac::valuesForOrientation(ScrollbarOrientati
 
 bool ScrollerPairMac::hasScrollerImp()
 {
-    return verticalScroller().hasScrollerImp() || horizontalScroller().hasScrollerImp();
+    return checkedVerticalScroller()->hasScrollerImp() || checkedHorizontalScroller()->hasScrollerImp();
 }
 
 void ScrollerPairMac::releaseReferencesToScrollerImpsOnTheMainThread()

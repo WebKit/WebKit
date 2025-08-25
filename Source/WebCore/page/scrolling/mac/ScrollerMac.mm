@@ -101,7 +101,7 @@ enum class FeatureToAnimate {
     else
         currentValue = progress;
 
-    _scroller->updateProgress(_featureToAnimate, currentValue);
+    CheckedPtr { _scroller }->updateProgress(_featureToAnimate, currentValue);
 }
 
 - (void)invalidate
@@ -206,9 +206,10 @@ enum class FeatureToAnimate {
         scrollbarPartAnimation = nil;
     }
 
-    CGFloat currentAlpha = featureToAnimate == FeatureToAnimate::KnobAlpha ? _scroller->knobAlpha() : _scroller->trackAlpha();
+    CheckedPtr scroller = _scroller;
+    CGFloat currentAlpha = featureToAnimate == FeatureToAnimate::KnobAlpha ? scroller->knobAlpha() : scroller->trackAlpha();
 
-    scrollbarPartAnimation = adoptNS([[WebScrollbarPartAnimationMac alloc] initWithScroller:_scroller.get()
+    scrollbarPartAnimation = adoptNS([[WebScrollbarPartAnimationMac alloc] initWithScroller:scroller.get()
         featureToAnimate:featureToAnimate
         animateFrom:currentAlpha
         animateTo:newAlpha

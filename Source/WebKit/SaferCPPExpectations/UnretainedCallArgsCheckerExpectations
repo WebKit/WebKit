@@ -46,11 +46,9 @@ Shared/Cocoa/CoreIPCContacts.mm
 Shared/Cocoa/CoreIPCPKSecureElementPass.mm
 Shared/Cocoa/CoreIPCPassKit.mm
 Shared/Cocoa/CoreIPCPersonNameComponents.mm
-Shared/Cocoa/CoreIPCPresentationIntent.mm
 Shared/Cocoa/DefaultWebBrowserChecks.mm
 Shared/Cocoa/PDFKitSoftLink.h
 Shared/Cocoa/RevealItem.mm
-Shared/Cocoa/WKKeyedCoder.mm
 Shared/Cocoa/WKNSError.mm
 Shared/Cocoa/WKNSURLRequest.mm
 Shared/Cocoa/WebIconUtilities.mm
@@ -64,7 +62,6 @@ Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm
 Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm
 Shared/JavaScriptEvaluationResult.mm
 Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm
-Shared/cf/CoreIPCNumber.mm
 Shared/mac/AuxiliaryProcessMac.mm
 Shared/mac/ScrollingAccelerationCurveMac.mm
 UIProcess/API/C/mac/WKNotificationPrivateMac.mm
@@ -191,7 +188,6 @@ UIProcess/mac/WKQuickLookPreviewController.mm
 UIProcess/mac/WKRevealItemPresenter.mm
 UIProcess/mac/WKSharingServicePickerDelegate.mm
 UIProcess/mac/WKTextAnimationManagerMac.mm
-UIProcess/mac/WebColorPickerMac.mm
 UIProcess/mac/WebContextMenuProxyMac.mm
 UIProcess/mac/WebDataListSuggestionsDropdownMac.mm
 UIProcess/mac/WebDateTimePickerMac.mm
