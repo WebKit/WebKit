@@ -21,12 +21,13 @@ function clearLastPingResultAndRunTest(callback)
 {
     function done()
     {
+        console.log("FAILED: delete ping failed!");
         if (window.testRunner)
             testRunner.notifyDone();
     }
 
     var xhr = new XMLHttpRequest;
-    xhr.open("GET", "../resources/delete-ping.py", true /* async */);
+    xhr.open("GET", "../../resources/delete-ping.py", true /* async */);
     xhr.send(null);
     xhr.onload = callback;
     xhr.onerror = done;

@@ -2406,8 +2406,6 @@ webkit.org/b/297251 fast/mediastream/getUserMedia-echoCancellation.html [ Pass F
 
 webkit.org/b/297343 [ Debug ] ipc/storage-area-cache-use-after-free.html [ Slow ]
 
-webkit.org/b/297428 http/tests/navigation/ping-attribute/anchor-cookie.html [ Pass Failure ]
-
 webkit.org/b/297483 fast/scrolling/mac/scrollend-event-on-select-element.html [ Pass Failure ]
 
 webkit.org/b/297551 imported/w3c/web-platform-tests/event-timing/buffered-and-duration-threshold.html [ Pass Failure ]
