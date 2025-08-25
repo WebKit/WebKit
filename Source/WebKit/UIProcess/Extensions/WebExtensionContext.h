@@ -740,7 +740,7 @@ private:
     // DeclarativeNetRequest methods.
     // Loading/unloading static rules
     void loadDeclarativeNetRequestRules(CompletionHandler<void(bool)>&&);
-    void compileDeclarativeNetRequestRules(NSArray *, CompletionHandler<void(bool)>&&);
+    void compileDeclarativeNetRequestRules(NSDictionary *, CompletionHandler<void(bool)>&&);
     void unloadDeclarativeNetRequestState();
     String declarativeNetRequestContentRuleListFilePath();
 

@@ -82,6 +82,7 @@ static NSString * const methodKey = @"method";
 static NSString * const parentDocumentIdKey = @"parentDocumentId";
 static NSString * const parentFrameIdKey = @"parentFrameId";
 static NSString * const requestIdKey = @"requestId";
+static NSString * const tabIdKey = @"tabId";
 static NSString * const typeKey = @"type";
 static NSString * const urlKey = @"url";
 
@@ -96,22 +97,23 @@ static inline NSDictionary *toWebAPI(const WebCore::ContentRuleListMatchedRule& 
     NSMutableDictionary *request = [NSMutableDictionary dictionary];
     NSMutableDictionary *rule = [NSMutableDictionary dictionary];
 
-    request[documentIdKey] = matchedRuleInfo.request.documentId.has_value() ? matchedRuleInfo.request.documentId.value().createNSString().get() : nil;
-    request[documentLifecycleKey] = matchedRuleInfo.request.documentId.has_value() ? matchedRuleInfo.request.documentLifecycle.value().createNSString().get() : nil;
-    request[frameIdKey] = matchedRuleInfo.request.frameId.has_value() ? @(matchedRuleInfo.request.frameId.value()) : nil;
-    request[frameTypeKey] = matchedRuleInfo.request.frameType.has_value() ? matchedRuleInfo.request.frameType.value().createNSString().get() : nil;
+    request[frameIdKey] = @(matchedRuleInfo.request.frameId);
+    request[parentFrameIdKey] = @(matchedRuleInfo.request.parentFrameId);
+    request[methodKey] = matchedRuleInfo.request.method.createNSString().get();
+    request[requestIdKey] = matchedRuleInfo.request.requestId.createNSString().get();
+    request[typeKey] = matchedRuleInfo.request.type.createNSString().get();
+    request[tabIdKey] = @(matchedRuleInfo.request.tabId);
+    request[urlKey] = matchedRuleInfo.request.url.createNSString().get();
     request[initiatorKey] = matchedRuleInfo.request.initiator.has_value() ? matchedRuleInfo.request.initiator.value().createNSString().get() : nil;
-    request[methodKey] = matchedRuleInfo.request.method.has_value() ? matchedRuleInfo.request.method.value().createNSString().get() : nil;
+    request[documentIdKey] = matchedRuleInfo.request.documentId.has_value() ? matchedRuleInfo.request.documentId.value().createNSString().get() : nil;
+    request[documentLifecycleKey] = matchedRuleInfo.request.documentLifecycle.has_value() ? matchedRuleInfo.request.documentLifecycle.value().createNSString().get() : nil;
+    request[frameTypeKey] = matchedRuleInfo.request.frameType.has_value() ? matchedRuleInfo.request.frameType.value().createNSString().get() : nil;
     request[parentDocumentIdKey] = matchedRuleInfo.request.parentDocumentId.has_value() ? matchedRuleInfo.request.parentDocumentId.value().createNSString().get() : nil;
-    request[parentFrameIdKey] = matchedRuleInfo.request.parentFrameId.has_value() ? @(matchedRuleInfo.request.parentFrameId.value()) : nil;
-    request[requestIdKey] = matchedRuleInfo.request.requestId.has_value() ? matchedRuleInfo.request.requestId.value().createNSString().get() : nil;
-    request[typeKey] = matchedRuleInfo.request.type.has_value() ? matchedRuleInfo.request.type.value().createNSString().get() : nil;
-    request[urlKey] = matchedRuleInfo.request.url.has_value() ? matchedRuleInfo.request.url.value().createNSString().get() : nil;
     result[requestKey] = [request copy];
 
+    rule[ruleIdKey] = @(matchedRuleInfo.rule.ruleId);
+    rule[rulesetIdKey] = matchedRuleInfo.rule.rulesetId.createNSString().get();
     rule[extensionIdKey] = matchedRuleInfo.rule.extensionId.has_value() ? matchedRuleInfo.rule.extensionId.value().createNSString().get() : nil;
-    rule[ruleIdKey] = matchedRuleInfo.rule.ruleId.has_value() ? @(matchedRuleInfo.rule.ruleId.value()) : nil;
-    rule[rulesetIdKey] = matchedRuleInfo.rule.rulesetId.has_value() ? matchedRuleInfo.rule.rulesetId.value().createNSString().get() : nil;
     result[ruleKey] = [rule copy];
 
     return [result copy];
@@ -175,7 +177,7 @@ void WebExtensionAPIDeclarativeNetRequest::updateDynamicRules(NSDictionary *opti
     NSString *ruleErrorString;
     size_t index = 0;
     for (NSDictionary *ruleDictionary in rulesToAdd) {
-        if (![[_WKWebExtensionDeclarativeNetRequestRule  alloc] initWithDictionary:ruleDictionary errorString:&ruleErrorString]) {
+        if (![[_WKWebExtensionDeclarativeNetRequestRule  alloc] initWithDictionary:ruleDictionary rulesetID:dynamicRulesetID errorString:&ruleErrorString]) {
             ASSERT(ruleErrorString);
             *outExceptionString = toErrorString(nullString(), addRulesKey, @"an error with rule at index %lu: %@", index, ruleErrorString).createNSString().autorelease();
             return;
@@ -246,7 +248,7 @@ void WebExtensionAPIDeclarativeNetRequest::updateSessionRules(NSDictionary *opti
     NSString *ruleErrorString;
     size_t index = 0;
     for (NSDictionary *ruleDictionary in rulesToAdd) {
-        if (![[_WKWebExtensionDeclarativeNetRequestRule  alloc] initWithDictionary:ruleDictionary errorString:&ruleErrorString]) {
+        if (![[_WKWebExtensionDeclarativeNetRequestRule  alloc] initWithDictionary:ruleDictionary rulesetID:sessionRulesetID errorString:&ruleErrorString]) {
             ASSERT(ruleErrorString);
             *outExceptionString = toErrorString(nullString(), addRulesKey, @"an error with rule at index %lu: %@", index, ruleErrorString).createNSString().autorelease();
             return;

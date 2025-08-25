@@ -26,6 +26,9 @@
 #import "config.h"
 #import "_WKWebExtensionDeclarativeNetRequestRule.h"
 
+NSString * const sessionRulesetID = @"_session";
+NSString * const dynamicRulesetID = @"_dynamic";
+
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #if !__has_feature(objc_arc)
@@ -112,7 +115,7 @@ using namespace WebKit;
 
 @implementation _WKWebExtensionDeclarativeNetRequestRule
 
-- (instancetype)initWithDictionary:(NSDictionary *)ruleDictionary errorString:(NSString **)outErrorString
+- (instancetype)initWithDictionary:(NSDictionary *)ruleDictionary rulesetID:(NSString *)rulesetID errorString:(NSString **)outErrorString
 {
     if (!(self = [super init]))
         return nil;
@@ -138,6 +141,8 @@ using namespace WebKit;
 
         return nil;
     }
+
+    _rulesetID = rulesetID;
 
     NSString *exceptionString;
     if (!validateDictionary(ruleDictionary, nil, requiredKeysInRuleDictionary, keyToExpectedValueTypeInRuleDictionary, &exceptionString)) {
@@ -879,6 +884,7 @@ static BOOL isArrayOfRequestMethodsValid(NSArray<NSString *> *requestMethods)
         @"trigger": triggerDictionary,
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @(_ruleID),
+        @"_rulesetIdentifier": _rulesetID,
 #endif
     };
 
@@ -1252,7 +1258,7 @@ static NSInteger priorityForRuleType(NSString *ruleType)
 
 @implementation _WKWebExtensionDeclarativeNetRequestRule
 
-- (instancetype)initWithDictionary:(NSDictionary *)ruleDictionary errorString:(NSString **)outErrorString
+- (instancetype)initWithDictionary:(NSDictionary *)ruleDictionary rulesetID:(NSString *)rulesetID errorString:(NSString **)outErrorString
 {
     return nil;
 }

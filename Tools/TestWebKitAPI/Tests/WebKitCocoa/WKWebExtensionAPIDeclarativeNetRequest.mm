@@ -1240,25 +1240,80 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, OnRuleMatchedDebugWithoutPermission
 
 TEST(WKWebExtensionAPIDeclarativeNetRequest, OnRuleMatchedDebug)
 {
-    auto *identifier = @"org.webkit.test.extension (76C788B8)";
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
         { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<h1>Hello, world!</h1>"_s } },
+        { "/script.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<script type='module' src='/script.js'></script>"_s } },
+        { "/script.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, "browser.test.notifyFail('This script shouldn't load')"_s } },
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
-    // FIXME: <rdar://157880177> Add assertions for the other properties on the MatchedRuleInfo object
+    // FIXME: <rdar://159289161> Add checks for parentDocumentId once we support it
     auto *backgroundScript = Util::constructScript(@[
         @"browser.declarativeNetRequest.onRuleMatchedDebug.addListener((info) => {",
-        @"  browser.test.assertEq(new URL(info.request.url).pathname, '/frame.html')",
-        @"  browser.test.assertEq(info.rule.ruleId, 1)",
-        [NSString stringWithFormat:@"  browser.test.assertEq(info.rule.extensionId, '%@')", identifier],
-        @"  browser.test.notifyPass()",
+        @"  switch (info.rule.rulesetId) {",
+        @"    case 'sub_frame rules':",
+        @"      browser.test.assertEq(typeof info.request.documentId, 'string')",
+        @"      browser.test.assertEq(info.request.documentLifecycle, undefined)",
+        @"      browser.test.assertTrue(info.request.frameId > 0)",
+        @"      browser.test.assertEq(info.request.frameType, 'sub_frame')",
+        // FIXME: <rdar://159231459> Initiator of a sub-frame is null; it should be src of the iframe.
+        @"      browser.test.assertEq(info.request.initiator, undefined)",
+        @"      browser.test.assertEq(info.request.method, 'GET')",
+        @"      browser.test.assertTrue(info.request.parentFrameId > 0)",
+        @"      browser.test.assertTrue(info.request.tabId > 0)",
+        @"      browser.test.assertEq(info.request.type, 'sub_frame')",
+        @"      browser.test.assertEq(new URL(info.request.url).pathname, '/frame.html')",
+
+        @"      browser.test.assertEq(info.rule.ruleId, 1)",
+        @"      browser.test.assertEq(info.rule.extensionId, undefined)",
+
+        @"      browser.test.sendMessage('Done')",
+        @"      break",
+        @"    case 'main_frame rules':",
+        @"      browser.test.assertEq(typeof info.request.documentId, 'string')",
+        @"      browser.test.assertEq(info.request.documentLifecycle, undefined)",
+        @"      browser.test.assertEq(info.request.frameId, 0)",
+        @"      browser.test.assertEq(info.request.frameType, 'outermost_frame')",
+        @"      browser.test.assertEq(info.request.initiator, 'localhost')",
+        @"      browser.test.assertEq(info.request.method, 'GET')",
+        @"      browser.test.assertEq(info.request.parentFrameId, -1)",
+        @"      browser.test.assertTrue(info.request.tabId > 0)",
+        @"      browser.test.assertEq(info.request.type, 'main_frame')",
+        @"      browser.test.assertEq(new URL(info.request.url).pathname, '/frame.html')",
+
+        @"      browser.test.assertEq(info.rule.ruleId, 2)",
+        @"      browser.test.assertEq(info.rule.extensionId, undefined)",
+
+        @"      browser.test.sendMessage('Done')",
+        @"      break",
+        @"    case 'non_frame rules':",
+        @"      browser.test.assertEq(info.request.documentId, undefined)",
+        @"      browser.test.assertEq(info.request.documentLifecycle, undefined)",
+        @"      browser.test.assertEq(info.request.frameId, 0)",
+        @"      browser.test.assertEq(info.request.frameType, undefined)",
+        @"      browser.test.assertEq(info.request.initiator, 'localhost')",
+        @"      browser.test.assertEq(info.request.method, 'GET')",
+        @"      browser.test.assertEq(info.request.parentFrameId, -1)",
+        @"      browser.test.assertTrue(info.request.tabId > 0)",
+        @"      browser.test.assertEq(info.request.type, 'script')",
+        @"      browser.test.assertEq(new URL(info.request.url).pathname, '/script.js')",
+
+        @"      browser.test.assertEq(info.rule.ruleId, 3)",
+        @"      browser.test.assertEq(info.rule.extensionId, undefined)",
+
+        @"      browser.test.notifyPass()",
+        @"      break",
+        @"    default:",
+        @"      browser.test.notifyFail('Received an unexpected rulesetId.')",
+        @"  }",
         @"})",
 
         @"browser.test.sendMessage('Load Tab')",
     ]);
 
-    auto *rules = @"[{\"id\":1,\"action\":{\"type\":\"block\"},\"condition\":{\"urlFilter\":\"*frame*\", \"resourceTypes\":[\"sub_frame\"]}}]";
+    auto *subFrameRules = @"[{\"id\":1,\"action\":{\"type\":\"block\"},\"condition\":{\"urlFilter\":\"frame\",\"resourceTypes\":[\"sub_frame\"]}}]";
+    auto *mainFrameRules = @"[{\"id\":2,\"action\":{\"type\":\"block\"},\"condition\":{\"urlFilter\":\"frame\",\"resourceTypes\":[\"main_frame\"]}}]";
+    auto *nonFrameRules = @"[{\"id\":3,\"action\":{\"type\":\"block\"},\"condition\":{\"urlFilter\":\"script.js\",\"resourceTypes\":[\"script\"]}}]";
 
     auto *manifest = @{
         @"manifest_version": @3,
@@ -1267,19 +1322,118 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, OnRuleMatchedDebug)
         @"declarative_net_request": @{
             @"rule_resources": @[
                 @{
-                    @"id": @"rules",
+                    @"id": @"sub_frame rules",
                     @"enabled": @YES,
-                    @"path": @"rules.json"
+                    @"path": @"sub_frame.json"
+                },
+                @{
+                    @"id": @"main_frame rules",
+                    @"enabled": @YES,
+                    @"path": @"main_frame.json"
+                },
+                @{
+                    @"id": @"non_frame rules",
+                    @"enabled": @YES,
+                    @"path": @"non_frame.json"
                 }
             ]
         }
     };
 
-    auto manager = Util::parseExtension(manifest, @{ @"background.js": backgroundScript, @"rules.json": rules });
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript, @"sub_frame.json": subFrameRules, @"main_frame.json": mainFrameRules, @"non_frame.json": nonFrameRules });
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionDeclarativeNetRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionDeclarativeNetRequestFeedback];
+    [manager runUntilTestMessage:@"Load Tab"];
 
-    manager.get().context.uniqueIdentifier = identifier;
-    [manager load];
+    // Test sub_frame rules
+    auto *urlRequest = server.requestWithLocalhost();
+    NSURL *requestURL = urlRequest.URL;
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:requestURL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:[requestURL URLByAppendingPathComponent:@"frame.html"]];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
 
+    [manager runUntilTestMessage:@"Done"];
+
+    // Test main_frame rules
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost("/frame.html"_s)];
+    [manager runUntilTestMessage:@"Done"];
+
+    // Test non_frame rules
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost("/script.html"_s)];
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, OnRuleMatchedDebugSessionRules)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<h1>Hello, world!</h1>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.declarativeNetRequest.onRuleMatchedDebug.addListener((info) => {",
+        @"  browser.test.assertEq(info.rule.rulesetId, '_session')",
+        @"  browser.test.assertEq(info.rule.ruleId, 1)",
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"let sessionRules = await browser.declarativeNetRequest.getSessionRules()",
+        @"browser.test.assertEq(sessionRules.length, 0)",
+        @"await browser.declarativeNetRequest.updateSessionRules({ addRules: [{ id: 1, priority: 1, action: {type: 'block'}, condition: { urlFilter: 'frame' } }] })",
+        @"sessionRules = await browser.declarativeNetRequest.getSessionRules()",
+        @"browser.test.assertEq(sessionRules.length, 1)",
+        @"browser.test.sendMessage('Load Tab')",
+    ]);
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"declarativeNetRequest", @"declarativeNetRequestFeedback" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+    };
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionDeclarativeNetRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionDeclarativeNetRequestFeedback];
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    NSURL *requestURL = urlRequest.URL;
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:requestURL];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:[requestURL URLByAppendingPathComponent:@"frame.html"]];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, OnRuleMatchedDebugDynamicRules)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<h1>Hello, world!</h1>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.declarativeNetRequest.onRuleMatchedDebug.addListener((info) => {",
+        @"  browser.test.assertEq(info.rule.rulesetId, '_dynamic')",
+        @"  browser.test.assertEq(info.rule.ruleId, 1)",
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"let dynamicRules = await browser.declarativeNetRequest.getDynamicRules()",
+        @"browser.test.assertEq(dynamicRules.length, 0)",
+        @"await browser.declarativeNetRequest.updateDynamicRules({ addRules: [{ id: 1, priority: 1, action: {type: 'block'}, condition: { urlFilter: 'frame' } }] })",
+        @"dynamicRules = await browser.declarativeNetRequest.getDynamicRules()",
+        @"browser.test.assertEq(dynamicRules.length, 1)",
+        @"browser.test.sendMessage('Load Tab')",
+    ]);
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"declarativeNetRequest", @"declarativeNetRequestFeedback" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+    };
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionDeclarativeNetRequest];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionDeclarativeNetRequestFeedback];
     [manager runUntilTestMessage:@"Load Tab"];
@@ -1307,7 +1461,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RequiredAndOptionalKeys)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule1 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule1 errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule1 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule1 rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NOT_NULL(validatedRule1);
 
     NSDictionary *rule2 = @{
@@ -1317,7 +1471,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RequiredAndOptionalKeys)
             @"resourceTypes": @[ @"script" ],
         },
     };
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule2 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule2 errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule2 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule2 rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule2);
 
     NSDictionary *rule3 = @{
@@ -1327,14 +1481,14 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RequiredAndOptionalKeys)
             @"resourceTypes": @[ @"script" ],
         },
     };
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule3 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule3 errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule3 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule3 rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule3);
 
     NSDictionary *rule4 = @{
         @"id": @1,
         @"action": @{ @"type": @"block" },
     };
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule4 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule4 errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule4 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule4 rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule4);
 }
 
@@ -1350,7 +1504,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, PropertiesHaveCorrectType)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule1 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule1 errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule1 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule1 rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule1);
 
     NSDictionary *rule2 = @{
@@ -1362,7 +1516,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, PropertiesHaveCorrectType)
             @"resourceTypes": @[ @"script" ],
         },
     };
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule2 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule2 errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule2 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule2 rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule2);
 }
 
@@ -1378,7 +1532,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, NumbersArePositiveIntegers)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule1 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule1 errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule1 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule1 rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule1);
 
     NSDictionary *rule2 = @{
@@ -1391,7 +1545,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, NumbersArePositiveIntegers)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule2 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule2 errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule2 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule2 rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule2);
 
     NSDictionary *ruleWithNonIntegerPriority = @{
@@ -1404,7 +1558,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, NumbersArePositiveIntegers)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRuleWithNonIntegerPriority = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:ruleWithNonIntegerPriority errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRuleWithNonIntegerPriority = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:ruleWithNonIntegerPriority rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NOT_NULL(validatedRuleWithNonIntegerPriority);
     EXPECT_EQ(validatedRuleWithNonIntegerPriority.ruleID, 80);
     EXPECT_EQ(validatedRuleWithNonIntegerPriority.priority, 5);
@@ -1423,7 +1577,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, OnlyOneOfResourceTypesAndExcludedRe
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule);
 }
 
@@ -1439,7 +1593,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RegexRuleConversion)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
     EXPECT_NOT_NULL(convertedRule);
 
@@ -1453,6 +1607,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RegexRuleConversion)
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
 
@@ -1473,7 +1628,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, BasicValidRuleParsing)
         @"condition": conditionDictionary,
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NOT_NULL(validatedRule);
     EXPECT_EQ(validatedRule.ruleID, 1);
     EXPECT_EQ(validatedRule.priority, 3);
@@ -1493,7 +1648,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, BasicRuleConversion)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
     EXPECT_NOT_NULL(convertedRule);
 
@@ -1507,6 +1662,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, BasicRuleConversion)
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
 
@@ -1525,7 +1681,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, MainFrameResourceRuleConversion)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
     EXPECT_NOT_NULL(convertedRule);
 
@@ -1539,6 +1695,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, MainFrameResourceRuleConversion)
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
 
@@ -1557,7 +1714,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, SubFrameResourceRuleConversion)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
     EXPECT_NOT_NULL(convertedRule);
 
@@ -1571,6 +1728,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, SubFrameResourceRuleConversion)
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
 
@@ -1589,7 +1747,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RepeatedMainFrameResourceRuleConver
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
     EXPECT_NOT_NULL(convertedRule);
 
@@ -1603,6 +1761,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RepeatedMainFrameResourceRuleConver
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
 
@@ -1622,7 +1781,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, CaseSensitiveConversion)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule1 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule1 errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule1 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule1 rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule1 = validatedRule1.ruleInWebKitFormat.firstObject;
     EXPECT_NOT_NULL(convertedRule1);
 
@@ -1637,6 +1796,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, CaseSensitiveConversion)
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
     EXPECT_NS_EQUAL(convertedRule1, correctRuleConversion1);
@@ -1652,7 +1812,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, CaseSensitiveConversion)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule2 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule2 errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule2 = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule2 rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule2 = validatedRule2.ruleInWebKitFormat.firstObject;
     EXPECT_NOT_NULL(convertedRule2);
 
@@ -1666,6 +1826,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, CaseSensitiveConversion)
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
     EXPECT_NS_EQUAL(convertedRule2, correctRuleConversion2);
@@ -1683,7 +1844,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, ConvertingMultipleResourceTypes)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSMutableDictionary *convertedRule = [validatedRule.ruleInWebKitFormat.firstObject mutableCopy];
     EXPECT_NOT_NULL(convertedRule);
 
@@ -1697,6 +1858,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, ConvertingMultipleResourceTypes)
         } mutableCopy],
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     } mutableCopy];
     NSSet *actualResourceTypes = [NSSet setWithArray:convertedRule[@"trigger"][@"resource-type"]];
@@ -1720,7 +1882,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, ConvertingXHRWebSocketAndOtherTypes
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSMutableDictionary *convertedRule = [validatedRule.ruleInWebKitFormat.firstObject mutableCopy];
     EXPECT_NOT_NULL(convertedRule);
 
@@ -1734,6 +1896,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, ConvertingXHRWebSocketAndOtherTypes
         } mutableCopy],
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     } mutableCopy];
     NSSet *actualResourceTypes = [NSSet setWithArray:convertedRule[@"trigger"][@"resource-type"]];
@@ -1757,7 +1920,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, UpgradeSchemeRuleConversion)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSArray<NSDictionary *> *convertedRules = validatedRule.ruleInWebKitFormat;
     EXPECT_EQ(convertedRules.count, 2ul);
 
@@ -1771,6 +1934,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, UpgradeSchemeRuleConversion)
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
 
@@ -1784,6 +1948,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, UpgradeSchemeRuleConversion)
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
 
@@ -1803,7 +1968,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, UpgradeSchemeForMainFrameRuleConver
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSArray<NSDictionary *> *convertedRules = validatedRule.ruleInWebKitFormat;
     EXPECT_EQ(convertedRules.count, 2ul);
 
@@ -1817,6 +1982,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, UpgradeSchemeForMainFrameRuleConver
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
     EXPECT_NS_EQUAL(convertedRules[0], makeHTTPSRule);
@@ -1831,6 +1997,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, UpgradeSchemeForMainFrameRuleConver
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
     EXPECT_NS_EQUAL(convertedRules[1], sortingRule);
@@ -1847,7 +2014,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleWithoutAPriority)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NOT_NULL(validatedRule);
     EXPECT_EQ(validatedRule.priority, 1);
 }
@@ -1864,7 +2031,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleWithInvalidDomainType)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule);
 }
 
@@ -1880,7 +2047,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithDomainType)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
     EXPECT_NOT_NULL(convertedRule);
 
@@ -1895,6 +2062,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithDomainType)
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
 
@@ -1911,7 +2079,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithNoSpecifiedResour
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSMutableDictionary *convertedRule = [validatedRule.ruleInWebKitFormat.firstObject mutableCopy];
     EXPECT_NOT_NULL(convertedRule);
 
@@ -1925,6 +2093,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithNoSpecifiedResour
         } mutableCopy],
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     } mutableCopy];
     NSSet *actualResourceTypes = [NSSet setWithArray:convertedRule[@"trigger"][@"resource-type"]];
@@ -1947,7 +2116,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithUnsupportedResour
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
     EXPECT_NOT_NULL(convertedRule);
 
@@ -1967,7 +2136,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExactlyOneUnsuppo
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
     EXPECT_NULL(convertedRule);
 }
@@ -1983,7 +2152,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, EmptyResourceTypes)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule);
 }
 
@@ -1998,7 +2167,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedResourceT
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
     EXPECT_NOT_NULL(convertedRule);
 
@@ -2018,7 +2187,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithUnsupportedExclud
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
     EXPECT_NOT_NULL(convertedRule);
 
@@ -2032,6 +2201,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithUnsupportedExclud
         } mutableCopy],
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     } mutableCopy];
     NSSet *actualResourceTypes = [NSSet setWithArray:convertedRule[@"trigger"][@"resource-type"]];
@@ -2054,7 +2224,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithEmptyExcludedReso
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSMutableDictionary *convertedRule = [validatedRule.ruleInWebKitFormat.firstObject mutableCopy];
     EXPECT_NOT_NULL(convertedRule);
 
@@ -2068,6 +2238,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithEmptyExcludedReso
         } mutableCopy],
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     } mutableCopy];
 
@@ -2092,7 +2263,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, EmptyDomains)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule);
 }
 
@@ -2108,7 +2279,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, NonASCIIDomains)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule);
 }
 
@@ -2123,7 +2294,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithDomains)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
     EXPECT_NOT_NULL(convertedRule);
 
@@ -2138,6 +2309,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithDomains)
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
 
@@ -2159,7 +2331,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithURLFilterAndReque
         if (urlFilter)
             rule[@"condition"][@"urlFilter"] = urlFilter;
 
-        _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+        _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
         NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
         EXPECT_NOT_NULL(convertedRule);
 
@@ -2173,6 +2345,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithURLFilterAndReque
             },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
         };
 
@@ -2213,7 +2386,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithRequestDomains)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSArray<NSDictionary *> *convertedRules = validatedRule.ruleInWebKitFormat;
     EXPECT_EQ(convertedRules.count, 3ul);
 
@@ -2227,6 +2400,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithRequestDomains)
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
     EXPECT_NS_EQUAL(convertedRules[0], appleURLFilterRuleConversion);
@@ -2241,6 +2415,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithRequestDomains)
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
     EXPECT_NS_EQUAL(convertedRules[1], facebookURLFilterRuleConversion);
@@ -2255,6 +2430,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithRequestDomains)
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
     EXPECT_NS_EQUAL(convertedRules[2], googleURLFilterRuleConversion);
@@ -2271,7 +2447,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithInitiatorDomains)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
     EXPECT_NOT_NULL(convertedRule);
 
@@ -2286,6 +2462,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithInitiatorDomains)
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
 
@@ -2303,7 +2480,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedInitiator
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
     EXPECT_NOT_NULL(convertedRule);
 
@@ -2318,6 +2495,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedInitiator
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
 
@@ -2336,7 +2514,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedInitiator
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSArray *convertedRules = validatedRule.ruleInWebKitFormat;
     EXPECT_NOT_NULL(convertedRules);
 
@@ -2352,6 +2530,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedInitiator
             },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
             @"_identifier": @1,
+            @"_rulesetIdentifier": @"Test Ruleset",
 #endif
         },
         @{
@@ -2365,6 +2544,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedInitiator
             },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
             @"_identifier": @1,
+            @"_rulesetIdentifier": @"Test Ruleset",
 #endif
         }
     ];
@@ -2383,7 +2563,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithEmptyExcludedDoma
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
     EXPECT_NOT_NULL(convertedRule);
 
@@ -2398,6 +2578,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithEmptyExcludedDoma
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
 
@@ -2416,7 +2597,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, NonASCIIExcludedDomains)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule);
 }
 
@@ -2431,7 +2612,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedDomains)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
     EXPECT_NOT_NULL(convertedRule);
 
@@ -2446,6 +2627,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedDomains)
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
 
@@ -2463,7 +2645,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedRequestDo
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSArray<NSDictionary *> *convertedRules = validatedRule.ruleInWebKitFormat;
     EXPECT_EQ(convertedRules.count, 2ul);
 
@@ -2477,6 +2659,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedRequestDo
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
     EXPECT_NS_EQUAL(convertedRules[0], passRuleConversion);
@@ -2491,6 +2674,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedRequestDo
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
     EXPECT_NS_EQUAL(convertedRules[1], blockRuleConversion);
@@ -2507,7 +2691,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithInvalidRequestMet
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule);
 }
 
@@ -2522,7 +2706,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithInvalidExcludedRe
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule);
 }
 
@@ -2537,7 +2721,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithRequestMethods)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSArray *convertedRules = validatedRule.ruleInWebKitFormat;
     EXPECT_NOT_NULL(convertedRules);
 
@@ -2553,6 +2737,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithRequestMethods)
             },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
             @"_identifier": @1,
+            @"_rulesetIdentifier": @"Test Ruleset",
 #endif
         },
         @{
@@ -2566,6 +2751,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithRequestMethods)
             },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
             @"_identifier": @1,
+            @"_rulesetIdentifier": @"Test Ruleset",
 #endif
         }
     ];
@@ -2584,7 +2770,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedRequestMe
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSArray *convertedRules = validatedRule.ruleInWebKitFormat;
     EXPECT_NOT_NULL(convertedRules);
 
@@ -2600,6 +2786,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedRequestMe
             },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
             @"_identifier": @1,
+            @"_rulesetIdentifier": @"Test Ruleset",
 #endif
         },
         @{
@@ -2613,6 +2800,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedRequestMe
             },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
             @"_identifier": @1,
+            @"_rulesetIdentifier": @"Test Ruleset",
 #endif
         },
         @{
@@ -2625,6 +2813,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedRequestMe
             },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
             @"_identifier": @1,
+            @"_rulesetIdentifier": @"Test Ruleset",
 #endif
         }
     ];
@@ -2646,7 +2835,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithRequestMethodsAnd
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSArray *convertedRules = validatedRule.ruleInWebKitFormat;
     EXPECT_NOT_NULL(convertedRules);
 
@@ -2662,6 +2851,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithRequestMethodsAnd
             },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
             @"_identifier": @1,
+            @"_rulesetIdentifier": @"Test Ruleset",
 #endif
         },
         @{
@@ -2675,6 +2865,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithRequestMethodsAnd
             },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
             @"_identifier": @1,
+            @"_rulesetIdentifier": @"Test Ruleset",
 #endif
         }
     ];
@@ -2693,7 +2884,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, NonASCIIURLFilter)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule);
 }
 
@@ -2708,7 +2899,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, NonASCIIRegexFilter)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule);
 }
 
@@ -2724,7 +2915,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, URLFilterSpecialCharacters)
             },
         };
 
-        _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+        _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
         NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
         EXPECT_NOT_NULL(convertedRule);
 
@@ -2738,6 +2929,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, URLFilterSpecialCharacters)
             },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
             @"_identifier": @1,
+            @"_rulesetIdentifier": @"Test Ruleset",
 #endif
         };
 
@@ -2774,7 +2966,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, UnacceptableResourceTypeForAllowAll
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule);
 }
 
@@ -2789,7 +2981,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, ExcludedResourceTypeForAllowAllRequ
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule);
 }
 
@@ -2803,7 +2995,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, NoResourceTypeForAllowAllRequests)
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     EXPECT_NULL(validatedRule);
 }
 
@@ -2819,7 +3011,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithMainFrameAllowAll
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSMutableDictionary *convertedRule = [validatedRule.ruleInWebKitFormat.firstObject mutableCopy];
     EXPECT_NOT_NULL(convertedRule);
 
@@ -2833,6 +3025,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithMainFrameAllowAll
         } mutableCopy],
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @1,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     } mutableCopy];
 
@@ -2854,7 +3047,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithRedirect)
             },
         };
 
-        _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+        _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
         NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
 
         if (!expectedRedirect) {
@@ -2875,6 +3068,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithRedirect)
             },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
             @"_identifier": @1,
+            @"_rulesetIdentifier": @"Test Ruleset",
 #endif
         };
 
@@ -2935,7 +3129,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithModifyHeaders)
             },
         };
 
-        _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+        _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
         NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
 
         if (!expectedModifyHeadersInfo) {
@@ -2957,6 +3151,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithModifyHeaders)
             },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
             @"_identifier": @10,
+            @"_rulesetIdentifier": @"Test Ruleset",
 #endif
         };
 
@@ -3003,7 +3198,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithModifyHeadersWith
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
     EXPECT_NOT_NULL(convertedRule);
 
@@ -3026,6 +3221,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithModifyHeadersWith
         },
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         @"_identifier": @10,
+        @"_rulesetIdentifier": @"Test Ruleset",
 #endif
     };
 
@@ -3046,15 +3242,15 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithModifyHeadersWith
         },
     };
 
-    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule rulesetID:@"Test Ruleset" errorString:nil];
     NSDictionary *convertedRule = validatedRule.ruleInWebKitFormat.firstObject;
     EXPECT_NULL(convertedRule);
 }
 
 TEST(WKWebExtensionAPIDeclarativeNetRequest, RulesSortByPriorityFromDifferentRulesets)
 {
-    NSArray *rules = @[
-        @[ @{
+    NSDictionary *rules = @{
+        @"Test Ruleset 1": @[ @{
             @"id": @1,
             @"priority": @2,
             @"action": @{ @"type": @"allow" },
@@ -3063,7 +3259,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RulesSortByPriorityFromDifferentRul
                 @"resourceTypes": @[ @"script" ],
             },
         } ],
-        @[ @{
+        @"Test Ruleset 2": @[ @{
             @"id": @1,
             @"priority": @1,
             @"action": @{ @"type": @"block" },
@@ -3072,7 +3268,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RulesSortByPriorityFromDifferentRul
                 @"resourceTypes": @[ @"script" ],
             },
         } ],
-    ];
+    };
 
     NSArray *sortedTranslatedRules = [_WKWebExtensionDeclarativeNetRequestTranslator translateRules:rules errorStrings:nil];
     EXPECT_NOT_NULL(sortedTranslatedRules);
@@ -3083,8 +3279,8 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RulesSortByPriorityFromDifferentRul
 
 TEST(WKWebExtensionAPIDeclarativeNetRequest, RulesSortWithoutExplicitPriority)
 {
-    NSArray *rules = @[
-        @[
+    NSDictionary *rules = @{
+        @"Test Ruleset": @[
             @{
                 @"id": @1,
                 @"action": @{ @"type": @"upgradeScheme" },
@@ -3103,7 +3299,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RulesSortWithoutExplicitPriority)
                 },
             },
         ]
-    ];
+    };
 
     NSArray *sortedTranslatedRules = [_WKWebExtensionDeclarativeNetRequestTranslator translateRules:rules errorStrings:nil];
     EXPECT_NOT_NULL(sortedTranslatedRules);
@@ -3115,8 +3311,8 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RulesSortWithoutExplicitPriority)
 
 TEST(WKWebExtensionAPIDeclarativeNetRequest, RulesSortByActionType)
 {
-    NSArray *rules = @[
-        @[
+    NSDictionary *rules = @{
+        @"Test Ruleset": @[
             @{
                 @"id": @1,
                 @"action": @{ @"type": @"upgradeScheme" },
@@ -3163,7 +3359,7 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RulesSortByActionType)
                 },
             },
         ]
-    ];
+    };
 
     NSArray *sortedTranslatedRules = [_WKWebExtensionDeclarativeNetRequestTranslator translateRules:rules errorStrings:nil];
     EXPECT_NOT_NULL(sortedTranslatedRules);

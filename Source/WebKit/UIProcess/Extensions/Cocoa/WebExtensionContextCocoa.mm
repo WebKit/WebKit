@@ -79,6 +79,7 @@
 #import "WebPreferences.h"
 #import "WebScriptMessageHandler.h"
 #import "WebUserContentControllerProxy.h"
+#import "_WKWebExtensionDeclarativeNetRequestRule.h"
 #import "_WKWebExtensionDeclarativeNetRequestSQLiteStore.h"
 #import "_WKWebExtensionDeclarativeNetRequestTranslator.h"
 #import "_WKWebExtensionRegisteredScriptsSQLiteStore.h"
@@ -4661,7 +4662,7 @@ static NSString *computeStringHashForContentBlockerRules(NSString *rules)
     return [hashAsString stringByAppendingString:[NSString stringWithFormat:@"-%zu", currentDeclarativeNetRequestRuleTranslatorVersion]];
 }
 
-void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData, CompletionHandler<void(bool)>&& completionHandler)
+void WebExtensionContext::compileDeclarativeNetRequestRules(NSDictionary *rulesData, CompletionHandler<void(bool)>&& completionHandler)
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), makeBlockPtr([this, protectedThis = Ref { *this }, rulesData = RetainPtr { rulesData }, completionHandler = WTFMove(completionHandler)]() mutable {
         NSArray<NSString *> *jsonDeserializationErrorStrings;
@@ -4732,10 +4733,10 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
         return;
     }
 
-    auto *allJSONData = [NSMutableArray array];
+    auto *allJSONData = [NSMutableDictionary dictionary];
 
     auto applyDeclarativeNetRequestRules = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), allJSONData = RetainPtr { allJSONData }] () mutable {
-        if (!allJSONData.get().count) {
+        if (!allJSONData.get().allKeys.count) {
             removeDeclarativeNetRequestRules();
             API::ContentRuleListStore::defaultStoreSingleton().removeContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), [completionHandler = WTFMove(completionHandler)](std::error_code error) mutable {
                 completionHandler(error ? false : true);
@@ -4759,7 +4760,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
                 continue;
             }
 
-            [allJSONData addObject:jsonData->wrapper()];
+            allJSONData.get()[ruleset.rulesetID.createNSString().get()] = jsonData->wrapper();
         }
 
         applyDeclarativeNetRequestRules();
@@ -4778,7 +4779,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
             if (serializationError)
                 RELEASE_LOG_ERROR(Extensions, "Unable to serialize dynamic declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", uniqueIdentifier().createNSString().get(), privacyPreservingDescription(serializationError));
             else
-                [allJSONData addObject:dynamicRulesAsData];
+                allJSONData.get()[dynamicRulesetID] = dynamicRulesAsData;
 
             HashSet<double> dynamicRuleIDs;
             for (NSDictionary<NSString *, id> *rule in rules)
@@ -4802,7 +4803,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
         if (serializationError)
             RELEASE_LOG_ERROR(Extensions, "Unable to serialize session declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", uniqueIdentifier().createNSString().get(), privacyPreservingDescription(serializationError));
         else
-            [allJSONData addObject:sessionRulesAsData];
+            allJSONData.get()[sessionRulesetID] = sessionRulesAsData;
 
         HashSet<double> sessionRuleIDs;
         for (NSDictionary<NSString *, id> *rule in rules)
@@ -4818,7 +4819,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
 void WebExtensionContext::handleContentRuleListMatchedRule(WebExtensionTab& tab, WebCore::ContentRuleListMatchedRule& matchedRule)
 {
     // FIXME: <158147119> Figure out the permissions story for onRuleMatchedDebug
-    if (!(hasPermission(WKWebExtensionPermissionDeclarativeNetRequestFeedback) && hasPermission(WKWebExtensionPermissionDeclarativeNetRequest) && hasPermission(URL { matchedRule.request.url.value() }, &tab)))
+    if (!(hasPermission(WKWebExtensionPermissionDeclarativeNetRequestFeedback) && hasPermission(WKWebExtensionPermissionDeclarativeNetRequest) && hasPermission(URL { matchedRule.request.url }, &tab)))
         return;
 
     wakeUpBackgroundContentIfNecessaryToFireEvents({ WebExtensionEventListenerType::DeclarativeNetRequestOnRuleMatchedDebug }, [=, this, protectedThis = Ref { *this }] {

@@ -675,6 +675,9 @@ void WebExtensionController::handleContentRuleListMatchedRule(WebPageProxyIdenti
         if (!tab)
             break;
 
+        // FIXME: <rdar://99141106> Implement declarativeNetRequest.testMatchOutcome; until then, extensionId should be null
+        matchedRule.rule.extensionId = std::nullopt;
+        matchedRule.request.tabId = toWebAPI(tab->identifier());
         context->handleContentRuleListMatchedRule(*tab, matchedRule);
 
         break;

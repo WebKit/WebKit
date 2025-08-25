@@ -6148,28 +6148,29 @@ struct WebCore::ContentRuleListResults {
 };
 
 struct WebCore::ContentRuleListMatchedRule {
-    WebCore::ContentRuleListMatchedRule::Request request;
     WebCore::ContentRuleListMatchedRule::MatchedRule rule;
+    WebCore::ContentRuleListMatchedRule::Request request;
 };
 
 [Nested] struct WebCore::ContentRuleListMatchedRule::Request {
+    double frameId;
+    double parentFrameId;
+    String method;
+    String requestId;
+    double tabId;
+    String type;
+    String url;
+    std::optional<String> initiator;
     std::optional<String> documentId;
     std::optional<String> documentLifecycle;
-    std::optional<double> frameId;
     std::optional<String> frameType;
-    std::optional<String> initiator;
-    std::optional<String> method;
     std::optional<String> parentDocumentId;
-    std::optional<double> parentFrameId;
-    std::optional<String> requestId;
-    std::optional<String> type;
-    std::optional<String> url;
 };
 
 [Nested] struct WebCore::ContentRuleListMatchedRule::MatchedRule {
+    double ruleId;
+    String rulesetId;
     std::optional<String> extensionId;
-    std::optional<double> ruleId;
-    std::optional<String> rulesetId;
 };
 
 #endif
