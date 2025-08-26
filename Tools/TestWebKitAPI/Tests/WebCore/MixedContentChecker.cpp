@@ -58,13 +58,16 @@ TEST(MixedContentChecker, CanModifyRequest)
         initiator
     ));
 
-    // Exception for 4.1.2 potentially truthworthy address
+    // Exception for 4.1.1 (request’s URL is a potentially trustworthy URL) and
+    // 4.1.2 (URL’s host is an IP address) when it comes to loopback
     ASSERT_TRUE(MixedContentChecker::canModifyRequest(
         URL { "http://127.0.0.1"_s },
         destination,
         initiator
     ));
 
+    // Exception for 4.1.1 (request’s URL is a potentially trustworthy URL) when it
+    // comes to localhost
     ASSERT_TRUE(MixedContentChecker::canModifyRequest(
         URL { "http://localhost"_s },
         destination,
@@ -97,12 +100,18 @@ TEST(MixedContentChecker, CanModifyRequest)
         Initiator::Imageset
     ));
 
-    // But if the scheme is handled by the handler, it is modifiable even if the initiator is "imageset".
+    // But if the scheme is handled by the handler, it is never modifiable
     LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler("custom"_s);
 
     ASSERT_TRUE(LegacySchemeRegistry::schemeIsHandledBySchemeHandler("custom"_s));
 
-    ASSERT_TRUE(MixedContentChecker::canModifyRequest(
+    ASSERT_FALSE(MixedContentChecker::canModifyRequest(
+        URL { "custom://example.com/cat.jpg"_s },
+        FetchOptions::Destination::Audio,
+        initiator
+    ));
+
+    ASSERT_FALSE(MixedContentChecker::canModifyRequest(
         URL { "custom://example.com/cat.jpg"_s },
         destination,
         Initiator::Imageset
@@ -111,10 +120,10 @@ TEST(MixedContentChecker, CanModifyRequest)
     // This exception won't apply if the cheme is not registered.
     ASSERT_FALSE(LegacySchemeRegistry::schemeIsHandledBySchemeHandler("custom2"_s));
 
-    ASSERT_FALSE(MixedContentChecker::canModifyRequest(
+    ASSERT_TRUE(MixedContentChecker::canModifyRequest(
         URL { "custom2://example.com/cat.jpg"_s },
-        destination,
-        Initiator::Imageset
+        FetchOptions::Destination::Audio,
+        initiator
     ));
 }
 

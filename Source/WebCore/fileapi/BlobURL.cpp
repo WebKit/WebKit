@@ -71,16 +71,14 @@ URL BlobURL::getOriginURL(const URL& url)
     return URL(SecurityOrigin::createForBlobURL(url)->toString());
 }
 
-bool BlobURL::isSecureBlobURL(const URL& url)
+const Document* BlobURL::getOwnerDocument(const URL& url)
 {
     ASSERT(url.protocolIsBlob());
 
-    // As per https://github.com/w3c/webappsec-mixed-content/issues/41, Blob URL is secure if the document that created it is secure.
     if (auto origin = ThreadableBlobRegistry::getCachedOrigin(url)) {
-        if (RefPtr document = blobOwner(*origin))
-            return document->isSecureContext();
+        return blobOwner(*origin);
     }
-    return SecurityOrigin::isSecure(getOriginURL(url));
+    return nullptr;
 }
 
 URL BlobURL::createBlobURL(StringView originString)

@@ -240,8 +240,14 @@ bool SecurityOrigin::isSecure(const URL& url)
     if (!url.isValid() || LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(url.protocol()))
         return true;
 
-    if (url.protocolIsBlob())
-        return BlobURL::isSecureBlobURL(url);
+    if (url.protocolIsBlob()) {
+        // As per https://github.com/w3c/webappsec-mixed-content/issues/41, Blob URL is secure
+        // if the document that created it is secure.
+        if (RefPtr document = BlobURL::getOwnerDocument(url))
+            return document->isSecureContext();
+
+        return SecurityOrigin::isSecure(BlobURL::getOriginURL(url));
+    }
 
     return false;
 }
