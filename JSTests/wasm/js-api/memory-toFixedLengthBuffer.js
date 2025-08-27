@@ -1,3 +1,4 @@
+//@ skip if $addressBits <= 32
 //@ requireOptions("--useWasmMemoryToBufferAPIs=true")
 
 import { eq as assertEq, throws as assertThrows } from "../assert.js";
@@ -92,4 +93,12 @@ function assertSharedFixedLengthBufferOfPageSize(pageCount, buffer) {
     memory.grow(1);
     assertEq(buffer4, memory.buffer);
     assertSharedFixedLengthBufferOfPageSize(3, buffer3);
+}
+
+// Non-shared memory with no user-specified maximum
+
+{
+    let memory = new WebAssembly.Memory({ initial: 0 });
+    let buffer = memory.toFixedLengthBuffer();
+    assertEq(buffer.maxByteLength, pageSize * 65536);
 }

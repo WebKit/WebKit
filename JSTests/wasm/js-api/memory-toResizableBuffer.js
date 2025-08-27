@@ -1,3 +1,4 @@
+//@ skip if $addressBits <= 32
 //@ requireOptions("--useWasmMemoryToBufferAPIs=true")
 
 import { eq as assertEq, throws as assertThrows } from "../assert.js";

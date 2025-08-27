@@ -1367,6 +1367,10 @@ void Options::assertOptionsAreCoherent()
         coherent = false;
         dataLog("INCOHERENT OPTIONS: can't restrict pointer tagging to pacibsp and use posix signals");
     }
+    if (is32Bit() && useWasmMemoryToBufferAPIs()) {
+        coherent = false;
+        dataLog("INCOHERENT OPTIONS: useWasmMemoryToBufferAPIs requires a 4GB buffer, currently unfeasible in 32-bit JSC\n");
+    }
 
     if (!coherent)
         CRASH();
