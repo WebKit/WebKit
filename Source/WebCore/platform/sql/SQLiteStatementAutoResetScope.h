@@ -25,12 +25,12 @@
 
 #pragma once
 
+#include "SQLiteStatement.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
-class SQLiteStatement;
 
 class SQLiteStatementAutoResetScope {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(SQLiteStatementAutoResetScope, WEBCORE_EXPORT);
@@ -45,8 +45,8 @@ public:
     bool operator!() const { return !m_statement; }
 
     SQLiteStatement* get() { return m_statement.get(); }
-    SQLiteStatement* operator->() { return m_statement.get(); }
     SQLiteStatement& operator*() const { ASSERT(m_statement); return *m_statement; }
+    CheckedPtr<SQLiteStatement> operator->() { return m_statement; }
 
 private:
     CheckedPtr<SQLiteStatement> m_statement;
