@@ -202,6 +202,8 @@ template<typename T> inline void DoublyLinkedList<T>::remove(T* node)
         ASSERT(node == m_tail);
         m_tail = node->prev();
     }
+    node->setNext(0);
+    node->setPrev(0);
 }
 
 template<typename T> inline T* DoublyLinkedList<T>::removeHead()

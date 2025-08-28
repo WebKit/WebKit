@@ -133,7 +133,6 @@ public:
 
     void shrink();
     void freeBlock(MarkedBlock::Handle*);
-    void freeOrShrinkBlock(MarkedBlock::Handle*);
 
     void didAddBlock(MarkedBlock::Handle*);
     void didConsumeFreeList(MarkedBlock::Handle*);

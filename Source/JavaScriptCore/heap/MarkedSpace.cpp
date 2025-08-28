@@ -400,16 +400,6 @@ void MarkedSpace::freeBlock(MarkedBlock::Handle* block)
     delete block;
 }
 
-void MarkedSpace::freeOrShrinkBlock(MarkedBlock::Handle* block)
-{
-    if (!block->isEmpty()) {
-        block->shrink();
-        return;
-    }
-
-    freeBlock(block);
-}
-
 void MarkedSpace::shrink()
 {
     forEachDirectory(
