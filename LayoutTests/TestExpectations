@@ -540,6 +540,7 @@ imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.html [ Skip 
 imported/w3c/web-platform-tests/server-timing/navigation_timing_idl.https.html [ Skip ]
 
 # Console log lines may appear in a different order so we silence them.
+fullscreen/fullscreen-document-gc-crash.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/cookie-module.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/cookie-module-import-propagate.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/cookie-module-propagate.html [ DumpJSConsoleLogInStdErr ]

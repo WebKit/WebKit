@@ -3219,5 +3219,3 @@ http/tests/lockdown-mode [ Skip ]
 js/dom/lockdown-mode [ Skip ]
 
 webkit.org/b/289382 fast/canvas/offscreen-no-script-context-crash.html [ Skip ]
-
-webkit.org/b/297861 fullscreen/fullscreen-document-gc-crash.html [ Failure ]
