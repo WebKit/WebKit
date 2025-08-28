@@ -589,6 +589,9 @@
 /* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many enabled static rulesets */
 "Exceeded maximum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored." = "Exceeded maximum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored.";
 
+/* WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for a duplicated rule id */
+"`declarative_net_request` ruleset with id `%@` duplicates the rule id `%@`." = "`declarative_net_request` ruleset with id `%@` duplicates the rule id `%@`.";
+
 /* Button for exiting full screen when in full screen media playback */
 "Exit Full Screen" = "Exit Full Screen";
 

@@ -133,7 +133,6 @@ using namespace WebKit;
         declarativeNetRequestRuleConditionKey: NSDictionary.class,
     };
 
-    // FIXME: <rdar://72159785> Make sure every rule ID is unique.
     _ruleID = objectForKey<NSNumber>(ruleDictionary, declarativeNetRequestRuleIDKey).integerValue;
     if (!_ruleID) {
         if (outErrorString)

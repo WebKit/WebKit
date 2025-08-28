@@ -1448,6 +1448,45 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, OnRuleMatchedDebugDynamicRules)
 }
 #endif
 
+TEST(WKWebExtensionAPIDeclarativeNetRequest, DuplicatedRuleIDs)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"let enabledRulesets = await browser.declarativeNetRequest.getEnabledRulesets()",
+        @"browser.test.assertEq(enabledRulesets.length, 1, 'The static ruleset should be enabled.')",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto *declarativeNetRequestManifest = @{
+        @"name": @"Test",
+        @"description": @"Test dNR extension",
+        @"version": @"1",
+        @"manifest_version": @3,
+        @"permissions": @[ @"declarativeNetRequest" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"declarative_net_request": @{
+            @"rule_resources": @[
+                @{
+                    @"id": @"duplicated_rule_id",
+                    @"enabled": @YES,
+                    @"path": @"rules.json"
+                }
+            ]
+        }
+    };
+
+    auto *rules = @"[ { \"id\" : 1, \"priority\": 1, \"action\" : { \"type\" : \"block\" }, \"condition\" : { \"urlFilter\" : \"foo\" } }, { \"id\" : 1, \"priority\": 1, \"action\" : { \"type\" : \"block\" }, \"condition\" : { \"urlFilter\" : \"bar\" } } ]";
+
+    auto manager = Util::loadExtension(declarativeNetRequestManifest, @{ @"background.js": backgroundScript, @"rules.json": rules });
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionDeclarativeNetRequest];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    NSArray<NSError *> *errors = manager.get().context.errors;
+    ASSERT_EQ(errors.count, 1ul);
+    ASSERT_TRUE([errors.firstObject.localizedDescription isEqualToString:@"`declarative_net_request` ruleset with id `duplicated_rule_id` duplicates the rule id `1`."]);
+}
+
 // MARK: Rule translation tests
 
 TEST(WKWebExtensionAPIDeclarativeNetRequest, RequiredAndOptionalKeys)
