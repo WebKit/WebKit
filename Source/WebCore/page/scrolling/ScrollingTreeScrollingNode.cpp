@@ -594,7 +594,8 @@ void ScrollingTreeScrollingNode::scrollbarVisibilityDidChange(ScrollbarOrientati
 
 void ScrollingTreeScrollingNode::scrollbarMinimumThumbLengthDidChange(ScrollbarOrientation orientation, int minimumThumbLength)
 {
-    scrollingTree()->scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(scrollingNodeID(), orientation, minimumThumbLength);
+    if (RefPtr scrollingTree = this->scrollingTree())
+        scrollingTree->scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(scrollingNodeID(), orientation, minimumThumbLength);
 }
 
 } // namespace WebCore
