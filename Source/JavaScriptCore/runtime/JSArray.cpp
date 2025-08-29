@@ -908,23 +908,31 @@ JSArray* JSArray::fastToSpliced(JSGlobalObject* globalObject, CallFrame* callFra
         if (newLength >= MIN_SPARSE_ARRAY_INDEX) [[unlikely]]
             return nullptr;
 
-        if (length > this->butterfly()->vectorLength()) [[unlikely]]
+        if (holesMustForwardToPrototype()) [[unlikely]]
             return nullptr;
 
-        if (hasDouble(sourceType)) {
-            if (containsHole(this->butterfly()->contiguousDouble().data(), static_cast<uint32_t>(length)))
-                return nullptr;
-        } else if (containsHole(this->butterfly()->contiguous().data(), static_cast<uint32_t>(length)))
+        if (length > this->butterfly()->vectorLength()) [[unlikely]]
             return nullptr;
 
         IndexingType insertedItemsIndexingType = sourceType;
         for (uint64_t i = 0; i < insertCount; i++)
             insertedItemsIndexingType = leastUpperBoundOfIndexingTypeAndValue(insertedItemsIndexingType, callFrame->uncheckedArgument(i + 2));
 
-        Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(insertedItemsIndexingType);
-        IndexingType resultIndexingType = resultStructure->indexingType();
+        IndexingType resultIndexingType = insertedItemsIndexingType;
+        if (sourceType == ArrayWithDouble) {
+            auto* buffer = this->butterfly()->contiguousDouble().data();
+            if (containsHole(buffer, length)) [[unlikely]]
+                resultIndexingType = ArrayWithContiguous;
+        } else if (sourceType == ArrayWithInt32) {
+            auto* buffer = this->butterfly()->contiguous().data();
+            if (containsHole(buffer, length)) [[unlikely]]
+                resultIndexingType = ArrayWithContiguous;
+        }
 
-        if (hasAnyArrayStorage(resultIndexingType)) [[unlikely]]
+        Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(resultIndexingType);
+        IndexingType indexingType = resultStructure->indexingType();
+
+        if (hasAnyArrayStorage(indexingType)) [[unlikely]]
             return nullptr;
         ASSERT(!globalObject->isHavingABadTime());
 
@@ -939,48 +947,61 @@ JSArray* JSArray::fastToSpliced(JSGlobalObject* globalObject, CallFrame* callFra
         resultButterfly->setVectorLength(vectorLength);
         resultButterfly->setPublicLength(newLength);
 
-        auto copyArrayPrefixElements = [&]<typename T, typename U>(T* resultBuffer, U* sourceBuffer) {
-            copyArrayElements<ArrayFillMode::Empty, NeedsGCSafeOps::No>(resultBuffer, 0, sourceBuffer, 0, start, sourceType);
-        };
-        auto copyArraySuffixElements = [&]<typename T, typename U>(T* resultBuffer, U* sourceBuffer) {
-            copyArrayElements<ArrayFillMode::Empty, NeedsGCSafeOps::No>(resultBuffer, start + insertCount, sourceBuffer, start + deleteCount, length - start - deleteCount, sourceType);
-        };
-
         auto* sourceButterfly = this->butterfly();
-        if (hasDouble(resultIndexingType)) {
+        uint32_t prefixResultOffset = 0;
+        uint32_t prefixSourceOffset = 0;
+        uint32_t prefixSourceLength = start;
+        uint32_t suffixResultOffset = start + insertCount;
+        uint32_t suffixSourceOffset = start + deleteCount;
+        uint32_t suffixSourceLength = length - start - deleteCount;
+        if (hasDouble(indexingType)) {
             ASSERT(sourceType == ArrayWithInt32 || sourceType == ArrayWithDouble);
             double* resultBuffer = resultButterfly->contiguousDouble().data();
             if (sourceType == ArrayWithDouble)
-                copyArrayPrefixElements(resultBuffer, sourceButterfly->contiguousDouble().data());
+                copyArrayElements<ArrayFillMode::Empty, NeedsGCSafeOps::No>(resultBuffer, prefixResultOffset, sourceButterfly->contiguousDouble().data(), prefixSourceOffset, prefixSourceLength, sourceType);
             else
-                copyArrayPrefixElements(resultBuffer, sourceButterfly->contiguous().data());
+                copyArrayElements<ArrayFillMode::Empty, NeedsGCSafeOps::No>(resultBuffer, prefixResultOffset, sourceButterfly->contiguous().data(), prefixSourceOffset, prefixSourceLength, sourceType);
             for (uint64_t i = 0; i < insertCount; ++i) {
                 JSValue value = callFrame->uncheckedArgument(i + 2);
                 ASSERT(value.isNumber());
                 resultButterfly->contiguousDouble().atUnsafe(start + i) = value.asNumber();
             }
             if (sourceType == ArrayWithDouble)
-                copyArraySuffixElements(resultBuffer, sourceButterfly->contiguousDouble().data());
+                copyArrayElements<ArrayFillMode::Empty, NeedsGCSafeOps::No>(resultBuffer, suffixResultOffset, sourceButterfly->contiguousDouble().data(), suffixSourceOffset, suffixSourceLength, sourceType);
             else
-                copyArraySuffixElements(resultBuffer, sourceButterfly->contiguous().data());
-        } else if (hasInt32(resultIndexingType) || hasContiguous(resultIndexingType)) {
+                copyArrayElements<ArrayFillMode::Empty, NeedsGCSafeOps::No>(resultBuffer, suffixResultOffset, sourceButterfly->contiguous().data(), suffixSourceOffset, suffixSourceLength, sourceType);
+        } else if (hasInt32(indexingType)) {
             auto* resultBuffer = resultButterfly->contiguous().data();
             if (sourceType == ArrayWithDouble)
-                copyArrayPrefixElements(resultBuffer, sourceButterfly->contiguousDouble().data());
+                copyArrayElements<ArrayFillMode::Empty, NeedsGCSafeOps::No>(resultBuffer, prefixResultOffset, sourceButterfly->contiguousDouble().data(), prefixSourceOffset, prefixSourceLength, sourceType);
             else
-                copyArrayPrefixElements(resultBuffer, sourceButterfly->contiguous().data());
+                copyArrayElements<ArrayFillMode::Empty, NeedsGCSafeOps::No>(resultBuffer, prefixResultOffset, sourceButterfly->contiguous().data(), prefixSourceOffset, prefixSourceLength, sourceType);
             for (uint64_t i = 0; i < insertCount; ++i) {
                 JSValue value = callFrame->uncheckedArgument(i + 2);
                 resultButterfly->contiguous().atUnsafe(start + i).setWithoutWriteBarrier(value);
             }
             if (sourceType == ArrayWithDouble)
-                copyArraySuffixElements(resultBuffer, sourceButterfly->contiguousDouble().data());
+                copyArrayElements<ArrayFillMode::Empty, NeedsGCSafeOps::No>(resultBuffer, suffixResultOffset, sourceButterfly->contiguousDouble().data(), suffixSourceOffset, suffixSourceLength, sourceType);
             else
-                copyArraySuffixElements(resultBuffer, sourceButterfly->contiguous().data());
+                copyArrayElements<ArrayFillMode::Empty, NeedsGCSafeOps::No>(resultBuffer, suffixResultOffset, sourceButterfly->contiguous().data(), suffixSourceOffset, suffixSourceOffset, sourceType);
+        } else if (hasContiguous(indexingType)) {
+            auto* resultBuffer = resultButterfly->contiguous().data();
+            if (sourceType == ArrayWithDouble)
+                copyArrayElements<ArrayFillMode::Undefined, NeedsGCSafeOps::No>(resultBuffer, prefixResultOffset, sourceButterfly->contiguousDouble().data(), prefixSourceOffset, prefixSourceLength, sourceType);
+            else
+                copyArrayElements<ArrayFillMode::Undefined, NeedsGCSafeOps::No>(resultBuffer, prefixResultOffset, sourceButterfly->contiguous().data(), prefixSourceOffset, prefixSourceLength, sourceType);
+            for (uint64_t i = 0; i < insertCount; ++i) {
+                JSValue value = callFrame->uncheckedArgument(i + 2);
+                resultButterfly->contiguous().atUnsafe(start + i).setWithoutWriteBarrier(value);
+            }
+            if (sourceType == ArrayWithDouble)
+                copyArrayElements<ArrayFillMode::Undefined, NeedsGCSafeOps::No>(resultBuffer, suffixResultOffset, sourceButterfly->contiguousDouble().data(), suffixSourceOffset, suffixSourceLength, sourceType);
+            else
+                copyArrayElements<ArrayFillMode::Undefined, NeedsGCSafeOps::No>(resultBuffer, suffixResultOffset, sourceButterfly->contiguous().data(), suffixSourceOffset, suffixSourceLength, sourceType);
         } else
             RELEASE_ASSERT_NOT_REACHED();
 
-        Butterfly::clearOptimalVectorLengthGap(resultIndexingType, resultButterfly, vectorLength, newLength);
+        Butterfly::clearOptimalVectorLengthGap(indexingType, resultButterfly, vectorLength, newLength);
         return createWithButterfly(vm, nullptr, resultStructure, resultButterfly);
     }
     default: {
