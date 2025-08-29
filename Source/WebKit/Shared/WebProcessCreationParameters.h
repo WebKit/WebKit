@@ -288,6 +288,10 @@ struct WebProcessCreationParameters {
 #if HAVE(LIQUID_GLASS)
     bool isLiquidGlassEnabled { false };
 #endif
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    bool isDebugLoggingEnabled { false };
+#endif
 };
 
 } // namespace WebKit

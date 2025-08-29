@@ -367,7 +367,7 @@ static void setVideoDecoderBehaviors(OptionSet<VideoDecoderBehavior> videoDecode
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    initializeLogForwarding();
+    initializeLogForwarding(parameters);
 #endif
 
 #if ENABLE(NOTIFY_BLOCKING)
@@ -838,7 +838,7 @@ static bool shouldIgnoreLogMessage(std::span<const LChar> logChannel)
     return equalSpans(logChannel, "com.apple.xpc\0"_span8) || equalSpans(logChannel, "com.apple.CoreAnalytics\0"_span8);
 }
 
-static void registerLogClient(std::unique_ptr<LogClient>&& newLogClient)
+static void registerLogClient(bool isDebugLoggingEnabled, std::unique_ptr<LogClient>&& newLogClient)
 {
 #if PLATFORM(IOS_FAMILY)
     prewarmLogs();
@@ -849,27 +849,22 @@ static void registerLogClient(std::unique_ptr<LogClient>&& newLogClient)
 
     static os_log_hook_t prevHook = nullptr;
 
-#ifdef NDEBUG
     // OS_LOG_TYPE_DEFAULT implies default, fault, and error.
-    constexpr auto minimumType = OS_LOG_TYPE_DEFAULT;
-#else
     // OS_LOG_TYPE_DEBUG implies debug, info, default, fault, and error.
-    constexpr auto minimumType = OS_LOG_TYPE_DEBUG;
-#endif
+    const auto minimumType = isDebugLoggingEnabled ? OS_LOG_TYPE_DEBUG : OS_LOG_TYPE_DEFAULT;
+    WEBPROCESS_RELEASE_LOG(Process, "registerLogClient: Debug logging enabled: %d", isDebugLoggingEnabled);
 
-    prevHook = os_log_set_hook(minimumType, makeBlockPtr([](os_log_type_t type, os_log_message_t msg) {
+    prevHook = os_log_set_hook(minimumType, makeBlockPtr([isDebugLoggingEnabled](os_log_type_t type, os_log_message_t msg) {
         if (prevHook)
             prevHook(type, msg);
 
         if (msg->buffer_sz > 1024)
             return;
 
-#ifdef NDEBUG
-        // Don't send messages with types we don't want to log in release. Even though OS_LOG_TYPE_DEFAULT is the minimum,
+        // Don't send debug/info messages unless debug logging is enabled. Even though OS_LOG_TYPE_DEFAULT would be the minimum,
         // the hook will be called for other subsystems with debug and info types.
-        if (type & (OS_LOG_TYPE_DEBUG | OS_LOG_TYPE_INFO))
+        if (!isDebugLoggingEnabled && type & (OS_LOG_TYPE_DEBUG | OS_LOG_TYPE_INFO))
             return;
-#endif
 
         if (Thread::currentThreadIsRealtime())
             return;
@@ -900,7 +895,7 @@ static void registerLogClient(std::unique_ptr<LogClient>&& newLogClient)
     WTFSignpostIndirectLoggingEnabled = true;
 }
 
-void WebProcess::initializeLogForwarding()
+void WebProcess::initializeLogForwarding(const WebProcessCreationParameters& parameters)
 {
     if (os_trace_get_mode() != OS_TRACE_MODE_OFF)
         return;
@@ -908,6 +903,7 @@ void WebProcess::initializeLogForwarding()
     RefPtr parentConnection = parentProcessConnection();
     if (!parentConnection)
         return;
+
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
     static constexpr auto connectionBufferSizeLog2 = 17;
     auto connectionPair = IPC::StreamClientConnection::create(connectionBufferSizeLog2, 1_s);
@@ -916,14 +912,14 @@ void WebProcess::initializeLogForwarding()
     auto [connection, handle] = WTFMove(*connectionPair);
     connection->open(*this, RunLoop::currentSingleton());
     std::unique_ptr newLogClient = makeUnique<LogClient>(Ref { connection });
-    parentConnection->sendWithAsyncReply(Messages::WebProcessProxy::CreateLogStream(WTFMove(handle), newLogClient->identifier()), [newLogClient = WTFMove(newLogClient), connection = WTFMove(connection)] (IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore) mutable {
+    parentConnection->sendWithAsyncReply(Messages::WebProcessProxy::CreateLogStream(WTFMove(handle), newLogClient->identifier()), [newLogClient = WTFMove(newLogClient), connection = WTFMove(connection), isDebugLoggingEnabled = parameters.isDebugLoggingEnabled] (IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore) mutable {
         connection->setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
-        registerLogClient(WTFMove(newLogClient));
+        registerLogClient(isDebugLoggingEnabled, WTFMove(newLogClient));
     });
 #else
     std::unique_ptr newLogClient = makeUnique<LogClient>(*parentConnection);
-    parentConnection->sendWithAsyncReply(Messages::WebProcessProxy::CreateLogStream(newLogClient->identifier()), [newLogClient = WTFMove(newLogClient)] mutable {
-        registerLogClient(WTFMove(newLogClient));
+    parentConnection->sendWithAsyncReply(Messages::WebProcessProxy::CreateLogStream(newLogClient->identifier()), [newLogClient = WTFMove(newLogClient), isDebugLoggingEnabled = parameters.isDebugLoggingEnabled] mutable {
+        registerLogClient(isDebugLoggingEnabled, WTFMove(newLogClient));
     });
 #endif
 

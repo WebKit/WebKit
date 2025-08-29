@@ -753,7 +753,7 @@ private:
     void accessibilityRelayProcessSuspended(bool);
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    void initializeLogForwarding();
+    void initializeLogForwarding(const WebProcessCreationParameters&);
 #endif
 
     bool isProcessBeingCachedForPerformance();

@@ -547,6 +547,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if HAVE(LIQUID_GLASS)
     parameters.isLiquidGlassEnabled = isLiquidGlassEnabled();
 #endif
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    parameters.isDebugLoggingEnabled = os_log_debug_enabled(OS_LOG_DEFAULT);
+#endif
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
