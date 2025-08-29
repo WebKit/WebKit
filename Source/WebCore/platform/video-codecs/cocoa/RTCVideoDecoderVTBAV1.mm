@@ -147,6 +147,22 @@ static std::optional<std::pair<std::span<const uint8_t>, std::span<const uint8_t
     return { };
 }
 
+struct ParsedDecoderModel {
+    std::optional<size_t> buffer_delay_length_minus_1;
+    std::optional<size_t> num_units_in_decoding_tick;
+    std::optional<size_t> buffer_removal_time_length_minus_1;
+    std::optional<size_t> frame_presentation_time_length_minus_1;
+};
+
+struct ParsedTimingInfo {
+    std::optional<size_t> num_units_in_display_tick;
+    std::optional<size_t> time_scale;
+    std::optional<size_t> equal_picture_interval;
+    std::optional<size_t> num_ticks_per_picture_minus_1;
+    std::optional<size_t> decoder_model_info_present_flag;
+    std::optional<ParsedDecoderModel> decoder_model;
+};
+
 struct ParsedSequenceHeaderParameters {
     int32_t height { 0 };
     int32_t width { 0 };
@@ -158,6 +174,57 @@ struct ParsedSequenceHeaderParameters {
     uint8_t twelve_bit { 0 };
     uint8_t chroma_type { 0 };
 };
+
+static size_t parseUlvc(BitReader *reader)
+{
+    int leading_zeros = 0;
+    while (leading_zeros < 32) {
+        std::optional<size_t> done = reader->read(1);
+        if (done && *done)
+            break;
+        ++leading_zeros;
+    }
+
+    if (leading_zeros >= 32)
+        return UINT32_MAX;
+
+    const size_t base = (1u << leading_zeros) - 1;
+
+    if (!leading_zeros)
+        return 0;
+
+    std::optional<size_t> value = reader->read(leading_zeros);
+    if (value && *value)
+        return base + *value;
+
+    return 0;
+}
+
+static std::optional<ParsedTimingInfo> parseTimingInfo(BitReader *reader)
+{
+    ParsedTimingInfo timingInfo;
+
+    timingInfo.num_units_in_display_tick = reader->read(32);
+    timingInfo.time_scale = reader->read(32);
+    timingInfo.equal_picture_interval = reader->read(1);
+
+    if (timingInfo.equal_picture_interval && *timingInfo.equal_picture_interval)
+        timingInfo.num_ticks_per_picture_minus_1 = parseUlvc(reader);
+
+    timingInfo.decoder_model_info_present_flag = reader->read(1);
+    if (timingInfo.decoder_model_info_present_flag && *timingInfo.decoder_model_info_present_flag) {
+        ParsedDecoderModel decoderModel;
+
+        decoderModel.buffer_delay_length_minus_1 = reader->read(5);
+        decoderModel.num_units_in_decoding_tick = reader->read(32);
+        decoderModel.buffer_removal_time_length_minus_1 = reader->read(5);
+        decoderModel.frame_presentation_time_length_minus_1 = reader->read(5);
+
+        timingInfo.decoder_model = decoderModel;
+    }
+
+    return timingInfo;
+}
 
 static std::optional<ParsedSequenceHeaderParameters> parseSequenceHeaderOBU(std::span<const uint8_t> data)
 {
@@ -181,6 +248,7 @@ static std::optional<ParsedSequenceHeaderParameters> parseSequenceHeaderOBU(std:
     value = bitReader.read(1);
     if (!value)
         return { };
+
     // We only support hdr still picture = 0 for now.
     if (*value)
         return { };
@@ -193,9 +261,12 @@ static std::optional<ParsedSequenceHeaderParameters> parseSequenceHeaderOBU(std:
     value = bitReader.read(1);
     if (!value)
         return { };
-    // We only support no timing info for now.
+
+    // Parse timing_info if present
+    std::optional<ParsedTimingInfo> timingInfo;
     if (*value)
-        return { };
+        timingInfo = parseTimingInfo(&bitReader);
+
 
     // Read one bit, display mode
     value = bitReader.read(1);
@@ -206,26 +277,44 @@ static std::optional<ParsedSequenceHeaderParameters> parseSequenceHeaderOBU(std:
     value = bitReader.read(5);
     if (!value)
         return { };
-    // We only support operating_points_cnt_minus_1 = 0 for now.
-    if (*value)
-        return { };
 
-    // Read 12 bits, operating_point_idc
-    value = bitReader.read(12);
-    if (!value)
-        return { };
-
-    // Read 5 bits, level
-    value = bitReader.read(5);
-    if (!value)
-        return { };
-    parameters.level = *value;
-
-    // If level >= 4.0, read one bit
-    if (parameters.level > 7) {
-        value = bitReader.read(1);
+    uint8_t loops = *value;
+    // Parse through the operating points
+    for (uint8_t i = 0; i <= loops; i++) {
+        // Read 12 bits, operating_point_idc
+        value = bitReader.read(12);
         if (!value)
             return { };
+
+        // Read 5 bits, level
+        value = bitReader.read(5);
+        if (!value)
+            return { };
+        parameters.level = *value;
+
+        // If level >= 4.0, read one bit
+        if (parameters.level > 7) {
+            value = bitReader.read(1);
+            if (!value)
+                return { };
+        }
+
+        if (timingInfo && *(*timingInfo).decoder_model_info_present_flag) {
+            value = bitReader.read(1);
+            if (!value)
+                return { };
+
+            if (*value) {
+                // Parse operating_parameters_info(i)
+                auto n = (*(*(*timingInfo).decoder_model).buffer_delay_length_minus_1) + 1;
+                // decoder_buffer_delay f(n)
+                value = bitReader.read(n);
+                // encoder_buffer_delay f(n)
+                value = bitReader.read(n);
+                // low_delay_mode_flag
+                value = bitReader.read(1);
+            }
+        }
     }
 
     // Read width num bits
