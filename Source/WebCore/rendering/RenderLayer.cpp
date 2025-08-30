@@ -3768,13 +3768,17 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     };
 
     if (paintingInfo.paintBehavior.contains(PaintBehavior::DraggableSnapshot) && paintingInfo.subtreePaintRoot) {
-        if (paintingInfo.subtreePaintRoot->hasLayer()) {
-            CheckedPtr subtreeRootLayer = paintingInfo.subtreePaintRoot->enclosingLayer();
-            bool isLayerInSubtree = (this == subtreeRootLayer) || isDescendantOf(*subtreeRootLayer);
+        auto isNotSelfReference = paintingInfo.subtreePaintRoot != &renderer();
+        auto hasLayer = paintingInfo.subtreePaintRoot->hasLayer();
 
-            if (isLayerInSubtree && (paintingInfo.subtreePaintRoot != &renderer() && shouldExcludeBasedOnContainingBlock()))
-                shouldPaintContent = false;
-        } else if (renderer().isAbsolutelyPositioned() && paintingInfo.subtreePaintRoot != &renderer() && shouldExcludeBasedOnContainingBlock()) {
+        CheckedPtr subtreeRootLayer = hasLayer ? paintingInfo.subtreePaintRoot->enclosingLayer() : nullptr;
+        bool isLayerInSubtree = subtreeRootLayer && ((this == subtreeRootLayer) || isDescendantOf(*subtreeRootLayer));
+
+        if (hasLayer && !isLayerInSubtree && isNotSelfReference) {
+            shouldPaintContent = false;
+        } else if (hasLayer && isLayerInSubtree && isNotSelfReference && shouldExcludeBasedOnContainingBlock()) {
+            shouldPaintContent = false;
+        } else if (!hasLayer && renderer().isAbsolutelyPositioned() && isNotSelfReference && shouldExcludeBasedOnContainingBlock()) {
             shouldPaintContent = false;
         }
     }
