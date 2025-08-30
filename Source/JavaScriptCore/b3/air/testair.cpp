@@ -934,6 +934,12 @@ void testRotateFringeClobber()
             continue;
         if (RegisterSetBuilder::specialRegisters().contains(reg, IgnoreVectors))
             continue;
+#if CPU(ARM)
+        // Skip addressTempRegister (r6) and dataTempRegister (ip) on ARM32 since they're
+        // excluded from Air's available registers
+        if (reg == MacroAssembler::addressTempRegister || reg == MacroAssembler::dataTempRegister)
+            continue;
+#endif
         code.pinRegister(reg);
     }
 
