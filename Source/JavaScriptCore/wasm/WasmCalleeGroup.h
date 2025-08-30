@@ -31,6 +31,7 @@
 #include <JavaScriptCore/MemoryMode.h>
 #include <JavaScriptCore/WasmCallee.h>
 #include <JavaScriptCore/WasmJS.h>
+#include <wtf/CountingLock.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FixedBitVector.h>
 #include <wtf/FixedVector.h>
@@ -52,6 +53,15 @@ struct UnlinkedWasmToWasmCall;
 
 class CalleeGroup final : public ThreadSafeRefCounted<CalleeGroup> {
 public:
+    struct UpperTierCallee {
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+        RefPtr<OMGCallee> m_omgCallee;
+#endif
+#if ENABLE(WEBASSEMBLY_BBQJIT)
+        ThreadSafeWeakOrStrongPtr<BBQCallee> m_bbqCallee;
+#endif
+    };
+
     typedef void CallbackType(Ref<CalleeGroup>&&, bool);
     using AsyncCompilationCallback = RefPtr<WTF::SharedTask<CallbackType>>;
     static Ref<CalleeGroup> createFromIPInt(VM&, MemoryMode, ModuleInformation&, RefPtr<IPIntCallees>);
@@ -100,28 +110,45 @@ public:
         return *callee;
     }
 
-    RefPtr<JITCallee> replacement(const AbstractLocker&, FunctionSpaceIndex functionIndexSpace) WTF_REQUIRES_LOCK(m_lock)
+    RefPtr<JITCallee> replacement(FunctionSpaceIndex functionIndexSpace)
     {
         ASSERT(runnable());
         ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
-        UNUSED_PARAM(calleeIndex);
+        return m_lock.doOptimizedRead(
+            [&]() -> RefPtr<JITCallee> {
+                auto& callees = m_upperTierCallees[calleeIndex];
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-        if (!m_omgCallees.isEmpty()) {
-            if (RefPtr callee = m_omgCallees[calleeIndex])
-                return callee;
-        }
+                if (RefPtr callee = callees.m_omgCallee)
+                    return callee;
 #endif
 #if ENABLE(WEBASSEMBLY_BBQJIT)
-        if (!m_bbqCallees.isEmpty()) {
-            if (RefPtr callee = m_bbqCallees[calleeIndex].get())
-                return callee;
-        }
+                if (RefPtr callee = callees.m_bbqCallee.get())
+                    return callee;
 #endif
+                return nullptr;
+            });
+    }
+
+    RefPtr<JITCallee> replacement(const AbstractLocker&, FunctionSpaceIndex functionIndexSpace)
+    {
+        ASSERT(runnable());
+        ASSERT(functionIndexSpace >= functionImportCount());
+        unsigned calleeIndex = functionIndexSpace - functionImportCount();
+        auto& callees = m_upperTierCallees[calleeIndex];
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+        if (RefPtr callee = callees.m_omgCallee)
+            return callee;
+#endif
+#if ENABLE(WEBASSEMBLY_BBQJIT)
+        if (RefPtr callee = callees.m_bbqCallee.get())
+            return callee;
+#endif
+        UNUSED_PARAM(callees);
         return nullptr;
     }
 
-    Ref<Callee> wasmEntrypointCalleeFromFunctionIndexSpace(const AbstractLocker& locker, FunctionSpaceIndex functionIndexSpace) WTF_REQUIRES_LOCK(m_lock)
+    Ref<Callee> wasmEntrypointCalleeFromFunctionIndexSpace(const AbstractLocker& locker, FunctionSpaceIndex functionIndexSpace)
     {
 
         if (RefPtr replacement = this->replacement(locker, functionIndexSpace))
@@ -130,7 +157,7 @@ public:
         return m_ipintCallees->at(calleeIndex).get();
     }
 
-    Ref<IPIntCallee> ipintCalleeFromFunctionIndexSpace(const AbstractLocker&, FunctionSpaceIndex functionIndexSpace) const WTF_REQUIRES_LOCK(m_lock)
+    Ref<IPIntCallee> ipintCalleeFromFunctionIndexSpace(const AbstractLocker&, FunctionSpaceIndex functionIndexSpace) const
     {
         ASSERT(functionIndexSpace >= functionImportCount());
         unsigned calleeIndex = functionIndexSpace - functionImportCount();
@@ -138,40 +165,32 @@ public:
     }
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
-    RefPtr<BBQCallee> bbqCallee(const AbstractLocker&, FunctionCodeIndex functionIndex) WTF_REQUIRES_LOCK(m_lock)
+    RefPtr<BBQCallee> bbqCallee(const AbstractLocker&, FunctionCodeIndex functionIndex)
     {
-        if (m_bbqCallees.isEmpty())
-            return nullptr;
-        return m_bbqCallees[functionIndex].get();
+        return m_upperTierCallees[functionIndex].m_bbqCallee.get();
     }
 
-    void setBBQCallee(const AbstractLocker&, FunctionCodeIndex functionIndex, Ref<BBQCallee>&& callee) WTF_REQUIRES_LOCK(m_lock)
+    void setBBQCallee(const AbstractLocker&, FunctionCodeIndex functionIndex, Ref<BBQCallee>&& callee)
     {
-        if (m_bbqCallees.isEmpty())
-            m_bbqCallees = FixedVector<ThreadSafeWeakOrStrongPtr<BBQCallee>>(m_calleeCount);
-        m_bbqCallees[functionIndex] = WTFMove(callee);
+        m_upperTierCallees[functionIndex].m_bbqCallee = WTFMove(callee);
     }
 
-    RefPtr<BBQCallee> tryGetBBQCalleeForLoopOSR(const AbstractLocker&, VM&, FunctionCodeIndex) WTF_REQUIRES_LOCK(m_lock);
-    void releaseBBQCallee(const AbstractLocker&, FunctionCodeIndex) WTF_REQUIRES_LOCK(m_lock);
+    RefPtr<BBQCallee> tryGetBBQCalleeForLoopOSR(VM&, FunctionCodeIndex);
+    void releaseBBQCallee(const AbstractLocker&, FunctionCodeIndex);
 #endif
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-    OMGCallee* omgCallee(const AbstractLocker&, FunctionCodeIndex functionIndex) WTF_REQUIRES_LOCK(m_lock)
+    OMGCallee* omgCallee(const AbstractLocker&, FunctionCodeIndex functionIndex)
     {
-        if (m_omgCallees.isEmpty())
-            return nullptr;
-        return m_omgCallees[functionIndex].get();
+        return m_upperTierCallees[functionIndex].m_omgCallee.get();
     }
 
-    void setOMGCallee(const AbstractLocker&, FunctionCodeIndex functionIndex, Ref<OMGCallee>&& callee) WTF_REQUIRES_LOCK(m_lock)
+    void setOMGCallee(const AbstractLocker&, FunctionCodeIndex functionIndex, Ref<OMGCallee>&& callee)
     {
-        if (m_omgCallees.isEmpty())
-            m_omgCallees = FixedVector<RefPtr<OMGCallee>>(m_calleeCount);
-        m_omgCallees[functionIndex] = WTFMove(callee);
+        m_upperTierCallees[functionIndex].m_omgCallee = WTFMove(callee);
     }
 
-    void recordOMGOSREntryCallee(const AbstractLocker&, FunctionCodeIndex functionIndex, OMGOSREntryCallee& callee) WTF_REQUIRES_LOCK(m_lock)
+    void recordOMGOSREntryCallee(const AbstractLocker&, FunctionCodeIndex functionIndex, OMGOSREntryCallee& callee)
     {
         auto result = m_osrEntryCallees.add(functionIndex, callee);
         ASSERT_UNUSED(result, result.isNewEntry);
@@ -202,12 +221,12 @@ public:
     MemoryMode mode() const { return m_mode; }
 
 #if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
-    void updateCallsitesToCallUs(const AbstractLocker&, CodeLocationLabel<WasmEntryPtrTag> entrypoint, FunctionCodeIndex functionIndex) WTF_REQUIRES_LOCK(m_lock);
-    void reportCallees(const AbstractLocker&, JITCallee* caller, const FixedBitVector& callees) WTF_REQUIRES_LOCK(m_lock);
+    void updateCallsitesToCallUs(const AbstractLocker&, CodeLocationLabel<WasmEntryPtrTag> entrypoint, FunctionCodeIndex functionIndex);
+    void reportCallees(const AbstractLocker&, JITCallee* caller, const FixedBitVector& callees);
 #endif
 
     // TriState::Indeterminate means weakly referenced.
-    TriState calleeIsReferenced(const AbstractLocker&, Wasm::Callee*) const WTF_REQUIRES_LOCK(m_lock);
+    TriState calleeIsReferenced(const AbstractLocker&, Wasm::Callee*) const;
 
     ~CalleeGroup();
 private:
@@ -226,17 +245,12 @@ private:
 
     unsigned m_calleeCount;
     MemoryMode m_mode;
-#if ENABLE(WEBASSEMBLY_OMGJIT)
-    FixedVector<RefPtr<OMGCallee>> m_omgCallees WTF_GUARDED_BY_LOCK(m_lock);
-#endif
-#if ENABLE(WEBASSEMBLY_BBQJIT)
-    FixedVector<ThreadSafeWeakOrStrongPtr<BBQCallee>> m_bbqCallees WTF_GUARDED_BY_LOCK(m_lock);
-#endif
-    RefPtr<IPIntCallees> m_ipintCallees WTF_GUARDED_BY_LOCK(m_lock);
+    FixedVector<UpperTierCallee> m_upperTierCallees;
+    RefPtr<IPIntCallees> m_ipintCallees;
     UncheckedKeyHashMap<uint32_t, RefPtr<JSEntrypointCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_jsEntrypointCallees;
 #if ENABLE(WEBASSEMBLY_BBQJIT) || ENABLE(WEBASSEMBLY_OMGJIT)
     // FIXME: We should probably find some way to prune dead entries periodically.
-    UncheckedKeyHashMap<uint32_t, ThreadSafeWeakPtr<OMGOSREntryCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_osrEntryCallees WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashMap<uint32_t, ThreadSafeWeakPtr<OMGOSREntryCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_osrEntryCallees;
 #endif
 
     // functionCodeIndex -> functionCodeIndex of internal functions that have direct JIT callsites to the lhs.
@@ -245,7 +259,7 @@ private:
     // FIXME: This should be a WTF class and we should use it in the JIT Plans.
     using SparseCallers = UncheckedKeyHashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     using DenseCallers = BitVector;
-    FixedVector<Variant<SparseCallers, DenseCallers>> m_callers WTF_GUARDED_BY_LOCK(m_lock);
+    FixedVector<Variant<SparseCallers, DenseCallers>> m_callers;
     FixedVector<CodePtr<WasmEntryPtrTag>> m_wasmIndirectCallEntryPoints;
     FixedVector<RefPtr<Wasm::IPIntCallee>> m_wasmIndirectCallWasmCallees;
     FixedVector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToWasmExitStubs;
@@ -253,7 +267,7 @@ private:
     std::atomic<bool> m_compilationFinished { false };
     String m_errorMessage;
 public:
-    Lock m_lock;
+    CountingLock m_lock;
 };
 
 } } // namespace JSC::Wasm
