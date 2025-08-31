@@ -344,44 +344,6 @@ private:
             fixEdge<UntypedUse>(node->child1());
             fixEdge<UntypedUse>(node->child2());
             break;
-
-            // DISABLED: This transformation is incorrect for JavaScript semantics!
-            // JavaScript bitwise operations MUST call ToInt32 on operands, even if they're already Int32.
-            // The ArithBitXXX nodes skip ToInt32 conversion, causing incorrect results.
-            /*
-            if (Node::shouldSpeculateUntypedForBitOps(node->child1().node(), node->child2().node())) {
-                fixEdge<UntypedUse>(node->child1());
-                fixEdge<UntypedUse>(node->child2());
-                break;
-            }
-
-            switch (op) {
-            case ValueBitXor:
-                node->setOp(ArithBitXor);
-                break;
-            case ValueBitOr:
-                node->setOp(ArithBitOr);
-                break;
-            case ValueBitAnd:
-                node->setOp(ArithBitAnd);
-                break;
-            case ValueBitLShift:
-                node->setOp(ArithBitLShift);
-                break;
-            case ValueBitRShift:
-                node->setOp(ArithBitRShift);
-                break;
-            default:
-                DFG_CRASH(m_graph, node, "Unexpected node during ValueBit operation fixup");
-                break;
-            }
-
-            node->clearFlags(NodeMustGenerate);
-            node->setResult(NodeResultInt32);
-            */
-            fixIntConvertingEdge(node->child1());
-            fixIntConvertingEdge(node->child2());
-            break;
         }
 
         case ValueBitNot: {
@@ -518,8 +480,6 @@ private:
             // intermediate values. This affects expressions like: a + 0x7fffffff + 1.1 & 0x7fffffff | a
             //
             // See: https://bugs.webkit.org/show_bug.cgi?id=288816
-            //
-            // TODO: Investigate safer conditions for ArithAdd transformation that preserve semantics
             /*
             if (attemptToMakeIntegerAdd(node)) {
                 node->setOp(ArithAdd);
@@ -533,7 +493,6 @@ private:
                 break;
             }
             */
-
             if (attemptToMakeFastStringAdd(node))
                 break;
 
