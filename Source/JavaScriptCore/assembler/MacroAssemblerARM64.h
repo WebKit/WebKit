@@ -5668,6 +5668,12 @@ public:
 
     ALWAYS_INLINE static bool supportsDoubleToInt32ConversionUsingJavaScriptSemantics()
     {
+        // FIXME: The ARM64 fast path for double-to-int32 conversion has incorrect semantics.
+        // The fjcvtzs instruction clamps values instead of doing JavaScript's modulo 2^32 behavior.
+        // Disable the fast path until we implement correct modulo arithmetic.
+        return false;
+
+#if 0 // Original code - disabled for correctness
 #if HAVE(FJCVTZS_INSTRUCTION)
         return true;
 #else
@@ -5675,6 +5681,7 @@ public:
             collectCPUFeatures();
 
         return s_jscvtCheckState == CPUIDCheckState::Set;
+#endif
 #endif
     }
 
@@ -5690,14 +5697,15 @@ public:
 #endif
     }
 
-    void convertDoubleToInt32UsingJavaScriptSemantics(FPRegisterID src, RegisterID dest)
+    [[noreturn]] void convertDoubleToInt32UsingJavaScriptSemantics(FPRegisterID, RegisterID)
     {
-        // Use unsigned conversion for correct JavaScript ToInt32 semantics.
-        // JavaScript requires modulo 2^32 behavior, not signed clamping.
-        // The fjcvtzs instruction was causing incorrect results for bitwise operations
-        // by clamping to signed int32 range instead of wrapping via modulo 2^32.
-        m_assembler.fcvtzu<32, 64>(dest, src);
-        signExtend32ToPtr(dest, dest);
+        // FIXME: The original fjcvtzs instruction has incorrect semantics for JavaScript ToInt32.
+        // For now, disable the fast path and force the JIT to use the slow path.
+        // This ensures correct JavaScript semantics at the cost of performance.
+
+        // By not providing a fast implementation here, the JIT will fall back to
+        // calling the runtime toInt32 function, which has correct semantics.
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
 #if ENABLE(FAST_TLS_JIT)
