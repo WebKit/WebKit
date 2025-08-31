@@ -2405,6 +2405,11 @@ public:
         storePair32(src1, src2, dest.base, TrustedImm32(dest.offset));
     }
 
+    void storePair32(FPRegisterID src1, FPRegisterID src2, RegisterID dest)
+    {
+        storePair32(src1, src2, dest, TrustedImm32(0));
+    }
+
     void storePair32(FPRegisterID src1, FPRegisterID src2, RegisterID dest, TrustedImm32 offset)
     {
         if (ARM64Assembler::isValidSTPFPImm<32>(offset.m_value)) {
@@ -5691,7 +5696,10 @@ public:
 
     void convertDoubleToInt32UsingJavaScriptSemantics(FPRegisterID src, RegisterID dest)
     {
+        // Use fjcvtzs and then sign-extend to 32-bit for proper JavaScript semantics
+        // fjcvtzs zero-extends, but JavaScript bitwise operations expect sign-extension
         m_assembler.fjcvtzs(dest, src); // This zero extends.
+        signExtend32ToPtr(dest, dest); // Sign-extend to match JavaScript semantics
     }
     
 #if ENABLE(FAST_TLS_JIT)
