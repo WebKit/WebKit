@@ -5696,10 +5696,12 @@ public:
 
     void convertDoubleToInt32UsingJavaScriptSemantics(FPRegisterID src, RegisterID dest)
     {
-        // Use fjcvtzs and then sign-extend to 32-bit for proper JavaScript semantics
-        // fjcvtzs zero-extends, but JavaScript bitwise operations expect sign-extension
-        m_assembler.fjcvtzs(dest, src); // This zero extends.
-        signExtend32ToPtr(dest, dest); // Sign-extend to match JavaScript semantics
+        // Use unsigned conversion for correct JavaScript ToInt32 semantics.
+        // JavaScript requires modulo 2^32 behavior, not signed clamping.
+        // The fjcvtzs instruction was causing incorrect results for bitwise operations
+        // by clamping to signed int32 range instead of wrapping via modulo 2^32.
+        m_assembler.fcvtzu<32, 64>(dest, src);
+        signExtend32ToPtr(dest, dest);
     }
     
 #if ENABLE(FAST_TLS_JIT)
