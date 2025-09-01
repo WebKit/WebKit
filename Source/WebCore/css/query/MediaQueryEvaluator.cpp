@@ -83,7 +83,7 @@ bool MediaQueryEvaluator::evaluate(const MediaQuery& query) const
             return EvaluationResult::Unknown;
 
 //        FeatureEvaluationContext context { *document, { *m_rootElementStyle, m_rootElementStyle, nullptr, document->renderView() }, nullptr };
-        FeatureEvaluationContext
+        FeatureEvaluationContext context { *document, {}}
         return evaluateCondition(*query.condition, context);
     }();
 
