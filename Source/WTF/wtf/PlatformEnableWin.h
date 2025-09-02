@@ -39,6 +39,9 @@
 
 /* --------- Windows port --------- */
 
+#if !defined(ENABLE_COMPLEX_TEXT_CONTROLLER_FOR_SIMPLE_CODE_PATH)
+#define ENABLE_COMPLEX_TEXT_CONTROLLER_FOR_SIMPLE_CODE_PATH 1
+#endif
 
 #if !defined(ENABLE_GEOLOCATION)
 #define ENABLE_GEOLOCATION 1
