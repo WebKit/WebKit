@@ -87,10 +87,10 @@ inline RetainPtr<id> bridge_id_cast(RetainPtr<CFTypeRef>&& object)
 template <typename ExpectedType>
 struct ObjCTypeCastTraits {
 public:
-    static bool isType(id object) { return [object isKindOfClass:[ExpectedType class]]; }
+    static bool isType(__unsafe_unretained id object) { return [object isKindOfClass:[ExpectedType class]]; }
 
     template <typename ArgType>
-    static bool isType(const ArgType *object) { return [object isKindOfClass:[ExpectedType class]]; }
+    static bool isType(__unsafe_unretained const ArgType *object) { return [object isKindOfClass:[ExpectedType class]]; }
 };
 
 #define SPECIALIZE_OBJC_TYPE_TRAITS(ClassName, ClassExpresssion) \
@@ -98,13 +98,19 @@ namespace WTF { \
 template <> \
 class ObjCTypeCastTraits<ClassName> { \
 public: \
-    static bool isType(id object) { return [object isKindOfClass:(ClassExpresssion)]; } \
-    static bool isType(const NSObject *object) { return [object isKindOfClass:(ClassExpresssion)]; } \
+    static bool isType(__unsafe_unretained id object) { return [object isKindOfClass:(ClassExpresssion)]; } \
+    static bool isType(__unsafe_unretained const NSObject *object) { return [object isKindOfClass:(ClassExpresssion)]; } \
 }; \
 }
 
+template <typename ExpectedType>
+inline bool is_objc(__unsafe_unretained id source)
+{
+    return source && ObjCTypeCastTraits<ExpectedType>::isType(source);
+}
+
 template <typename ExpectedType, typename ArgType>
-inline bool is_objc(ArgType * source)
+inline bool is_objc(__unsafe_unretained ArgType * source)
 {
     return source && ObjCTypeCastTraits<ExpectedType>::isType(source);
 }
