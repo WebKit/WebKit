@@ -1550,7 +1550,7 @@ PASS SVGAElement interface: existence and properties of interface prototype obje
 PASS SVGAElement interface: existence and properties of interface prototype object's "constructor" property
 PASS SVGAElement interface: existence and properties of interface prototype object's @@unscopables property
 PASS SVGAElement interface: attribute target
-FAIL SVGAElement interface: attribute download assert_true: The prototype object must have a property "download" expected true got false
+PASS SVGAElement interface: attribute download
 FAIL SVGAElement interface: attribute ping assert_true: The prototype object must have a property "ping" expected true got false
 PASS SVGAElement interface: attribute rel
 PASS SVGAElement interface: attribute relList
@@ -1572,7 +1572,7 @@ PASS SVGAElement interface: attribute href
 PASS SVGAElement must be primary interface of objects.a
 PASS Stringification of objects.a
 PASS SVGAElement interface: objects.a must inherit property "target" with the proper type
-FAIL SVGAElement interface: objects.a must inherit property "download" with the proper type assert_inherits: property "download" not found in prototype chain
+PASS SVGAElement interface: objects.a must inherit property "download" with the proper type
 FAIL SVGAElement interface: objects.a must inherit property "ping" with the proper type assert_inherits: property "ping" not found in prototype chain
 PASS SVGAElement interface: objects.a must inherit property "rel" with the proper type
 PASS SVGAElement interface: objects.a must inherit property "relList" with the proper type
