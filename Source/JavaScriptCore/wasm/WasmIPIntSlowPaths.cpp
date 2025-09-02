@@ -111,10 +111,9 @@ static inline RefPtr<Wasm::JITCallee> jitCompileAndSetHeuristics(Wasm::IPIntCall
     ASSERT(instance->memoryMode() == memoryMode);
     ASSERT(memoryMode == calleeGroup.mode());
     auto getReplacement = [&] () -> RefPtr<Wasm::JITCallee> {
-        Locker locker { calleeGroup.m_lock };
         if (osrFor == OSRFor::Call)
-            return calleeGroup.replacement(locker, callee.index());
-        return calleeGroup.tryGetBBQCalleeForLoopOSR(locker, instance->vm(), callee.functionIndex());
+            return calleeGroup.replacement(callee.index());
+        return calleeGroup.tryGetBBQCalleeForLoopOSR(instance->vm(), callee.functionIndex());
     };
 
     if (RefPtr replacement = getReplacement()) {
@@ -163,12 +162,9 @@ static inline Expected<RefPtr<Wasm::JITCallee>, Wasm::CompilationError> jitCompi
 
     MemoryMode memoryMode = instance->memory()->mode();
     Wasm::CalleeGroup& calleeGroup = *instance->calleeGroup();
-    {
-        Locker locker { calleeGroup.m_lock };
-        if (RefPtr replacement = calleeGroup.replacement(locker, callee.index()))  {
-            dataLogLnIf(Options::verboseOSR(), "\tSIMD code was already compiled.");
-            return replacement;
-        }
+    if (RefPtr replacement = calleeGroup.replacement(callee.index()))  {
+        dataLogLnIf(Options::verboseOSR(), "\tSIMD code was already compiled.");
+        return replacement;
     }
 
     bool compile = false;
@@ -187,8 +183,7 @@ static inline Expected<RefPtr<Wasm::JITCallee>, Wasm::CompilationError> jitCompi
             // Besides we're outside the critical section.
             locker.unlockEarly();
             {
-                Locker locker { calleeGroup.m_lock };
-                RefPtr replacement = calleeGroup.replacement(locker, callee.index());
+                RefPtr replacement = calleeGroup.replacement(callee.index());
                 RELEASE_ASSERT(replacement);
                 return replacement;
             }
@@ -211,8 +206,7 @@ static inline Expected<RefPtr<Wasm::JITCallee>, Wasm::CompilationError> jitCompi
         RELEASE_ASSERT(tierUpCounter.compilationStatus(memoryMode) == Wasm::IPIntTierUpCounter::CompilationStatus::Compiled);
     }
 
-    Locker locker { calleeGroup.m_lock };
-    RefPtr replacement = calleeGroup.replacement(locker, callee.index());
+    RefPtr replacement = calleeGroup.replacement(callee.index());
     RELEASE_ASSERT(replacement);
     return replacement;
 }

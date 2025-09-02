@@ -51,6 +51,7 @@ Ref<CalleeGroup> CalleeGroup::createFromExisting(MemoryMode mode, const CalleeGr
 CalleeGroup::CalleeGroup(MemoryMode mode, const CalleeGroup& other)
     : m_calleeCount(other.m_calleeCount)
     , m_mode(mode)
+    , m_upperTierCallees(m_calleeCount)
     , m_ipintCallees(other.m_ipintCallees)
     , m_jsEntrypointCallees(other.m_jsEntrypointCallees)
     , m_callers(m_calleeCount)
@@ -65,6 +66,7 @@ CalleeGroup::CalleeGroup(MemoryMode mode, const CalleeGroup& other)
 CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInformation, RefPtr<IPIntCallees> ipintCallees)
     : m_calleeCount(moduleInformation.internalFunctionCount())
     , m_mode(mode)
+    , m_upperTierCallees(m_calleeCount)
     , m_ipintCallees(ipintCallees)
     , m_callers(m_calleeCount)
 {
@@ -142,23 +144,28 @@ void CalleeGroup::compileAsync(VM& vm, AsyncCompilationCallback&& task)
 }
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
-RefPtr<BBQCallee> CalleeGroup::tryGetBBQCalleeForLoopOSR(const AbstractLocker&, VM& vm, FunctionCodeIndex functionIndex)
+RefPtr<BBQCallee> CalleeGroup::tryGetBBQCalleeForLoopOSR(VM& vm, FunctionCodeIndex functionIndex)
 {
-    if (m_bbqCallees.isEmpty())
-        return nullptr;
+    RefPtr<BBQCallee> released;
+    auto callee = m_lock.doOptimizedRead(
+        [&]() -> RefPtr<BBQCallee> {
+            auto& maybeCallee = m_upperTierCallees[functionIndex].m_bbqCallee;
+            RefPtr bbqCallee = maybeCallee.get();
+            if (!bbqCallee)
+                return nullptr;
 
-    auto& maybeCallee = m_bbqCallees[functionIndex];
-    RefPtr bbqCallee = maybeCallee.get();
-    if (!bbqCallee)
-        return nullptr;
+            if (maybeCallee.isStrong())
+                return bbqCallee;
 
-    if (maybeCallee.isStrong())
-        return bbqCallee;
-
-    // This means this callee has been released but hasn't yet been destroyed. We're safe to use it
-    // as long as this VM knows to look for it the next time it scans for conservative roots.
-    vm.heap.reportWasmCalleePendingDestruction(Ref { *bbqCallee });
-    return bbqCallee;
+            released = bbqCallee;
+            return bbqCallee;
+        });
+    if (released) {
+        // This means this callee has been released but hasn't yet been destroyed. We're safe to use it
+        // as long as this VM knows to look for it the next time it scans for conservative roots.
+        vm.heap.reportWasmCalleePendingDestruction(Ref { *released });
+    }
+    return callee;
 }
 
 void CalleeGroup::releaseBBQCallee(const AbstractLocker&, FunctionCodeIndex functionIndex)
@@ -175,11 +182,9 @@ void CalleeGroup::releaseBBQCallee(const AbstractLocker&, FunctionCodeIndex func
     // We could have triggered a tier up from a BBQCallee has MemoryMode::BoundsChecking
     // but is currently running a MemoryMode::Signaling memory. In that case there may
     // be nothing to release.
-    if (!m_bbqCallees.isEmpty()) [[likely]] {
-        if (RefPtr bbqCallee = m_bbqCallees[functionIndex].convertToWeak()) {
-            bbqCallee->reportToVMsForDestruction();
-            return;
-        }
+    if (RefPtr bbqCallee = m_upperTierCallees[functionIndex].m_bbqCallee.convertToWeak()) {
+        bbqCallee->reportToVMsForDestruction();
+        return;
     }
 
     ASSERT(mode() == MemoryMode::Signaling);
@@ -220,11 +225,10 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
 
     auto handleCallerIndex = [&](size_t caller) {
         auto callerIndex = FunctionCodeIndex(caller);
-        assertIsHeld(m_lock);
 #if ENABLE(WEBASSEMBLY_BBQJIT)
         // This callee could be weak but we still need to update it since it could call our BBQ callee
         // that we're going to want to destroy.
-        if (RefPtr<BBQCallee> bbqCallee = m_bbqCallees[callerIndex].get()) {
+        if (RefPtr bbqCallee = m_upperTierCallees[callerIndex].m_bbqCallee.get()) {
             collectCallsites(bbqCallee.get());
             ASSERT(!bbqCallee->osrEntryCallee() || m_osrEntryCallees.find(callerIndex) != m_osrEntryCallees.end());
         }
@@ -286,7 +290,6 @@ void CalleeGroup::reportCallees(const AbstractLocker&, JITCallee* caller, const 
     for (uint32_t calleeIndex : callees) {
         WTF::switchOn(m_callers[calleeIndex],
             [&](SparseCallers& callers) {
-                assertIsHeld(m_lock);
                 callers.add(callerIndex.rawIndex());
                 // FIXME: We should do this when we would resize to be bigger than the bitvectors count rather than after we've already resized.
                 if (callers.memoryUse() >= DenseCallers::outOfLineMemoryUse(m_calleeCount)) {
@@ -312,7 +315,7 @@ TriState CalleeGroup::calleeIsReferenced(const AbstractLocker&, Wasm::Callee* ca
 #if ENABLE(WEBASSEMBLY_BBQJIT)
     case CompilationMode::BBQMode: {
         FunctionCodeIndex index = toCodeIndex(callee->index());
-        auto& calleeHandle = m_bbqCallees.at(index);
+        auto& calleeHandle = m_upperTierCallees[index].m_bbqCallee;
         RefPtr bbqCallee = calleeHandle.get();
         if (calleeHandle.isWeak())
             return bbqCallee ? TriState::Indeterminate : TriState::False;
@@ -320,13 +323,15 @@ TriState CalleeGroup::calleeIsReferenced(const AbstractLocker&, Wasm::Callee* ca
     }
 #endif
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-    case CompilationMode::OMGMode:
-        return triState(m_omgCallees.at(toCodeIndex(callee->index())).get());
+    case CompilationMode::OMGMode: {
+        FunctionCodeIndex index = toCodeIndex(callee->index());
+        return triState(m_upperTierCallees[index].m_omgCallee.get());
+    }
     case CompilationMode::OMGForOSREntryMode: {
         FunctionCodeIndex index = toCodeIndex(callee->index());
         if (m_osrEntryCallees.get(index).get()) {
             // The BBQCallee really owns the OMGOSREntryCallee so as long as that's around the OMGOSREntryCallee is referenced.
-            if (m_bbqCallees.at(index).get())
+            if (m_upperTierCallees[index].m_bbqCallee.get())
                 return TriState::True;
             return TriState::Indeterminate;
         }
