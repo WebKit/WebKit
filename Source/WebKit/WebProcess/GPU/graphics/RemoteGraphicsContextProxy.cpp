@@ -747,26 +747,26 @@ bool RemoteGraphicsContextProxy::recordResourceUse(const NativeImage& image)
         return false;
     }
 
-    auto colorSpace = image.colorSpace();
+    auto fallbackColorSpace = this->colorSpace();
 
     if (image.headroom() > Headroom::None) {
 #if ENABLE(PIXEL_FORMAT_RGBA16F) && USE(CG)
         // The image will be drawn to a Float16 layer, so use extended range sRGB
         // to preserve the HDR contents.
         if (m_contentsFormat && *m_contentsFormat == ContentsFormat::RGBA16F)
-            colorSpace = DestinationColorSpace::ExtendedSRGB();
+            fallbackColorSpace = DestinationColorSpace::ExtendedSRGB();
         else
 #endif
 #if PLATFORM(IOS_FAMILY)
             // iOS typically renders into extended range sRGB to preserve wide gamut colors, but we want
             // a non-extended range colorspace here so that the contents are tone mapped to SDR range.
-            colorSpace = DestinationColorSpace::DisplayP3();
+            fallbackColorSpace = DestinationColorSpace::DisplayP3();
 #else
-            colorSpace = DestinationColorSpace::SRGB();
+            fallbackColorSpace = DestinationColorSpace::SRGB();
 #endif
     }
 
-    return renderingBackend->remoteResourceCacheProxy().recordNativeImageUse(image, colorSpace);
+    return renderingBackend->remoteResourceCacheProxy().recordNativeImageUse(image, fallbackColorSpace);
 }
 
 bool RemoteGraphicsContextProxy::recordResourceUse(ImageBuffer& imageBuffer)

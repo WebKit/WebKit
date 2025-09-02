@@ -8408,17 +8408,10 @@ void WebPage::loadAndDecodeImage(WebCore::ResourceRequest&& request, std::option
             destinationSize = largestRectWithAspectRatioInsideRect(sourceSize.aspectRatio(), FloatRect({ }, sizeConstraint->shrunkTo(sourceSize))).size();
 
         IntSize roundedDestinationSize = flooredIntSize(destinationSize);
-        auto sourceColorSpace = nativeImage->colorSpace();
-        auto destinationColorSpace = sourceColorSpace.supportsOutput() ? sourceColorSpace : DestinationColorSpace::SRGB();
-        auto bitmap = ShareableBitmap::create({ roundedDestinationSize, destinationColorSpace });
+        auto fallbackColorSpace = DestinationColorSpace::SRGB();
+        RefPtr bitmap = ShareableBitmap::createFromNativeImage(*nativeImage, fallbackColorSpace, roundedDestinationSize);
         if (!bitmap)
             return completionHandler(makeUnexpected<ResourceError>({ }));
-
-        auto context = bitmap->createGraphicsContext();
-        if (!context)
-            return completionHandler(makeUnexpected<ResourceError>({ }));
-
-        context->drawNativeImage(*nativeImage, FloatRect({ }, roundedDestinationSize), FloatRect({ }, sourceSize), { CompositeOperator::Copy });
 
         completionHandler(bitmap.releaseNonNull());
     });

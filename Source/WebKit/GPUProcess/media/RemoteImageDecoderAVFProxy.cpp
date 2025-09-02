@@ -154,20 +154,13 @@ void RemoteImageDecoderAVFProxy::createFrameImageAtIndex(ImageDecoderIdentifier 
     if (!imageDecoder)
         return;
 
-    auto nativeImage = NativeImage::createTransient(imageDecoder->createFrameImageAtIndex(index));
+    RefPtr nativeImage = NativeImage::createTransient(imageDecoder->createFrameImageAtIndex(index));
     if (!nativeImage)
         return;
-    bool isOpaque = false;
-    auto imageSize = nativeImage->size();
-    auto bitmap = ShareableBitmap::create({ imageSize, nativeImage->colorSpace(), nativeImage->headroom(), isOpaque });
+
+    RefPtr bitmap = ShareableBitmap::createFromNativeImage(*nativeImage, DestinationColorSpace::SRGB());
     if (!bitmap)
         return;
-    auto context = bitmap->createGraphicsContext();
-    if (!context)
-        return;
-
-    FloatRect imageRect { { }, imageSize };
-    context->drawNativeImage(*nativeImage, imageRect, imageRect, { CompositeOperator::Copy });
     imageHandle = bitmap->createHandle();
 }
 

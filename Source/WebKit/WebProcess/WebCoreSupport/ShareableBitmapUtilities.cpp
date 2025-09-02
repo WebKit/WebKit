@@ -60,20 +60,11 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
         if (!imageBuffer)
             return { };
 
-        auto snapshotImage = ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
+        RefPtr snapshotImage = ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
         if (!snapshotImage)
             return { };
 
-        auto bitmap = ShareableBitmap::create({ snapshotImage->size(), WTF::move(colorSpaceForBitmap) });
-        if (!bitmap)
-            return { };
-
-        auto context = bitmap->createGraphicsContext();
-        if (!context)
-            return { };
-        FloatRect imageRect { { }, snapshotImage->size() };
-        context->drawNativeImage(*snapshotImage, imageRect, imageRect);
-        return bitmap;
+        return ShareableBitmap::createFromNativeImage(*snapshotImage, DestinationColorSpace::SRGB());
     }
 
 #if ENABLE(VIDEO)
