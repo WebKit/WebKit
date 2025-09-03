@@ -1013,7 +1013,7 @@ private:
             //      Allocation starts as sinkable but later escapes; it must be materialized at a specific point
             //      while preserving dependency ordering.
             //
-            // Cases:
+            // Cases: GetButterfly-State/Array-State
             //  (1)     S\S S\SEM: Fine. Let it sink. (e.g. [2])
             //  (2) S\E SEM\E E/E: Fine. But not profitable to sink GetButterfly.
             //  (3)       SEM\SEM: Fine iff they materialize at the same site due to PutByVal/GetByVal. (e.g. [1])
@@ -1561,7 +1561,10 @@ escapeChildren:
 
             for (const auto& pair : toAdd) {
                 m_sinkCandidates.add(pair.first);
-                escapees.add(pair.first, *pair.second);
+                Allocation allocation = *pair.second;
+                if (allocation.isEscapedAllocation())
+                    allocation = Allocation(allocation.identifier(), Allocation::Kind::ArrayButterfly);
+                escapees.add(pair.first, WTFMove(allocation));
             }
         };
 
@@ -1644,12 +1647,12 @@ escapeChildren:
         if (m_sinkCandidates.isEmpty())
             return hasUnescapedReads;
 
-        dataLogLnIf(Options::verboseObjectAllocationSinking(), "Candidates: ", listDump(m_sinkCandidates));
-
         // Create the materialization nodes.
         forEachEscapee([&] (UncheckedKeyHashMap<Node*, Allocation>& escapees, Node* where) {
             placeMaterializations(WTFMove(escapees), where);
         });
+
+        dataLogLnIf(Options::verboseObjectAllocationSinking(), "Candidates: ", listDump(m_sinkCandidates));
 
         return hasUnescapedReads || !m_sinkCandidates.isEmpty();
     }
