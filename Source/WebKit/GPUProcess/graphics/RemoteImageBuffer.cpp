@@ -142,7 +142,7 @@ void RemoteImageBuffer::getShareableBitmap(WebCore::PreserveResolution preserveR
         auto resultSize = preserveResolution == WebCore::PreserveResolution::Yes ? backendSize : imageBuffer->truncatedLogicalSize();
         if (resultSize.isEmpty())
             return std::nullopt;
-        auto bitmap = WebCore::ShareableBitmap::create({ resultSize, imageBuffer->colorSpace() });
+        auto bitmap = WebCore::ShareableBitmap::create(resultSize, imageBuffer->colorSpace());
         if (!bitmap)
             return std::nullopt;
         auto handle = bitmap->createHandle();
@@ -166,7 +166,7 @@ void RemoteImageBuffer::filteredNativeImage(Ref<WebCore::Filter> filter, Complet
         if (!image)
             return std::nullopt;
         auto imageSize = image->size();
-        auto bitmap = WebCore::ShareableBitmap::create({ imageSize, imageBuffer->colorSpace() });
+        auto bitmap = WebCore::ShareableBitmap::create(imageSize, imageBuffer->colorSpace());
         if (!bitmap)
             return std::nullopt;
         auto handle = bitmap->createHandle();

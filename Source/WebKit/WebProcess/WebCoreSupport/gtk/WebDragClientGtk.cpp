@@ -54,7 +54,7 @@ static RefPtr<ShareableBitmap> convertCairoSurfaceToShareableBitmap(cairo_surfac
         return nullptr;
 
     IntSize imageSize(cairo_image_surface_get_width(surface), cairo_image_surface_get_height(surface));
-    auto bitmap = ShareableBitmap::create({ imageSize });
+    auto bitmap = ShareableBitmap::create(imageSize);
     auto graphicsContext = bitmap->createGraphicsContext();
 
     ASSERT(graphicsContext->hasPlatformContext());
@@ -71,7 +71,7 @@ static RefPtr<ShareableBitmap> convertSkiaImageToShareableBitmap(SkImage* image)
         return nullptr;
 
     IntSize imageSize(image->width(), image->height());
-    RefPtr bitmap = ShareableBitmap::create({ imageSize });
+    RefPtr bitmap = ShareableBitmap::create(imageSize);
     auto graphicsContext = bitmap->createGraphicsContext();
 
     ASSERT(graphicsContext->hasPlatformContext());

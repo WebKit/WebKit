@@ -60,7 +60,7 @@ void WebTextTrackRepresentationCocoa::update()
     if (!image)
         return;
     auto imageSize = image->size();
-    RefPtr bitmap = WebCore::ShareableBitmap::create({ image->size(), image->colorSpace() });
+    RefPtr bitmap = WebCore::ShareableBitmap::create(image->size(), image->colorSpace());
     if (!bitmap)
         return;
     auto context = bitmap->createGraphicsContext();

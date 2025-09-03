@@ -340,8 +340,10 @@ void RemoteRenderingBackend::cacheNativeImage(ShareableBitmap::Handle&& handle, 
     ASSERT(!RunLoop::isMain());
 
     auto bitmap = ShareableBitmap::create(WTFMove(handle));
-    if (!bitmap)
+    if (!bitmap) {
+        ASSERT_NOT_REACHED();
         return;
+    }
 
     auto image = NativeImage::create(bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes), nativeImageIdentifier);
     if (!image)

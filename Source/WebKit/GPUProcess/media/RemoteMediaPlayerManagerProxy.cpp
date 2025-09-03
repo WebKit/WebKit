@@ -202,7 +202,7 @@ std::optional<ShareableBitmap::Handle> RemoteMediaPlayerManagerProxy::bitmapImag
         return { };
 
     auto imageSize = image->size();
-    auto bitmap = ShareableBitmap::create({ imageSize, player->colorSpace() });
+    auto bitmap = ShareableBitmap::create(imageSize, player->colorSpace());
     if (!bitmap)
         return { };
 

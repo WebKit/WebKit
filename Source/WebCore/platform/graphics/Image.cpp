@@ -427,7 +427,7 @@ DestinationColorSpace Image::colorSpace()
 
 RefPtr<ShareableBitmap> Image::toShareableBitmap() const
 {
-    RefPtr bitmap = ShareableBitmap::create({ IntSize(size()) });
+    RefPtr bitmap = ShareableBitmap::create(IntSize(size()));
     std::unique_ptr graphicsContext = bitmap->createGraphicsContext();
     if (!graphicsContext)
         return nullptr;

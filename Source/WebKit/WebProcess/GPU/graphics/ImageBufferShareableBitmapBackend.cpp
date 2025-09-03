@@ -48,7 +48,7 @@ IntSize ImageBufferShareableBitmapBackend::calculateSafeBackendSize(const Parame
     if (backendSize.isEmpty())
         return { };
 
-    CheckedUint32 numBytes = ShareableBitmapConfiguration::calculateSizeInBytes(backendSize, parameters.colorSpace);
+    CheckedUint32 numBytes = ShareableBitmapConfiguration::calculateBytesPerRow(backendSize, parameters.colorSpace) * backendSize.height();
     if (numBytes.hasOverflowed())
         return { };
 
@@ -74,7 +74,7 @@ std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBac
     if (backendSize.isEmpty())
         return nullptr;
 
-    auto bitmap = ShareableBitmap::create({ backendSize, parameters.colorSpace });
+    auto bitmap = ShareableBitmap::create(backendSize, parameters.colorSpace);
     if (!bitmap)
         return nullptr;
     if (creationContext.resourceOwner)

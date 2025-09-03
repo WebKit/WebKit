@@ -37,19 +37,10 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-std::optional<DestinationColorSpace> ShareableBitmapConfiguration::validateColorSpace(std::optional<DestinationColorSpace> colorSpace)
+static SkImageInfo imageInfo(const ShareableBitmapConfiguration& configuration)
 {
-    return colorSpace;
-}
-
-CheckedUint32 ShareableBitmapConfiguration::calculateBitsPerComponent(const DestinationColorSpace& colorSpace)
-{
-    return (calculateBytesPerPixel(colorSpace) / 4) * 8;
-}
-
-CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerPixel(const DestinationColorSpace& colorSpace)
-{
-    return SkImageInfo::MakeN32Premul(1, 1, colorSpace.platformColorSpace()).bytesPerPixel();
+    auto size = configuration.size();
+    return SkImageInfo::MakeN32Premul(size.width(), size.height(), configuration.colorSpace());
 }
 
 CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerRow(const IntSize& size, const DestinationColorSpace& colorSpace)
@@ -61,7 +52,7 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     ref();
     SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
-    auto surface = SkSurfaces::WrapPixels(m_configuration.imageInfo(), mutableSpan().data(), bytesPerRow(), [](void*, void* context) {
+    auto surface = SkSurfaces::WrapPixels(imageInfo(m_configuration), mutableSpan().data(), bytesPerRow(), [](void*, void* context) {
         static_cast<ShareableBitmap*>(context)->deref();
     }, this, &properties);
 
@@ -103,7 +94,7 @@ PlatformImagePtr ShareableBitmap::createPlatformImage(BackingStoreCopy backingSt
             static_cast<ShareableBitmap*>(bitmap)->deref();
         }, this);
     }
-    return SkImages::RasterFromData(m_configuration.imageInfo(), pixelData, bytesPerRow());
+    return SkImages::RasterFromData(imageInfo(m_configuration), pixelData, bytesPerRow());
 }
 
 void ShareableBitmap::setOwnershipOfMemory(const ProcessIdentity&)

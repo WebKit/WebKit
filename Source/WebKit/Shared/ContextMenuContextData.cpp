@@ -89,7 +89,7 @@ void ContextMenuContextData::setImage(WebCore::Image& image)
 {
     // FIXME: figure out the rounding strategy for ShareableBitmap.
 
-    RefPtr controlledImage = ShareableBitmap::create({ IntSize(image.size()) });
+    RefPtr controlledImage = ShareableBitmap::create(IntSize(image.size()));
     m_controlledImage = controlledImage;
     if (auto graphicsContext = controlledImage->createGraphicsContext())
         graphicsContext->drawImage(image, IntPoint());
@@ -107,7 +107,7 @@ std::optional<ShareableBitmap::Handle> ContextMenuContextData::createControlledI
 
 void ContextMenuContextData::setPotentialQRCodeNodeSnapshotImage(WebCore::Image& image)
 {
-    RefPtr potentialQRCodeNodeSnapshotImage = ShareableBitmap::create({ IntSize(image.size()) });
+    RefPtr potentialQRCodeNodeSnapshotImage = ShareableBitmap::create(IntSize(image.size()));
     m_potentialQRCodeNodeSnapshotImage = potentialQRCodeNodeSnapshotImage;
     if (auto graphicsContext = potentialQRCodeNodeSnapshotImage->createGraphicsContext())
         graphicsContext->drawImage(image, IntPoint());
@@ -115,7 +115,7 @@ void ContextMenuContextData::setPotentialQRCodeNodeSnapshotImage(WebCore::Image&
 
 void ContextMenuContextData::setPotentialQRCodeViewportSnapshotImage(WebCore::Image& image)
 {
-    RefPtr potentialQRCodeViewportSnapshotImage = ShareableBitmap::create({ IntSize(image.size()) });
+    RefPtr potentialQRCodeViewportSnapshotImage = ShareableBitmap::create(IntSize(image.size()));
     m_potentialQRCodeViewportSnapshotImage = potentialQRCodeViewportSnapshotImage;
     if (auto graphicsContext = potentialQRCodeViewportSnapshotImage->createGraphicsContext())
         graphicsContext->drawImage(image, IntPoint());

@@ -41,71 +41,103 @@
 
 namespace WebCore {
 
-ShareableBitmapConfiguration::ShareableBitmapConfiguration(NativeImage& image)
-    : m_size(image.size())
-    , m_colorSpace(image.colorSpace())
-    , m_headroom(image.headroom())
-    , m_bitsPerComponent(CGImageGetBitsPerComponent(image.platformImage().get()))
-    , m_bytesPerPixel(CGImageGetBitsPerPixel(image.platformImage().get()) / 8)
-    , m_bytesPerRow(CGImageGetBytesPerRow(image.platformImage().get()))
-    , m_bitmapInfo(CGImageGetBitmapInfo(image.platformImage().get()))
+static std::optional<ShareableBitmapConfiguration> resolveShareableBitmapConfiguration(NativeImage& image)
 {
+    RetainPtr platformImage = image.platformImage();
+    return ShareableBitmapConfiguration::create(image.size(), CGImageGetColorSpace(platformImage.get()), CGImageGetBytesPerRow(platformImage.get()), image.headroom(), CGImageGetBitmapInfo(platformImage.get()), CGImageGetBitsPerComponent(platformImage.get()), CGImageGetBitsPerPixel(platformImage.get()));
 }
 
-std::optional<DestinationColorSpace> ShareableBitmapConfiguration::validateColorSpace(std::optional<DestinationColorSpace> colorSpace)
+std::optional<ShareableBitmapConfiguration> ShareableBitmapConfiguration::create(const IntSize& size, PlatformColorSpace&& colorSpace, size_t bytesPerRow, Headroom headroom, CGBitmapInfo bitmapInfo, size_t bitsPerComponent, size_t bitsPerPixel)
 {
+    if (size.isEmpty())
+        return std::nullopt;
     if (!colorSpace)
         return std::nullopt;
-
-    if (auto colorSpaceAsRGB = colorSpace->asRGB())
-        return colorSpaceAsRGB;
-
-    return DestinationColorSpace::ExtendedSRGB();
+    // FIXME: support other color space models.
+    if (CGColorSpaceGetModel(colorSpace.get()) != kCGColorSpaceModelRGB)
+        return std::nullopt;
+    if (headroom < Headroom::None)
+        return std::nullopt;
+    if (!bytesPerRow)
+        return std::nullopt;
+    CheckedUint32 bytesPerRowUInt32 { bytesPerRow };
+    auto sizeInBytes = bytesPerRowUInt32 * size.height();
+    if (sizeInBytes.hasOverflowed())
+        return std::nullopt;
+    auto bytesPerRowTight = CheckedUint32 { size.width() } * (bitsPerPixel / 8);
+    if (bytesPerRowTight.hasOverflowed())
+        return std::nullopt;
+    if (bytesPerRow < bytesPerRowTight)
+        return std::nullopt;
+    auto alphaInfo = static_cast<CGImageAlphaInfo>(bitmapInfo & kCGBitmapAlphaInfoMask);
+    auto componentInfo = static_cast<CGImageComponentInfo>(bitmapInfo & kCGBitmapComponentInfoMask);
+    auto byteOrderInfo = static_cast<CGImageByteOrderInfo>(bitmapInfo & kCGBitmapByteOrderInfoMask);
+    auto pixelFormatInfo = static_cast<CGImagePixelFormatInfo>(bitmapInfo & kCGBitmapPixelFormatInfoMask);
+    if (bitmapInfo != CGBitmapInfoMake(alphaInfo, componentInfo, byteOrderInfo, pixelFormatInfo))
+        return std::nullopt;
+    if (bitsPerComponent < 1 || bitsPerComponent > 32)
+        return std::nullopt;
+    if (bitsPerPixel < 8 || bitsPerPixel > 128)
+        return std::nullopt;
+    return ShareableBitmapConfiguration { size, WTFMove(colorSpace), bytesPerRow, headroom, bitmapInfo, static_cast<uint8_t>(bitsPerComponent), static_cast<uint8_t>(bitsPerPixel) };
 }
 
-CheckedUint32 ShareableBitmapConfiguration::calculateBitsPerComponent(const DestinationColorSpace& colorSpace)
+ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, PlatformColorSpace&& colorSpace, size_t bytesPerRow, Headroom headroom, CGBitmapInfo bitmapInfo, uint8_t bitsPerComponent, uint8_t bitsPerPixel)
+    : m_size(size)
+    , m_colorSpace(WTFMove(colorSpace))
+    , m_bytesPerRow(bytesPerRow)
+    , m_headroom(headroom)
+    , m_bitmapInfo(bitmapInfo)
+    , m_bitsPerComponent(bitsPerComponent)
+    , m_bitsPerPixel(bitsPerPixel)
 {
-    return (calculateBytesPerPixel(colorSpace) / 4) * 8;
 }
 
-CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerPixel(const DestinationColorSpace& colorSpace)
+RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, const DestinationColorSpace& colorSpace, Headroom headroom, bool isOpaque)
 {
-    return colorSpace.usesExtendedRange() ? 8 : 4;
+    if (!colorSpace.supportsOutput()) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+
+    CGBitmapInfo bitmapInfo;
+    size_t bitsPerComponent;
+    size_t bitsPerPixel;
+    if (colorSpace.usesExtendedRange()) {
+        auto alphaInfo = isOpaque ? kCGImageAlphaNoneSkipLast : kCGImageAlphaPremultipliedLast;
+        bitmapInfo = CGBitmapInfoMake(alphaInfo, kCGImageComponentFloat, kCGImageByteOrder16Host, kCGImagePixelFormatPacked);
+        bitsPerComponent = 16;
+        bitsPerPixel = 64;
+    } else {
+        auto alphaInfo = isOpaque ? kCGImageAlphaNoneSkipFirst : kCGImageAlphaPremultipliedFirst;
+        bitmapInfo = CGBitmapInfoMake(alphaInfo, kCGImageComponentInteger, kCGImageByteOrder32Host, kCGImagePixelFormatPacked);
+        bitsPerComponent = 8;
+        bitsPerPixel = 32;
+    }
+
+    auto bytesPerRow = ShareableBitmapConfiguration::calculateBytesPerRow(size, colorSpace);
+    if (bytesPerRow.hasOverflowed())
+        return nullptr;
+
+    auto configuration = ShareableBitmapConfiguration::create(size, colorSpace.platformColorSpace(), bytesPerRow, headroom, bitmapInfo, bitsPerComponent, bitsPerPixel);
+    if (!configuration)
+        return nullptr;
+
+    return create(*configuration);
 }
 
 CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerRow(const IntSize& size, const DestinationColorSpace& colorSpace)
 {
-    CheckedUint32 bytesPerRow = calculateBytesPerPixel(colorSpace) * size.width();
+    uint32_t bytesPerPixel = colorSpace.usesExtendedRange() ? 8 : 4;
+    CheckedUint32 bytesPerRow = CheckedUint32 { bytesPerPixel } * size.width();
 #if HAVE(IOSURFACE)
+    size_t alignmentMask = IOSurface::bytesPerRowAlignment() - 1;
+    bytesPerRow += bytesPerRow + alignmentMask;
     if (bytesPerRow.hasOverflowed())
         return bytesPerRow;
-    size_t alignmentMask = IOSurface::bytesPerRowAlignment() - 1;
-    return (bytesPerRow + alignmentMask) & ~alignmentMask;
-#else
-    return bytesPerRow;
+    bytesPerRow = bytesPerRow & ~alignmentMask;
 #endif
-}
-
-CGBitmapInfo ShareableBitmapConfiguration::calculateBitmapInfo(const DestinationColorSpace& colorSpace, bool isOpaque)
-{
-    CGBitmapInfo info = 0;
-    if (colorSpace.usesExtendedRange()) {
-        info |= kCGBitmapFloatComponents | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host);
-
-        if (isOpaque)
-            info |= kCGImageAlphaNoneSkipLast;
-        else
-            info |= kCGImageAlphaPremultipliedLast;
-    } else {
-        info |= static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Host);
-
-        if (isOpaque)
-            info |= kCGImageAlphaNoneSkipFirst;
-        else
-            info |= kCGImageAlphaPremultipliedFirst;
-    }
-
-    return info;
+    return bytesPerRow;
 }
 
 RefPtr<ShareableBitmap> ShareableBitmap::createFromImagePixels(NativeImage& image)
@@ -118,7 +150,9 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImagePixels(NativeImage& imag
     if (!sourceProvider)
         return nullptr;
 
-    auto configuration = ShareableBitmapConfiguration(image);
+    auto configuration = resolveShareableBitmapConfiguration(image);
+    if (!configuration)
+        return nullptr;
 
     RetainPtr<CFDataRef> pixels;
     @try {
@@ -126,9 +160,9 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImagePixels(NativeImage& imag
     } @catch (id exception) {
         LOG_WITH_STREAM(Images, stream
             << "ShareableBitmap::createFromImagePixels() failed CGDataProviderCopyData "
-            << " CGImage size: " << configuration.size()
-            << " CGImage bytesPerRow: " << configuration.bytesPerRow()
-            << " CGImage sizeInBytes: " << configuration.sizeInBytes());
+            << " CGImage size: " << configuration->size()
+            << " CGImage bytesPerRow: " << configuration->bytesPerRow()
+            << " CGImage sizeInBytes: " << configuration->sizeInBytes());
         return nullptr;
     }
 
@@ -139,12 +173,12 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImagePixels(NativeImage& imag
     if (bytes.empty() || CheckedUint32(bytes.size()).hasOverflowed())
         return nullptr;
 
-    if (configuration.sizeInBytes() != bytes.size()) {
+    if (configuration->sizeInBytes() != bytes.size()) {
         LOG_WITH_STREAM(Images, stream
             << "ShareableBitmap::createFromImagePixels() " << image.platformImage().get()
-            << " CGImage size: " << configuration.size()
-            << " CGImage bytesPerRow: " << configuration.bytesPerRow()
-            << " CGImage sizeInBytes: " << configuration.sizeInBytes()
+            << " CGImage size: " << configuration->size()
+            << " CGImage bytesPerRow: " << configuration->bytesPerRow()
+            << " CGImage sizeInBytes: " << configuration->sizeInBytes()
             << " CGDataProvider sizeInBytes: " << bytes.size()
             << " CGImage and its CGDataProvider disagree about how many bytes are in pixels buffer. CGImage is a sub-image; bailing.");
         return nullptr;
@@ -155,18 +189,20 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImagePixels(NativeImage& imag
         return nullptr;
 
     memcpySpan(sharedMemory->mutableSpan(), bytes);
-    return adoptRef(new ShareableBitmap(configuration, sharedMemory.releaseNonNull()));
+    return adoptRef(new ShareableBitmap(*configuration, sharedMemory.releaseNonNull()));
 }
 
 std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
-    unsigned bitsPerComponent = m_configuration.bitsPerComponent();
-    unsigned bytesPerRow = m_configuration.bytesPerRow();
+    auto bitsPerComponent = m_configuration.bitsPerComponent();
+    auto bytesPerRow = m_configuration.bytesPerRow();
+    auto colorSpace = m_configuration.colorSpace();
+    auto size = this->size();
 
     ref(); // Balanced by deref in releaseBitmapContextData.
 
     m_releaseBitmapContextDataCalled = false;
-    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(mutableSpan().data(), size().width(), size().height(), bitsPerComponent, bytesPerRow, m_configuration.platformColorSpace(), m_configuration.bitmapInfo(), releaseBitmapContextData, this));
+    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(mutableSpan().data(), size.width(), size.height(), bitsPerComponent, bytesPerRow, colorSpace.get(), m_configuration.bitmapInfo(), releaseBitmapContextData, this));
     if (!bitmapContext) {
         // When CGBitmapContextCreateWithData fails and returns null, it will only
         // call the release callback in some circumstances <rdar://82228446>. We
@@ -179,7 +215,7 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
     ASSERT(!m_releaseBitmapContextDataCalled);
 
     // We want the origin to be in the top left corner so we flip the backing store context.
-    CGContextTranslateCTM(bitmapContext.get(), 0, size().height());
+    CGContextTranslateCTM(bitmapContext.get(), 0, size.height());
     CGContextScaleCTM(bitmapContext.get(), 1, -1);
 
     return makeUnique<GraphicsContextCG>(bitmapContext.get());
@@ -231,16 +267,17 @@ PlatformImagePtr ShareableBitmap::createPlatformImage(BackingStoreCopy copyBehav
         ref(); // Balanced by deref above.
     }
 
-    unsigned bitsPerComponent = m_configuration.bitsPerComponent();
-    unsigned bitsPerPixel = m_configuration.bytesPerPixel() * 8;
-    unsigned bytesPerRow = m_configuration.bytesPerRow();
+    auto size = this->size();
+    auto bitmapInfo = m_configuration.bitmapInfo();
+    auto bitsPerComponent = m_configuration.bitsPerComponent();
+    auto bitsPerPixel = m_configuration.bitsPerPixel();
+    RetainPtr platformColorSpace = m_configuration.colorSpace();
 
 #if HAVE(SUPPORT_HDR_DISPLAY_APIS)
     if (m_configuration.headroom() > Headroom::None)
-        return adoptCF(CGImageCreateWithContentHeadroom(m_configuration.headroom(), size().width(), size().height(), bitsPerComponent, bitsPerPixel, bytesPerRow, m_configuration.platformColorSpace(), m_configuration.bitmapInfo(), dataProvider.get(), 0, shouldInterpolate == ShouldInterpolate::Yes, kCGRenderingIntentDefault));
+        return adoptCF(CGImageCreateWithContentHeadroom(m_configuration.headroom(), size.width(), size.height(), bitsPerComponent, bitsPerPixel, bytesPerRow(), platformColorSpace.get(), bitmapInfo, dataProvider.get(), 0, shouldInterpolate == ShouldInterpolate::Yes, kCGRenderingIntentDefault));
 #endif
-    return adoptCF(CGImageCreate(size().width(), size().height(), bitsPerComponent, bitsPerPixel, bytesPerRow, m_configuration.platformColorSpace(), m_configuration.bitmapInfo(), dataProvider.get(), 0, shouldInterpolate == ShouldInterpolate::Yes, kCGRenderingIntentDefault));
-
+    return adoptCF(CGImageCreate(size.width(), size.height(), bitsPerComponent, bitsPerPixel, bytesPerRow(), platformColorSpace.get(), bitmapInfo, dataProvider.get(), 0, shouldInterpolate == ShouldInterpolate::Yes, kCGRenderingIntentDefault));
 }
 
 void ShareableBitmap::releaseBitmapContextData(void* typelessBitmap, void* typelessData)

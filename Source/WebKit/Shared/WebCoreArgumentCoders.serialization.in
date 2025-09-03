@@ -8735,22 +8735,28 @@ header: <WebCore/VideoTrackPrivate.h>
 #endif
 
 header: <WebCore/ShareableBitmap.h>
-[CustomHeader] class WebCore::ShareableBitmapConfiguration {
-    [Validator='m_size->width() > 0 && m_size->height() > 0'] WebCore::IntSize m_size;
-    std::optional<WebCore::DestinationColorSpace> m_colorSpace;
-    WebCore::Headroom m_headroom;
-    bool m_isOpaque;
-    [Validator='*bitsPerComponent >= 1 && *bitsPerComponent <= 16'] unsigned bitsPerComponent();
-    [Validator='*bytesPerPixel >= 1 && *bytesPerPixel <= 8'] unsigned bytesPerPixel();
-    [Validator='*bytesPerRow >= m_size->width() * *bytesPerPixel'] unsigned bytesPerRow();
 #if USE(CG)
+[CustomHeader, CreateUsing=create] class WebCore::ShareableBitmapConfiguration {
+    WebCore::IntSize m_size;
+    WebCore::PlatformColorSpace m_colorSpace;
+    uint32_t m_bytesPerRow;
+    WebCore::Headroom m_headroom;
     CGBitmapInfo m_bitmapInfo;
-#endif
+    uint8_t m_bitsPerComponent;
+    uint8_t m_bitsPerPixel;
 }
+#else
+[CustomHeader, CreateUsing=create] class WebCore::ShareableBitmapConfiguration {
+    WebCore::IntSize m_size;
+    WebCore::PlatformColorSpace m_colorSpace;
+    uint32_t m_bytesPerRow;
+    bool m_isOpaque;
+}
+#endif
 
 [CustomHeader, RValue] class WebCore::ShareableBitmapHandle {
     WebCore::SharedMemoryHandle m_handle;
-    [Validator='!m_configuration->sizeInBytes().hasOverflowed() && m_handle->size() >= m_configuration->sizeInBytes()'] WebCore::ShareableBitmapConfiguration m_configuration;
+    [Validator='m_handle->size() >= m_configuration->sizeInBytes()'] WebCore::ShareableBitmapConfiguration m_configuration;
 }
 
 [RefCounted, CreateUsing=createReadOnly] class WebCore::ShareableBitmap {

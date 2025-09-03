@@ -548,8 +548,10 @@ RemoteLayerBackingStoreProperties::LayerContentsBufferInfo RemoteLayerBackingSto
     WTF::switchOn(backendHandle,
         [&] (ShareableBitmap::Handle& handle) {
             if (auto bitmap = ShareableBitmap::create(WTFMove(handle), SharedMemory::Protection::ReadOnly)) {
-                contents = bridge_id_cast(bitmap->createPlatformImage());
-                hasExtendedDynamicRange = bitmap->colorSpace().usesExtendedRange();
+                RetainPtr image = bitmap->createPlatformImage();
+                RetainPtr colorSpace = adoptCF(CGImageGetColorSpace(image.get()));
+                hasExtendedDynamicRange = CGColorSpaceUsesExtendedRange(colorSpace.get());
+                contents = bridge_id_cast(image.get());
             }
         },
         [&] (MachSendRight& machSendRight) {
