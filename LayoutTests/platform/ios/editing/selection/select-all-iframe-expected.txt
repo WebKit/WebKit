@@ -41,12 +41,12 @@ layer at (0,0) size 800x600
           text run at (130,40) width 173: "Two things should happen:"
       RenderBlock {UL} at (0,322) size 784x60
         RenderListItem {LI} at (40,0) size 744x40
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 689x39
             text run at (0,0) width 462: "The Select All operation should not select the iframe, only it's contents. "
             text run at (461,0) width 228: "The results of the Select All will be"
             text run at (0,20) width 517: "apparent from the delegate messages that DumpRenderTree receives and dumps."
         RenderListItem {LI} at (40,40) size 744x20
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 344x19
             text run at (0,0) width 344: "The contents of the editable iframe should be deleted."

@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
           text run at (0,30) width 0: " "
       RenderBlock {UL} at (0,110) size 784x36
         RenderListItem {LI} at (40,0) size 744x36
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderListMarker at (-15,0) size 7x18: bullet
           RenderText {#text} at (0,0) size 743x36
             text run at (0,0) width 743: "The text in this item should behave as expected; that is, it should line up with itself on the left margin, leaving blank"
             text run at (0,18) width 158: "space beneath the bullet."
@@ -39,7 +39,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (12,26) size 770x112 [border: (1px inset #000000)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {UL} at (4,4) size 762x36
                 RenderListItem {LI} at (40,0) size 722x36
-                  RenderListMarker at (-17,0) size 7x18: bullet
+                  RenderListMarker at (-15,0) size 7x18: bullet
                   RenderText {#text} at (0,0) size 704x36
                     text run at (0,0) width 704: "The text in this item should behave as expected; that is, it should line up with itself on the left margin, leaving"
                     text run at (0,18) width 197: "blank space beneath the bullet."

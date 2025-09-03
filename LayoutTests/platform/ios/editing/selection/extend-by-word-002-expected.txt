@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 148x174 [border: (2px solid #FF0000)]
         RenderBlock {UL} at (14,14) size 120x146
           RenderListItem {LI} at (0,0) size 120x22
-            RenderListMarker at (-15,5) size 6x14: bullet
+            RenderListMarker at (-13,5) size 6x14: bullet
             RenderInline (generated) at (5,-5) size 15x26
               RenderText at (5,-5) size 15x26
                 text run at (5,-5) width 15: "\x{B7} "
@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (19,5) size 53x14
                 text run at (19,5) width 53: "Appetizers"
           RenderListItem {LI} at (0,22) size 120x22
-            RenderListMarker at (-15,5) size 6x14: bullet
+            RenderListMarker at (-13,5) size 6x14: bullet
             RenderInline (generated) at (5,-5) size 15x26
               RenderText at (5,-5) size 15x26
                 text run at (5,-5) width 15: "\x{B7} "
@@ -33,7 +33,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (19,5) size 79x14
                 text run at (19,5) width 79: "Soups & Salads"
           RenderListItem {LI} at (0,44) size 120x36
-            RenderListMarker at (-15,5) size 6x14: bullet
+            RenderListMarker at (-13,5) size 6x14: bullet
             RenderInline (generated) at (5,-5) size 15x26
               RenderText at (5,-5) size 15x26
                 text run at (5,-5) width 15: "\x{B7} "
@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
                 text run at (19,5) width 74: "Sandwiches & "
                 text run at (16,19) width 40: "Burgers"
           RenderListItem {LI} at (0,80) size 120x22
-            RenderListMarker at (-15,5) size 6x14: bullet
+            RenderListMarker at (-13,5) size 6x14: bullet
             RenderInline (generated) at (5,-5) size 15x26
               RenderText at (5,-5) size 15x26
                 text run at (5,-5) width 15: "\x{B7} "
@@ -52,7 +52,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (19,5) size 65x14
                 text run at (19,5) width 65: "Steak & Ribs"
           RenderListItem {LI} at (0,102) size 120x22
-            RenderListMarker at (-15,5) size 6x14: bullet
+            RenderListMarker at (-13,5) size 6x14: bullet
             RenderInline (generated) at (5,-5) size 15x26
               RenderText at (5,-5) size 15x26
                 text run at (5,-5) width 15: "\x{B7} "
@@ -61,7 +61,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (19,5) size 41x14
                 text run at (19,5) width 41: "Seafood"
           RenderListItem {LI} at (0,124) size 120x22
-            RenderListMarker at (-15,5) size 6x14: bullet
+            RenderListMarker at (-13,5) size 6x14: bullet
             RenderInline (generated) at (5,-5) size 15x26
               RenderText at (5,-5) size 15x26
                 text run at (5,-5) width 15: "\x{B7} "

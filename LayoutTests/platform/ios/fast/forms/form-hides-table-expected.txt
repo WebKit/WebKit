@@ -39,7 +39,7 @@ layer at (0,0) size 800x694
       RenderBlock {DIV} at (0,156) size 784x46
         RenderListItem {DIV} at (0,0) size 784x46
           RenderBlock (anonymous) at (0,0) size 784x20
-            RenderListMarker at (-18,0) size 7x19: bullet
+            RenderListMarker at (-15,0) size 7x19: bullet
           RenderBlock {FORM} at (0,20) size 784x26
             RenderTable {TABLE} at (0,0) size 114x26
               RenderTableSection {TBODY} at (0,0) size 114x26

@@ -27,7 +27,7 @@ layer at (0,0) size 785x2270
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x106 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 18x18: "1"
+            RenderListMarker at (-35,6) size 18x18: "1"
             RenderText {#text} at (6,8) size 134x92
               text run at (6,8) width 134: "div :last-child {"
               text run at (139,8) width 1: " "
@@ -48,7 +48,7 @@ layer at (0,0) size 785x2270
             RenderBlock {BLOCKQUOTE} at (0,0) size 584x0
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x121 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 18x18: "2"
+            RenderListMarker at (-35,6) size 18x18: "2"
             RenderText {#text} at (6,8) size 219x107
               text run at (6,8) width 134: "div :last-child {"
               text run at (139,8) width 1: " "
@@ -70,7 +70,7 @@ layer at (0,0) size 785x2270
           RenderBlock {DIV} at (16,16) size 584x24 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x121 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 18x18: "3"
+            RenderListMarker at (-35,6) size 18x18: "3"
             RenderText {#text} at (6,8) size 204x107
               text run at (6,8) width 134: "div :last-child {"
               text run at (139,8) width 1: " "
@@ -94,7 +94,7 @@ layer at (0,0) size 785x2270
           RenderBlock {DIV} at (16,16) size 584x42 [bgcolor=#990000]
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
             RenderBlock (anonymous) at (0,24) size 584x18
-              RenderListMarker at (-38,0) size 18x17: "4"
+              RenderListMarker at (-35,0) size 18x17: "4"
               RenderText {#text} at (0,0) size 5x17
                 text run at (0,0) width 5: "."
           RenderBlock {PRE} at (16,71) size 584x118 [bgcolor=#FFFFFF]
@@ -122,7 +122,7 @@ layer at (0,0) size 785x2270
             RenderBlock {DIV} at (0,0) size 584x24
             RenderBlock {BLOCKQUOTE} at (0,24) size 584x0 [bgcolor=#990000]
           RenderBlock {PRE} at (16,53) size 584x121 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 18x18: "5"
+            RenderListMarker at (-35,6) size 18x18: "5"
             RenderText {#text} at (6,8) size 219x107
               text run at (6,8) width 134: "div :last-child {"
               text run at (139,8) width 1: " "
@@ -145,7 +145,7 @@ layer at (0,0) size 785x2270
             RenderBlock {DIV} at (0,0) size 584x0
             RenderBlock {DIV} at (0,0) size 584x24 [bgcolor=#009900]
           RenderBlock {PRE} at (16,53) size 584x151 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 18x18: "6"
+            RenderListMarker at (-35,6) size 18x18: "6"
             RenderText {#text} at (6,8) size 469x137
               text run at (6,8) width 134: "div :last-child {"
               text run at (139,8) width 1: " "
@@ -171,7 +171,7 @@ layer at (0,0) size 785x2270
             RenderBlock {DIV} at (0,0) size 584x24
             RenderBlock {DIV} at (0,24) size 584x0 [bgcolor=#990000]
           RenderBlock {PRE} at (16,53) size 584x151 [bgcolor=#FFFFFF]
-            RenderListMarker at (-38,6) size 18x18: "7"
+            RenderListMarker at (-35,6) size 18x18: "7"
             RenderText {#text} at (6,8) size 469x137
               text run at (6,8) width 134: "div :last-child {"
               text run at (139,8) width 1: " "

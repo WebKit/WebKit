@@ -46,11 +46,11 @@ layer at (0,0) size 800x1053
           text run at (196,40) width 76: "(light blue)."
       RenderBlock {UL} at (0,431) size 784x80 [bgcolor=#808080]
         RenderListItem {LI} at (25,0) size 759x20
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 732x19
             text run at (0,0) width 732: "The left padding on this unordered list has been set to 25 pixels, which will require some extra test in order to test."
         RenderListItem {LI} at (25,20) size 759x60 [bgcolor=#FFFFFF]
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (25,0) size 726x59
             text run at (25,0) width 726: "Another list item might not be such a bad idea, either, considering that such things do need to be double-checked."
             text run at (25,20) width 713: "This list item has its left padding also set to 25 pixels, which should combine with the list's padding to make 50"
@@ -98,11 +98,11 @@ layer at (0,0) size 800x1053
                   text run at (190,40) width 111: "aqua (light blue)."
               RenderBlock {UL} at (4,284) size 762x80 [bgcolor=#808080]
                 RenderListItem {LI} at (25,0) size 737x20
-                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderListMarker at (-15,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 732x19
                     text run at (0,0) width 732: "The left padding on this unordered list has been set to 25 pixels, which will require some extra test in order to test."
                 RenderListItem {LI} at (25,20) size 737x60 [bgcolor=#FFFFFF]
-                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderListMarker at (-15,0) size 7x19: bullet
                   RenderText {#text} at (25,0) size 698x59
                     text run at (25,0) width 669: "Another list item might not be such a bad idea, either, considering that such things do need to be double-"
                     text run at (25,20) width 61: "checked. "

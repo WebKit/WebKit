@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,0) size 510x103 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {UL} at (1,1) size 508x85
                 RenderListItem {LI} at (40,0) size 468x85
-                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderListMarker at (-15,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 198x19
                     text run at (0,0) width 198: "The XML Files Resources List"
                   RenderText {#text} at (0,0) size 0x0
@@ -47,7 +47,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (0,0) size 510x103 [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {UL} at (1,1) size 508x85
                 RenderListItem {LI} at (40,0) size 468x85
-                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderListMarker at (-15,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 198x19
                     text run at (0,0) width 198: "The XML Files Resources List"
                   RenderImage {IMG} at (0,20) size 468x60

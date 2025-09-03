@@ -28,15 +28,15 @@ layer at (0,0) size 800x600
             text run at (0,0) width 150: "...images for each item."
       RenderBlock {UL} at (0,185) size 784x60
         RenderListItem {LI} at (40,0) size 744x20
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 65x19
             text run at (0,0) width 65: "This list..."
         RenderListItem {LI} at (40,20) size 744x20
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 116x19
             text run at (0,0) width 116: "...should feature..."
         RenderListItem {LI} at (40,40) size 744x20
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 238x19
             text run at (0,0) width 238: "...standard list markers for each item."
       RenderTable {TABLE} at (0,261) size 300x190 [border: (1px outset #000000)]
@@ -66,15 +66,15 @@ layer at (0,0) size 800x600
                     text run at (0,0) width 150: "...images for each item."
               RenderBlock {UL} at (4,80) size 278x60
                 RenderListItem {LI} at (40,0) size 238x20
-                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderListMarker at (-15,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 65x19
                     text run at (0,0) width 65: "This list..."
                 RenderListItem {LI} at (40,20) size 238x20
-                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderListMarker at (-15,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 116x19
                     text run at (0,0) width 116: "...should feature..."
                 RenderListItem {LI} at (40,40) size 238x20
-                  RenderListMarker at (-18,0) size 7x19: bullet
+                  RenderListMarker at (-15,0) size 7x19: bullet
                   RenderText {#text} at (0,0) size 238x19
                     text run at (0,0) width 238: "...standard list markers for each item."
 layer at (8,99) size 784x2 clip at (0,0) size 0x0

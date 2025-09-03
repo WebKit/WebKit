@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {UL} at (0,90) size 784x20
         RenderListItem {LI} at (40,0) size 744x20
-          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderListMarker at (-15,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 162x19
             text run at (0,0) width 162: "Item with outside marker"
       RenderBlock {UL} at (0,126) size 784x20
@@ -43,11 +43,11 @@ layer at (0,0) size 800x600
             text run at (17,0) width 197: "Item with inside image marker"
       RenderBlock {OL} at (0,234) size 784x40
         RenderListItem {LI} at (40,0) size 744x20
-          RenderListMarker at (-21,0) size 16x19: "1"
+          RenderListMarker at (-17,0) size 16x19: "1"
           RenderText {#text} at (0,0) size 162x19
             text run at (0,0) width 162: "Item with outside ordinal"
         RenderListItem {LI} at (40,20) size 744x20
-          RenderListMarker at (-21,0) size 16x19: "2"
+          RenderListMarker at (-17,0) size 16x19: "2"
           RenderText {#text} at (0,0) size 103x19
             text run at (0,0) width 103: "and another one"
       RenderBlock {OL} at (0,290) size 784x40

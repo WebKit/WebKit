@@ -401,7 +401,7 @@ void RenderListMarker::updateInlineMargins()
         if (isImage())
             return { -minPreferredLogicalWidth() - markerPadding, markerPadding };
 
-        int offset = fontMetrics.intAscent() * 2 / 3;
+        int offset = fontMetrics.intAscent() / 2;
         if (widthUsesMetricsOfPrimaryFont())
             return { -offset - markerPadding - 1, offset + markerPadding + 1 - minPreferredLogicalWidth() };
 
@@ -411,7 +411,7 @@ void RenderListMarker::updateInlineMargins()
         if (style().listStyleType().isString())
             return { -minPreferredLogicalWidth(), 0 };
 
-        return { -minPreferredLogicalWidth() - offset / 2, offset / 2 };
+        return { -minPreferredLogicalWidth() - offset / 4, offset / 4 };
     };
 
     auto [marginStart, marginEnd] = isInside() ? marginsForInsideMarker() : marginsForOutsideMarker();

@@ -35,7 +35,7 @@ layer at (0,0) size 785x1132
             text run at (0,0) width 409: "This is in contradiction with the CSS2 specification which says:"
         RenderBlock {UL} at (4,398) size 616x36
           RenderListItem {LI} at (40,0) size 576x36
-            RenderListMarker at (-17,0) size 7x18: bullet
+            RenderListMarker at (-15,0) size 7x18: bullet
             RenderText {#text} at (0,0) size 29x18
               text run at (0,0) width 29: "The "
             RenderInline {A} at (28,0) size 83x18 [color=#0000EE]

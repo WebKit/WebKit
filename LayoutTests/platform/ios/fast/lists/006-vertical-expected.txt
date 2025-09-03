@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {OL} at (0,0) size 40x584
         RenderListItem {LI} at (0,40) size 40x544
           RenderBlock (anonymous) at (0,0) size 20x544
-            RenderListMarker at (0,-21) size 19x16: "1"
+            RenderListMarker at (0,-17) size 19x16: "1"
             RenderInline {I} at (0,0) size 19x77
               RenderInline {U} at (0,0) size 19x77
                 RenderText {#text} at (0,0) size 19x77
@@ -14,6 +14,6 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 0x0
           RenderBlock {OL} at (20,0) size 20x544
             RenderListItem {LI} at (0,40) size 20x504
-              RenderListMarker at (0,-21) size 19x16: "1"
+              RenderListMarker at (0,-17) size 19x16: "1"
               RenderText {#text} at (0,0) size 19x59
                 text run at (0,0) width 59: "Goodbye"

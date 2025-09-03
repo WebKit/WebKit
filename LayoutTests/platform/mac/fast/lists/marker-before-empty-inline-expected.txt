@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 0x0
           RenderBlock (anonymous) at (0,0) size 744x18
             RenderBlock {DIV} at (0,0) size 744x18
-              RenderListMarker at (-17,0) size 7x18: bullet
+              RenderListMarker at (-15,0) size 7x18: bullet
               RenderText {#text} at (0,0) size 29x18
                 text run at (0,0) width 29: "item"
           RenderBlock (anonymous) at (0,18) size 744x0
@@ -37,7 +37,7 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
           RenderBlock {DIV} at (0,0) size 744x18
-            RenderListMarker at (-17,0) size 7x18: bullet
+            RenderListMarker at (-15,0) size 7x18: bullet
             RenderText {#text} at (0,0) size 29x18
               text run at (0,0) width 29: "item"
       RenderBlock {UL} at (0,136) size 784x18
@@ -49,7 +49,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 0x0
           RenderBlock (anonymous) at (0,0) size 744x18
             RenderBlock {DIV} at (0,0) size 744x18
-              RenderListMarker at (-17,0) size 7x18: bullet
+              RenderListMarker at (-15,0) size 7x18: bullet
               RenderText {#text} at (0,0) size 28x18
                 text run at (0,0) width 28: "item"
           RenderBlock (anonymous) at (0,18) size 744x0
@@ -60,7 +60,7 @@ layer at (0,0) size 800x600
       RenderBlock {UL} at (0,170) size 784x36
         RenderListItem {LI} at (40,0) size 744x36
           RenderBlock (anonymous) at (0,0) size 744x18
-            RenderListMarker at (-17,0) size 7x18: bullet
+            RenderListMarker at (-15,0) size 7x18: bullet
             RenderInline {SPAN} at (0,0) size 41x18
               RenderInline (generated) at (0,0) size 41x18
                 RenderText at (0,0) size 41x18
@@ -79,8 +79,8 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (0,0) size 744x18
             RenderBlock {UL} at (0,0) size 744x18
               RenderListItem {LI} at (40,0) size 704x18
-                RenderListMarker at (-17,0) size 7x18: white bullet
-                RenderListMarker at (-57,0) size 7x18: bullet
+                RenderListMarker at (-15,0) size 7x18: white bullet
+                RenderListMarker at (-55,0) size 7x18: bullet
                 RenderText {#text} at (0,0) size 29x18
                   text run at (0,0) width 29: "item"
           RenderBlock (anonymous) at (0,18) size 744x18
@@ -91,8 +91,8 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (0,0) size 744x18
             RenderBlock {UL} at (0,0) size 744x18
               RenderListItem {LI} at (40,0) size 704x18
-                RenderListMarker at (-17,0) size 7x18: white bullet
-                RenderListMarker at (-57,0) size 7x18: bullet
+                RenderListMarker at (-15,0) size 7x18: white bullet
+                RenderListMarker at (-55,0) size 7x18: bullet
                 RenderText {#text} at (0,0) size 29x18
                   text run at (0,0) width 29: "item"
           RenderBlock (anonymous) at (0,18) size 744x18
@@ -103,10 +103,10 @@ layer at (0,0) size 800x600
       RenderBlock {UL} at (0,360) size 784x54
         RenderListItem {LI} at (40,0) size 744x54
           RenderBlock (anonymous) at (0,0) size 744x18
-            RenderListMarker at (-17,0) size 7x18: bullet
+            RenderListMarker at (-15,0) size 7x18: bullet
           RenderBlock {UL} at (0,18) size 744x18
             RenderListItem {LI} at (40,0) size 704x18
-              RenderListMarker at (-17,0) size 7x18: white bullet
+              RenderListMarker at (-15,0) size 7x18: white bullet
               RenderText {#text} at (0,0) size 29x18
                 text run at (0,0) width 29: "item"
           RenderBlock (anonymous) at (0,36) size 744x18
