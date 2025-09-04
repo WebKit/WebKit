@@ -27,9 +27,11 @@
 #include "StackFrame.h"
 
 #include "CodeBlock.h"
+#include "ConstructorKind.h"
 #include "DebuggerPrimitives.h"
 #include "FunctionExecutable.h"
 #include "JSCellInlines.h"
+#include "UnlinkedFunctionExecutable.h"
 #include <wtf/text/MakeString.h>
 
 namespace JSC {
@@ -38,7 +40,8 @@ StackFrame::StackFrame(VM& vm, JSCell* owner, JSCell* callee)
     : m_frameData(JSFrameData {
         WriteBarrier<JSCell>(vm, owner, callee),
         WriteBarrier<CodeBlock>(),
-        BytecodeIndex()
+        BytecodeIndex(),
+        AtomString()
     })
 {
 }
@@ -47,7 +50,18 @@ StackFrame::StackFrame(VM& vm, JSCell* owner, JSCell* callee, CodeBlock* codeBlo
     : m_frameData(JSFrameData {
         WriteBarrier<JSCell>(vm, owner, callee),
         WriteBarrier<CodeBlock>(vm, owner, codeBlock),
-        bytecodeIndex
+        bytecodeIndex,
+        AtomString()
+    })
+{
+}
+
+StackFrame::StackFrame(VM& vm, JSCell* owner, JSCell* callee, CodeBlock* codeBlock, BytecodeIndex bytecodeIndex, JSValue thisValue)
+    : m_frameData(JSFrameData {
+        WriteBarrier<JSCell>(vm, owner, callee),
+        WriteBarrier<CodeBlock>(vm, owner, codeBlock),
+        bytecodeIndex,
+        getConstructorName(vm, thisValue, codeBlock)
     })
 {
 }
@@ -56,7 +70,8 @@ StackFrame::StackFrame(VM& vm, JSCell* owner, CodeBlock* codeBlock, BytecodeInde
     : m_frameData(JSFrameData {
         WriteBarrier<JSCell>(),
         WriteBarrier<CodeBlock>(vm, owner, codeBlock),
-        bytecodeIndex
+        bytecodeIndex,
+        AtomString()
     })
 {
 }
@@ -167,6 +182,61 @@ String StackFrame::sourceURLStripped(VM& vm) const
     );
 }
 
+const AtomString& StackFrame::getConstructorName(VM& vm, JSValue thisValue, CodeBlock* codeBlock)
+{
+    AssertNoGC assertNoGC;
+
+    if (thisValue.isEmpty() || !thisValue.isCell() || !thisValue.isObject()) [[unlikely]]
+        return emptyAtom();
+
+    JSObject* object = asObject(thisValue);
+    if (!object) [[unlikely]]
+        return emptyAtom();
+
+    Structure* structure = object->structure();
+    if (!structure) [[unlikely]]
+        return emptyAtom();
+
+    if (codeBlock) {
+        if (auto* executable = jsDynamicCast<FunctionExecutable*>(codeBlock->ownerExecutable())) {
+            auto* unlinkedExecutable = executable->unlinkedExecutable();
+            ConstructorKind constructorKind = unlinkedExecutable->constructorKind();
+            if (constructorKind != ConstructorKind::None)
+                return emptyAtom(); // Skip constructor functions themselves
+        }
+    }
+
+    // obj.__proto__.constructor
+    if (!structure->typeInfo().overridesGetPrototype()) {
+        JSValue protoValue = object->getPrototypeDirect();
+        if (!protoValue.isEmpty() && protoValue.isCell() && protoValue.isObject()) {
+            JSObject* protoObject = asObject(protoValue);
+            if (!protoObject) [[unlikely]]
+                return emptyAtom();
+            Structure* protoStructure = protoObject->structure();
+            if (!protoStructure) [[unlikely]]
+                return emptyAtom();
+            unsigned attributes;
+            PropertyOffset protoConstructorOffset = protoStructure->getConcurrently(vm.propertyNames->constructor.impl(), attributes);
+            if (protoConstructorOffset != invalidOffset && !(attributes & (PropertyAttribute::Accessor | PropertyAttribute::CustomAccessorOrValue))) {
+                JSValue protoConstructor = protoObject->getDirect(protoConstructorOffset);
+                if (!protoConstructor.isEmpty() && protoConstructor.isCell() && protoConstructor.isObject()) {
+                    JSObject* protoConstructorObject = asObject(protoConstructor);
+                    if (!protoConstructorObject) [[unlikely]]
+                        return emptyAtom();
+                    if (auto* jsFunction = jsDynamicCast<JSFunction*>(protoConstructorObject)) {
+                        // FIXME: Support ES5 function style constructor
+                        if (jsFunction->isClassConstructorFunction())
+                            return jsFunction->jsExecutable()->ecmaName().string();
+                    }
+                }
+            }
+        }
+    }
+
+    return emptyAtom();
+}
+
 String StackFrame::functionName(VM& vm) const
 {
     return WTF::switchOn(m_frameData,
@@ -190,7 +260,11 @@ String StackFrame::functionName(VM& vm) const
                 if (auto* executable = jsDynamicCast<FunctionExecutable*>(jsFrame.codeBlock->ownerExecutable()))
                     name = executable->ecmaName().impl();
             }
-            return name.isNull() ? emptyString() : name;
+            if (name.isNull())
+                name = emptyString();
+            if (!jsFrame.constructorName.isEmpty() && !name.isEmpty())
+                return makeString(jsFrame.constructorName.string(), '.', name);
+            return name;
         },
         [](const WasmFrameData& wasmFrame) -> String {
             if (wasmFrame.functionIndexOrName.isEmpty() || !wasmFrame.functionIndexOrName.nameSection())

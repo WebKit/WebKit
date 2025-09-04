@@ -527,9 +527,13 @@ void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size
                 break;
             }
             }
-        } else if (!!visitor->codeBlock() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction())
-            results.append(StackFrame(vm, owner, visitor->callee().asCell(), visitor->codeBlock(), visitor->bytecodeIndex()));
-        else
+        } else if (!!visitor->codeBlock() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
+            if (CallFrame* callFrame = visitor->callFrame()) {
+                JSValue thisValue = callFrame->thisValue();
+                results.append(StackFrame(vm, owner, visitor->callee().asCell(), visitor->codeBlock(), visitor->bytecodeIndex(), thisValue));
+            } else
+                results.append(StackFrame(vm, owner, visitor->callee().asCell(), visitor->codeBlock(), visitor->bytecodeIndex()));
+        } else
             results.append(StackFrame(vm, owner, visitor->callee().asCell()));
         return IterationStatus::Continue;
     });

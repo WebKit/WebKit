@@ -44,6 +44,7 @@ struct JSFrameData {
     WriteBarrier<JSCell> callee;
     WriteBarrier<CodeBlock> codeBlock;
     BytecodeIndex bytecodeIndex;
+    AtomString constructorName;
 };
 
 struct WasmFrameData {
@@ -57,6 +58,7 @@ public:
 
     StackFrame(VM&, JSCell* owner, JSCell* callee);
     StackFrame(VM&, JSCell* owner, JSCell* callee, CodeBlock*, BytecodeIndex);
+    StackFrame(VM&, JSCell* owner, JSCell* callee, CodeBlock*, BytecodeIndex, JSValue thisValue);
     StackFrame(VM&, JSCell* owner, CodeBlock*, BytecodeIndex);
     StackFrame(Wasm::IndexOrName);
     StackFrame(Wasm::IndexOrName, size_t functionIndex);
@@ -92,6 +94,8 @@ public:
     bool isMarked(VM&) const;
 
 private:
+    static const AtomString& getConstructorName(VM&, JSValue, CodeBlock*);
+
     FrameData m_frameData { JSFrameData { } };
 };
 
