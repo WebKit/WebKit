@@ -19112,7 +19112,6 @@
 				8DC2EF520486A6940098B216 /* Resources */,
 				372589431C1E496800C92CA9 /* Copy Shims */,
 				1A07D2F71919B36500ECDA16 /* Copy Message Generation Scripts */,
-				5C98344C2E26724100F8D1C7 /* Generate plain C++ Swift interop header */,
 				8DC2EF540486A6940098B216 /* Sources */,
 				8DC2EF560486A6940098B216 /* Frameworks */,
 				5DF408C5131DD46700130071 /* Check For Weak VTables and Externals */,
@@ -19802,30 +19801,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "Scripts/process-entitlements.sh\n";
-		};
-		5C98344C2E26724100F8D1C7 /* Generate plain C++ Swift interop header */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Scripts/generate-plain-cpp-swift-interop-header.sh",
-				"$(SRCROOT)/UIProcess/SwiftDemoLogo.swift",
-				"$(SRCROOT)/Modules/Internal/WebKitInternalCxx.h",
-				"$(SRCROOT)/Modules/Internal/module.modulemap",
-				"$(SRCROOT)/UIProcess/SwiftDemoLogoConfirmation.h",
-			);
-			name = "Generate plain C++ Swift interop header";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit-Swift-CPP.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${ENABLE_SWIFT_DEMO_URI_SCHEME}\" = \"ENABLE_SWIFT_DEMO_URI_SCHEME\" ]; then\n\"${SCRIPT_INPUT_FILE_0}\"\nfi";
 		};
 		5DF408C5131DD46700130071 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;
