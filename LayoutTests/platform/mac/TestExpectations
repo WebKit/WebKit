@@ -2153,7 +2153,6 @@ webkit.org/b/257698 [ Sonoma+ ] imported/w3c/web-platform-tests/css/css-text/wor
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-001.html [ ImageOnlyFailure ]
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-002.html [ ImageOnlyFailure ]
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-003.html [ ImageOnlyFailure ]
-webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-004.html [ ImageOnlyFailure ]
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-005.html [ ImageOnlyFailure ]
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-006.html [ ImageOnlyFailure ]
 webkit.org/b/245347 imported/w3c/web-platform-tests/css/css-color/deprecated-sameas-010.html [ ImageOnlyFailure ]
@@ -2398,8 +2397,6 @@ webkit.org/b/287990 [ Sonoma+ ] fast/canvas/webgl/drawingbuffer-test.html [ Pass
 webkit.org/b/288507 [ Debug x86_64 ] media/media-source/remoteplayback-availability-callback-does-not-leak.html [ Timeout ]
 
 webkit.org/b/288546 imported/w3c/web-platform-tests/fullscreen/api/element-ready-allowed.html [ Pass Failure ]
-
-webkit.org/b/260320 imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-in-shadow-root.html [ ImageOnlyFailure ]
 
 webkit.org/b/289275 [ Release ] media/media-garbage-collection.html [ Pass Failure Timeout ]
 
