@@ -270,6 +270,8 @@ public:
     void loadWebExtension(const Inspector::Protocol::Automation::WebExtensionResourceOptions, const String& resource, Inspector::CommandCallback<String>&&) override;
     void unloadWebExtension(const String& identifier, Inspector::CommandCallback<void>&&) override;
 #endif
+    void setStorageAccessPermissionState(const Inspector::Protocol::Automation::BrowsingContextHandle&, Inspector::Protocol::Automation::PermissionState, const String& topFrameOrigin, const String& subFrameOrigin, Inspector::CommandCallback<void>&&) override;
+    void grantStorageAccess(const Inspector::Protocol::Automation::BrowsingContextHandle&, const String& topFrameOrigin, const String& subFrameOrigin, Inspector::CommandCallback<void>&&) override;
 
 #if ENABLE(WEBDRIVER_BIDI)
     Inspector::CommandResult<void> processBidiMessage(const String&) override;

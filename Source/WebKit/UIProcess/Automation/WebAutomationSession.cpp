@@ -1816,6 +1816,26 @@ CommandResult<void> WebAutomationSession::generateTestReport(const String& brows
     return { };
 }
 
+void WebAutomationSession::setStorageAccessPermissionState(const String& browsingContextHandle, Inspector::Protocol::Automation::PermissionState state, const String& topFrameOrigin, const String& subFrameOrigin, CommandCallback<void>&& callback)
+{
+    auto page = webPageProxyForHandle(browsingContextHandle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+
+    page->protectedWebsiteDataStore()->setStorageAccessPermissionForTesting(state == Inspector::Protocol::Automation::PermissionState::Granted, page->identifier(), topFrameOrigin, subFrameOrigin, [protectedThis = Ref { *this }, callback = WTFMove(callback)]() {
+        callback({ });
+    });
+}
+
+void WebAutomationSession::grantStorageAccess(const String& browsingContextHandle, const String& topFrameOrigin, const String& subFrameOrigin, CommandCallback<void>&& callback)
+{
+    auto page = webPageProxyForHandle(browsingContextHandle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+
+    page->protectedWebsiteDataStore()->grantStorageAccessForTesting(topFrameOrigin.isolatedCopy(), { subFrameOrigin.isolatedCopy() }, [protectedThis = Ref { *this }, callback = WTFMove(callback)]() {
+        callback({ });
+    });
+}
+
 #if ENABLE(WEBDRIVER_BIDI)
 CommandResult<void> WebAutomationSession::processBidiMessage(const String& message)
 {
