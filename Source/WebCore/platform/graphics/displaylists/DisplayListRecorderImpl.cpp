@@ -177,6 +177,12 @@ void RecorderImpl::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& 
     m_items.append(ClipToImageBuffer(imageBuffer, destinationRect));
 }
 
+void RecorderImpl::clipToNativeImage(const NativeImage& image, const FloatRect& destinationRect)
+{
+    updateStateForClipToNativeImage(destinationRect);
+    m_items.append(ClipToNativeImage(image, destinationRect));
+}
+
 void RecorderImpl::clipOut(const Path& path)
 {
     updateStateForClipOut(path);

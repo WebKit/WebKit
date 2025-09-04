@@ -168,7 +168,7 @@ void clipOut(GraphicsContextCairo&, const FloatRect&);
 void clipOut(GraphicsContextCairo&, const Path&);
 void clipPath(GraphicsContextCairo&, const Path&, WindRule);
 
-void clipToImageBuffer(GraphicsContextCairo&, cairo_surface_t*, const FloatRect&);
+void clipToNativeImage(GraphicsContextCairo&, cairo_surface_t*, const FloatRect&);
 
 } // namespace Cairo
 } // namespace WebCore

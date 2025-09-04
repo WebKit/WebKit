@@ -98,6 +98,7 @@ public:
     void clipOut(const Path&) final;
 
     void clipToImageBuffer(ImageBuffer&, const FloatRect&) final;
+    void clipToNativeImage(const NativeImage&, const FloatRect&) final;
 
     IntRect clipBounds() const final;
 

@@ -191,7 +191,7 @@ static void fillShadowBuffer(GraphicsContextCairo& platformContext, ImageBuffer&
     platformContext.save();
 
     if (auto nativeImage = platformContext.nativeImageForDrawing(layerImage))
-        clipToImageBuffer(platformContext, nativeImage->platformImage().get(), FloatRect(layerOrigin, expandedIntSize(layerSize)));
+        clipToNativeImage(platformContext, nativeImage->platformImage().get(), FloatRect(layerOrigin, expandedIntSize(layerSize)));
 
     FillSource fillSource;
     fillSource.globalAlpha = shadowState.globalAlpha;
@@ -1327,7 +1327,7 @@ void clipPath(GraphicsContextCairo& platformContext, const Path& path, WindRule 
     cairo_set_fill_rule(cr, savedFillRule);
 }
 
-void clipToImageBuffer(GraphicsContextCairo& platformContext, cairo_surface_t* image, const FloatRect& destRect)
+void clipToNativeImage(GraphicsContextCairo& platformContext, cairo_surface_t* image, const FloatRect& destRect)
 {
     platformContext.pushImageMask(image, destRect);
 }

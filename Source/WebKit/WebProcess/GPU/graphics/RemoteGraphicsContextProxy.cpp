@@ -207,9 +207,20 @@ void RemoteGraphicsContextProxy::clipOutRoundedRect(const FloatRoundedRect& rect
 
 void RemoteGraphicsContextProxy::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destinationRect)
 {
+    if (!recordResourceUse(imageBuffer)) {
+        GraphicsContext::clipToImageBuffer(imageBuffer, destinationRect);
+        return;
+    }
     updateStateForClipToImageBuffer(destinationRect);
-    recordResourceUse(imageBuffer);
     send(Messages::RemoteGraphicsContext::ClipToImageBuffer(imageBuffer.renderingResourceIdentifier(), destinationRect));
+}
+
+void RemoteGraphicsContextProxy::clipToNativeImage(const NativeImage& image, const FloatRect& destinationRect)
+{
+    if (!recordResourceUse(image))
+        return;
+    updateStateForClipToNativeImage(destinationRect);
+    send(Messages::RemoteGraphicsContext::ClipToNativeImage(image.renderingResourceIdentifier(), destinationRect));
 }
 
 void RemoteGraphicsContextProxy::clipOut(const Path& path)
@@ -623,7 +634,7 @@ void RemoteGraphicsContextProxy::setURLForRect(const URL& link, const FloatRect&
     send(Messages::RemoteGraphicsContext::SetURLForRect(link, destRect));
 }
 
-bool RemoteGraphicsContextProxy::recordResourceUse(NativeImage& image)
+bool RemoteGraphicsContextProxy::recordResourceUse(const NativeImage& image)
 {
     RefPtr renderingBackend = m_renderingBackend.get();
     if (!renderingBackend) [[unlikely]] {
@@ -650,7 +661,7 @@ bool RemoteGraphicsContextProxy::recordResourceUse(NativeImage& image)
 #endif
     }
 
-    renderingBackend->remoteResourceCacheProxy().recordNativeImageUse(image, colorSpace);
+    renderingBackend->remoteResourceCacheProxy().recordNativeImageUse(const_cast<NativeImage&>(image), colorSpace);
     return true;
 }
 
