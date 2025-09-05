@@ -95,6 +95,7 @@ public:
     bool isRemote() const;
     String localizedStringsURL() const;
     String backendCommandsURL() const;
+    String backendCommandsScript() const;
     unsigned inspectionLevel() const;
 
     String platform() const;

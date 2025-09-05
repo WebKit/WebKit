@@ -66,7 +66,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Called by RemoteWebInspectorUI messages
-    void initialize(DebuggableInfoData&&, const String& backendCommandsURL);
+    void initialize(DebuggableInfoData&&, String backendCommandsURL, String backendCommandsScript);
     void updateFindString(const String&);
     void sendMessageToFrontend(const String&);
     void showConsole();
@@ -90,6 +90,7 @@ public:
     bool isRemote() const final { return true; }
     String localizedStringsURL() const override;
     String backendCommandsURL() const final { return m_backendCommandsURL; }
+    String backendCommandsScript() const final { return m_backendCommandsScript; }
     Inspector::DebuggableType debuggableType() const override;
     String targetPlatformName() const override;
     String targetBuildVersion() const override;
@@ -155,6 +156,7 @@ private:
 
     DebuggableInfoData m_debuggableInfo;
     String m_backendCommandsURL;
+    String m_backendCommandsScript;
 
 #if ENABLE(INSPECTOR_TELEMETRY)
     bool m_diagnosticLoggingAvailable { false };

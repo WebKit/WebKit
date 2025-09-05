@@ -94,13 +94,12 @@ class IncrementalFileWriter:
         self._output = self._output.rstrip() + "\n"
 
         try:
-            if self.force_output:
-                raise
-
             read_file = open(self._filepath, "r")
             old_text = read_file.read()
             read_file.close()
             text_changed = old_text != self._output
+            if self.force_output:
+                raise
         except:
             # Ignore, just overwrite by default
             pass
@@ -113,15 +112,10 @@ class IncrementalFileWriter:
             out_file.write(self._output)
             out_file.close()
 
+        return text_changed
 
-def generate_from_specification(primary_specification_filepath=None,
-                                supplemental_specification_filepaths=[],
-                                concatenate_output=False,
-                                output_dirpath=None,
-                                force_output=False,
-                                framework_name="",
-                                generate_frontend=True,
-                                generate_backend=True):
+
+def generate_from_specification(primary_specification_filepath=None, supplemental_specification_filepaths=[], concatenate_output=False, output_dirpath=None, backend_commands_output_dirpath=None, backend_commands_platform=None, force_output=False, framework_name="", generate_frontend=True, generate_backend=True):
 
     def load_specification(protocol, filepath, isSupplemental=False):
         try:
@@ -261,15 +255,38 @@ def generate_from_specification(primary_specification_filepath=None,
 
     if concatenate_output:
         filename = os.path.join(os.path.basename(primary_specification_filepath) + '-result')
-        output_file = IncrementalFileWriter(os.path.join(output_dirpath, filename), force_output)
+        concatenated_output_filepath = os.path.join(output_dirpath, filename)
+        output_file = IncrementalFileWriter(concatenated_output_filepath, force_output)
         output_file.write('\n'.join(single_output_file_contents))
         output_file.close()
+
+    if backend_commands_output_dirpath and backend_commands_platform:
+        if concatenate_output:
+            backend_commands_path = concatenated_output_filepath
+        else:
+            backend_commands_path = os.path.join(output_dirpath, JSBackendCommandsGenerator.OutputFileName)
+        backend_commands_script = open(backend_commands_path, "r").read()
+
+        contents_generator = ProtocolContentsGenerator(backend_commands_script, backend_commands_platform, *generator_arguments)
+        contents_filepath = os.path.join(backend_commands_output_dirpath, contents_generator.output_filename())
+        contents_file = IncrementalFileWriter(contents_filepath, force_output)
+        contents_file.write(contents_generator.generate_output())
+        contents_changed = contents_file.close()
+
+        if contents_changed:
+            version_generator = ProtocolVersionGenerator(*generator_arguments)
+            version_filepath = os.path.join(backend_commands_output_dirpath, version_generator.output_filename())
+            version_file = IncrementalFileWriter(version_filepath, force_output)
+            version_file.write(version_generator.generate_output())
+            version_file.close()
 
 
 if __name__ == '__main__':
     allowed_framework_names = ['JavaScriptCore', 'WebInspector', 'WebInspectorUI', 'WebKit', 'WebDriverBidi', 'Test']
     cli_parser = optparse.OptionParser(usage="usage: %prog [options] PrimaryProtocol.json [SupplementalProtocol.json ...]")
     cli_parser.add_option("-o", "--outputDir", help="Directory where generated files should be written.")
+    cli_parser.add_option("--backendCommandsOutputDir", help="Directory where generated backend combined commands files should be written.")
+    cli_parser.add_option("--backendCommandsPlatform", help="If a backendCommandsOutputDir is given, instruct the platform's name for the generated backend commands code to refer to.")
     cli_parser.add_option("--framework", type="choice", choices=allowed_framework_names, help="The framework that the primary specification belongs to.")
     cli_parser.add_option("--force", action="store_true", help="Force output of generated scripts, even if nothing changed.")
     cli_parser.add_option("-v", "--debug", action="store_true", help="Log extra output for debugging the generator itself.")
@@ -296,14 +313,16 @@ if __name__ == '__main__':
         generate_frontend = True
 
     options = {
-        'primary_specification_filepath': arg_values[0],
-        'supplemental_specification_filepaths': arg_values[1:],
-        'output_dirpath': arg_options.outputDir,
-        'concatenate_output': arg_options.test,
-        'framework_name': arg_options.framework,
-        'force_output': arg_options.force,
-        'generate_backend': generate_backend,
-        'generate_frontend': generate_frontend,
+        "primary_specification_filepath": arg_values[0],
+        "supplemental_specification_filepaths": arg_values[1:],
+        "output_dirpath": arg_options.outputDir,
+        "backend_commands_output_dirpath": arg_options.backendCommandsOutputDir,
+        "backend_commands_platform": arg_options.backendCommandsPlatform,
+        "concatenate_output": arg_options.test,
+        "framework_name": arg_options.framework,
+        "force_output": arg_options.force,
+        "generate_backend": generate_backend,
+        "generate_frontend": generate_frontend,
     }
 
     try:

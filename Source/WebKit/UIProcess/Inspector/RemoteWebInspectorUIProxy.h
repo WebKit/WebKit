@@ -96,7 +96,7 @@ public:
 
     void invalidate();
 
-    void initialize(Ref<API::DebuggableInfo>&&, const String& backendCommandsURL);
+    void initialize(Ref<API::DebuggableInfo>&&, String backendCommandsURL, String backendCommandsScript);
     void closeFromBackend();
     void show();
     void showConsole();
@@ -186,6 +186,7 @@ private:
     
     Ref<API::DebuggableInfo> m_debuggableInfo;
     String m_backendCommandsURL;
+    String m_backendCommandsScript;
 
 #if PLATFORM(MAC)
     RetainPtr<WKInspectorViewController> m_inspectorView;

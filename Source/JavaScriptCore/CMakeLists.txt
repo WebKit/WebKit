@@ -1564,6 +1564,12 @@ add_custom_command(
     VERBATIM)
 
 # Inspector Backend Dispatchers, Frontend Dispatchers, Type Builders
+if ("${PORT}" STREQUAL "Mac")
+    (set PLATFORM_NAME "Mac")
+else ()
+    (set PLATFORM_NAME "iOS")
+endif ()
+
 file(MAKE_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector)
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendDispatchers.cpp
@@ -1572,10 +1578,12 @@ add_custom_command(
            ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorFrontendDispatchers.h
            ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorProtocolObjects.cpp
            ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorProtocolObjects.h
-           ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendCommands.js
+           ${JAVASCRIPTCORE_DIR}/inspector/protocol/RemoteInspectorCocoaProtocolContentsMac.mm
+           ${JAVASCRIPTCORE_DIR}/inspector/protocol/RemoteInspectorCocoaProtocolContentsIOS.mm
+           ${JAVASCRIPTCORE_DIR}/inspector/protocol/RemoteInspectorCocoaProtocolVersion.mm
     MAIN_DEPENDENCY ${JavaScriptCore_DERIVED_SOURCES_DIR}/CombinedDomains.json
     DEPENDS ${JavaScriptCore_INSPECTOR_PROTOCOL_SCRIPTS}
-    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector" --framework JavaScriptCore ${JavaScriptCore_DERIVED_SOURCES_DIR}/CombinedDomains.json
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector" --backendCommandsOutputDir "${JAVASCRIPTCORE_DIR}/inspector/protocol" --backendCommandsPlatform ${PLATFORM_NAME} --framework JavaScriptCore ${JavaScriptCore_DERIVED_SOURCES_DIR}/CombinedDomains.json
     VERBATIM)
 
 set(JavaScriptCore_INTERFACE_LIBRARIES JavaScriptCore)

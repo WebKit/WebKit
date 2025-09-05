@@ -425,6 +425,10 @@ void RemoteInspector::xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*
         receivedAutomationSessionRequestMessage(userInfo);
     else if ([messageName isEqualToString:WIRPingSuccessMessage])
         receivedPingSuccessMessage();
+#if ENABLE(REMOTE_INSPECTOR_PROTOCOL_SHARING)
+    else if ([messageName isEqualToString:WIRProtocolSharingRequestMessage])
+        receivedProtocolSharingRequestMessage(userInfo);
+#endif
     else
         NSLog(@"Unrecognized RemoteInspector XPC Message: %@", messageName);
 }
@@ -872,6 +876,27 @@ void RemoteInspector::receivedPingSuccessMessage()
 {
     m_shouldReconnectToRelayOnFailure = false;
 }
+
+#if ENABLE(REMOTE_INSPECTOR_PROTOCOL_SHARING)
+void RemoteInspector::receivedProtocolSharingRequestMessage(NSDictionary *userInfo)
+{
+    NSString *connectionIdentifier = userInfo[WIRConnectionIdentifierKey];
+    BAIL_IF_UNEXPECTED_TYPE(connectionIdentifier, NSString.class);
+    NSString *debuggerUUID = userInfo[WIRProtocolSharingDebuggerUUIDKey];
+    BAIL_IF_UNEXPECTED_TYPE(debuggerUUID, NSString.class);
+
+    m_relayConnection->sendMessage(WIRProtocolSharingResponseMessage, @{
+        WIRConnectionIdentifierKey : connectionIdentifier,
+        WIRProtocolSharingDebuggerUUIDKey : debuggerUUID,
+        WIRProtocolSharingResponseVersionKey : @(RemoteInspector::protocolVersion()),
+#if PLATFORM(MAC)
+        WIRProtocolSharingResponseContentsKey : @(RemoteInspector::protocolContentsMac()),
+#else
+        WIRProtocolSharingResponseContentsKey : @(RemoteInspector::protocolContentsIOS()),
+#endif
+    });
+}
+#endif // ENABLE(REMOTE_INSPECTOR_PROTOCOL_SHARING)
 
 void RemoteInspector::setNeedMachSandboxExtension(bool needExtension)
 {

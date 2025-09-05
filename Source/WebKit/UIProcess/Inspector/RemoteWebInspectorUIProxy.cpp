@@ -85,15 +85,16 @@ void RemoteWebInspectorUIProxy::setDiagnosticLoggingAvailable(bool available)
 #endif
 }
 
-void RemoteWebInspectorUIProxy::initialize(Ref<API::DebuggableInfo>&& debuggableInfo, const String& backendCommandsURL)
+void RemoteWebInspectorUIProxy::initialize(Ref<API::DebuggableInfo>&& debuggableInfo, String backendCommandsURL, String backendCommandsScript)
 {
     m_debuggableInfo = WTFMove(debuggableInfo);
     m_backendCommandsURL = backendCommandsURL;
+    m_backendCommandsScript = backendCommandsScript;
 
     createFrontendPageAndWindow();
 
     RefPtr inspectorPage = m_inspectorPage.get();
-    inspectorPage->protectedLegacyMainFrameProcess()->send(Messages::RemoteWebInspectorUI::Initialize(m_debuggableInfo->debuggableInfoData(), backendCommandsURL), m_inspectorPage->webPageIDInMainFrameProcess());
+    inspectorPage->protectedLegacyMainFrameProcess()->send(Messages::RemoteWebInspectorUI::Initialize(m_debuggableInfo->debuggableInfoData(), backendCommandsURL, backendCommandsScript), m_inspectorPage->webPageIDInMainFrameProcess());
     inspectorPage->loadRequest(URL { WebInspectorUIProxy::inspectorPageURL() });
 }
 
@@ -150,10 +151,10 @@ void RemoteWebInspectorUIProxy::frontendDidClose()
 
 void RemoteWebInspectorUIProxy::reopen()
 {
-    ASSERT(!m_backendCommandsURL.isEmpty());
+    ASSERT(!m_backendCommandsURL.isEmpty() || !m_backendCommandsScript.isEmpty());
 
     closeFrontendPageAndWindow();
-    initialize(m_debuggableInfo.copyRef(), m_backendCommandsURL);
+    initialize(m_debuggableInfo.copyRef(), m_backendCommandsURL, m_backendCommandsScript);
 }
 
 void RemoteWebInspectorUIProxy::resetState()

@@ -126,7 +126,12 @@ private:
 
 - (void)loadForDebuggable:(_WKInspectorDebuggableInfo *)debuggableInfo backendCommandsURL:(NSURL *)backendCommandsURL
 {
-    m_remoteInspectorProxy->initialize(downcast<API::DebuggableInfo>([debuggableInfo _apiObject]), backendCommandsURL.absoluteString);
+    m_remoteInspectorProxy->initialize(downcast<API::DebuggableInfo>([debuggableInfo _apiObject]), backendCommandsURL.absoluteString, ""_s);
+}
+
+- (void)loadForDebuggable:(_WKInspectorDebuggableInfo *)debuggableInfo backendCommandsScript:(NSString *)backendCommandsScript
+{
+    m_remoteInspectorProxy->initialize(downcast<API::DebuggableInfo>([debuggableInfo _apiObject]), ""_s, backendCommandsScript);
 }
 
 - (void)close

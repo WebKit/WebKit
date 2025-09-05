@@ -103,6 +103,7 @@ public:
     bool isRemote() const final { return false; }
     WEBCORE_EXPORT unsigned inspectionLevel() const final;
     String backendCommandsURL() const final { return String(); };
+    String backendCommandsScript() const final { return String(); };
 
     InspectorFrontendAPIDispatcher& frontendAPIDispatcher() final { return m_frontendAPIDispatcher; }
     WEBCORE_EXPORT Page* frontendPage() final;

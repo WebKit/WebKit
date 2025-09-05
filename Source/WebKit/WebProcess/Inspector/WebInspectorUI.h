@@ -117,6 +117,7 @@ public:
     bool isRemote() const final { return false; }
     String localizedStringsURL() const override;
     String backendCommandsURL() const final { return String(); }
+    String backendCommandsScript() const final { return String(); }
     Inspector::DebuggableType debuggableType() const final { return Inspector::DebuggableType::WebPage; }
     String targetPlatformName() const override;
     String targetBuildVersion() const override;

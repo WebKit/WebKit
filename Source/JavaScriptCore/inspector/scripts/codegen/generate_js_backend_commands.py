@@ -25,10 +25,12 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 
+import datetime
 import json
 import logging
 import string
 from string import Template
+import textwrap
 
 try:
     from .generator import Generator, ucfirst
@@ -43,11 +45,13 @@ log = logging.getLogger('global')
 
 
 class JSBackendCommandsGenerator(Generator):
+    OutputFileName = "InspectorBackendCommands.js"
+
     def __init__(self, *args, **kwargs):
         Generator.__init__(self, *args, **kwargs)
 
     def output_filename(self):
-        return "InspectorBackendCommands.js"
+        return JSBackendCommandsGenerator.OutputFileName
 
     def should_generate_domain(self, domain):
         type_declarations = self.type_declarations_for_domain(domain)
@@ -168,3 +172,72 @@ class JSBackendCommandsGenerator(Generator):
         lines.append('InspectorBackend.activateDomain("%(domainName)s", %(debuggableTypes)s);' % activate_args)
 
         return self.wrap_with_guard_for_condition(domain.condition, "\n".join(lines))
+
+
+class ProtocolContentsGenerator(Generator):
+    def __init__(self, js_backend_commands_script, platform_name, *args, **kwargs):
+        self._script = js_backend_commands_script
+        self._platform_name = ucfirst(platform_name)
+        Generator.__init__(self, *args, **kwargs)
+
+    def output_filename(self):
+        return "RemoteInspectorCocoaProtocolContents%s.mm" % self._platform_name
+
+    def generate_output(self):
+        output = '''\
+            %(license)s
+
+            #if ENABLE(REMOTE_INSPECTOR_PROTOCOL_SHARING)
+
+            #include "RemoteInspector.h"
+
+            namespace Inspector {
+
+            const char* RemoteInspector::protocolContents%(platform)s()
+            {
+                return R""""(%(script)s)"""";
+            }
+
+            } // namespace Inspector
+
+            #endif // ENABLE(REMOTE_INSPECTOR_PROTOCOL_SHARING)
+        '''
+        output_args = {
+            'license': self.generate_license(),
+            'platform': self._platform_name,
+            'script': self._script.strip(),
+        }
+        return textwrap.dedent(output) % output_args
+
+
+class ProtocolVersionGenerator(Generator):
+    def __init__(self, *args, **kwargs):
+        Generator.__init__(self, *args, **kwargs)
+
+    def output_filename(self):
+        return "RemoteInspectorCocoaProtocolVersion.mm"
+
+    def generate_output(self):
+        output = '''\
+            %(license)s
+
+            #if ENABLE(REMOTE_INSPECTOR_PROTOCOL_SHARING)
+
+            #include "RemoteInspector.h"
+
+            namespace Inspector {
+
+            const char* RemoteInspector::protocolVersion()
+            {
+                return "%(version)s";
+            }
+
+            } // namespace Inspector
+
+            #endif // ENABLE(REMOTE_INSPECTOR_PROTOCOL_SHARING)
+        '''
+        output_args = {
+            'license': self.generate_license(),
+            'version': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        }
+        return textwrap.dedent(output) % output_args

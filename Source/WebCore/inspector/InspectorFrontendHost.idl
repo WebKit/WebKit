@@ -65,6 +65,7 @@
     readonly attribute boolean isRemote;
     readonly attribute DOMString localizedStringsURL;
     readonly attribute DOMString backendCommandsURL;
+    readonly attribute DOMString backendCommandsScript;
     readonly attribute unsigned long inspectionLevel;
     readonly attribute DebuggableInfo debuggableInfo;
 

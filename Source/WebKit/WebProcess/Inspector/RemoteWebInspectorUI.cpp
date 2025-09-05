@@ -63,7 +63,7 @@ RemoteWebInspectorUI::RemoteWebInspectorUI(WebPage& page)
 
 RemoteWebInspectorUI::~RemoteWebInspectorUI() = default;
 
-void RemoteWebInspectorUI::initialize(DebuggableInfoData&& debuggableInfo, const String& backendCommandsURL)
+void RemoteWebInspectorUI::initialize(DebuggableInfoData&& debuggableInfo, String backendCommandsURL, String backendCommandsScript)
 {
 #if ENABLE(INSPECTOR_EXTENSIONS)
     m_extensionController = WebInspectorUIExtensionController::create(*this, m_page->identifier());
@@ -71,6 +71,7 @@ void RemoteWebInspectorUI::initialize(DebuggableInfoData&& debuggableInfo, const
 
     m_debuggableInfo = WTFMove(debuggableInfo);
     m_backendCommandsURL = backendCommandsURL;
+    m_backendCommandsScript = backendCommandsScript;
 
     protectedWebPage()->protectedCorePage()->inspectorController().setInspectorFrontendClient(this);
 

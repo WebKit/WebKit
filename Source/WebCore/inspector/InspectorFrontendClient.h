@@ -100,6 +100,7 @@ public:
     virtual bool isRemote() const = 0;
     virtual String localizedStringsURL() const = 0;
     virtual String backendCommandsURL() const = 0;
+    virtual String backendCommandsScript() const = 0;
     virtual Inspector::DebuggableType debuggableType() const = 0;
     virtual String targetPlatformName() const = 0;
     virtual String targetBuildVersion() const = 0;
