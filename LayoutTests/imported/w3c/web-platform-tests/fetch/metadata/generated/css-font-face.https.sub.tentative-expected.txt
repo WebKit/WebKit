@@ -1,10 +1,3 @@
-CONSOLE MESSAGE: Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY
-CONSOLE MESSAGE: Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Flocalhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fapi%2Fresources%2Fredirect.py%3Flocation%3Dhttps%253A%252F%252Flocalhost%253A9443%252Ffetch%252Fmetadata%252Fresources%252Frecord-headers.py%253Fkey%253DGENERATED_KEY&count=1
-CONSOLE MESSAGE: Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&count=1
-CONSOLE MESSAGE: Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/record-headers.py?key=GENERATED_KEY&location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY&count=1
-CONSOLE MESSAGE: Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Flocalhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY
-CONSOLE MESSAGE: Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2Fwww.localhost%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY
-CONSOLE MESSAGE: Blocked access to external URL https://www.localhost:9443/fetch/api/resources/redirect.py?location=https%3A%2F%2F127.0.0.1%3A9443%2Ffetch%2Fmetadata%2Fresources%2Frecord-headers.py%3Fkey%3DGENERATED_KEY
 
 PASS sec-fetch-site - Same origin
 FAIL sec-fetch-site - Cross-site promise_test: Unhandled rejection with value: object "Error: Failed to query for recorded headers."
