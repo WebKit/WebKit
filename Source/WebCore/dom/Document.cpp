@@ -8566,12 +8566,8 @@ void Document::addConsoleMessage(MessageSource source, MessageLevel level, const
         postTask(AddConsoleMessageTask(source, level, message));
         return;
     }
-
     if (RefPtr page = this->page())
         page->console().addMessage(source, level, message, requestIdentifier, this);
-
-    if (RefPtr consoleMessageListener = m_consoleMessageListener)
-        consoleMessageListener->scheduleCallback(*this, message);
 }
 
 void Document::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&& callStack, JSC::JSGlobalObject* state, unsigned long requestIdentifier)
@@ -10615,11 +10611,6 @@ void Document::downgradeReferrerToRegistrableDomain()
         m_referrerOverride = makeString(referrerURL.protocol(), "://"_s, domainString, ':', *port, '/');
     else
         m_referrerOverride = makeString(referrerURL.protocol(), "://"_s, domainString, '/');
-}
-
-void Document::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
-{
-    m_consoleMessageListener = listener;
 }
 
 AnimationTimelinesController& Document::ensureTimelinesController()

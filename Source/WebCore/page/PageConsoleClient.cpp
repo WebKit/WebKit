@@ -62,6 +62,7 @@
 #include "Page.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
+#include "StringCallback.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptArguments.h>
@@ -136,6 +137,11 @@ void PageConsoleClient::logMessageToSystemConsole(const Inspector::ConsoleMessag
     ConsoleClient::printConsoleMessage(consoleMessage.source(), consoleMessage.type(), consoleMessage.level(), consoleMessage.toString(), consoleMessage.url(), consoleMessage.line(), consoleMessage.column());
 }
 
+void PageConsoleClient::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
+{
+    m_consoleMessageListener = listener;
+}
+
 void PageConsoleClient::addMessage(std::unique_ptr<Inspector::ConsoleMessage>&& consoleMessage)
 {
     Ref page = m_page.get();
@@ -154,6 +160,9 @@ void PageConsoleClient::addMessage(std::unique_ptr<Inspector::ConsoleMessage>&& 
             message = consoleMessage->message();
 
         page->chrome().client().addMessageToConsole(consoleMessage->source(), consoleMessage->level(), message, consoleMessage->line(), consoleMessage->column(), consoleMessage->url());
+
+        if (RefPtr consoleMessageListener = m_consoleMessageListener)
+            consoleMessageListener->invoke(message);
 
         if (page->settings().logsPageMessagesToSystemConsoleEnabled() || shouldPrintExceptions()) [[unlikely]]
             logMessageToSystemConsole(*consoleMessage);
@@ -223,6 +232,9 @@ void PageConsoleClient::messageWithTypeAndLevel(MessageType type, MessageLevel l
 
     if (!messageArgumentsVector.isEmpty()) {
         page->chrome().client().addMessageToConsole(MessageSource::ConsoleAPI, level, messageText, lineNumber, columnNumber, url);
+
+        if (RefPtr consoleMessageListener = m_consoleMessageListener)
+            consoleMessageListener->invoke(messageText);
     }
 
     if (page->settings().logsPageMessagesToSystemConsoleEnabled() || PageConsoleClient::shouldPrintExceptions())
