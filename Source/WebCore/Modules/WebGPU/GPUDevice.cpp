@@ -29,7 +29,6 @@
 #include "ContextDestructionObserverInlines.h"
 #include "DOMPromiseProxy.h"
 #include "EventNames.h"
-#include "GPUAdapterInfo.h"
 #include "GPUBindGroup.h"
 #include "GPUBindGroupDescriptor.h"
 #include "GPUBindGroupLayout.h"
@@ -81,15 +80,12 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(GPUDevice);
 
-GPUDevice::GPUDevice(ScriptExecutionContext* scriptExecutionContext, Ref<WebGPU::Device>&& backing, String&& queueLabel, GPUAdapterInfo& adapterInfo)
+GPUDevice::GPUDevice(ScriptExecutionContext* scriptExecutionContext, Ref<WebGPU::Device>&& backing, String&& queueLabel)
     : ActiveDOMObject { scriptExecutionContext }
     , m_lostPromise(makeUniqueRef<LostPromise>())
     , m_backing(WTFMove(backing))
     , m_queue(GPUQueue::create(Ref { m_backing->queue() }, this->backing()))
     , m_autoPipelineLayout(createAutoPipelineLayout())
-    , m_features(GPUSupportedFeatures::create(m_backing->features()))
-    , m_limits(GPUSupportedLimits::create(m_backing->limits()))
-    , m_adapterInfo(adapterInfo)
 {
     m_queue->setLabel(WTFMove(queueLabel));
 }
@@ -108,12 +104,12 @@ void GPUDevice::setLabel(String&& label)
 
 Ref<GPUSupportedFeatures> GPUDevice::features() const
 {
-    return m_features;
+    return GPUSupportedFeatures::create(m_backing->features());
 }
 
 Ref<GPUSupportedLimits> GPUDevice::limits() const
 {
-    return m_limits;
+    return GPUSupportedLimits::create(m_backing->limits());
 }
 
 Ref<GPUQueue> GPUDevice::queue() const
@@ -696,10 +692,5 @@ WeakPtr<GPUExternalTexture> GPUDevice::takeExternalTextureForVideoElement(const 
     return m_videoElementToExternalTextureMap.take(element);
 }
 #endif
-
-Ref<GPUAdapterInfo> GPUDevice::adapterInfo() const
-{
-    return m_adapterInfo;
-}
 
 }

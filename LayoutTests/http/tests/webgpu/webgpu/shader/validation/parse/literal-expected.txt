@@ -136,7 +136,27 @@ PASS :f32:val="2.4e%2B4f"
 PASS :f32:val="2.4e-2f"
 PASS :f32:val="2.e%2B4f"
 PASS :f32:val="1e-4f"
-PASS :f32:val="0x1P%2B4f"
+FAIL :f32:val="0x1P%2B4f" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    6:25: error: Expected one of '(', a literal, or an identifier
+
+    ---- shader ----
+
+
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f32 = 0x1P+4f;
+          }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    6:24: Expected one of '(', a literal, or an identifier
+    TestFailedButDeviceReusable@
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :f32:val="0.0"
 PASS :f32:val=".0"
 PASS :f32:val="12."
@@ -147,12 +167,132 @@ PASS :f32:val="1.2E2"
 PASS :f32:val="1.2e%2B2"
 PASS :f32:val="2.4e-2"
 PASS :f32:val=".1e-2"
-PASS :f32:val="0x.3"
-PASS :f32:val="0X.3"
-PASS :f32:val="0xa.fp%2B2"
-PASS :f32:val="0xa.fP%2B2"
-PASS :f32:val="0xE.fp%2B2"
-PASS :f32:val="0X1.fp-4"
+FAIL :f32:val="0x.3" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    6:25: error: Expected one of '(', a literal, or an identifier
+
+    ---- shader ----
+
+
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f32 = 0x.3;
+          }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    6:24: Expected one of '(', a literal, or an identifier
+    TestFailedButDeviceReusable@
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :f32:val="0X.3" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    6:25: error: Expected one of '(', a literal, or an identifier
+
+    ---- shader ----
+
+
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f32 = 0X.3;
+          }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    6:24: Expected one of '(', a literal, or an identifier
+    TestFailedButDeviceReusable@
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :f32:val="0xa.fp%2B2" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    6:25: error: Expected one of '(', a literal, or an identifier
+
+    ---- shader ----
+
+
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f32 = 0xa.fp+2;
+          }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    6:24: Expected one of '(', a literal, or an identifier
+    TestFailedButDeviceReusable@
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :f32:val="0xa.fP%2B2" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    6:25: error: Expected one of '(', a literal, or an identifier
+
+    ---- shader ----
+
+
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f32 = 0xa.fP+2;
+          }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    6:24: Expected one of '(', a literal, or an identifier
+    TestFailedButDeviceReusable@
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :f32:val="0xE.fp%2B2" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    6:25: error: Expected one of '(', a literal, or an identifier
+
+    ---- shader ----
+
+
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f32 = 0xE.fp+2;
+          }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    6:24: Expected one of '(', a literal, or an identifier
+    TestFailedButDeviceReusable@
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :f32:val="0X1.fp-4" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    6:25: error: Expected one of '(', a literal, or an identifier
+
+    ---- shader ----
+
+
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f32 = 0X1.fp-4;
+          }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    6:24: Expected one of '(', a literal, or an identifier
+    TestFailedButDeviceReusable@
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :f32:val="1"
 PASS :f32:val="-1"
 PASS :f32:val="0h"
@@ -184,10 +324,90 @@ PASS :f16:val=".1h"
 PASS :f16:val="1.1e2h"
 PASS :f16:val="1.1E%2B2h"
 PASS :f16:val="2.4e-2h"
-PASS :f16:val="0xep2h"
-PASS :f16:val="0xEp-2h"
-PASS :f16:val="0x3p%2B2h"
-PASS :f16:val="0x3.2p%2B2h"
+FAIL :f16:val="0xep2h" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    6:25: error: Expected one of '(', a literal, or an identifier
+
+    ---- shader ----
+
+          enable f16;
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f16 = 0xep2h;
+          }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    6:24: Expected one of '(', a literal, or an identifier
+    TestFailedButDeviceReusable@
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :f16:val="0xEp-2h" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    6:25: error: Expected one of '(', a literal, or an identifier
+
+    ---- shader ----
+
+          enable f16;
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f16 = 0xEp-2h;
+          }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    6:24: Expected one of '(', a literal, or an identifier
+    TestFailedButDeviceReusable@
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :f16:val="0x3p%2B2h" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    6:25: error: Expected one of '(', a literal, or an identifier
+
+    ---- shader ----
+
+          enable f16;
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f16 = 0x3p+2h;
+          }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    6:24: Expected one of '(', a literal, or an identifier
+    TestFailedButDeviceReusable@
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :f16:val="0x3.2p%2B2h" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    6:25: error: Expected one of '(', a literal, or an identifier
+
+    ---- shader ----
+
+          enable f16;
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f16 = 0x3.2p+2h;
+          }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    6:24: Expected one of '(', a literal, or an identifier
+    TestFailedButDeviceReusable@
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :f16:val="0.0"
 PASS :f16:val=".0"
 PASS :f16:val="12."
@@ -198,12 +418,132 @@ PASS :f16:val="1.2E2"
 PASS :f16:val="1.2e%2B2"
 PASS :f16:val="2.4e-2"
 PASS :f16:val=".1e-2"
-PASS :f16:val="0x.3"
-PASS :f16:val="0X.3"
-PASS :f16:val="0xa.fp%2B2"
-PASS :f16:val="0xa.fP%2B2"
-PASS :f16:val="0xE.fp%2B2"
-PASS :f16:val="0X1.fp-4"
+FAIL :f16:val="0x.3" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    6:25: error: Expected one of '(', a literal, or an identifier
+
+    ---- shader ----
+
+          enable f16;
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f16 = 0x.3;
+          }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    6:24: Expected one of '(', a literal, or an identifier
+    TestFailedButDeviceReusable@
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :f16:val="0X.3" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    6:25: error: Expected one of '(', a literal, or an identifier
+
+    ---- shader ----
+
+          enable f16;
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f16 = 0X.3;
+          }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    6:24: Expected one of '(', a literal, or an identifier
+    TestFailedButDeviceReusable@
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :f16:val="0xa.fp%2B2" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    6:25: error: Expected one of '(', a literal, or an identifier
+
+    ---- shader ----
+
+          enable f16;
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f16 = 0xa.fp+2;
+          }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    6:24: Expected one of '(', a literal, or an identifier
+    TestFailedButDeviceReusable@
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :f16:val="0xa.fP%2B2" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    6:25: error: Expected one of '(', a literal, or an identifier
+
+    ---- shader ----
+
+          enable f16;
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f16 = 0xa.fP+2;
+          }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    6:24: Expected one of '(', a literal, or an identifier
+    TestFailedButDeviceReusable@
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :f16:val="0xE.fp%2B2" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    6:25: error: Expected one of '(', a literal, or an identifier
+
+    ---- shader ----
+
+          enable f16;
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f16 = 0xE.fp+2;
+          }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    6:24: Expected one of '(', a literal, or an identifier
+    TestFailedButDeviceReusable@
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
+FAIL :f16:val="0X1.fp-4" assert_unreached:
+  - VALIDATION FAILED: subcase:
+    Unexpected compilationInfo 'error' message.
+    6:25: error: Expected one of '(', a literal, or an identifier
+
+    ---- shader ----
+
+          enable f16;
+
+          @compute @workgroup_size(1)
+          fn main() {
+            var test: f16 = 0X1.fp-4;
+          }
+      at (elided: below max severity)
+  - INFO: subcase:
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: 1 error generated while compiling the shader:
+    6:24: Expected one of '(', a literal, or an identifier
+    TestFailedButDeviceReusable@
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :f16:val="1"
 PASS :f16:val="-1"
 PASS :f16:val="0f"

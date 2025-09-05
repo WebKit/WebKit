@@ -33,7 +33,7 @@ typedef [EnforceRange] unsigned long GPUIntegerCoordinate;
     EnabledBySetting=WebGPUEnabled
 ]
 dictionary GPURenderPassColorAttachment {
-    required (GPUTexture or GPUTextureView) view;
+    required GPUTextureView view;
     GPUIntegerCoordinate depthSlice;
     GPUTextureView resolveTarget;
 

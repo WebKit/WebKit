@@ -61,12 +61,12 @@ public:
     const WebGPU::Adapter& backing() const { return m_backing; }
 
 private:
-    GPUAdapter(Ref<WebGPU::Adapter>&& backing);
+    GPUAdapter(Ref<WebGPU::Adapter>&& backing)
+        : m_backing(WTFMove(backing))
+    {
+    }
 
     const Ref<WebGPU::Adapter> m_backing;
-    Ref<GPUSupportedFeatures> m_features;
-    Ref<GPUSupportedLimits> m_limits;
-    Ref<GPUAdapterInfo> m_info;
 };
 
 }

@@ -42,22 +42,14 @@ String GPUAdapter::name() const
     return m_backing->name();
 }
 
-GPUAdapter::GPUAdapter(Ref<WebGPU::Adapter>&& backing)
-    : m_backing(WTFMove(backing))
-    , m_features(GPUSupportedFeatures::create(WebGPU::SupportedFeatures::clone(m_backing->features())))
-    , m_limits(GPUSupportedLimits::create(WebGPU::SupportedLimits::clone(m_backing->limits())))
-    , m_info(GPUAdapterInfo::create(name()))
-{
-}
-
 Ref<GPUSupportedFeatures> GPUAdapter::features() const
 {
-    return m_features;
+    return GPUSupportedFeatures::create(WebGPU::SupportedFeatures::clone(m_backing->features()));
 }
 
 Ref<GPUSupportedLimits> GPUAdapter::limits() const
 {
-    return m_limits;
+    return GPUSupportedLimits::create(WebGPU::SupportedLimits::clone(m_backing->limits()));
 }
 
 bool GPUAdapter::isFallbackAdapter() const
@@ -126,12 +118,12 @@ void GPUAdapter::requestDevice(ScriptExecutionContext& scriptExecutionContext, c
         return;
     }
 
-    m_backing->requestDevice(convertToBacking(deviceDescriptor), [protectedThis = Ref { *this }, deviceDescriptor, promise = WTFMove(promise), scriptExecutionContextRef = Ref { scriptExecutionContext }](RefPtr<WebGPU::Device>&& device) mutable {
+    m_backing->requestDevice(convertToBacking(deviceDescriptor), [deviceDescriptor, promise = WTFMove(promise), scriptExecutionContextRef = Ref { scriptExecutionContext }](RefPtr<WebGPU::Device>&& device) mutable {
         if (!device.get())
             promise.reject(Exception(ExceptionCode::OperationError));
         else {
             auto queueLabel = deviceDescriptor->defaultQueue.label;
-            Ref<GPUDevice> gpuDevice = GPUDevice::create(scriptExecutionContextRef.ptr(), device.releaseNonNull(), deviceDescriptor ? WTFMove(queueLabel) : ""_s, GPUAdapterInfo::create(protectedThis->name()));
+            Ref<GPUDevice> gpuDevice = GPUDevice::create(scriptExecutionContextRef.ptr(), device.releaseNonNull(), deviceDescriptor ? WTFMove(queueLabel) : ""_s);
             gpuDevice->suspendIfNeeded();
             promise.resolve(WTFMove(gpuDevice));
         }
@@ -140,7 +132,7 @@ void GPUAdapter::requestDevice(ScriptExecutionContext& scriptExecutionContext, c
 
 Ref<GPUAdapterInfo> GPUAdapter::info()
 {
-    return m_info;
+    return GPUAdapterInfo::create(name());
 }
 
 }

@@ -7,9 +7,9 @@ FAIL :depth_clamp_and_clip:format="depth16unorm";unclippedDepth="_undef_";writeD
        actual == 0x: 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff 00
        failed ->        xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:48:11
  Reached unreachable code
 FAIL :depth_clamp_and_clip:format="depth16unorm";unclippedDepth="_undef_";writeDepth=true;multisampled=true assert_unreached:
@@ -18,9 +18,9 @@ FAIL :depth_clamp_and_clip:format="depth16unorm";unclippedDepth="_undef_";writeD
        actual == 0x: 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff 00
        failed ->        xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:48:11
  Reached unreachable code
 PASS :depth_clamp_and_clip:format="depth16unorm";unclippedDepth=false;writeDepth=false;multisampled=false
@@ -31,9 +31,9 @@ FAIL :depth_clamp_and_clip:format="depth16unorm";unclippedDepth=false;writeDepth
        actual == 0x: 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff 00
        failed ->        xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:48:11
  Reached unreachable code
 FAIL :depth_clamp_and_clip:format="depth16unorm";unclippedDepth=false;writeDepth=true;multisampled=true assert_unreached:
@@ -42,9 +42,9 @@ FAIL :depth_clamp_and_clip:format="depth16unorm";unclippedDepth=false;writeDepth
        actual == 0x: 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff 00
        failed ->        xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:48:11
  Reached unreachable code
 PASS :depth_clamp_and_clip:format="depth16unorm";unclippedDepth=true;writeDepth=false;multisampled=false
@@ -60,10 +60,10 @@ FAIL :depth_clamp_and_clip:format="depth32float";unclippedDepth="_undef_";writeD
        failed ->            xx   xx   xx             xx   xx   xx   xx   xx   xx             xx   xx   xx   xx   xx   xx      ...
      expected ==       00   00   00   00   00   00   00   00   00   00   00   00   00   00   00   00   00   00   00   00   00 ...
           act ==     0.50 0.00 0.00 0.00 0.25 0.75 1.00 1.00 1.00 0.00 0.00 0.00 0.25 0.75 1.00 1.00 1.00 0.00 0.00 0.00 0.25 ...
-          exp ==     0.50 0.00 0.00 0.00 0.25 0.75 1.00 1.00 1.00 0.00 0.00 0.00 0.25 0.75 1.00 1.00 1.00 0.00 0.00 0.00 0.25 ...
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+          exp ==     0.50 0.25 0.25 0.25 0.25 0.75 0.75 0.75 0.75 0.25 0.25 0.25 0.25 0.75 0.75 0.75 0.75 0.25 0.25 0.25 0.25 ...
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
  Reached unreachable code
 FAIL :depth_clamp_and_clip:format="depth32float";unclippedDepth="_undef_";writeDepth=true;multisampled=true assert_unreached:
   - EXPECTATION FAILED: Array had unexpected contents at indices 16 through 47.
@@ -71,9 +71,9 @@ FAIL :depth_clamp_and_clip:format="depth32float";unclippedDepth="_undef_";writeD
        actual == 0x: 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff 00
        failed ->        xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:48:11
  Reached unreachable code
 PASS :depth_clamp_and_clip:format="depth32float";unclippedDepth=false;writeDepth=false;multisampled=false
@@ -85,10 +85,10 @@ FAIL :depth_clamp_and_clip:format="depth32float";unclippedDepth=false;writeDepth
        failed ->            xx   xx   xx             xx   xx   xx   xx   xx   xx             xx   xx   xx   xx   xx   xx      ...
      expected ==       00   00   00   00   00   00   00   00   00   00   00   00   00   00   00   00   00   00   00   00   00 ...
           act ==     0.50 0.00 0.00 0.00 0.25 0.75 1.00 1.00 1.00 0.00 0.00 0.00 0.25 0.75 1.00 1.00 1.00 0.00 0.00 0.00 0.25 ...
-          exp ==     0.50 0.00 0.00 0.00 0.25 0.75 1.00 1.00 1.00 0.00 0.00 0.00 0.25 0.75 1.00 1.00 1.00 0.00 0.00 0.00 0.25 ...
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+          exp ==     0.50 0.25 0.25 0.25 0.25 0.75 0.75 0.75 0.75 0.25 0.25 0.25 0.25 0.75 0.75 0.75 0.75 0.25 0.25 0.25 0.25 ...
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
  Reached unreachable code
 FAIL :depth_clamp_and_clip:format="depth32float";unclippedDepth=false;writeDepth=true;multisampled=true assert_unreached:
   - EXPECTATION FAILED: Array had unexpected contents at indices 16 through 47.
@@ -96,9 +96,9 @@ FAIL :depth_clamp_and_clip:format="depth32float";unclippedDepth=false;writeDepth
        actual == 0x: 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff 00
        failed ->        xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:48:11
  Reached unreachable code
 PASS :depth_clamp_and_clip:format="depth32float";unclippedDepth=true;writeDepth=false;multisampled=false
@@ -113,9 +113,9 @@ FAIL :depth_clamp_and_clip:format="depth24plus";unclippedDepth="_undef_";writeDe
        actual == 0x: 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff 00
        failed ->        xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:48:11
  Reached unreachable code
 FAIL :depth_clamp_and_clip:format="depth24plus";unclippedDepth="_undef_";writeDepth=true;multisampled=true assert_unreached:
@@ -124,9 +124,9 @@ FAIL :depth_clamp_and_clip:format="depth24plus";unclippedDepth="_undef_";writeDe
        actual == 0x: 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff 00
        failed ->        xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:48:11
  Reached unreachable code
 PASS :depth_clamp_and_clip:format="depth24plus";unclippedDepth=false;writeDepth=false;multisampled=false
@@ -137,9 +137,9 @@ FAIL :depth_clamp_and_clip:format="depth24plus";unclippedDepth=false;writeDepth=
        actual == 0x: 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff 00
        failed ->        xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:48:11
  Reached unreachable code
 FAIL :depth_clamp_and_clip:format="depth24plus";unclippedDepth=false;writeDepth=true;multisampled=true assert_unreached:
@@ -148,9 +148,9 @@ FAIL :depth_clamp_and_clip:format="depth24plus";unclippedDepth=false;writeDepth=
        actual == 0x: 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff 00
        failed ->        xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:48:11
  Reached unreachable code
 PASS :depth_clamp_and_clip:format="depth24plus";unclippedDepth=true;writeDepth=false;multisampled=false
@@ -165,9 +165,9 @@ FAIL :depth_clamp_and_clip:format="depth24plus-stencil8";unclippedDepth="_undef_
        actual == 0x: 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff 00
        failed ->        xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:48:11
  Reached unreachable code
 FAIL :depth_clamp_and_clip:format="depth24plus-stencil8";unclippedDepth="_undef_";writeDepth=true;multisampled=true assert_unreached:
@@ -176,9 +176,9 @@ FAIL :depth_clamp_and_clip:format="depth24plus-stencil8";unclippedDepth="_undef_
        actual == 0x: 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff 00
        failed ->        xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:48:11
  Reached unreachable code
 PASS :depth_clamp_and_clip:format="depth24plus-stencil8";unclippedDepth=false;writeDepth=false;multisampled=false
@@ -189,9 +189,9 @@ FAIL :depth_clamp_and_clip:format="depth24plus-stencil8";unclippedDepth=false;wr
        actual == 0x: 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff 00
        failed ->        xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:48:11
  Reached unreachable code
 FAIL :depth_clamp_and_clip:format="depth24plus-stencil8";unclippedDepth=false;writeDepth=true;multisampled=true assert_unreached:
@@ -200,9 +200,9 @@ FAIL :depth_clamp_and_clip:format="depth24plus-stencil8";unclippedDepth=false;wr
        actual == 0x: 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff 00
        failed ->        xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:48:11
  Reached unreachable code
 PASS :depth_clamp_and_clip:format="depth24plus-stencil8";unclippedDepth=true;writeDepth=false;multisampled=false
@@ -217,9 +217,9 @@ FAIL :depth_clamp_and_clip:format="depth32float-stencil8";unclippedDepth="_undef
        actual == 0x: 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff 00
        failed ->        xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:48:11
  Reached unreachable code
 FAIL :depth_clamp_and_clip:format="depth32float-stencil8";unclippedDepth="_undef_";writeDepth=true;multisampled=true assert_unreached:
@@ -228,9 +228,9 @@ FAIL :depth_clamp_and_clip:format="depth32float-stencil8";unclippedDepth="_undef
        actual == 0x: 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff 00
        failed ->        xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:48:11
  Reached unreachable code
 PASS :depth_clamp_and_clip:format="depth32float-stencil8";unclippedDepth=false;writeDepth=false;multisampled=false
@@ -241,9 +241,9 @@ FAIL :depth_clamp_and_clip:format="depth32float-stencil8";unclippedDepth=false;w
        actual == 0x: 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff 00
        failed ->        xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:48:11
  Reached unreachable code
 FAIL :depth_clamp_and_clip:format="depth32float-stencil8";unclippedDepth=false;writeDepth=true;multisampled=true assert_unreached:
@@ -252,9 +252,9 @@ FAIL :depth_clamp_and_clip:format="depth32float-stencil8";unclippedDepth=false;w
        actual == 0x: 00 ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff ff ff ff 00 00 ff ff ff 00
        failed ->        xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:357:35
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:354:35
     @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:48:11
  Reached unreachable code
 PASS :depth_clamp_and_clip:format="depth32float-stencil8";unclippedDepth=true;writeDepth=false;multisampled=false
@@ -267,10 +267,10 @@ FAIL :depth_test_input_clamped:format="depth16unorm";unclippedDepth=false;multis
        actual == 0x: ff ff ff 00 00 ff ff ff
        failed ->     xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:548:31
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:545:31
  Reached unreachable code
 FAIL :depth_test_input_clamped:format="depth16unorm";unclippedDepth=false;multisampled=true assert_unreached:
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 7.
@@ -278,10 +278,10 @@ FAIL :depth_test_input_clamped:format="depth16unorm";unclippedDepth=false;multis
        actual == 0x: ff ff ff 00 00 ff ff ff
        failed ->     xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:548:31
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:545:31
  Reached unreachable code
 PASS :depth_test_input_clamped:format="depth16unorm";unclippedDepth=true;multisampled=false
 PASS :depth_test_input_clamped:format="depth16unorm";unclippedDepth=true;multisampled=true
@@ -291,10 +291,10 @@ FAIL :depth_test_input_clamped:format="depth32float";unclippedDepth=false;multis
        actual == 0x: ff ff ff 00 00 ff ff ff
        failed ->     xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:548:31
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:545:31
  Reached unreachable code
 FAIL :depth_test_input_clamped:format="depth32float";unclippedDepth=false;multisampled=true assert_unreached:
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 7.
@@ -302,10 +302,10 @@ FAIL :depth_test_input_clamped:format="depth32float";unclippedDepth=false;multis
        actual == 0x: ff ff ff 00 00 ff ff ff
        failed ->     xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:548:31
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:545:31
  Reached unreachable code
 PASS :depth_test_input_clamped:format="depth32float";unclippedDepth=true;multisampled=false
 PASS :depth_test_input_clamped:format="depth32float";unclippedDepth=true;multisampled=true
@@ -315,10 +315,10 @@ FAIL :depth_test_input_clamped:format="depth24plus";unclippedDepth=false;multisa
        actual == 0x: ff ff ff 00 00 ff ff ff
        failed ->     xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:548:31
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:545:31
  Reached unreachable code
 FAIL :depth_test_input_clamped:format="depth24plus";unclippedDepth=false;multisampled=true assert_unreached:
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 7.
@@ -326,10 +326,10 @@ FAIL :depth_test_input_clamped:format="depth24plus";unclippedDepth=false;multisa
        actual == 0x: ff ff ff 00 00 ff ff ff
        failed ->     xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:548:31
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:545:31
  Reached unreachable code
 PASS :depth_test_input_clamped:format="depth24plus";unclippedDepth=true;multisampled=false
 PASS :depth_test_input_clamped:format="depth24plus";unclippedDepth=true;multisampled=true
@@ -339,10 +339,10 @@ FAIL :depth_test_input_clamped:format="depth24plus-stencil8";unclippedDepth=fals
        actual == 0x: ff ff ff 00 00 ff ff ff
        failed ->     xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:548:31
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:545:31
  Reached unreachable code
 FAIL :depth_test_input_clamped:format="depth24plus-stencil8";unclippedDepth=false;multisampled=true assert_unreached:
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 7.
@@ -350,10 +350,10 @@ FAIL :depth_test_input_clamped:format="depth24plus-stencil8";unclippedDepth=fals
        actual == 0x: ff ff ff 00 00 ff ff ff
        failed ->     xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:548:31
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:545:31
  Reached unreachable code
 PASS :depth_test_input_clamped:format="depth24plus-stencil8";unclippedDepth=true;multisampled=false
 PASS :depth_test_input_clamped:format="depth24plus-stencil8";unclippedDepth=true;multisampled=true
@@ -363,10 +363,10 @@ FAIL :depth_test_input_clamped:format="depth32float-stencil8";unclippedDepth=fal
        actual == 0x: ff ff ff 00 00 ff ff ff
        failed ->     xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:548:31
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:545:31
  Reached unreachable code
 FAIL :depth_test_input_clamped:format="depth32float-stencil8";unclippedDepth=false;multisampled=true assert_unreached:
   - EXPECTATION FAILED: Array had unexpected contents at indices 0 through 7.
@@ -374,10 +374,10 @@ FAIL :depth_test_input_clamped:format="depth32float-stencil8";unclippedDepth=fal
        actual == 0x: ff ff ff 00 00 ff ff ff
        failed ->     xx xx xx       xx xx xx
      expected ==     00 00 00 00 00 00 00 00
-    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:258:33
-    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:695:34
-    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:711:40
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:548:31
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:254:33
+    expectGPUBufferValuesPassCheck@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:804:34
+    expectGPUBufferValuesEqual@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:820:40
+    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js:545:31
  Reached unreachable code
 PASS :depth_test_input_clamped:format="depth32float-stencil8";unclippedDepth=true;multisampled=false
 PASS :depth_test_input_clamped:format="depth32float-stencil8";unclippedDepth=true;multisampled=true

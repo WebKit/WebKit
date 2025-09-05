@@ -37,6 +37,7 @@ FAIL :from_orientation_metadata_file:imageName="four-colors-rotate-90-cw.jpg";ob
        diff (act - exp) in normal-ULPs ==                            0,0,-255,-255                   0,-255,0,-255                -255,-255,0,-255 ...
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: GPUQueue.writeTexture: GPUTexture.validateLinearTextureData: bytesPerRow(960) is less than bytesInLastRow(1280)
+    TestFailedButDeviceReusable@
     attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 FAIL :from_orientation_metadata_file:imageName="four-colors-rotate-90-cw.jpg";objectTypeFromFile="Image";srcDoFlipYDuringCopy=false assert_unreached:
@@ -52,6 +53,7 @@ FAIL :from_orientation_metadata_file:imageName="four-colors-rotate-90-cw.jpg";ob
        diff (act - exp) in normal-ULPs ==                         -255,-255,0,-255                   -255,0,0,-255                   0,0,-255,-255 ...
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: GPUQueue.writeTexture: GPUTexture.validateLinearTextureData: bytesPerRow(960) is less than bytesInLastRow(1280)
+    TestFailedButDeviceReusable@
     attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 PASS :from_orientation_metadata_file:imageName="four-colors-rotate-180-cw.jpg";objectTypeFromFile="ImageBitmap-from-Blob";srcDoFlipYDuringCopy=true
@@ -107,6 +109,7 @@ FAIL :from_orientation_metadata_file:imageName="four-colors-rotate-270-cw.jpg";o
        diff (act - exp) in normal-ULPs ==                            0,0,-255,-255                   0,-255,0,-255                -255,-255,0,-255 ...
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: GPUQueue.writeTexture: GPUTexture.validateLinearTextureData: bytesPerRow(960) is less than bytesInLastRow(1280)
+    TestFailedButDeviceReusable@
     attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 FAIL :from_orientation_metadata_file:imageName="four-colors-rotate-270-cw.jpg";objectTypeFromFile="Image";srcDoFlipYDuringCopy=false assert_unreached:
@@ -122,6 +125,7 @@ FAIL :from_orientation_metadata_file:imageName="four-colors-rotate-270-cw.jpg";o
        diff (act - exp) in normal-ULPs ==                         -255,-255,0,-255                   -255,0,0,-255                   0,0,-255,-255 ...
       at (elided: below max severity)
   - EXCEPTION: Error: Unexpected validation error occurred: GPUQueue.writeTexture: GPUTexture.validateLinearTextureData: bytesPerRow(960) is less than bytesInLastRow(1280)
+    TestFailedButDeviceReusable@
     attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:457:44
  Reached unreachable code
 FAIL :from_multiple_formats:imageName="four-colors.jpg";srcDoFlipYDuringCopy=true assert_unreached:

@@ -24,18 +24,12 @@ PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="rgba8sint"
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="bgra8unorm"
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="bgra8unorm-srgb"
-PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="r16unorm"
-PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="r16snorm"
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="r16uint"
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="r16sint"
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="r16float"
-PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="rg16unorm"
-PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="rg16snorm"
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="rg16uint"
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="rg16sint"
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="rg16float"
-PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="rgba16unorm"
-PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="rgba16snorm"
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="rgba16uint"
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="rgba16sint"
 PASS :color_attachments,limits,maxColorAttachmentBytesPerSample,aligned:format="rgba16float"
@@ -89,18 +83,12 @@ PASS :resolveTarget,format_supports_resolve:format="rgba8uint"
 PASS :resolveTarget,format_supports_resolve:format="rgba8sint"
 PASS :resolveTarget,format_supports_resolve:format="bgra8unorm"
 PASS :resolveTarget,format_supports_resolve:format="bgra8unorm-srgb"
-PASS :resolveTarget,format_supports_resolve:format="r16unorm"
-PASS :resolveTarget,format_supports_resolve:format="r16snorm"
 PASS :resolveTarget,format_supports_resolve:format="r16uint"
 PASS :resolveTarget,format_supports_resolve:format="r16sint"
 PASS :resolveTarget,format_supports_resolve:format="r16float"
-PASS :resolveTarget,format_supports_resolve:format="rg16unorm"
-PASS :resolveTarget,format_supports_resolve:format="rg16snorm"
 PASS :resolveTarget,format_supports_resolve:format="rg16uint"
 PASS :resolveTarget,format_supports_resolve:format="rg16sint"
 PASS :resolveTarget,format_supports_resolve:format="rg16float"
-PASS :resolveTarget,format_supports_resolve:format="rgba16unorm"
-PASS :resolveTarget,format_supports_resolve:format="rgba16snorm"
 PASS :resolveTarget,format_supports_resolve:format="rgba16uint"
 PASS :resolveTarget,format_supports_resolve:format="rgba16sint"
 PASS :resolveTarget,format_supports_resolve:format="rgba16float"
@@ -143,7 +131,64 @@ PASS :depth_stencil_attachment,depth_clear_value:depthLoadOp="_undef_";depthClea
 PASS :depth_stencil_attachment,depth_clear_value:depthLoadOp="_undef_";depthClearValue=1.5
 PASS :timestampWrites,query_set_type:queryType="occlusion"
 PASS :timestampWrites,query_set_type:queryType="timestamp"
-PASS :timestampWrite,query_index:
+FAIL :timestampWrite,query_index: assert_unreached:
+  - INFO: subcase: beginningOfPassWriteIndex="_undef_";endOfPassWriteIndex=0
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex="_undef_";endOfPassWriteIndex=1
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=0;endOfPassWriteIndex="_undef_"
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=0;endOfPassWriteIndex=1
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=1;endOfPassWriteIndex="_undef_"
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=1;endOfPassWriteIndex=0
+    OK
+  - VALIDATION FAILED: subcase: beginningOfPassWriteIndex="_undef_";endOfPassWriteIndex="_undef_"
+    Validation succeeded unexpectedly.
+      at (elided: below max severity)
+  - INFO: subcase: beginningOfPassWriteIndex="_undef_";endOfPassWriteIndex="_undef_"
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex="_undef_";endOfPassWriteIndex=2
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex="_undef_";endOfPassWriteIndex=3
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=0;endOfPassWriteIndex=0
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=0;endOfPassWriteIndex=2
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=0;endOfPassWriteIndex=3
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=1;endOfPassWriteIndex=1
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=1;endOfPassWriteIndex=2
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=1;endOfPassWriteIndex=3
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=2;endOfPassWriteIndex="_undef_"
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=2;endOfPassWriteIndex=0
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=2;endOfPassWriteIndex=1
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=2;endOfPassWriteIndex=2
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=2;endOfPassWriteIndex=3
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=3;endOfPassWriteIndex="_undef_"
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=3;endOfPassWriteIndex=0
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=3;endOfPassWriteIndex=1
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=3;endOfPassWriteIndex=2
+    OK
+  - INFO: subcase: beginningOfPassWriteIndex=3;endOfPassWriteIndex=3
+    OK
+  - EXCEPTION: Error: Unexpected validation error occurred: writeIndices mismatch: beginningOfPassWriteIndex(0) >= querySetCount(2) || endOfPassWriteIndex(0) >= querySetCount(2) || timestampWrite.beginningOfPassWriteIndex(0) == timestampWrite.endOfPassWriteIndex(0)
+    TestFailedButDeviceReusable@
+    attemptEndTestScope@http://127.0.0.1:8000/webgpu/webgpu/util/device_pool.js:442:44
+ Reached unreachable code
 PASS :occlusionQuerySet,query_set_type:queryType="occlusion"
 PASS :occlusionQuerySet,query_set_type:queryType="timestamp"
 

@@ -240,10 +240,12 @@ uint32_t GPUTexture::texelBlockSize(GPUTextureFormat format)
     case GPUTextureFormat::Depth24plus:
         return 4;
     case GPUTextureFormat::Depth24plusStencil8:
+        ASSERT_NOT_REACHED();
         return 0;
     case GPUTextureFormat::Depth32float:
         return 4;
     case GPUTextureFormat::Depth32floatStencil8:
+        ASSERT_NOT_REACHED();
         return 0;
     case GPUTextureFormat::Bc1RgbaUnorm:
     case GPUTextureFormat::Bc1RgbaUnormSRGB:

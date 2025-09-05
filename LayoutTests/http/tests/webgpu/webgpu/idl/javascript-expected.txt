@@ -21,10 +21,14 @@ PASS :obj,for_in:type="texture"
 PASS :obj,for_in:type="querySet"
 PASS :obj,for_in:type="adapter"
 FAIL :obj,for_in:type="device" assert_unreached:
+  - EXPECTATION FAILED: adapterInfo in GPUDevice exists
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
+    hasRequiredKeys@http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:199:13
+    @http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:244:18
   - EXPECTATION FAILED: onuncapturederror in GPUDevice exists
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
-    hasRequiredKeys@http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:209:13
-    @http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:260:18
+    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:355:43
+    hasRequiredKeys@http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:199:13
+    @http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:244:18
  Reached unreachable code
 PASS :obj,for_in:type="adapter.limits"
 PASS :obj,for_in:type="device.limits"
@@ -59,20 +63,28 @@ PASS :readonly_properties:type="buffer"
 PASS :readonly_properties:type="texture"
 PASS :readonly_properties:type="querySet"
 PASS :readonly_properties:type="adapter"
-PASS :readonly_properties:type="device"
+FAIL :readonly_properties:type="device" assert_unreached:
+  - EXPECTATION FAILED: unexpectedly did not throw: instanceof device.adapterInfo = value throws
+    shouldThrow@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:333:45
+    @http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:369:18
+ Reached unreachable code
 PASS :readonly_properties:type="adapter.limits"
 PASS :readonly_properties:type="device.limits"
 PASS :getter_replacement:type="gpu"
 PASS :getter_replacement:type="buffer"
 PASS :getter_replacement:type="texture"
 PASS :getter_replacement:type="querySet"
-PASS :getter_replacement:type="adapter"
-FAIL :getter_replacement:type="device" assert_unreached:
-  - EXPECTATION FAILED: Object.getOwnPropertyDescriptor(instance of device, 'onuncapturederror') === undefined
-      at (elided: below max severity)
-  - EXCEPTION: Error: Object.getOwnPropertyDescriptor(device, 'onuncapturederror') !== undefined
+FAIL :getter_replacement:type="adapter" assert_unreached:
+  - EXCEPTION: Error: able to restore getter for instance of adapter.features
     assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
-    @http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:433:11
+    @http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:435:11
+ Reached unreachable code
+FAIL :getter_replacement:type="device" assert_unreached:
+  - EXPECTATION FAILED: Object.getOwnPropertyDescriptor(instance of device, 'adapterInfo') === undefined
+      at (elided: below max severity)
+  - EXCEPTION: Error: Object.getOwnPropertyDescriptor(device, 'adapterInfo') !== undefined
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:414:11
  Reached unreachable code
 PASS :getter_replacement:type="adapter.limits"
 PASS :getter_replacement:type="device.limits"
@@ -88,41 +100,23 @@ PASS :sameObject:type="gpu"
 PASS :sameObject:type="buffer"
 PASS :sameObject:type="texture"
 PASS :sameObject:type="querySet"
-PASS :sameObject:type="adapter"
-PASS :sameObject:type="device"
+FAIL :sameObject:type="adapter" assert_unreached:
+  - EXPECTATION FAILED
+      at (elided: below max severity)
+  - EXPECTATION FAILED
+      at (elided: below max severity)
+  - EXCEPTION: Error
+    assert@http://127.0.0.1:8000/webgpu/common/util/util.js:37:20
+    @http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:521:11
+ Reached unreachable code
+FAIL :sameObject:type="device" assert_unreached:
+  - EXPECTATION FAILED
+      at (elided: below max severity)
+  - EXPECTATION FAILED
+      at (elided: below max severity)
+  - EXCEPTION: TypeError: undefined is not an object (evaluating 'origValue1['foo'] = 'test'')
+    @http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:514:15
+ Reached unreachable code
 PASS :sameObject:type="adapter.limits"
 PASS :sameObject:type="device.limits"
-PASS :inheritance:type="GPUDevice"
-PASS :inheritance:type="GPUPipelineError"
-FAIL :inheritance:type="GPUValidationError" assert_unreached:
-  - EXCEPTION: ReferenceError: Can't find variable: GPUError
-    GPUValidationError@http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:550:77
-    @http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:568:14
- Reached unreachable code
-FAIL :inheritance:type="GPUOutOfMemoryError" assert_unreached:
-  - EXCEPTION: ReferenceError: Can't find variable: GPUError
-    GPUOutOfMemoryError@http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:551:79
-    @http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:568:14
- Reached unreachable code
-FAIL :inheritance:type="GPUInternalError" assert_unreached:
-  - EXCEPTION: ReferenceError: Can't find variable: GPUError
-    GPUInternalError@http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:552:73
-    @http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:568:14
- Reached unreachable code
-PASS :inheritance:type="GPUUncapturedErrorEvent"
-PASS :device,EventTarget:test="canPassEventThroughDevice"
-PASS :device,EventTarget:test="canPassCustomEventThroughDevice"
-FAIL :device,EventTarget:test="patchingEventTargetAffectsDevice" assert_unreached:
-  - EXPECTATION FAILED: overriding EventTarget addEventListener worked
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
-    patchingEventTargetAffectsDevice@http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:644:13
-  - EXPECTATION FAILED: overriding EventTarget dispatchEvent worked
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:373:43
-    patchingEventTargetAffectsDevice@http://127.0.0.1:8000/webgpu/webgpu/idl/javascript.spec.js:645:13
-  - EXPECTATION FAILED: overriding EventTarget removeEventListener worked
-      at (elided: only 2 shown)
- Reached unreachable code
-PASS :device,EventTarget:test="passingGPUUncapturedErrorEventWorksThoughEventTarget"
-PASS :device,addEventListener:test="EventHandler"
-PASS :device,addEventListener:test="EventListener"
 
