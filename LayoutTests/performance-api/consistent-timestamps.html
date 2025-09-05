@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Ensure event timestamps are neither ahead of Performance::now() nor more than 1 minute in the past.")
+window.jsTestIsAsync = true;
+let clickEvent;
+new Promise( (resolve) => {
+    let listener = (event) => {
+        clickEvent = event
+        window.removeEventListener('click', listener)
+        resolve()
+    }
+    window.addEventListener('click', listener)
+    if (!eventSender) shouldBeTrue("false");
+    eventSender.mouseMoveTo(100, 100)
+    eventSender.asyncMouseDown()
+    eventSender.asyncMouseUp()
+}).then( () => {
+    dt = performance.now() - clickEvent.timeStamp
+    shouldBeGreaterThanOrEqual("dt", "0")
+    shouldBeLessThanOrEqual("dt", "60000")
+    finishJSTest();
+})
+</script>
+</body>
+</html>

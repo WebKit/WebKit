@@ -1,0 +1,11 @@
+Ensure event timestamps are neither ahead of Performance::now() nor more than 1 minute in the past.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS dt is >= 0
+PASS dt is <= 60000
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
