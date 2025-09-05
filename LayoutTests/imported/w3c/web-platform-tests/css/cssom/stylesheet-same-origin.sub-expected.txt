@@ -1,8 +1,3 @@
-CONSOLE MESSAGE: Blocked access to external URL http://www1.localhost:8801/css/cssom/stylesheet-same-origin.css
-CONSOLE MESSAGE: Blocked access to external URL http://www1.localhost:8801/common/redirect.py?location=http://localhost:8800/css/cssom/stylesheet-same-origin.css
-CONSOLE MESSAGE: Blocked access to external URL http://www1.localhost:8801/css/cssom/stylesheet-same-origin.css
-CONSOLE MESSAGE: Blocked access to external URL http://www1.localhost:8801/common/redirect.py?location=http://localhost:8800/css/cssom/stylesheet-same-origin.css
-CONSOLE MESSAGE: Blocked access to external URL http://www1.localhost:8801/css/cssom/stylesheet-same-origin.css
 
 FAIL Origin-clean check in cross-origin CSSOM Stylesheets assert_throws_dom: stylesheet.cssRules should throw SecurityError. function "function () {
                     sheet.cssRules;
