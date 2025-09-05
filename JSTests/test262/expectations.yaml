@@ -82,18 +82,6 @@ test/built-ins/Temporal/Duration/compare/throws-when-target-zoned-date-time-outs
 test/built-ins/Temporal/Duration/from/argument-duration-precision-exact-numerical-values.js:
   default: 'Test262Error: case where floating point inaccuracy brings total below limit, positive Expected SameValue(«"PT9007199254740992.000424S"», «"PT9007199254740991.975424S"») to be true'
   strict mode: 'Test262Error: case where floating point inaccuracy brings total below limit, positive Expected SameValue(«"PT9007199254740992.000424S"», «"PT9007199254740991.975424S"») to be true'
-test/built-ins/Temporal/Duration/prototype/add/argument-duration-max.js:
-  default: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
-  strict mode: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
-test/built-ins/Temporal/Duration/prototype/add/argument-duration-precision-exact-numerical-values.js:
-  default: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
-  strict mode: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
-test/built-ins/Temporal/Duration/prototype/add/precision-exact-mathematical-values.js:
-  default: 'Test262Error: duration1.add(duration2): nanoseconds result Expected SameValue(«24», «0») to be true'
-  strict mode: 'Test262Error: duration1.add(duration2): nanoseconds result Expected SameValue(«24», «0») to be true'
-test/built-ins/Temporal/Duration/prototype/add/precision-no-floating-point-loss.js:
-  default: 'Test262Error: duration1.add(duration2): milliseconds result: Expected SameValue(«926», «999») to be true'
-  strict mode: 'Test262Error: duration1.add(duration2): milliseconds result: Expected SameValue(«926», «999») to be true'
 test/built-ins/Temporal/Duration/prototype/round/accepts-datetime-strings-for-relative-to.js:
   default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
   strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
@@ -187,18 +175,6 @@ test/built-ins/Temporal/Duration/prototype/round/throws-on-wrong-offset-for-zone
 test/built-ins/Temporal/Duration/prototype/round/valid-increments.js:
   default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
   strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
-test/built-ins/Temporal/Duration/prototype/subtract/argument-duration-max.js:
-  default: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
-  strict mode: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
-test/built-ins/Temporal/Duration/prototype/subtract/argument-duration-precision-exact-numerical-values.js:
-  default: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
-  strict mode: 'RangeError: Temporal.Duration properties must be finite and of consistent sign'
-test/built-ins/Temporal/Duration/prototype/subtract/precision-exact-mathematical-values.js:
-  default: 'Test262Error: duration1.subtract(duration2): nanoseconds result Expected SameValue(«24», «0») to be true'
-  strict mode: 'Test262Error: duration1.subtract(duration2): nanoseconds result Expected SameValue(«24», «0») to be true'
-test/built-ins/Temporal/Duration/prototype/subtract/precision-no-floating-point-loss.js:
-  default: 'Test262Error: duration1.subtract(duration2): milliseconds result: Expected SameValue(«926», «999») to be true'
-  strict mode: 'Test262Error: duration1.subtract(duration2): milliseconds result: Expected SameValue(«926», «999») to be true'
 test/built-ins/Temporal/Duration/prototype/toString/max-value.js:
   default: 'Test262Error: values do not lose precision intermediately Expected SameValue(«"PT9007199254740.992S"», «"PT9007199254740.993S"») to be true'
   strict mode: 'Test262Error: values do not lose precision intermediately Expected SameValue(«"PT9007199254740.992S"», «"PT9007199254740.993S"») to be true'

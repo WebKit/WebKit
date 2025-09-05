@@ -277,6 +277,14 @@ static_assert(sizeof(PlainDate) == sizeof(int32_t));
 
 using TimeZone = Variant<TimeZoneID, int64_t>;
 
+class PlainYearMonth final {
+public:
+    double year;
+    double month;
+    PlainYearMonth(double y, double m)
+        : year(y), month(m) { }
+};
+
 // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimezonestring
 // Record { [[Z]], [[OffsetString]], [[Name]] }
 struct TimeZoneRecord {
@@ -321,6 +329,8 @@ String monthCode(uint32_t);
 uint8_t monthFromCode(StringView);
 
 bool isValidDuration(const Duration&);
+bool isValidISODate(double, double, double);
+PlainDate createISODateRecord(double, double, double);
 
 std::optional<ExactTime> parseInstant(StringView);
 

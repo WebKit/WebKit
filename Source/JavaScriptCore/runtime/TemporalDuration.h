@@ -71,6 +71,7 @@ public:
 
     static ISO8601::InternalDuration toInternalDuration(ISO8601::Duration);
     static ISO8601::InternalDuration toInternalDurationRecordWith24HourDays(JSGlobalObject*, ISO8601::Duration);
+    ISO8601::Duration addDurations(JSGlobalObject*, AddOrSubtract, ISO8601::Duration, TemporalUnit) const;
     static ISO8601::Duration temporalDurationFromInternal(ISO8601::InternalDuration, TemporalUnit);
     static Int128 timeDurationFromComponents(double, double, double, double, double, double);
 
@@ -79,6 +80,7 @@ public:
 
     static int sign(const ISO8601::Duration&);
     static double round(ISO8601::Duration&, double increment, TemporalUnit, RoundingMode);
+    static std::optional<ISO8601::PlainDate> regulateISODate(double, double, double, TemporalOverflow);
     static ISO8601::Duration toDateDurationRecordWithoutTime(JSGlobalObject*, const ISO8601::Duration&);
     static std::optional<double> balance(ISO8601::Duration&, TemporalUnit largestUnit);
 

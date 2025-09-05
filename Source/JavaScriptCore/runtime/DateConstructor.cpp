@@ -73,40 +73,6 @@ static inline double toIntegerOrInfinity(double d)
     return trunc(std::isnan(d) ? 0.0 : d + 0.0);
 }
 
-// https://tc39.es/ecma262/#sec-makedate
-static inline double makeDate(double day, double time)
-{
-#if COMPILER(CLANG)
-    #pragma STDC FP_CONTRACT OFF
-#endif
-    return (day * msPerDay) + time;
-}
-
-// https://tc39.es/ecma262/#sec-maketime
-static inline double makeTime(double hour, double min, double sec, double ms)
-{
-#if COMPILER(CLANG)
-    #pragma STDC FP_CONTRACT OFF
-#endif
-    return (((hour * msPerHour) + min * msPerMinute) + sec * msPerSecond) + ms;
-}
-
-// https://tc39.es/ecma262/#sec-makeday
-static inline double makeDay(double year, double month, double date)
-{
-    double additionalYears = std::floor(month / 12);
-    double ym = year + additionalYears;
-    if (!std::isfinite(ym))
-        return PNaN;
-    double mm = month - additionalYears * 12;
-    int32_t yearInt32 = toInt32(ym);
-    int32_t monthInt32 = toInt32(mm);
-    if (yearInt32 != ym || monthInt32 != mm)
-        return PNaN;
-    double days = dateToDaysFrom1970(yearInt32, monthInt32, 1);
-    return days + date - 1;
-}
-
 static double millisecondsFromComponents(JSGlobalObject* globalObject, const ArgList& args, TimeType timeType)
 {
     VM& vm = globalObject->vm();

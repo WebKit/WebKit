@@ -132,6 +132,11 @@ enum class DifferenceOperation : bool {
     Until
 };
 
+enum class AddOrSubtract : bool {
+    Add,
+    Subtract
+};
+
 double nonNegativeModulo(double x, double y);
 WTF::String ellipsizeAt(unsigned maxLength, const WTF::String&);
 PropertyName temporalUnitPluralPropertyName(VM&, TemporalUnit);
