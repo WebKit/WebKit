@@ -405,7 +405,7 @@ static RefPtr<WebCore::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage 
     auto resultRect = roundedIntRect(largestRectWithAspectRatioInsideRect(originalThumbnailSize.aspectRatio(), { { }, fittingSize }));
     resultRect.setLocation({ });
 
-    auto bitmap = WebCore::ShareableBitmap::create({ resultRect.size() });
+    auto bitmap = WebCore::ShareableBitmap::create(resultRect.size());
     if (!bitmap)
         return nullptr;
 

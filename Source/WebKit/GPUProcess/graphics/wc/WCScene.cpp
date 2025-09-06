@@ -275,7 +275,7 @@ std::optional<UpdateInfo> WCScene::update(WCUpdateInfo&& update)
     if (showFPS)
         m_fpsCounter.updateFPSAndDisplay(*m_textureMapper);
     if (readPixel) {
-        bitmap = WebCore::ShareableBitmap::create({ update.viewport });
+        bitmap = WebCore::ShareableBitmap::create(update.viewport);
         glReadPixels(0, 0, update.viewport.width(), update.viewport.height(), GL_BGRA, GL_UNSIGNED_BYTE, bitmap->mutableSpan().data());
     }
     m_textureMapper->endPainting();

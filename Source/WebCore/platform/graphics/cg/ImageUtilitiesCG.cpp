@@ -308,7 +308,7 @@ void decodeImageWithSize(std::span<const uint8_t> data, std::optional<FloatSize>
 
         auto sourceColorSpace = nativeImage->colorSpace();
         auto destinationColorSpace = sourceColorSpace.supportsOutput() ? sourceColorSpace : DestinationColorSpace::SRGB();
-        RefPtr bitmap = ShareableBitmap::create({ nativeImage->size(), destinationColorSpace });
+        RefPtr bitmap = ShareableBitmap::create(nativeImage->size(), destinationColorSpace);
         if (!bitmap) {
             completionHandler(nullptr);
             return;

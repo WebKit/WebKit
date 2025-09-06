@@ -36,75 +36,18 @@ namespace WebCore {
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER_AND_EXPORT(ShareableBitmap, WTF_INTERNAL);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableBitmap);
 
-ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, std::optional<DestinationColorSpace> colorSpace, Headroom headroom, bool isOpaque)
-    : m_size(size)
-    , m_colorSpace(validateColorSpace(colorSpace))
-    , m_headroom(headroom)
-    , m_isOpaque(isOpaque)
-    , m_bitsPerComponent(calculateBitsPerComponent(this->colorSpace()))
-    , m_bytesPerPixel(calculateBytesPerPixel(this->colorSpace()))
-    , m_bytesPerRow(calculateBytesPerRow(size, this->colorSpace()))
-#if USE(CG)
-    , m_bitmapInfo(calculateBitmapInfo(this->colorSpace(), isOpaque))
-#endif
-#if USE(SKIA)
-    , m_imageInfo(SkImageInfo::MakeN32Premul(size.width(), size.height(), this->colorSpace().platformColorSpace()))
-#endif
-{
-    ASSERT(!m_size.isEmpty());
-    ASSERT(headroom >= Headroom::None);
-}
-
-ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, std::optional<DestinationColorSpace> colorSpace, Headroom headroom, bool isOpaque, unsigned bitsPerComponent, unsigned bytesPerPixel, unsigned bytesPerRow
-#if USE(CG)
-    , CGBitmapInfo bitmapInfo
-#endif
-)
-    : m_size(size)
-    , m_colorSpace(colorSpace)
-    , m_headroom(headroom)
-    , m_isOpaque(isOpaque)
-    , m_bitsPerComponent(bitsPerComponent)
-    , m_bytesPerPixel(bytesPerPixel)
-    , m_bytesPerRow(bytesPerRow)
-#if USE(CG)
-    , m_bitmapInfo(bitmapInfo)
-#endif
-#if USE(SKIA)
-    , m_imageInfo(SkImageInfo::MakeN32Premul(size.width(), size.height(), this->colorSpace().platformColorSpace()))
-#endif
-{
-    // This constructor is called when decoding ShareableBitmapConfiguration. So this constructor
-    // will behave like the default constructor if a null ShareableBitmapHandle was encoded.
-    ASSERT(headroom >= Headroom::None);
-}
-
-CheckedUint32 ShareableBitmapConfiguration::calculateSizeInBytes(const IntSize& size, const DestinationColorSpace& colorSpace)
-{
-    return calculateBytesPerRow(size, colorSpace) * size.height();
-}
-
 RefPtr<ShareableBitmap> ShareableBitmap::create(const ShareableBitmapConfiguration& configuration)
 {
-    auto sizeInBytes = configuration.sizeInBytes();
-    if (sizeInBytes.hasOverflowed())
-        return nullptr;
-
-    RefPtr<SharedMemory> sharedMemory = SharedMemory::allocate(sizeInBytes);
+    RefPtr<SharedMemory> sharedMemory = SharedMemory::allocate(configuration.sizeInBytes());
     if (!sharedMemory)
         return nullptr;
 
-    ASSERT(configuration.headroom() >= Headroom::None);
     return adoptRef(new ShareableBitmap(configuration, sharedMemory.releaseNonNull()));
 }
 
 RefPtr<ShareableBitmap> ShareableBitmap::create(const ShareableBitmapConfiguration& configuration, Ref<SharedMemory>&& sharedMemory)
 {
-    auto sizeInBytes = configuration.sizeInBytes();
-    if (sizeInBytes.hasOverflowed())
-        return nullptr;
-
-    if (sharedMemory->size() < sizeInBytes) {
+    if (sharedMemory->size() < configuration.sizeInBytes()) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
@@ -124,7 +67,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(NativeImage& image,
 
 RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(NativeImage& image, const DestinationColorSpace& colorSpace, const IntSize& destinationSize, const IntSize& sourceSize)
 {
-    auto bitmap = ShareableBitmap::create({ destinationSize, colorSpace });
+    auto bitmap = ShareableBitmap::create(destinationSize, colorSpace);
     if (!bitmap)
         return nullptr;
 
@@ -174,7 +117,6 @@ ShareableBitmap::ShareableBitmap(ShareableBitmapConfiguration configuration, Ref
     : m_configuration(configuration)
     , m_sharedMemory(WTFMove(sharedMemory))
 {
-    ASSERT(m_configuration.headroom() >= Headroom::None);
 }
 
 std::span<const uint8_t> ShareableBitmap::span() const
@@ -186,5 +128,45 @@ std::span<uint8_t> ShareableBitmap::mutableSpan()
 {
     return m_sharedMemory->mutableSpan();
 }
+
+#if !USE(CG)
+std::optional<ShareableBitmapConfiguration> ShareableBitmapConfiguration::create(const IntSize& size, PlatformColorSpace&& colorSpace, size_t bytesPerRow, bool isOpaque)
+{
+    if (size.isEmpty())
+        return std::nullopt;
+#if !USE(CAIRO)
+    if (!colorSpace)
+        return std::nullopt;
+#endif
+    if (!bytesPerRow)
+        return std::nullopt;
+    CheckedUint32 bytesPerRowUInt32 { bytesPerRow };
+    auto sizeInBytes = bytesPerRowUInt32 * size.height();
+    if (sizeInBytes.hasOverflowed())
+        return std::nullopt;
+    auto bytesPerRowTight = calculateBytesPerRow(size, DestinationColorSpace(colorSpace));
+    if (bytesPerRowTight.hasOverflowed())
+        return std::nullopt;
+    if (bytesPerRow < bytesPerRowTight)
+        return std::nullopt;
+    return ShareableBitmapConfiguration { size, WTFMove(colorSpace), bytesPerRow, isOpaque };
+}
+
+ShareableBitmapConfiguration::ShareableBitmapConfiguration(const IntSize& size, PlatformColorSpace&& colorSpace, size_t bytesPerRow, bool isOpaque)
+    : m_size(size)
+    , m_colorSpace(WTFMove(colorSpace))
+    , m_bytesPerRow(bytesPerRow)
+    , m_isOpaque(isOpaque)
+{
+}
+
+RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, const DestinationColorSpace& colorSpace, bool isOpaque)
+{
+    auto configuration = ShareableBitmapConfiguration::create(size, colorSpace.platformColorSpace(), ShareableBitmapConfiguration::calculateBytesPerRow(size, colorSpace), isOpaque);
+    if (!configuration)
+        return nullptr;
+    return create(*configuration);
+}
+#endif
 
 } // namespace WebCore

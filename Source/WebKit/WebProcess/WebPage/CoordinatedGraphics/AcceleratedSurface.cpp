@@ -329,7 +329,7 @@ AcceleratedSurface::RenderTargetEGLImage::~RenderTargetEGLImage()
 
 std::unique_ptr<AcceleratedSurface::RenderTarget> AcceleratedSurface::RenderTargetSHMImage::create(uint64_t surfaceID, const IntSize& size)
 {
-    RefPtr buffer = ShareableBitmap::create({ size });
+    RefPtr buffer = ShareableBitmap::create(size);
     if (!buffer) {
         WTFLogAlways("Failed to allocate shared memory buffer of size %dx%d", size.width(), size.height());
         return nullptr;

@@ -8177,7 +8177,7 @@ void WebPage::loadAndDecodeImage(WebCore::ResourceRequest&& request, std::option
         IntSize roundedDestinationSize = flooredIntSize(destinationSize);
         auto sourceColorSpace = nativeImage->colorSpace();
         auto destinationColorSpace = sourceColorSpace.supportsOutput() ? sourceColorSpace : DestinationColorSpace::SRGB();
-        auto bitmap = ShareableBitmap::create({ roundedDestinationSize, destinationColorSpace });
+        auto bitmap = ShareableBitmap::create(roundedDestinationSize, destinationColorSpace);
         if (!bitmap)
             return completionHandler(makeUnexpected<ResourceError>({ }));
 
@@ -10223,7 +10223,7 @@ void WebPage::takeSnapshotForTargetedElement(NodeIdentifier nodeID, ScriptExecut
     if (!image)
         return completion({ });
 
-    auto bitmap = ShareableBitmap::create({ IntSize { image->size() } });
+    auto bitmap = ShareableBitmap::create(IntSize { image->size() });
     if (!bitmap)
         return completion({ });
 

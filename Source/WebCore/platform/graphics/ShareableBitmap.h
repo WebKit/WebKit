@@ -32,14 +32,9 @@
 #include <WebCore/PlatformImage.h>
 #include <WebCore/SharedMemory.h>
 #include <wtf/ArgumentCoder.h>
-#include <wtf/DebugHeap.h>
 #include <wtf/ExportMacros.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
-
-#if USE(SKIA)
-#include <skia/core/SkImageInfo.h>
-#endif
 
 namespace WebCore {
 
@@ -49,62 +44,42 @@ class NativeImage;
 
 class ShareableBitmapConfiguration {
 public:
-    ShareableBitmapConfiguration() = default;
-
-    WEBCORE_EXPORT ShareableBitmapConfiguration(const IntSize&, std::optional<DestinationColorSpace> = std::nullopt, Headroom = Headroom::None, bool isOpaque = false);
-    WEBCORE_EXPORT ShareableBitmapConfiguration(const IntSize&, std::optional<DestinationColorSpace>, Headroom, bool isOpaque, unsigned bitsPerComponent, unsigned bytesPerPixel, unsigned bytesPerRow
 #if USE(CG)
-        , CGBitmapInfo
-#endif
-    );
-#if USE(CG)
-    ShareableBitmapConfiguration(NativeImage&);
+    WEBCORE_EXPORT static std::optional<ShareableBitmapConfiguration> create(const IntSize&, PlatformColorSpace&&, size_t bytesPerRow, Headroom, CGBitmapInfo, size_t bitsPerComponent, size_t bitsPerPixel);
+    Headroom headroom() const { return m_headroom; }
+    CGBitmapInfo bitmapInfo() const { return m_bitmapInfo; }
+    size_t bitsPerComponent() const { return m_bitsPerComponent; }
+    size_t bitsPerPixel() const { return m_bitsPerPixel; }
+#else
+    WEBCORE_EXPORT static std::optional<ShareableBitmapConfiguration> create(const IntSize&, PlatformColorSpace&&, size_t bytesPerRow, bool isOpaque);
 #endif
 
     IntSize size() const { return m_size; }
-    const DestinationColorSpace& colorSpace() const { return m_colorSpace ? *m_colorSpace : DestinationColorSpace::SRGB(); }
-    PlatformColorSpaceValue platformColorSpace() const { return colorSpace().platformColorSpace(); }
-    Headroom headroom() const { return m_headroom; }
-    bool isOpaque() const { return m_isOpaque; }
-
-    unsigned bitsPerComponent() const { ASSERT(!m_bitsPerComponent.hasOverflowed()); return m_bitsPerComponent; }
-    unsigned bytesPerPixel() const { ASSERT(!m_bytesPerPixel.hasOverflowed()); return m_bytesPerPixel; }
-    unsigned bytesPerRow() const { ASSERT(!m_bytesPerRow.hasOverflowed()); return m_bytesPerRow; }
-#if USE(CG)
-    CGBitmapInfo bitmapInfo() const { return m_bitmapInfo; }
-#endif
-#if USE(SKIA)
-    const SkImageInfo& imageInfo() const { return m_imageInfo; }
-#endif
-
-    CheckedUint32 sizeInBytes() const { return m_bytesPerRow * m_size.height(); }
+    PlatformColorSpace colorSpace() const { return m_colorSpace; }
+    uint32_t bytesPerRow() const { return m_bytesPerRow; }
+    uint32_t sizeInBytes() const { return m_bytesPerRow * m_size.height(); }
 
     WEBCORE_EXPORT static CheckedUint32 calculateBytesPerRow(const IntSize&, const DestinationColorSpace&);
-    WEBCORE_EXPORT static CheckedUint32 calculateSizeInBytes(const IntSize&, const DestinationColorSpace&);
 
 private:
+#if USE(CG)
+    ShareableBitmapConfiguration(const IntSize&, PlatformColorSpace&&, size_t bytesPerRow, Headroom, CGBitmapInfo, uint8_t bitsPerComponent, uint8_t bitsPerPixel);
+#else
+    ShareableBitmapConfiguration(const IntSize&, PlatformColorSpace&&, size_t bytesPerRow, bool isOpaque);
+#endif
+
     friend struct IPC::ArgumentCoder<ShareableBitmapConfiguration, void>;
 
-    static std::optional<DestinationColorSpace> validateColorSpace(std::optional<DestinationColorSpace>);
-    static CheckedUint32 calculateBitsPerComponent(const DestinationColorSpace&);
-    static CheckedUint32 calculateBytesPerPixel(const DestinationColorSpace&);
-#if USE(CG)
-    static CGBitmapInfo calculateBitmapInfo(const DestinationColorSpace&, bool isOpaque);
-#endif
-
     IntSize m_size;
-    std::optional<DestinationColorSpace> m_colorSpace;
-    Headroom m_headroom { Headroom::None };
-    bool m_isOpaque { false };
-
-    CheckedUint32 m_bitsPerComponent;
-    CheckedUint32 m_bytesPerPixel;
-    CheckedUint32 m_bytesPerRow;
+    PlatformColorSpace m_colorSpace;
+    uint32_t m_bytesPerRow;
 #if USE(CG)
-    CGBitmapInfo m_bitmapInfo { 0 };
-#endif
-#if USE(SKIA)
-    SkImageInfo m_imageInfo;
+    Headroom m_headroom { Headroom::None };
+    CGBitmapInfo m_bitmapInfo;
+    uint8_t m_bitsPerComponent;
+    uint8_t m_bitsPerPixel;
+#else
+    bool m_isOpaque;
 #endif
 };
 
@@ -135,7 +110,18 @@ class ShareableBitmap : public ThreadSafeRefCounted<ShareableBitmap> {
 public:
     using Handle = ShareableBitmapHandle;
 
+    // Creates a non-opaque SRGB destination drawable bitmap.
+    static RefPtr<ShareableBitmap> create(const IntSize&);
+
+    // Creates a destination drawable bitmap bitmap with compatible colorspace.
+#if USE(CG)
+    static WEBCORE_EXPORT RefPtr<ShareableBitmap> create(const IntSize&, const DestinationColorSpace&, Headroom = Headroom::None, bool isOpaque = false);
+#else
+    static WEBCORE_EXPORT RefPtr<ShareableBitmap> create(const IntSize&, const DestinationColorSpace&, bool isOpaque = false);
+#endif
+
     // Create a shareable bitmap whose backing memory can be shared with another process.
+    // The bitmap may be not be drawable if the colorspace or pixel format is not drawable.
     WEBCORE_EXPORT static RefPtr<ShareableBitmap> create(const ShareableBitmapConfiguration&);
 
     // Create a shareable bitmap from an already existing shared memory block.
@@ -169,7 +155,6 @@ public:
     WEBCORE_EXPORT std::span<uint8_t> mutableSpan() LIFETIME_BOUND;
     size_t bytesPerRow() const { return m_configuration.bytesPerRow(); }
     size_t sizeInBytes() const { return m_configuration.sizeInBytes(); }
-    const DestinationColorSpace& colorSpace() const { return  m_configuration.colorSpace(); }
 
     // Create a graphics context that can be used to paint into the backing store.
     WEBCORE_EXPORT std::unique_ptr<GraphicsContext> createGraphicsContext();
@@ -209,5 +194,10 @@ private:
     bool m_releaseBitmapContextDataCalled : 1 { false };
 #endif
 };
+
+inline RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size)
+{
+    return create(size, DestinationColorSpace::SRGB());
+}
 
 } // namespace WebCore

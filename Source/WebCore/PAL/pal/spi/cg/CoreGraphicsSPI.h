@@ -479,3 +479,29 @@ inline String CGPDFDictionaryGetNameString(CGPDFDictionaryRef dictionary, ASCIIL
 }
 
 #endif // __cplusplus
+
+#if !HAVE(CG_COMPONENT_INFO)
+
+typedef CF_ENUM(uint32_t, CGImageComponentInfo) { // NOLINT
+    kCGImageComponentInteger = (0 << 8),
+    kCGImageComponentFloat = (1 << 8)
+};
+
+#ifdef __BIG_ENDIAN__
+static const CGImageByteOrderInfo kCGImageByteOrder16Host = kCGImageByteOrder16Big;
+static const CGImageByteOrderInfo kCGImageByteOrder32Host = kCGImageByteOrder32Big;
+#else
+static const CGImageByteOrderInfo kCGImageByteOrder16Host = kCGImageByteOrder16Little;
+static const CGImageByteOrderInfo kCGImageByteOrder32Host = kCGImageByteOrder32Little;
+#endif
+
+static const CGBitmapInfo kCGBitmapComponentInfoMask = (CGBitmapInfo)(0xF00);
+static const CGBitmapInfo kCGBitmapByteOrderInfoMask = (CGBitmapInfo)(0x7000);
+static const CGBitmapInfo kCGBitmapPixelFormatInfoMask = (CGBitmapInfo)(0xF0000);
+
+inline CGBitmapInfo CGBitmapInfoMake(CGImageAlphaInfo alpha, CGImageComponentInfo component, CGImageByteOrderInfo byteOrder, CGImagePixelFormatInfo pixelFormat)
+{
+    return alpha | component | byteOrder | pixelFormat;
+}
+
+#endif

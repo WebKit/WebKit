@@ -38,21 +38,6 @@ namespace WebCore {
 
 static const cairo_format_t cairoFormat = CAIRO_FORMAT_ARGB32;
 
-std::optional<DestinationColorSpace> ShareableBitmapConfiguration::validateColorSpace(std::optional<DestinationColorSpace> colorSpace)
-{
-    return colorSpace;
-}
-
-CheckedUint32 ShareableBitmapConfiguration::calculateBitsPerComponent(const DestinationColorSpace& colorSpace)
-{
-    return (calculateBytesPerPixel(colorSpace) / 4) * 8;
-}
-
-CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerPixel(const DestinationColorSpace&)
-{
-    return 4;
-}
-
 CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerRow(const IntSize& size, const DestinationColorSpace&)
 {
     return cairo_format_stride_for_width(cairoFormat, size.width());
