@@ -41,7 +41,7 @@
 
 // FIXME(rdar://155970441): this annotation should be in WebGPU.h, move it once we support
 // annotating incomplete types
-struct __attribute__((swift_attr("@safe"))) SWIFT_SHARED_REFERENCE(wgpuQuerySetReference, wgpuQuerySetRelease) WGPUQuerySetImpl {
+struct SWIFT_SHARED_REFERENCE(wgpuQuerySetReference, wgpuQuerySetRelease) WGPUQuerySetImpl {
 };
 
 namespace WebGPU {
@@ -119,9 +119,7 @@ private:
     static Lock querySetLock;
     static std::unique_ptr<Vector<id<MTLCounterSampleBuffer>>> m_counterSampleBuffers WTF_GUARDED_BY_LOCK(querySetLock);
     static std::unique_ptr<Vector<RangeSet<Range<uint32_t>>>> m_counterSampleBufferFreeRanges WTF_GUARDED_BY_LOCK(querySetLock);
-
-// FIXME: remove @safe once rdar://151039766 lands
-} __attribute__((swift_attr("@safe"))) SWIFT_SHARED_REFERENCE(refQuerySet, derefQuerySet);
+} SWIFT_SHARED_REFERENCE(refQuerySet, derefQuerySet);
 
 } // namespace WebGPU
 

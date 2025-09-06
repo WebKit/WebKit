@@ -39,7 +39,7 @@
 
 // FIXME(rdar://155970441): this annotation should be in WebGPU.h, move it once we support
 // annotating incomplete types
-struct __attribute__((swift_attr("@safe"))) SWIFT_SHARED_REFERENCE(wgpuTextureReference, wgpuTextureRelease) WGPUTextureImpl {
+struct SWIFT_SHARED_REFERENCE(wgpuTextureReference, wgpuTextureRelease) WGPUTextureImpl {
 };
 
 namespace WebGPU {
@@ -123,6 +123,8 @@ public:
 
     Device& device() const { return m_device; }
 
+    bool previouslyCleared() const;
+    void setPreviouslyCleared();
     bool previouslyCleared(uint32_t mipLevel, uint32_t slice) const;
     void setPreviouslyCleared(uint32_t mipLevel, uint32_t slice, bool = true);
     bool isDestroyed() const { return m_destroyed; }
@@ -142,10 +144,17 @@ public:
     id<MTLSharedEvent> sharedEvent() const;
     uint64_t sharedEventSignalValue() const;
     void setRasterizationRateMaps(std::pair<id<MTLRasterizationRateMap>, id<MTLRasterizationRateMap>>&& rateMaps) { m_leftRightRasterizationMaps = WTFMove(rateMaps); }
-    id<MTLRasterizationRateMap> rasterizationMapForSlice(uint32_t slice) { return slice ? m_leftRightRasterizationMaps.second : m_leftRightRasterizationMaps.first; }
+    id<MTLRasterizationRateMap> rasterizationMapForSlice(uint32_t slice) const { return slice ? m_leftRightRasterizationMaps.second : m_leftRightRasterizationMaps.first; }
     uint32_t arrayLayerCount() const;
     WGPUTextureAspect aspect() const { return WGPUTextureAspect_All; }
+    uint32_t baseArrayLayer() const { return 0; }
+    uint32_t baseMipLevel() const { return 0; }
+    uint32_t parentRelativeSlice() const { return 0; }
     bool is2DTexture() const { return dimension() == WGPUTextureDimension_2D; }
+    bool is2DArrayTexture() const { return is2DTexture() && arrayLayerCount() > 1; }
+    bool is3DTexture() const { return dimension() == WGPUTextureDimension_3D; }
+    id<MTLTexture> parentTexture() const { return texture(); }
+    const Texture& apiParentTexture() const { return *this; }
 
 private:
     Texture(id<MTLTexture>, const WGPUTextureDescriptor&, Vector<WGPUTextureFormat>&& viewFormats, Device&);
@@ -179,8 +188,7 @@ private:
     std::pair<id<MTLRasterizationRateMap>, id<MTLRasterizationRateMap>> m_leftRightRasterizationMaps;
 
     uint64_t m_sharedEventSignalValue { 0 };
-// FIXME: remove @safe once rdar://151039766 lands
-} __attribute__((swift_attr("@safe"))) SWIFT_SHARED_REFERENCE(refTexture, derefTexture);
+} SWIFT_SHARED_REFERENCE(refTexture, derefTexture);
 
 } // namespace WebGPU
 
