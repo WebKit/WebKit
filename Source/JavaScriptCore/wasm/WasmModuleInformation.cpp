@@ -30,13 +30,19 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "WasmModuleDebugInfo.h"
 #include "WasmNameSection.h"
+#include "WebAssemblyBuiltin.h"
 
 namespace JSC { namespace Wasm {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModuleDebugInfo);
 
 ModuleInformation::ModuleInformation()
     : nameSection(NameSection::create())
 {
+    if (Options::enableWasmDebugger())
+        debugInfo = WTF::makeUnique<ModuleDebugInfo>();
 }
 
 ModuleInformation::~ModuleInformation() = default;

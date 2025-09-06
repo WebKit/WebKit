@@ -1227,6 +1227,16 @@ wasm/js/WebAssemblyTagConstructor.cpp
 wasm/js/WebAssemblyTagPrototype.cpp
 wasm/js/WebAssemblyWrapperFunction.cpp
 
+wasm/debugger/IPIntNextInstruction.cpp
+wasm/debugger/WasmBreakpointManager.cpp
+wasm/debugger/WasmDebugServer.cpp
+wasm/debugger/WasmExecutionHandler.cpp
+wasm/debugger/WasmMemoryHandler.cpp
+wasm/debugger/WasmQueryHandler.cpp
+wasm/debugger/WasmDebugServerUtilities.cpp
+wasm/debugger/WasmModuleManager.cpp
+wasm/debugger/WasmVirtualAddress.cpp
+
 yarr/RegularExpression.cpp
 yarr/YarrCanonicalizeUCS2.cpp
 yarr/YarrDisassembler.cpp

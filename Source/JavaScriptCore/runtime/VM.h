@@ -577,6 +577,10 @@ public:
         return m_deletePropertyMode;
     }
 
+    bool isStopWorldActive() { return m_isStopWorldActive; }
+    void setIsStopWorldActive(bool isStopWorldActive) { m_isStopWorldActive = isStopWorldActive; }
+    bool m_isStopWorldActive { false };
+
     class DeletePropertyModeScope {
     public:
         DeletePropertyModeScope(VM& vm, DeletePropertyMode mode)

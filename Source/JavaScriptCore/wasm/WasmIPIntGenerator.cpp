@@ -37,6 +37,7 @@
 #include "WasmContext.h"
 #include "WasmFunctionIPIntMetadataGenerator.h"
 #include "WasmFunctionParser.h"
+#include "WasmModuleDebugInfo.h"
 #include <wtf/Assertions.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefPtr.h>
@@ -538,11 +539,24 @@ public:
     void didPopValueFromStack(ExpressionType, ASCIILiteral) { }
     void willParseOpcode() { }
     void willParseExtendedOpcode() { }
+    uint32_t previousMC = 0;
     void didParseOpcode()
     {
         if (!m_parser->unreachableBlocks())
             assertAboutStackSize(m_parser->getStackHeightInValues() == m_stackSize.value());
+
+        if (Options::enableWasmDebugger()) { // FIXME
+            size_t functionStart = m_info.functions[m_functionIndex].start;
+            uint32_t currentOpcodeBaseOffset = functionStart + m_parser->currentOpcodeStartingOffset();
+            uint32_t currentMC = curMC();
+            uint32_t metadataSize = currentMC - previousMC;
+            m_info.debugInfo->addData(currentOpcodeBaseOffset, ModuleDebugInfo::Data(m_functionIndex, previousMC, metadataSize));
+            previousMC = currentMC;
+        }
     }
+
+    FunctionCodeIndex functionIndex() const { return m_functionIndex; }
+
     void dump(const ControlStack&, const Stack*);
 
     void convertTryToCatch(ControlType& tryBlock, CatchKind);

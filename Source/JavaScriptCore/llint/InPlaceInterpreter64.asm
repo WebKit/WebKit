@@ -171,6 +171,17 @@ const argumINTDsp = csr4
 
 macro ipintEntry()
     const argumINTEndAsScratch = argumINTEnd
+
+    move (constexpr JSWebAssemblyInstance::MaxSoftStackLimit), argumINTEndAsScratch
+    bpneq JSWebAssemblyInstance::m_stackMirror + StackManager::Mirror::m_trapAwareSoftStackLimit[wasmInstance], argumINTEndAsScratch, .stackCheck
+
+    probe(macro()
+        move wasmInstance, a0
+        move ws0, a1 # IPInt callee
+        cCall2(_ipint_extern_debug_interrupt_handler)
+    end)
+
+.stackCheck:
     checkStackOverflow(ws0, argumINTEndAsScratch)
 
     # Allocate space for locals and rethrow values
@@ -235,7 +246,23 @@ end
     #############################
 
 ipintOp(_unreachable, macro()
-    # unreachable
+    # Push arguments onto stack for the handler
+    push PC, MC
+    push PL, ws0
+    
+    move cfr, a1
+    move sp, a2
+    operationCall(macro() cCall3(_ipint_extern_unreachable_breakpoint_handler) end)
+    
+    # Clean up the pushed arguments
+    addq 32, sp  # Remove 4 pushed values (PC, MC, PL, and ws0)
+    
+    bqeq r0, 0, .exception
+
+.continue:
+    nextIPIntInstruction()
+
+.exception:
     ipintException(Unreachable)
 end)
 

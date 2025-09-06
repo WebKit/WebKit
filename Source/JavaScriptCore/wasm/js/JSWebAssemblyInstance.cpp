@@ -40,6 +40,7 @@
 #include "JSWebAssemblyStruct.h"
 #include "Register.h"
 #include "WasmConstExprGenerator.h"
+#include "WasmDebugServer.h"
 #include "WasmModuleInformation.h"
 #include "WasmTag.h"
 #include "WasmTypeDefinitionInlines.h"
@@ -140,6 +141,9 @@ void JSWebAssemblyInstance::finishCreation(VM& vm)
         vm.writeBarrier(this);
 
     m_vm->traps().registerMirror(m_stackMirror);
+
+    if (Options::enableWasmDebugger())
+        Wasm::DebugServer::singleton().trackInstance(this);
 }
 
 JSWebAssemblyInstance::~JSWebAssemblyInstance()

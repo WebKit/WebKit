@@ -41,6 +41,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace JSC { namespace Wasm {
 
 class ConstExprGenerator;
+class IPIntGenerator;
 
 enum class BlockType {
     If,
@@ -444,6 +445,16 @@ auto FunctionParser<Context>::parse() -> Result
         return signature.argumentType(i);
     });
 
+    Vector<Type>* localTypes = nullptr;
+    if (Options::enableWasmDebugger()) {
+        if constexpr (std::is_same_v<Context, class IPIntGenerator>) {
+            localTypes = const_cast<Vector<Type>*>(&m_info.functions[m_context.functionIndex()].localTypes);
+            localTypes->reserveInitialCapacity(signature.argumentCount());
+            for (uint32_t i = 0; i < signature.argumentCount(); ++i)
+                localTypes->append(signature.argumentType(i));
+        }
+    }
+
     uint64_t totalNumberOfLocals = signature.argumentCount();
     uint64_t totalNonDefaultableLocals = 0;
     for (uint32_t i = 0; i < localGroupsCount; ++i) {
@@ -462,6 +473,13 @@ auto FunctionParser<Context>::parse() -> Result
 
         WASM_PARSER_FAIL_IF(!m_locals.tryReserveCapacity(totalNumberOfLocals), "can't allocate enough memory for function's "_s, totalNumberOfLocals, " locals"_s);
         m_locals.appendUsingFunctor(numberOfLocals, [&](size_t) { return typeOfLocal; });
+
+        if (Options::enableWasmDebugger()) {
+            if constexpr (std::is_same_v<Context, class IPIntGenerator>) {
+                for (uint32_t j = 0; j < numberOfLocals; ++j)
+                    localTypes->append(typeOfLocal);
+            }
+        }
 
         WASM_TRY_ADD_TO_CONTEXT(addLocal(typeOfLocal, numberOfLocals));
     }

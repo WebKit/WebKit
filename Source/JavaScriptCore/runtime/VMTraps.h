@@ -282,6 +282,9 @@ public:
 
     VM& vm() const;
 
+    void requestStop() { m_stack.requestStop(); }
+    void cancelStop() { m_stack.cancelStop(); }
+
 private:
     ALWAYS_INLINE void clearTrapWithoutCancellingThreadStop(Event event)
     {

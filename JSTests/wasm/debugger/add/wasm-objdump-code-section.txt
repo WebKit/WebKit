@@ -1,0 +1,149 @@
+
+add.wasm:	file format wasm 0x1
+module name: <add.wasm>
+
+Code Disassembly:
+
+00016a func[1] <__wasm_call_ctors>:
+ 00016b: 10 0c                      | call 12 <emscripten_stack_init>
+ 00016d: 0b                         | end
+00016f func[2] <add>:
+ 000170: 01 7f                      | local[2] type=i32
+ 000172: 23 80 80 80 80 00          | global.get 0 <__stack_pointer>
+ 000178: 41 10                      | i32.const 16
+ 00017a: 6b                         | i32.sub
+ 00017b: 21 02                      | local.set 2
+ 00017d: 20 02                      | local.get 2
+ 00017f: 20 00                      | local.get 0
+ 000181: 36 02 0c                   | i32.store 2 12
+ 000184: 20 02                      | local.get 2
+ 000186: 20 01                      | local.get 1
+ 000188: 36 02 08                   | i32.store 2 8
+ 00018b: 20 02                      | local.get 2
+ 00018d: 20 02                      | local.get 2
+ 00018f: 28 02 0c                   | i32.load 2 12
+ 000192: 20 02                      | local.get 2
+ 000194: 28 02 08                   | i32.load 2 8
+ 000197: 6a                         | i32.add
+ 000198: 36 02 04                   | i32.store 2 4
+ 00019b: 20 02                      | local.get 2
+ 00019d: 28 02 04                   | i32.load 2 4
+ 0001a0: 0f                         | return
+ 0001a1: 0b                         | end
+0001a3 func[3] <__original_main>:
+ 0001a4: 02 7f                      | local[0..1] type=i32
+ 0001a6: 23 80 80 80 80 00          | global.get 0 <__stack_pointer>
+ 0001ac: 41 10                      | i32.const 16
+ 0001ae: 6b                         | i32.sub
+ 0001af: 21 00                      | local.set 0
+ 0001b1: 20 00                      | local.get 0
+ 0001b3: 24 80 80 80 80 00          | global.set 0 <__stack_pointer>
+ 0001b9: 20 00                      | local.get 0
+ 0001bb: 41 00                      | i32.const 0
+ 0001bd: 36 02 0c                   | i32.store 2 12
+ 0001c0: 20 00                      | local.get 0
+ 0001c2: 41 0a                      | i32.const 10
+ 0001c4: 36 02 08                   | i32.store 2 8
+ 0001c7: 20 00                      | local.get 0
+ 0001c9: 41 14                      | i32.const 20
+ 0001cb: 36 02 04                   | i32.store 2 4
+ 0001ce: 20 00                      | local.get 0
+ 0001d0: 20 00                      | local.get 0
+ 0001d2: 28 02 08                   | i32.load 2 8
+ 0001d5: 20 00                      | local.get 0
+ 0001d7: 28 02 04                   | i32.load 2 4
+ 0001da: 10 82 80 80 80 00          | call 2 <add>
+ 0001e0: 36 02 00                   | i32.store 2 0
+ 0001e3: 20 00                      | local.get 0
+ 0001e5: 28 02 00                   | i32.load 2 0
+ 0001e8: 21 01                      | local.set 1
+ 0001ea: 20 00                      | local.get 0
+ 0001ec: 41 10                      | i32.const 16
+ 0001ee: 6a                         | i32.add
+ 0001ef: 24 80 80 80 80 00          | global.set 0 <__stack_pointer>
+ 0001f5: 20 01                      | local.get 1
+ 0001f7: 0f                         | return
+ 0001f8: 0b                         | end
+0001fa func[4] <main>:
+ 0001fb: 10 83 80 80 80 00          | call 3 <__original_main>
+ 000201: 0f                         | return
+ 000202: 0b                         | end
+000204 func[5] <_start>:
+ 000205: 02 40                      | block
+ 000207: 41 81 80 80 80 00          |   i32.const 1
+ 00020d: 45                         |   i32.eqz
+ 00020e: 0d 00                      |   br_if 0
+ 000210: 10 81 80 80 80 00          |   call 1 <__wasm_call_ctors>
+ 000216: 0b                         | end
+ 000217: 10 83 80 80 80 00          | call 3 <__original_main>
+ 00021d: 10 88 80 80 80 00          | call 8 <exit>
+ 000223: 00                         | unreachable
+ 000224: 0b                         | end
+000226 func[6] <dummy>:
+ 000227: 0b                         | end
+000229 func[7] <libc_exit_fini>:
+ 00022a: 01 7f                      | local[0] type=i32
+ 00022c: 41 80 80 80 80 00          | i32.const 0
+ 000232: 21 00                      | local.set 0
+ 000234: 02 40                      | block
+ 000236: 41 80 80 80 80 00          |   i32.const 0
+ 00023c: 41 80 80 80 80 00          |   i32.const 0
+ 000242: 4d                         |   i32.le_u
+ 000243: 0d 00                      |   br_if 0
+ 000245: 03 40                      |   loop
+ 000247: 20 00                      |     local.get 0
+ 000249: 41 7c                      |     i32.const 4294967292
+ 00024b: 6a                         |     i32.add
+ 00024c: 22 00                      |     local.tee 0
+ 00024e: 28 02 00                   |     i32.load 2 0
+ 000251: 11 80 80 80 80 00 80 80 80 |     call_indirect 0 (type 0)
+ 00025a: 80 00                      | 
+ 00025c: 20 00                      |     local.get 0
+ 00025e: 41 80 80 80 80 00          |     i32.const 0
+ 000264: 4b                         |     i32.gt_u
+ 000265: 0d 00                      |     br_if 0
+ 000267: 0b                         |   end
+ 000268: 0b                         | end
+ 000269: 10 86 80 80 80 00          | call 6 <dummy>
+ 00026f: 0b                         | end
+000271 func[8] <exit>:
+ 000272: 10 86 80 80 80 00          | call 6 <dummy>
+ 000278: 10 87 80 80 80 00          | call 7 <libc_exit_fini>
+ 00027e: 10 86 80 80 80 00          | call 6 <dummy>
+ 000284: 20 00                      | local.get 0
+ 000286: 10 89 80 80 80 00          | call 9 <_Exit>
+ 00028c: 00                         | unreachable
+ 00028d: 0b                         | end
+00028f func[9] <_Exit>:
+ 000290: 20 00                      | local.get 0
+ 000292: 10 80 80 80 80 00          | call 0 <__wasi_proc_exit>
+ 000298: 00                         | unreachable
+ 000299: 0b                         | end
+00029b func[10] <_emscripten_stack_restore>:
+ 00029c: 20 00                      | local.get 0
+ 00029e: 24 80 80 80 80 00          | global.set 0 <__stack_pointer>
+ 0002a4: 0b                         | end
+0002a6 func[11] <emscripten_stack_get_current>:
+ 0002a7: 23 80 80 80 80 00          | global.get 0 <__stack_pointer>
+ 0002ad: 0b                         | end
+0002af func[12] <emscripten_stack_init>:
+ 0002b0: 41 80 80 84 80 00          | i32.const 65536
+ 0002b6: 24 82 80 80 80 00          | global.set 2 <__stack_base>
+ 0002bc: 41 80 80 80 80 00          | i32.const 0
+ 0002c2: 41 0f                      | i32.const 15
+ 0002c4: 6a                         | i32.add
+ 0002c5: 41 70                      | i32.const 4294967280
+ 0002c7: 71                         | i32.and
+ 0002c8: 24 81 80 80 80 00          | global.set 1 <__stack_end>
+ 0002ce: 0b                         | end
+0002d0 func[13] <emscripten_stack_get_free>:
+ 0002d1: 23 80 80 80 80 00          | global.get 0 <__stack_pointer>
+ 0002d7: 23 81 80 80 80 00          | global.get 1 <__stack_end>
+ 0002dd: 6b                         | i32.sub
+ 0002de: 0b                         | end
+0002e0 func[14] <emscripten_stack_get_base>:
+ 0002e1: 23 82 80 80 80 00          | global.get 2 <__stack_base>
+ 0002e7: 0b                         | end
+0002e9 func[15] <emscripten_stack_get_end>:
+ 0002ea: 23 81 80 80 80 00          | global.get 1 <__stack_end>
+ 0002f0: 0b                         | end

@@ -83,6 +83,7 @@
 #include "VMManager.h"
 #include "VMTrapsInlines.h"
 #include "WasmCapabilities.h"
+#include "WasmDebugServer.h"
 #include "WasmFaultSignalHandler.h"
 #include "WebAssemblyMemoryConstructor.h"
 #include <span>
@@ -4016,6 +4017,7 @@ static void runInteractive(GlobalObject* globalObject)
 #endif
     fprintf(stderr, "  --destroy-vm               Destroy VM before exiting\n");
     fprintf(stderr, "  --can-block-is-false       Make main thread's Atomics.wait throw\n");
+    fprintf(stderr, "  --wasm-debug[=port]        Enable WebAssembly debugging server (default port 1234)\n");
     fprintf(stderr, "\n");
     fprintf(stderr, "Files with a .mjs extension will always be evaluated as modules.\n");
     fprintf(stderr, "\n");
@@ -4209,6 +4211,36 @@ void CommandLine::parseArguments(int argc, char** argv)
             m_canBlockIsFalse = true;
             continue;
         }
+        if (!strcmp(arg, "--wasm-debug")) {
+#if ENABLE(WEBASSEMBLY)
+            JSC::Options::enableWasmDebugger() = true;
+            JSC::Options::useBBQJIT() = false;
+            JSC::Options::useOMGJIT() = false;
+#else
+            dataLogLn("WARNING: WebAssembly is not enabled, --wasm-debug option ignored");
+#endif
+            continue;
+        }
+        static const unsigned wasmDebugStrLength = strlen("--wasm-debug=");
+        if (!strncmp(arg, "--wasm-debug=", wasmDebugStrLength)) {
+#if ENABLE(WEBASSEMBLY)
+            const char* portStr = arg + wasmDebugStrLength;
+            char* endPtr;
+            long port = strtol(portStr, &endPtr, 10);
+            if (*endPtr == '\0' && port > 0 && port <= 65535) {
+                JSC::Options::enableWasmDebugger() = true;
+                JSC::Options::useBBQJIT() = false;
+                JSC::Options::useOMGJIT() = false;
+                Wasm::DebugServer::singleton().setPort(port);
+            } else {
+                hasBadJSCOptions = true;
+                dataLog("ERROR: invalid port number for --wasm-debug: ", portStr, "\n");
+            }
+#else
+            dataLogLn("WARNING: WebAssembly is not enabled, --wasm-debug option ignored");
+#endif
+            continue;
+        }
         if (!strcmp(arg, "--disableOptionsFreezingForTesting")) {
             JSC::Config::disableFreezingForTesting();
             continue;
@@ -4361,6 +4393,12 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
             startTimeoutThreadIfNeeded(vm);
             globalObject = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), options.m_arguments);
             globalObject->setInspectable(options.m_inspectable);
+
+#if ENABLE(WEBASSEMBLY)
+            if (Options::enableWasmDebugger())
+                Wasm::DebugServer::singleton().start(&vm);
+#endif
+
             func(vm, globalObject, success);
             vm.drainMicrotasks();
         }
@@ -4460,6 +4498,11 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
         // thread to die before its compilation threads finish.
         vm.derefSuppressingSaferCPPChecking();
     }
+
+#if ENABLE(WEBASSEMBLY)
+    if (Options::enableWasmDebugger())
+        Wasm::DebugServer::singleton().stop();
+#endif
 
     return result;
 }

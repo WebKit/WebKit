@@ -565,6 +565,7 @@ struct FunctionData {
     size_t start;
     size_t end;
     Vector<uint8_t> data;
+    Vector<Type> localTypes;
     bool usesSIMD : 1 { false };
     bool usesExceptions : 1 { false };
     bool usesAtomics : 1 { false };

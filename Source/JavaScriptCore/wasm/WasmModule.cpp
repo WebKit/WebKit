@@ -129,6 +129,9 @@ void Module::copyInitialCalleeGroupToAllMemoryModes(MemoryMode initialMode)
     }
 }
 
+uint32_t Module::debugId() { return m_moduleInformation->debugInfo->id(); }
+void Module::setDebugId(uint32_t id) { m_moduleInformation->debugInfo->setId(id); }
+
 } } // namespace JSC::Wasm
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -32,6 +32,7 @@
 #include "JSWebAssemblyCompileError.h"
 #include "JSWebAssemblyLinkError.h"
 #include "WasmBinding.h"
+#include "WasmDebugServer.h"
 #include "WasmFormat.h"
 #include "WasmModule.h"
 #include "WasmModuleInformation.h"
@@ -79,6 +80,9 @@ void JSWebAssemblyModule::finishCreation(VM& vm)
     }
 
     m_exportSymbolTable.set(vm, this, exportSymbolTable);
+
+    if (Options::enableWasmDebugger())
+        Wasm::DebugServer::singleton().trackModule(this);
 }
 
 void JSWebAssemblyModule::destroy(JSCell* cell)
