@@ -70,6 +70,7 @@ class JSWebAssemblyInstance final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
     static constexpr DestructionMode needsDestruction = NeedsDestruction;
+    static constexpr uintptr_t MaxSoftStackLimit = uintptr_t(-1); // FIXME
     static void destroy(JSCell*);
 
     template<typename CellType, SubspaceAccess mode>
@@ -306,6 +307,9 @@ public:
     void setFaultPC(void* pc) { m_faultPC = pc; };
     void* faultPC() const { return m_faultPC; }
 
+    void setDebugId(uint32_t id) { m_debugId = id; }
+    uint32_t debugId() { return m_debugId; }
+
 private:
     JSWebAssemblyInstance(VM&, Structure*, JSWebAssemblyModule*, WebAssemblyModuleRecord*, RefPtr<SourceProvider>&&);
     ~JSWebAssemblyInstance();
@@ -339,6 +343,7 @@ private:
     // Used by builtin trampolines to quickly fetch callee bits to store in the call frame.
     // The actual callees are owned by builtins. Populated by WebAssemblyModuleRecord::initializeImports().
     CalleeBits m_builtinCalleeBits[WASM_BUILTIN_COUNT];
+    uint32_t m_debugId { 0 };
 };
 
 } // namespace JSC

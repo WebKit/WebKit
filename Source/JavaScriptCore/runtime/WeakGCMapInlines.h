@@ -88,4 +88,17 @@ inline void WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::forEach(Func fun
     }
 }
 
+template<typename KeyArg, typename ValueArg, typename HashArg, typename KeyTraitsArg>
+template<typename Func>
+inline void WeakGCMap<KeyArg, ValueArg, HashArg, KeyTraitsArg>::forEach(Func func) const
+{
+    ASSERT(m_vm.heap.isDeferred());
+    for (const auto& entry : m_map) {
+        if (entry.value) {
+            if (func(entry.key, entry.value.get()) == IterationStatus::Done)
+                return;
+        }
+    }
+}
+
 } // namespace JSC

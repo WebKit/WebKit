@@ -226,6 +226,9 @@ private:
     // Support DropLockForScope even though it doesn't support thread safety analysis.
     template<typename>
     friend class DropLockForScope;
+    
+    // Support Condition class to access private lock/unlock methods
+    friend class Condition;
 
     void lock() WTF_ACQUIRES_LOCK(m_lock)
     {

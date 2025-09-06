@@ -30,6 +30,7 @@
 #include "WasmModuleInformation.h"
 #include "WasmPlan.h"
 #include "WasmStreamingParser.h"
+#include "WasmModuleDebugInfo.h"
 #include <wtf/Function.h>
 #include <wtf/SharedTask.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -61,6 +62,8 @@ public:
     Ref<ModuleInformation>&& takeModuleInformation()
     {
         RELEASE_ASSERT(!failed() && !hasWork());
+        if (Options::enableWasmDebugger())
+            m_moduleInformation->debugInfo->takeSource(WTFMove(m_source));
         return WTFMove(m_moduleInformation);
     }
 

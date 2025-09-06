@@ -42,6 +42,7 @@ set(JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/runtime"
     "${JAVASCRIPTCORE_DIR}/tools"
     "${JAVASCRIPTCORE_DIR}/wasm"
+    "${JAVASCRIPTCORE_DIR}/wasm/debugger"
     "${JAVASCRIPTCORE_DIR}/wasm/js"
     "${JAVASCRIPTCORE_DIR}/yarr"
     "${JavaScriptCore_DERIVED_SOURCES_DIR}"
@@ -1445,6 +1446,18 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/js/WebAssemblyLinkErrorConstructor.h
     wasm/js/WebAssemblyLinkErrorPrototype.h
     wasm/js/WebAssemblyModuleRecord.h
+
+    wasm/debugger/IPIntNextInstruction.h
+    wasm/debugger/WasmBreakpointManager.h
+    wasm/debugger/WasmDebugServer.h
+    wasm/debugger/WasmExecutionHandler.h
+    wasm/debugger/WasmMemoryHandler.h
+    wasm/debugger/WasmQueryHandler.h
+    wasm/debugger/WasmRegisterHandler.h
+    wasm/debugger/WasmDebugServerUtilities.h
+    wasm/debugger/WasmModuleDebugInfo.h
+    wasm/debugger/WasmModuleManager.h
+    wasm/debugger/WasmVirtualAddress.h
 
     yarr/RegularExpression.h
     yarr/Yarr.h

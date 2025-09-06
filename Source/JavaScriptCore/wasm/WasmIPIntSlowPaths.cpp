@@ -42,6 +42,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "WasmCallSlot.h"
 #include "WasmCallee.h"
 #include "WasmCallingConvention.h"
+#include "WasmDebugServer.h"
 #include "WasmIPIntGenerator.h"
 #include "WasmModuleInformation.h"
 #include "WasmOSREntryPlan.h"
@@ -1153,6 +1154,74 @@ WASM_IPINT_EXTERN_CPP_DECL(check_stack_and_vm_traps, void* candidateNewStackPoin
         IPINT_RETURN(encodedJSValue()); // No stack overflow. Carry on.
 
     IPINT_THROW(Wasm::ExceptionType::StackOverflow);
+}
+
+static UNUSED_FUNCTION void displayWasmDebugState(JSWebAssemblyInstance* instance, Wasm::IPIntCallee* callee, IPIntStackEntry* sp, IPIntLocal* pl)
+{
+    dataLogLn("=== WASM Debug State ===");
+    
+    uint32_t numLocals = callee->numLocals();
+    dataLogF("WASM Locals (%u entries):\n", numLocals);
+    auto functionIndex = callee->functionIndex();
+    const auto& moduleInfo = instance->module().moduleInformation();
+    const Vector<Wasm::Type>& localTypes = moduleInfo.functions[functionIndex].localTypes;
+    for (uint32_t i = 0; i < numLocals; ++i)
+        logWasmLocalValue(i,  pl[i], localTypes[i]);
+    
+
+    constexpr size_t STACK_ENTRY_SIZE = 16;
+    if (sp && pl && sp <= reinterpret_cast<IPIntStackEntry*>(pl)) {
+        size_t stackDepth = (reinterpret_cast<uint8_t*>(pl) - reinterpret_cast<uint8_t*>(sp)) / STACK_ENTRY_SIZE;
+        dataLogF("WASM Stack (%zu entries - showing all type interpretations):\n", stackDepth);
+        
+        IPIntStackEntry* currentEntry = sp;
+        for (size_t i = 0; i < stackDepth && i < 100; ++i) { // Limit to 100 entries for safety
+            dataLogF("  Stack[%zu]: i32=%d, i64=%" PRId64 ", f32=%f, f64=%f, ref=%p\n", i, currentEntry->i32, currentEntry->i64, currentEntry->f32, currentEntry->f64, reinterpret_cast<void*>(currentEntry->ref));
+            currentEntry++;
+        }
+        if (stackDepth > 100) {
+            dataLogF("  ... (%zu more entries)\n", stackDepth - 100);
+        }
+    } else {
+        dataLogLn("WASM Stack: Invalid stack pointers");
+    }
+
+    dataLogLn("=== End WASM Debug State ===");
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(debug_interrupt_handler, Wasm::IPIntCallee* callee)
+{
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Code][interrupt] Start");
+    
+    auto& debugServer = Wasm::DebugServer::singleton();
+    if (!debugServer.interruptRequested()) {
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Code][interrupt] continuing execution");
+        IPINT_END();
+    }
+
+    debugServer.setInterruptBreakpoint(instance, callee);
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Code][interrupt] Bytecode patched, continuing execution - will halt at unreachable instruction");
+    IPINT_END();
+}
+
+WASM_IPINT_EXTERN_CPP_DECL(unreachable_breakpoint_handler, CallFrame* callFrame, Register* sp)
+{
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Code][unreachable] Start");
+    bool breakpointHandled = false;
+    Wasm::DebugServer& debugServer = Wasm::DebugServer::singleton();
+    if (debugServer.needToHandleBreakpoints()) {
+        uint8_t* pc = static_cast<uint8_t*>(sp[2].pointer());
+        uint8_t* mc = static_cast<uint8_t*>(sp[3].pointer());
+        IPIntLocal* pl = static_cast<IPIntLocal*>(sp[0].pointer());
+        Wasm::IPIntCallee* callee = static_cast<Wasm::IPIntCallee*>(sp[1].pointer());
+
+        IPIntStackEntry* stackPointer = reinterpret_cast<IPIntStackEntry*>(sp + 4);        
+        if (Options::verboseWasmDebugger())
+            displayWasmDebugState(instance, callee, stackPointer, pl);
+        breakpointHandled = Wasm::DebugServer::singleton().stopCode(callFrame, instance, callee, pc, mc, pl, stackPointer);
+    }
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Code][unreachable] Done with breakpointHandled=", breakpointHandled);
+    IPINT_RETURN(static_cast<EncodedJSValue>(static_cast<int32_t>(breakpointHandled)));
 }
 
 } } // namespace JSC::IPInt

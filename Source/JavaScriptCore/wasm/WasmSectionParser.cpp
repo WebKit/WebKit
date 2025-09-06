@@ -242,7 +242,7 @@ auto SectionParser::parseFunction() -> PartialResult
         size_t end = 0;
         WASM_PARSER_FAIL_IF(!signature.has_value(), i, "th Function type "_s, typeNumber, " doesn't have a function signature"_s);
         m_info->internalFunctionTypeIndices.append(typeIndex);
-        m_info->functions.append({ start, end, Vector<uint8_t>() });
+        m_info->functions.append({ start, end, Vector<uint8_t>(), Vector<Type>() });
     }
 
     // Note that `initializeFunctionTrackers` should only be used after both parseImport and parseFunction

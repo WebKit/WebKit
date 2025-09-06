@@ -12,4 +12,9 @@ target_link_libraries(LLIntOffsetsExtractor PRIVATE ${MEMORY_EXTRA_LIB})
 
 if (DEVELOPER_MODE)
     add_subdirectory(testmem)
+    # Link testwasmdebugger with MEMORY_EXTRA_LIB for PlayStation-specific memory management
+    # Only link if the target exists and library is available
+    if (TARGET testwasmdebugger AND MEMORY_EXTRA_LIB)
+        target_link_libraries(testwasmdebugger PRIVATE ${MEMORY_EXTRA_LIB})
+    endif ()
 endif ()

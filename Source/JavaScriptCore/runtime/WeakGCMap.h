@@ -106,6 +106,11 @@ public:
     template<typename Func>
     void forEach(Func);
 
+    template<typename Func>
+    void forEach(Func) const;
+
+    size_t size() const { return m_map.size(); };
+
 private:
     HashMapType m_map;
     VM& m_vm;
