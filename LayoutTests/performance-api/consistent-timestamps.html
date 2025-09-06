@@ -4,23 +4,22 @@
 <script src="../resources/js-test.js"></script>
 </head>
 <body>
+<input type="text" id="textinput" value="Hello World">
 <script>
 description("Ensure event timestamps are neither ahead of Performance::now() nor more than 1 minute in the past.")
 window.jsTestIsAsync = true;
-let clickEvent;
+let keydownEvent;
 new Promise( (resolve) => {
     let listener = (event) => {
-        clickEvent = event
-        window.removeEventListener('click', listener)
+        keydownEvent = event
+        textinput.removeEventListener('keydown', listener)
         resolve()
     }
-    window.addEventListener('click', listener)
-    if (!eventSender) shouldBeTrue("false");
-    eventSender.mouseMoveTo(100, 100)
-    eventSender.asyncMouseDown()
-    eventSender.asyncMouseUp()
+    textinput.addEventListener('keydown', listener)
+    textinput.focus()
+    eventSender.keyDown('a')
 }).then( () => {
-    dt = performance.now() - clickEvent.timeStamp
+    dt = performance.now() - keydownEvent.timeStamp
     shouldBeGreaterThanOrEqual("dt", "0")
     shouldBeLessThanOrEqual("dt", "60000")
     finishJSTest();
