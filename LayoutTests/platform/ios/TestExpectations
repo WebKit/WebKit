@@ -4474,8 +4474,6 @@ http/tests/webgpu/webgpu/web_platform/copyToTexture/image.html [ Skip ]
 
 webkit.org/b/254637 fast/text/web-font-load-invisible-during-loading.html [ Pass Failure ]
 
-webkit.org/b/251417 imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.https.sub.tentative.html [ Pass Failure ]
-
 webkit.org/b/251533 imported/w3c/web-platform-tests/workers/baseurl/alpha/import-in-moduleworker.html [ Pass Timeout ]
 
 webkit.org/b/251876 editing/selection/selection-scrolling-in-multiple-nested-subframes.html [ Pass Crash ]
