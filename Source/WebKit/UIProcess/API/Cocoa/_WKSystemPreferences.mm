@@ -55,7 +55,6 @@ constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpm
 {
     CFPreferencesSetValue(WKLockdownModeEnabledKeyCFString, enabled ? kCFBooleanTrue : kCFBooleanFalse, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
     CFPreferencesSynchronize(kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification, nullptr, nullptr, true);
 }
 
 + (BOOL)isCaptivePortalModeIgnored:(NSString *)containerPath
@@ -88,8 +87,6 @@ constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpm
         [[NSFileManager defaultManager] createFileAtPath:cpmconfigIgnoreFilePath contents:NULL attributes:NULL];
     else
         [[NSFileManager defaultManager] removeItemAtPath:cpmconfigIgnoreFilePath error:NULL];
-
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification, nullptr, nullptr, true);
 #endif
 }
 

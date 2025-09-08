@@ -964,10 +964,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             webProcessPool->sendToAllProcesses(Messages::WebProcess::PowerSourceDidChange(hasAC));
     });
 
-#if PLATFORM(COCOA)
-    addCFNotificationObserver(lockdownModeConfigurationUpdateCallback, (__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification);
-#endif
-
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSReduceMotionChangedNotification);
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSIncreaseButtonLegibilityNotification);
@@ -1042,10 +1038,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     m_powerSourceNotifier = nullptr;
 
     [[NSNotificationCenter defaultCenter] removeObserver:m_finishedMobileAssetFontDownloadObserver.get()];
-
-#if PLATFORM(COCOA)
-    removeCFNotificationObserver((__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification);
-#endif
 
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
     removeCFNotificationObserver(kAXSReduceMotionChangedNotification);
