@@ -105,7 +105,8 @@ void RenderLayerModelObject::willBeDestroyed()
 void RenderLayerModelObject::destroyLayer()
 {
     setHasLayer(false);
-    m_layer = nullptr;
+    if (auto layer = std::exchange(m_layer, nullptr))
+        layer->removeForRenderTreeBeingDestroyed();
 }
 
 void RenderLayerModelObject::createLayer()

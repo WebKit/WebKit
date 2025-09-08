@@ -526,6 +526,26 @@ void RenderLayer::removeChild(RenderLayer& oldChild)
         dirtyVisibleContentStatus();
 }
 
+void RenderLayer::removeForRenderTreeBeingDestroyed()
+{
+    if (auto* parent = m_parent.get()) {
+        if (parent->m_first.get() == this)
+            parent->m_first = m_next;
+        if (parent->m_last.get() == this)
+            parent->m_last = m_previous;
+    }
+    if (auto* next = m_next.get())
+        next->m_previous = m_previous;
+    if (auto* previous = m_previous.get())
+        previous->m_next = m_next;
+
+    m_parent = nullptr;
+    m_first = nullptr;
+    m_last = nullptr;
+    m_previous = nullptr;
+    m_next = nullptr;
+}
+
 void RenderLayer::dirtyPaintOrderListsOnChildChange(RenderLayer& child)
 {
     if (child.isNormalFlowOnly())
@@ -578,7 +598,7 @@ void RenderLayer::removeOnlyThisLayer()
         removeChild(*reflectionLayer);
 
     // Now walk our kids and reattach them to our parent.
-    RenderLayer* current = m_first;
+    RenderLayer* current = m_first.get();
     while (current) {
         RenderLayer* next = current->nextSibling();
         removeChild(*current);

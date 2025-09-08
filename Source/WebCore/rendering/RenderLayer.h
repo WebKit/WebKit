@@ -182,11 +182,11 @@ public:
     RenderLayerModelObject& renderer() const { return m_renderer; }
     RenderBox* renderBox() const { return dynamicDowncast<RenderBox>(renderer()); }
 
-    RenderLayer* parent() const { return m_parent; }
-    RenderLayer* previousSibling() const { return m_previous; }
-    RenderLayer* nextSibling() const { return m_next; }
-    RenderLayer* firstChild() const { return m_first; }
-    RenderLayer* lastChild() const { return m_last; }
+    RenderLayer* parent() const { return m_parent.get(); }
+    RenderLayer* previousSibling() const { return m_previous.get(); }
+    RenderLayer* nextSibling() const { return m_next.get(); }
+    RenderLayer* firstChild() const { return m_first.get(); }
+    RenderLayer* lastChild() const { return m_last.get(); }
     bool isDescendantOf(const RenderLayer&) const;
     WEBCORE_EXPORT RenderLayer* commonAncestorWithLayer(const RenderLayer&) const;
 
@@ -201,6 +201,7 @@ public:
 
     void addChild(RenderLayer& newChild, RenderLayer* beforeChild = nullptr);
     void removeChild(RenderLayer&);
+    void removeForRenderTreeBeingDestroyed();
 
     void insertOnlyThisLayer();
     void removeOnlyThisLayer();
@@ -1404,11 +1405,11 @@ private:
 
     const CheckedRef<RenderLayerModelObject> m_renderer;
 
-    RenderLayer* m_parent { nullptr };
-    RenderLayer* m_previous { nullptr };
-    RenderLayer* m_next { nullptr };
-    RenderLayer* m_first { nullptr };
-    RenderLayer* m_last { nullptr };
+    CheckedPtr<RenderLayer> m_parent;
+    CheckedPtr<RenderLayer> m_previous;
+    CheckedPtr<RenderLayer> m_next;
+    CheckedPtr<RenderLayer> m_first;
+    CheckedPtr<RenderLayer> m_last;
 
     SingleThreadWeakPtr<RenderLayer> m_backingProviderLayer;
     SingleThreadWeakPtr<RenderLayer> m_backingProviderLayerAtEndOfCompositingUpdate;
@@ -1491,7 +1492,7 @@ inline void RenderLayer::updateZOrderLists()
 
 inline RenderLayer* RenderLayer::paintOrderParent() const
 {
-    return m_isNormalFlowOnly ? m_parent : stackingContext();
+    return m_isNormalFlowOnly ? m_parent.get() : stackingContext();
 }
 
 inline void RenderLayer::setIsHiddenByOverflowTruncation(bool isHidden)
