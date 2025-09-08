@@ -177,7 +177,7 @@ void WebExtensionAPIDeclarativeNetRequest::updateDynamicRules(NSDictionary *opti
     NSString *ruleErrorString;
     size_t index = 0;
     for (NSDictionary *ruleDictionary in rulesToAdd) {
-        if (![[_WKWebExtensionDeclarativeNetRequestRule  alloc] initWithDictionary:ruleDictionary rulesetID:dynamicRulesetID errorString:&ruleErrorString]) {
+        if (![[_WKWebExtensionDeclarativeNetRequestRule  alloc] initWithDictionary:ruleDictionary rulesetID:dynamicRulesetID additionalAnalyticsEnabled:NO errorString:&ruleErrorString]) {
             ASSERT(ruleErrorString);
             *outExceptionString = toErrorString(nullString(), addRulesKey, @"an error with rule at index %lu: %@", index, ruleErrorString).createNSString().autorelease();
             return;
@@ -248,7 +248,7 @@ void WebExtensionAPIDeclarativeNetRequest::updateSessionRules(NSDictionary *opti
     NSString *ruleErrorString;
     size_t index = 0;
     for (NSDictionary *ruleDictionary in rulesToAdd) {
-        if (![[_WKWebExtensionDeclarativeNetRequestRule  alloc] initWithDictionary:ruleDictionary rulesetID:sessionRulesetID errorString:&ruleErrorString]) {
+        if (![[_WKWebExtensionDeclarativeNetRequestRule  alloc] initWithDictionary:ruleDictionary rulesetID:sessionRulesetID additionalAnalyticsEnabled:NO errorString:&ruleErrorString]) {
             ASSERT(ruleErrorString);
             *outExceptionString = toErrorString(nullString(), addRulesKey, @"an error with rule at index %lu: %@", index, ruleErrorString).createNSString().autorelease();
             return;

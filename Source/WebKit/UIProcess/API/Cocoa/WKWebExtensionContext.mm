@@ -901,6 +901,23 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(WKWeb
     return *_webExtensionContext;
 }
 
+#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
+- (BOOL)_declarativeNetRequestAdditionalAnalyticsIsEnabled
+{
+    return Ref { *_webExtensionContext }->declarativeNetRequestAdditionalAnalyticsIsEnabled();
+}
+
+- (void)set_declarativeNetRequestAdditionalAnalyticsIsEnabled:(BOOL)enabled
+{
+    Ref { *_webExtensionContext }->setDeclarativeNetRequestAdditionalAnalyticsIsEnabled(enabled);
+}
+#else
+- (BOOL)_declarativeNetRequestAdditionalAnalyticsIsEnabled
+{
+    return NO;
+}
+#endif
+
 #else // ENABLE(WK_WEB_EXTENSIONS)
 
 + (instancetype)contextForExtension:(WKWebExtension *)extension
@@ -1304,6 +1321,11 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(WKWeb
 - (nullable _WKWebExtensionSidebar *)sidebarForTab:(id<WKWebExtensionTab>)tab
 {
     return nil;
+}
+
+- (BOOL)_declarativeNetRequestAdditionalAnalyticsIsEnabled
+{
+    return NO;
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

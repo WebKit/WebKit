@@ -114,12 +114,16 @@ typedef NS_ENUM(NSInteger, DeclarativeNetRequestRuleActionType) {
 
 using namespace WebKit;
 
-@implementation _WKWebExtensionDeclarativeNetRequestRule
+@implementation _WKWebExtensionDeclarativeNetRequestRule {
+    BOOL _additionalAnalyticsEnabled;
+}
 
-- (instancetype)initWithDictionary:(NSDictionary *)ruleDictionary rulesetID:(NSString *)rulesetID errorString:(NSString **)outErrorString
+- (instancetype)initWithDictionary:(NSDictionary *)ruleDictionary rulesetID:(NSString *)rulesetID additionalAnalyticsEnabled:(BOOL)additionalAnalyticsEnabled errorString:(NSString **)outErrorString
 {
     if (!(self = [super init]))
         return nil;
+
+    _additionalAnalyticsEnabled = additionalAnalyticsEnabled;
 
     static NSArray *requiredKeysInRuleDictionary = @[
         declarativeNetRequestRuleIDKey,
@@ -885,7 +889,7 @@ static BOOL isArrayOfRequestMethodsValid(NSArray<NSString *> *requestMethods)
     } mutableCopy];
 
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
-    if (includeIdentifier) {
+    if (_additionalAnalyticsEnabled && includeIdentifier) {
         convertedRule[@"_identifier"] = @(_ruleID);
         convertedRule[@"_rulesetIdentifier"] = _rulesetID;
     }

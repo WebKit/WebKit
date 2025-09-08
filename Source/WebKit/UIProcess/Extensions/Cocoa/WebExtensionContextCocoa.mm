@@ -4669,7 +4669,11 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSDictionary *rulesD
         auto *allJSONObjects = [_WKWebExtensionDeclarativeNetRequestTranslator jsonObjectsFromData:rulesData.get() errorStrings:&jsonDeserializationErrorStrings];
 
         NSArray<NSString *> *parsingErrorStrings;
-        auto *allConvertedRules = [_WKWebExtensionDeclarativeNetRequestTranslator translateRules:allJSONObjects errorStrings:&parsingErrorStrings];
+        BOOL additionalAnalyticsEnabled = NO;
+#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
+        additionalAnalyticsEnabled = declarativeNetRequestAdditionalAnalyticsIsEnabled();
+#endif
+        auto *allConvertedRules = [_WKWebExtensionDeclarativeNetRequestTranslator translateRules:allJSONObjects additionalAnalyticsEnabled:additionalAnalyticsEnabled errorStrings:&parsingErrorStrings];
 
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
         RefPtr extension = m_extension;
@@ -4824,7 +4828,8 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
 void WebExtensionContext::handleContentRuleListMatchedRule(WebExtensionTab& tab, WebCore::ContentRuleListMatchedRule& matchedRule)
 {
-    // FIXME: <158147119> Figure out the permissions story for onRuleMatchedDebug
+    // FIXME: Add check that additional analytics are enabled.
+
     if (!(hasPermission(WKWebExtensionPermissionDeclarativeNetRequestFeedback) && hasPermission(WKWebExtensionPermissionDeclarativeNetRequest) && hasPermission(URL { matchedRule.request.url }, &tab)))
         return;
 

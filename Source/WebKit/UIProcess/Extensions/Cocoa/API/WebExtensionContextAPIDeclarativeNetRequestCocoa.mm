@@ -44,6 +44,10 @@
 static NSString * const declarativeNetRequestRulesetStateKey = @"DeclarativeNetRequestRulesetState";
 static NSString * const displayBlockedResourceCountAsBadgeTextStateKey = @"DisplayBlockedResourceCountAsBadgeText";
 
+#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
+static NSString * const declarativeNetRequestAdditionalAnalyticsEnabledStateKey = @"DeclarativeNetRequestAdditionalAnalyticsEnabledState";
+#endif
+
 namespace WebKit {
 
 bool WebExtensionContext::isDeclarativeNetRequestMessageAllowed(IPC::Decoder& message)
@@ -433,6 +437,21 @@ void WebExtensionContext::declarativeNetRequestUpdateSessionRules(String&& rules
 
     updateDeclarativeNetRequestRulesInStorage(declarativeNetRequestSessionRulesStore(), @"session", apiName, rulesToAdd, ruleIDsToDelete, WTFMove(completionHandler));
 }
+
+#if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
+bool WebExtensionContext::declarativeNetRequestAdditionalAnalyticsIsEnabled()
+{
+    return objectForKey<NSNumber>(m_state, declarativeNetRequestAdditionalAnalyticsEnabledStateKey).boolValue;
+}
+
+void WebExtensionContext::setDeclarativeNetRequestAdditionalAnalyticsIsEnabled(bool enabled)
+{
+    [m_state setObject:@(enabled) forKey:declarativeNetRequestAdditionalAnalyticsEnabledStateKey];
+    writeStateToStorage();
+
+    loadDeclarativeNetRequestRules([](bool) { });
+}
+#endif
 
 } // namespace WebKit
 

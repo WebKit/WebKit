@@ -30,7 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 WK_EXTERN
 @interface _WKWebExtensionDeclarativeNetRequestTranslator : NSObject
 
-+ (NSArray<NSDictionary<NSString *, id> *> *)translateRules:(NSDictionary<NSString *, NSArray<NSDictionary *> *> *)jsonObjects errorStrings:(NSArray * _Nullable * _Nullable)outErrorStrings;
++ (NSArray<NSDictionary<NSString *, id> *> *)translateRules:(NSDictionary<NSString *, NSArray<NSDictionary *> *> *)jsonObjects additionalAnalyticsEnabled:(BOOL)additionalAnalyticsEnabled errorStrings:(NSArray * _Nullable * _Nullable)outErrorStrings;
+
 + (NSDictionary<NSString *, NSArray<NSDictionary *> *> *)jsonObjectsFromData:(NSDictionary<NSString *, NSData *> *)jsonData errorStrings:(NSArray * _Nullable * _Nullable)outErrorStrings;
 
 - (instancetype)init NS_UNAVAILABLE;
