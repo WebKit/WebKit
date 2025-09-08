@@ -1470,6 +1470,7 @@ $(PROJECT_DIR)/dom/EventListener.idl
 $(PROJECT_DIR)/dom/EventListenerOptions.idl
 $(PROJECT_DIR)/dom/EventModifierInit.idl
 $(PROJECT_DIR)/dom/EventNames.json
+$(PROJECT_DIR)/dom/EventTarget+Observable.idl
 $(PROJECT_DIR)/dom/EventTarget.idl
 $(PROJECT_DIR)/dom/EventTargetFactory.in
 $(PROJECT_DIR)/dom/FocusEvent.idl
@@ -1507,6 +1508,7 @@ $(PROJECT_DIR)/dom/NodeList.idl
 $(PROJECT_DIR)/dom/NonDocumentTypeChildNode.idl
 $(PROJECT_DIR)/dom/NonElementParentNode.idl
 $(PROJECT_DIR)/dom/Observable.idl
+$(PROJECT_DIR)/dom/ObservableEventListenerOptions.idl
 $(PROJECT_DIR)/dom/ObservableInspector.idl
 $(PROJECT_DIR)/dom/ObservableInspectorAbortCallback.idl
 $(PROJECT_DIR)/dom/OverflowEvent.idl

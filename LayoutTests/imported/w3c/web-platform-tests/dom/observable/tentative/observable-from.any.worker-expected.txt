@@ -1,7 +1,7 @@
 
 FAIL from(): Observable.from() is a function assert_equals: Observable.from() is a function expected "function" but got "undefined"
 PASS from(): Failed conversions
-FAIL from(): Given an observable, it returns that exact observable target.when is not a function. (In 'target.when('custom')', 'target.when' is undefined)
+FAIL from(): Given an observable, it returns that exact observable Observable.from is not a function. (In 'Observable.from(observable)', 'Observable.from' is undefined)
 FAIL from(): Given an array Observable.from is not a function. (In 'Observable.from(array)', 'Observable.from' is undefined)
 FAIL from(): Iterable converts to Observable Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)
 FAIL from(): [Symbol.iterator] side-effects (one observable) Observable.from is not a function. (In 'Observable.from(iterable)', 'Observable.from' is undefined)

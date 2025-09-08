@@ -17036,6 +17036,9 @@
 		A8239DFE09B3CF8A00B60641 /* Logging.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Logging.cpp; sourceTree = "<group>"; };
 		A8239DFF09B3CF8A00B60641 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
 		A824B4640E2EF2EA0081A7B7 /* TextRun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextRun.h; sourceTree = "<group>"; };
+		A824DDCE2D08083000286A01 /* ObservableEventTarget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObservableEventTarget.h; sourceTree = "<group>"; };
+		A824DDCF2D08083000286A01 /* ObservableEventTarget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ObservableEventTarget.cpp; sourceTree = "<group>"; };
+		A824DDD02D08084B00286A01 /* EventTarget+Observable.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = "EventTarget+Observable.idl"; sourceTree = "<group>"; };
 		A82B6DF82CBF6C6F00EE6BD9 /* InternalObserverLast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InternalObserverLast.h; sourceTree = "<group>"; };
 		A82B6DF92CBF6C6F00EE6BD9 /* InternalObserverLast.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InternalObserverLast.cpp; sourceTree = "<group>"; };
 		A833C7F60A2CF1D800D57664 /* xmlattrs.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = xmlattrs.in; sourceTree = "<group>"; };
@@ -17146,6 +17149,9 @@
 		A89CCC510F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplaceNodeWithSpanCommand.h; sourceTree = "<group>"; };
 		A89D454F2CD9EA18009F14E5 /* ObservableInspectorAbortCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObservableInspectorAbortCallback.h; sourceTree = "<group>"; };
 		A89D45502CD9EA18009F14E5 /* ObservableInspectorAbortCallback.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ObservableInspectorAbortCallback.idl; sourceTree = "<group>"; };
+		A8A26B5F2D091A5800C5B86B /* Observable.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Observable.idl; sourceTree = "<group>"; };
+		A8A26B602D091A5800C5B86B /* ObservableEventListenerOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObservableEventListenerOptions.h; sourceTree = "<group>"; };
+		A8A26B612D091A5800C5B86B /* ObservableEventListenerOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ObservableEventListenerOptions.idl; sourceTree = "<group>"; };
 		A8BC04911214F69600B5F122 /* HTMLEntityTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLEntityTable.cpp; sourceTree = "<group>"; };
 		A8C2280D11D4A59700D5A7D3 /* DocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentParser.cpp; sourceTree = "<group>"; };
 		A8C2289F11D5722E00D5A7D3 /* DecodedDataDocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DecodedDataDocumentParser.h; sourceTree = "<group>"; };
@@ -39966,6 +39972,7 @@
 				9B714E1E1C91166900AC0E92 /* EventPath.cpp */,
 				9B714E1F1C91166900AC0E92 /* EventPath.h */,
 				CE5CB1B314EDAB6F00BB2795 /* EventSender.h */,
+				A824DDD02D08084B00286A01 /* EventTarget+Observable.idl */,
 				E12EDBE90B308E0B002704B6 /* EventTarget.cpp */,
 				E12EDB7A0B308A78002704B6 /* EventTarget.h */,
 				85AFA7420AAF298400E84305 /* EventTarget.idl */,
@@ -40151,6 +40158,11 @@
 				7C6752BA1B06E82000C279CB /* NonElementParentNode.idl */,
 				FFEFAB2D183BCC6F00514536 /* Observable.cpp */,
 				FFEFAB2D183BCC6F00514535 /* Observable.h */,
+				A8A26B5F2D091A5800C5B86B /* Observable.idl */,
+				A8A26B602D091A5800C5B86B /* ObservableEventListenerOptions.h */,
+				A8A26B612D091A5800C5B86B /* ObservableEventListenerOptions.idl */,
+				A824DDCF2D08083000286A01 /* ObservableEventTarget.cpp */,
+				A824DDCE2D08083000286A01 /* ObservableEventTarget.h */,
 				A84377B72CD9C91100CD134E /* ObservableInspector.h */,
 				A84377B82CD9C91100CD134E /* ObservableInspector.idl */,
 				A89D454F2CD9EA18009F14E5 /* ObservableInspectorAbortCallback.h */,
