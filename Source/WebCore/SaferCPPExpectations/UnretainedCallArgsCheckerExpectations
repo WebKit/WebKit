@@ -171,7 +171,6 @@ platform/graphics/coretext/FontCoreText.cpp
 platform/graphics/coretext/FontPlatformDataCoreText.cpp
 platform/graphics/coretext/GlyphPageCoreText.cpp
 platform/graphics/cv/CVUtilities.mm
-platform/graphics/cv/GraphicsContextGLCVCocoa.mm
 platform/graphics/cv/ImageRotationSessionVT.mm
 platform/graphics/cv/ImageTransferSessionVT.mm
 platform/graphics/cv/VideoFrameCV.mm
