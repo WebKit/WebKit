@@ -124,7 +124,7 @@
 #define WTF_CPU_KNOWN 1
 
 #if defined(__arm64e__)
-#define WTF_CPU_ARM64E 1
+#define WTF_CPU_ARM64E 0
 #endif
 #endif
 

@@ -53,11 +53,11 @@ require "config"
 
 class Node
     attr_reader :codeOrigin
-    
+
     def initialize(codeOrigin)
         @codeOrigin = codeOrigin
     end
-    
+
     def codeOriginString
         @codeOrigin.to_s
     end
@@ -65,7 +65,7 @@ class Node
     def descendants
         children.collect{|v| v.flatten}.flatten
     end
-    
+
     def flatten
         [self] + descendants
     end
@@ -622,6 +622,43 @@ class StringLiteral < NoChildren
     end
 end
 
+class RegisterPair < NoChildren
+    attr_reader :reg1, :reg2
+    
+    def initialize(reg1, reg2)
+        super(reg1.codeOrigin)
+        @reg1 = reg1
+        @reg2 = reg2
+        unless @reg1.is_a? RegisterID and (@reg2.is_a? RegisterID or @reg2.is_a? FPRegisterID)
+            raise "Unexpected #{node.inspect} at #{node.codeOrigin}"
+        end
+    end
+    
+    def dump
+        "(#{reg1.dump}, #{reg2.dump})"
+    end
+
+    def arm64Operand(kind)
+        raise "Invalid place for a register pair: #{dump} at #{reg1.codeOrigin}"
+    end
+    
+    def address?
+        false
+    end
+    
+    def label?
+        false
+    end
+    
+    def immediate?
+        false
+    end
+    
+    def register?
+        true
+    end
+end
+
 class RegisterID < NoChildren
     attr_reader :name
     
@@ -980,7 +1017,7 @@ class Instruction < Node
     end
     
     def dump
-        "\t" + opcode.to_s + " " + operands.collect{|v| v.dump}.join(", ")
+        "\t" + opcode.to_s + " " + operands.collect{|v| v.dump}.join(", ") + "// " + codeOrigin.to_s
     end
 
     def lowerDefault
@@ -1658,4 +1695,3 @@ class MacroCall < Node
         "\t#{originalName}(" + operands.collect{|v| v.dump}.join(", ") + ")"
     end
 end
-

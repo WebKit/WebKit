@@ -56,6 +56,36 @@ GPRS =
      "invalidGPR"
     ]
 
+# JSRs (j*) are an abstraction representing a 64-bit register capable of
+# holding a JSValue. On 32-bit platforms, JSRs are implemented as
+# a pair (gpr, fpr) with the fpr storing the upper 32-bits.
+# For :spill, will use lr and csr2 to spill/fill the register
+
+JSR_MAPPING = {
+    't0': { gpr: 't0', fpr: 'ft0' },
+    't1': { gpr: 't1', fpr: 'ft1' },
+    't2': { gpr: 't2', fpr: 'ft2' },
+    't3': { gpr: 't3', fpr: 'ft3' },
+    't4': { gpr: 't4', fpr: 'ft4' },
+    't5': { gpr: 't5', fpr: 'ft5' },
+    't6': { gpr: 't6', fpr: 'ft6' },
+    't7': { gpr: 't7', fpr: 'ft7' },
+    'csr0': { gpr: 'csr0', fpr: 'csfr0' },
+    'csr1': { gpr: 'csr1', fpr: 'csfr1' },
+    'csr2': { gpr: :spill, fpr: 'csfr2' },
+    'csr3': { gpr: :spill, fpr: 'csfr3' },
+    'csr4': { gpr: :spill, fpr: 'csfr4' },
+    'csr5': { gpr: :spill, fpr: 'csfr5' },
+    'csr6': { gpr: :spill, fpr: 'csfr6' },
+    'csr7': { gpr: :spill, fpr: 'csfr7' },
+}
+
+def isJSR?(register)
+    JSR_MAPPING.include?(register.to_sym)
+end
+    
+JSRS = JSR_MAPPING.keys
+
 FPRS =
     [
      "ft0",
@@ -124,7 +154,7 @@ VECS =
      "v7_q",
     ]
 
-REGISTERS = GPRS + FPRS + VECS
+REGISTERS = GPRS + FPRS + VECS + JSRS
 
 GPR_PATTERN = Regexp.new('\\A((' + GPRS.join(')|(') + '))\\Z')
 FPR_PATTERN = Regexp.new('\\A((' + FPRS.join(')|(') + '))\\Z')

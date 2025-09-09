@@ -396,6 +396,9 @@ File.open(outputFlnm, "w") {
             lowLevelAST.validate
             emitCodeInConfiguration(concreteSettings, lowLevelAST, backend) {
                 $currentSettings = concreteSettings
+                lowLevelAST = lowLevelAST.lowerJSRs
+                lowLevelAST.validate
+                # $stderr.puts lowLevelAST.dump
                 $asm.inAsm {
                     lowLevelAST.lower(backend)
                 }

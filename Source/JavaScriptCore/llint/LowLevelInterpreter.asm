@@ -1824,13 +1824,12 @@ macro frameForCalleeSaveVerification()
     vmEntryRecord(cfr, scratch)
     leap VMEntryRecord::calleeSaveRegistersBuffer[scratch], scratch
     forEachGPCalleeSave(macro (reg, index)
-        bqeq index * MachineRegisterSize[scratch], reg, .ok
+        bpeq index * MachineRegisterSize[scratch], reg, .ok
         break
     .ok:
     end)
     forEachFPCalleeSave(macro (reg, index)
-        fd2q reg, t3
-        bqeq (index + (constexpr GPRInfo::numberOfCalleeSaveRegisters)) * MachineRegisterSize[scratch], t3, .ok
+        bdeq (index + (constexpr GPRInfo::numberOfCalleeSaveRegisters)) * MachineRegisterSize[scratch], reg, .ok
         break
     .ok:
     end)
@@ -2294,7 +2293,6 @@ if JSVALUE64
 else
     include LowLevelInterpreter32_64
 end
-
 
 # Value-representation-agnostic code.
 macro slowPathOp(opcodeName)

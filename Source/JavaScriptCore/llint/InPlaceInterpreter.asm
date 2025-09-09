@@ -64,7 +64,7 @@ const alignUInt = constexpr JSC::IPInt::alignUInt
 const alignMInt = constexpr JSC::IPInt::alignMInt
 
 if ARM64 or ARM64E
-    const PC = csr7
+    const PC = csr1
     const MC = csr6
     const PL = t6
 
@@ -498,7 +498,8 @@ end
 macro argumINTAlign(instrname)
     aligned _ipint_argumINT%instrname%_validate alignArgumInt
     _ipint_argumINT%instrname%_validate:
-    _argumINT%instrname%:
+    nop
+    _argumINT%instrname%: 
 end
 
 macro mintAlign(instrname)
@@ -2261,4 +2262,3 @@ unimplementedInstruction(_i64_atomic_rmw8_cmpxchg_u)
 unimplementedInstruction(_i64_atomic_rmw16_cmpxchg_u)
 unimplementedInstruction(_i64_atomic_rmw32_cmpxchg_u)
 end
-

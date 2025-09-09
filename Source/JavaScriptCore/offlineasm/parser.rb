@@ -57,7 +57,7 @@ end
 
 class CodeOrigin
     attr_reader :lineNumber
-    
+
     def initialize(sourceFile, lineNumber)
         @sourceFile = sourceFile
         @lineNumber = lineNumber
@@ -979,4 +979,3 @@ def parseHash(fileName, options)
     fileList.flatten!
     fileListHash(fileList)
 end
-
