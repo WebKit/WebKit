@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2017 Inc. All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -53,7 +53,6 @@ public:
     String src() const;
     ExceptionOr<void> setSrc(Variant<RefPtr<TrustedScriptURL>, String>&&);
 
-    WEBCORE_EXPORT void setAsync(bool);
     WEBCORE_EXPORT bool async() const;
 
     WEBCORE_EXPORT String crossOrigin() const;
