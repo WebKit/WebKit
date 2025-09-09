@@ -324,6 +324,7 @@ TEST(WebKit, ConfigurationMaskedURLSchemes_6)
 TEST(WebKit, ConfigurationMaskedURLSchemes_7)
 {
     [TestProtocol registerWithScheme:@"https"];
+    [TestProtocol registerWithScheme:@"http"];
     [TestProtocol registerWithScheme:@"another-scheme"];
 
     auto configuration = adoptNS([WKWebViewConfiguration new]);
@@ -406,6 +407,7 @@ TEST(WebKit, ConfigurationMaskedURLSchemes_7)
 TEST(WebKit, ConfigurationMaskedURLSchemes_8)
 {
     [TestProtocol registerWithScheme:@"https"];
+    [TestProtocol registerWithScheme:@"http"];
     [TestProtocol registerWithScheme:@"another-scheme"];
 
     auto configuration = adoptNS([WKWebViewConfiguration new]);
