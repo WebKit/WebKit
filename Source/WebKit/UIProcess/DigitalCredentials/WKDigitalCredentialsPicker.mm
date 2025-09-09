@@ -134,7 +134,7 @@ static RetainPtr<NSArray<WKIdentityDocumentPresentmentMobileDocumentIndividualDo
 
             for (auto&& elementPair : elements) {
                 RetainPtr mappedElementIdentifier = elementPair.first.createNSString();
-                RetainPtr mappedElementValue = adoptNS([WebKit::allocWKIdentityDocumentPresentmentMobileDocumentElementInfoInstance() initWithIsRetaining:elementPair.second.isRetaining]);
+                RetainPtr mappedElementValue = adoptNS([WebKit::allocWKIdentityDocumentPresentmentMobileDocumentElementInfoInstanceSingleton() initWithIsRetaining:elementPair.second.isRetaining]);
 
                 [namespaceDictionary setObject:mappedElementValue.get() forKey:mappedElementIdentifier.get()];
             }
@@ -144,7 +144,7 @@ static RetainPtr<NSArray<WKIdentityDocumentPresentmentMobileDocumentIndividualDo
         }
 
         RetainPtr documentType = validatedDocumentRequest.documentType.createNSString();
-        RetainPtr mappedDocumentRequest = adoptNS([WebKit::allocWKIdentityDocumentPresentmentMobileDocumentIndividualDocumentRequestInstance() initWithDocumentType:documentType.get() namespaces:namespaces.get()]);
+        RetainPtr mappedDocumentRequest = adoptNS([WebKit::allocWKIdentityDocumentPresentmentMobileDocumentIndividualDocumentRequestInstanceSingleton() initWithDocumentType:documentType.get() namespaces:namespaces.get()]);
         [mappedDocumentRequests addObject:mappedDocumentRequest.get()];
     }
 
@@ -166,7 +166,7 @@ static RetainPtr<NSArray<WKIdentityDocumentPresentmentMobileDocumentPresentmentR
     RetainPtr<NSMutableArray<WKIdentityDocumentPresentmentMobileDocumentPresentmentRequest *>> mappedPresentmentRequests = adoptNS([[NSMutableArray alloc] init]);
     for (auto&& validatedPresentmentRequest : presentmentRequests) {
         RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentMobileDocumentIndividualDocumentRequest *> *>> mappedDocumentSets = mapDocumentRequestSets(validatedPresentmentRequest.documentRequestSets);
-        RetainPtr mappedPresentmentRequest = adoptNS([WebKit::allocWKIdentityDocumentPresentmentMobileDocumentPresentmentRequestInstance() initWithDocumentSets:mappedDocumentSets.get() isMandatory:validatedPresentmentRequest.isMandatory]);
+        RetainPtr mappedPresentmentRequest = adoptNS([WebKit::allocWKIdentityDocumentPresentmentMobileDocumentPresentmentRequestInstanceSingleton() initWithDocumentSets:mappedDocumentSets.get() isMandatory:validatedPresentmentRequest.isMandatory]);
         [mappedPresentmentRequests addObject:mappedPresentmentRequest.get()];
     }
     return mappedPresentmentRequests;
@@ -183,7 +183,7 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
         CFIndex count = CFArrayGetCount(certificateChain.get());
         for (CFIndex i = 0; i < count; ++i) {
             auto certificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(certificateChain.get(), i));
-            RetainPtr mappedCertificate = adoptNS([WebKit::allocWKIdentityDocumentPresentmentRequestAuthenticationCertificateInstance() initWithCertificate:certificate]);
+            RetainPtr mappedCertificate = adoptNS([WebKit::allocWKIdentityDocumentPresentmentRequestAuthenticationCertificateInstanceSingleton() initWithCertificate:certificate]);
             [mappedCertificateChain addObject:mappedCertificate.get()];
         }
         [mappedRequestAuthenticationCertificates addObject:mappedCertificateChain.get()];
@@ -258,7 +258,7 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
                 continue;
             }
 
-            RetainPtr rawRequest = adoptNS([WebKit::allocWKIdentityDocumentPresentmentRawRequestInstance() initWithRequestProtocol:@"org.iso.mdoc" requestData:requestDataBytes.get()]);
+            RetainPtr rawRequest = adoptNS([WebKit::allocWKIdentityDocumentPresentmentRawRequestInstanceSingleton() initWithRequestProtocol:@"org.iso.mdoc" requestData:requestDataBytes.get()]);
             [rawRequests addObject:rawRequest.get()];
         }
 
@@ -307,12 +307,12 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
         RetainPtr<NSArray<WKIdentityDocumentPresentmentMobileDocumentPresentmentRequest *>> presentmentRequests = mapPresentmentRequests(validatedRequest.presentmentRequests);
         RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticationCertificate *> *>> authenticationCertificates = mapRequestAuthentications(validatedRequest.requestAuthentications);
 
-        RetainPtr mobileDocumentRequest = [WebKit::allocWKIdentityDocumentPresentmentMobileDocumentRequestInstance() initWithPresentmentRequests:presentmentRequests.get() authenticationCertificates:authenticationCertificates.get()];
+        RetainPtr mobileDocumentRequest = [WebKit::allocWKIdentityDocumentPresentmentMobileDocumentRequestInstanceSingleton() initWithPresentmentRequests:presentmentRequests.get() authenticationCertificates:authenticationCertificates.get()];
         [mobileDocumentRequests addObject:mobileDocumentRequest.get()];
     }
 
     RetainPtr mappedOrigin = requestData.topOrigin.toURL().createNSURL();
-    RetainPtr mappedRequest = adoptNS([WebKit::allocWKIdentityDocumentPresentmentRequestInstance() initWithOrigin:mappedOrigin.get() mobileDocumentRequests:mobileDocumentRequests.get()]);
+    RetainPtr mappedRequest = adoptNS([WebKit::allocWKIdentityDocumentPresentmentRequestInstanceSingleton() initWithOrigin:mappedOrigin.get() mobileDocumentRequests:mobileDocumentRequests.get()]);
 
     if (![mobileDocumentRequests count]) {
         LOG(DigitalCredentials, "No supported mobile document requests to present.");
@@ -332,7 +332,7 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
 
 - (void)setupPresentmentController
 {
-    _presentmentController = adoptNS([WebKit::allocWKIdentityDocumentPresentmentControllerInstance() init]);
+    _presentmentController = adoptNS([WebKit::allocWKIdentityDocumentPresentmentControllerInstanceSingleton() init]);
     [_presentmentController.get() setDelegate:self];
 }
 

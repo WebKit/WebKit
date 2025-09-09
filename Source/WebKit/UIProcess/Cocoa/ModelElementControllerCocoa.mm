@@ -170,7 +170,7 @@ void ModelElementController::modelElementCreateRemotePreview(String uuid, WebCor
     }
 
     auto nsUUID = adoptNS([[NSUUID alloc] initWithUUIDString:uuid.createNSString().get()]);
-    auto preview = adoptNS([allocASVInlinePreviewInstance() initWithFrame:CGRectMake(0, 0, size.width(), size.height()) UUID:nsUUID.get()]);
+    auto preview = adoptNS([allocASVInlinePreviewInstanceSingleton() initWithFrame:CGRectMake(0, 0, size.width(), size.height()) UUID:nsUUID.get()]);
 
     LOG(ModelElement, "Created remote preview with UUID %s.", uuid.utf8().data());
 

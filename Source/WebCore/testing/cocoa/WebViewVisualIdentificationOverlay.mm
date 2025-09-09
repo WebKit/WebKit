@@ -81,7 +81,7 @@ const void* const webViewVisualIdentificationOverlayKey = &webViewVisualIdentifi
     [_view setWantsLayer:YES];
     [_view setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 #else
-    _view = adoptNS([PAL::allocUIViewInstance() initWithFrame:webView.bounds]);
+    _view = adoptNS([PAL::allocUIViewInstanceSingleton() initWithFrame:webView.bounds]);
     [_view setUserInteractionEnabled:NO];
     [_view setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 #endif

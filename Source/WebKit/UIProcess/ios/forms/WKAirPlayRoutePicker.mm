@@ -78,15 +78,15 @@ typedef NSInteger WKAirPlayRoutePickerRouteSharingPolicy;
     if (_actionSheet)
         return;
 
-    __block RetainPtr<MPAVRoutingController> routingController = adoptNS([allocMPAVRoutingControllerInstance() initWithName:@"WebKit - HTML media element showing AirPlay route picker"]);
+    __block RetainPtr<MPAVRoutingController> routingController = adoptNS([allocMPAVRoutingControllerInstanceSingleton() initWithName:@"WebKit - HTML media element showing AirPlay route picker"]);
     [routingController setDiscoveryMode:MPRouteDiscoveryModeDetailed];
 
     RetainPtr<MPMediaControlsConfiguration> configuration;
     if ([getMPMediaControlsConfigurationClass() instancesRespondToSelector:@selector(setSortByIsVideoRoute:)]) {
-        configuration = adoptNS([allocMPMediaControlsConfigurationInstance() init]);
+        configuration = adoptNS([allocMPMediaControlsConfigurationInstanceSingleton() init]);
         configuration.get().sortByIsVideoRoute = hasVideo;
     }
-    _actionSheet = adoptNS([allocMPMediaControlsViewControllerInstance() initWithConfiguration:configuration.get()]);
+    _actionSheet = adoptNS([allocMPMediaControlsViewControllerInstanceSingleton() initWithConfiguration:configuration.get()]);
 
     if ([_actionSheet respondsToSelector:@selector(setOverrideRouteSharingPolicy:routingContextUID:)])
         [_actionSheet setOverrideRouteSharingPolicy:static_cast<WKAirPlayRoutePickerRouteSharingPolicy>(routeSharingPolicy) routingContextUID:routingContextUID];

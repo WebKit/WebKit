@@ -590,7 +590,7 @@ static RetainPtr<NSString> linkDestinationName(PDFDocument *document, PDFDestina
 
     if (!_printedPagesPDFDocument) {
         RetainPtr pdfData = toNSData(_printedPagesData.span());
-        _printedPagesPDFDocument = adoptNS([WebKit::allocPDFDocumentInstance() initWithData:pdfData.get()]);
+        _printedPagesPDFDocument = adoptNS([WebKit::allocPDFDocumentInstanceSingleton() initWithData:pdfData.get()]);
 
         unsigned pageCount = [_printedPagesPDFDocument pageCount];
         _linkDestinationsPerPage.clear();

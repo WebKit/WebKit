@@ -58,7 +58,7 @@ bool LocalService::isAvailable()
 {
 LOCAL_SERVICE_ADDITIONS
 
-    auto context = adoptNS([allocLAContextInstance() init]);
+    auto context = adoptNS([allocLAContextInstanceSingleton() init]);
     NSError *error = nil;
     auto result = [context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error];
     if ((!result || error) && error.code != LAErrorBiometryLockout) {

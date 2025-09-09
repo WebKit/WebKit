@@ -57,7 +57,7 @@ std::optional<String> PrivateClickMeasurement::calculateAndUpdateUnlinkableToken
         RetainPtr serverPublicKey = toNSData(serverPublicKeyData->span());
 
         NSError* nsError = 0;
-        unlinkableToken.blinder = adoptNS([PAL::allocRSABSSATokenBlinderInstance() initWithPublicKey:serverPublicKey.get() error:&nsError]);
+        unlinkableToken.blinder = adoptNS([PAL::allocRSABSSATokenBlinderInstanceSingleton() initWithPublicKey:serverPublicKey.get() error:&nsError]);
         if (nsError)
             return nsError.localizedDescription;
         if (!unlinkableToken.blinder)

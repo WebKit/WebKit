@@ -112,7 +112,7 @@ static RetainPtr<PKPaymentAuthorizationViewController> platformViewController(PK
 {
 #if PLATFORM(IOS_FAMILY)
     ASSERT(!viewController);
-    return adoptNS([PAL::allocPKPaymentAuthorizationViewControllerInstance() initWithPaymentRequest:request]);
+    return adoptNS([PAL::allocPKPaymentAuthorizationViewControllerInstanceSingleton() initWithPaymentRequest:request]);
 #else
     return viewController;
 #endif

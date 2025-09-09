@@ -127,7 +127,7 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (!m_synthesizer) {
-        lazyInitialize(m_synthesizer, adoptNS([PAL::allocAVSpeechSynthesizerInstance() init]));
+        lazyInitialize(m_synthesizer, adoptNS([PAL::allocAVSpeechSynthesizerInstanceSingleton() init]));
         [m_synthesizer setDelegate:self];
     }
     

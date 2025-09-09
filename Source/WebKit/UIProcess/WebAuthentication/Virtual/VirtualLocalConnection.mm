@@ -63,14 +63,14 @@ void VirtualLocalConnection::verifyUser(const String&, ClientDataType, SecAccess
     RunLoop::mainSingleton().dispatch([weakThis = WeakPtr { *this }, callback = WTFMove(callback)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
-            callback(UserVerification::No, adoptNS([allocLAContextInstance() init]).get());
+            callback(UserVerification::No, adoptNS([allocLAContextInstanceSingleton() init]).get());
             return;
         }
         ASSERT(protectedThis->m_configuration.transport == AuthenticatorTransport::Internal);
 
         UserVerification userVerification = protectedThis->m_configuration.isUserVerified ? UserVerification::Yes : UserVerification::Presence;
 
-        callback(userVerification, adoptNS([allocLAContextInstance() init]).get());
+        callback(userVerification, adoptNS([allocLAContextInstanceSingleton() init]).get());
     });
 }
 

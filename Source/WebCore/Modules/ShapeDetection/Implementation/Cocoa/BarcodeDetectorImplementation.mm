@@ -152,8 +152,7 @@ static RetainPtr<VNDetectBarcodesRequest> request()
     // configured the same way. This function is intended to make sure both VNDetectBarcodesRequests are
     // configured accordingly.
 
-    // FIXME: This is a safer cpp false positive (rdar://160083438).
-    SUPPRESS_UNRETAINED_ARG auto result = adoptNS([PAL::allocVNDetectBarcodesRequestInstance() init]);
+    auto result = adoptNS([PAL::allocVNDetectBarcodesRequestInstanceSingleton() init]);
     configureRequestToUseCPUOrGPU(result.get());
     return result;
 }
@@ -199,8 +198,7 @@ void BarcodeDetectorImpl::detect(Ref<ImageBuffer>&& imageBuffer, CompletionHandl
         request.get().symbologies = requestedSymbologies.allObjects;
     }
 
-    // FIXME: This is a safer cpp false positive (rdar://160083438).
-    SUPPRESS_UNRETAINED_ARG auto imageRequestHandler = adoptNS([PAL::allocVNImageRequestHandlerInstance() initWithCGImage:platformImage.get() options:@{ }]);
+    auto imageRequestHandler = adoptNS([PAL::allocVNImageRequestHandlerInstanceSingleton() initWithCGImage:platformImage.get() options:@{ }]);
 
     NSError *error = nil;
     auto result = [imageRequestHandler performRequests:@[request.get()] error:&error];

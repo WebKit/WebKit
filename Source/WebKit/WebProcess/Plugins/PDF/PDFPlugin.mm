@@ -524,7 +524,7 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
     , m_containerLayer(adoptNS([[CALayer alloc] init]))
     , m_contentLayer(adoptNS([[CALayer alloc] init]))
     , m_scrollCornerLayer(adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this shouldFlip:NO]))
-    , m_pdfLayerController(adoptNS([allocPDFLayerControllerInstance() init]))
+    , m_pdfLayerController(adoptNS([allocPDFLayerControllerInstanceSingleton() init]))
     , m_pdfLayerControllerDelegate(adoptNS([[WKPDFLayerControllerDelegate alloc] initWithPDFPlugin:this]))
 {
     Ref document = element.document();
@@ -1325,7 +1325,7 @@ PDFSelection *PDFPlugin::nextMatchForString(const String& target, bool searchFor
         foundSelection = [m_pdfDocument findString:nsTarget.get() fromSelection:initialSelection withOptions:options];
 
     if (!foundSelection && wrapSearch) {
-        auto emptySelection = adoptNS([allocPDFSelectionInstance() initWithDocument:m_pdfDocument.get()]);
+        auto emptySelection = adoptNS([allocPDFSelectionInstanceSingleton() initWithDocument:m_pdfDocument.get()]);
         foundSelection = [m_pdfDocument findString:nsTarget.get() fromSelection:emptySelection.get() withOptions:options];
     }
 

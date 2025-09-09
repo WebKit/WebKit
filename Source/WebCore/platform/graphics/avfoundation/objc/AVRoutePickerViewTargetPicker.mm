@@ -66,7 +66,7 @@ bool AVRoutePickerViewTargetPicker::isAvailable()
         if (!getAVRoutePickerViewClass())
             return;
 
-        if (auto picker = adoptNS([allocAVRoutePickerViewInstance() init]))
+        if (auto picker = adoptNS([allocAVRoutePickerViewInstanceSingleton() init]))
             available = [picker respondsToSelector:@selector(showRoutePickingControlsForOutputContext:relativeToRect:ofView:)];
     });
 
@@ -100,7 +100,7 @@ AVOutputContext * AVRoutePickerViewTargetPicker::outputContextInternal()
 AVRoutePickerView *AVRoutePickerViewTargetPicker::devicePicker()
 {
     if (!m_routePickerView) {
-        m_routePickerView = adoptNS([allocAVRoutePickerViewInstance() init]);
+        m_routePickerView = adoptNS([allocAVRoutePickerViewInstanceSingleton() init]);
         [m_routePickerView setDelegate:m_routePickerViewDelegate.get()];
     }
 
@@ -110,7 +110,7 @@ AVRoutePickerView *AVRoutePickerViewTargetPicker::devicePicker()
 AVRouteDetector *AVRoutePickerViewTargetPicker::routeDetector()
 {
     if (!m_routeDetector) {
-        m_routeDetector = adoptNS([PAL::allocAVRouteDetectorInstance() init]);
+        m_routeDetector = adoptNS([PAL::allocAVRouteDetectorInstanceSingleton() init]);
         [[NSNotificationCenter defaultCenter] addObserver:m_routePickerViewDelegate.get() selector:@selector(notificationHandler:) name:PAL::AVRouteDetectorMultipleRoutesDetectedDidChangeNotification object:m_routeDetector.get()];
         if ([m_routeDetector multipleRoutesDetected])
             availableDevicesDidChange();

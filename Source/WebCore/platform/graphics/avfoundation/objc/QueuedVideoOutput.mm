@@ -139,7 +139,7 @@ QueuedVideoOutput::QueuedVideoOutput(AVPlayerItem* item, AVPlayer* player)
     , m_player(player)
     , m_delegate(adoptNS([[WebQueuedVideoOutputDelegate alloc] initWithParent:this]))
 {
-    m_videoOutput = adoptNS([PAL::allocAVPlayerItemVideoOutputInstance() initWithPixelBufferAttributes:nil]);
+    m_videoOutput = adoptNS([PAL::allocAVPlayerItemVideoOutputInstanceSingleton() initWithPixelBufferAttributes:nil]);
     if (!m_videoOutput) {
         // When bailing out early, also release these following objects
         // to avoid doing unnecessary work in ::invalidate(). Failure to

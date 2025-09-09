@@ -46,7 +46,7 @@ std::optional<PaymentMerchantSession> PaymentMerchantSession::fromJS(JSC::JSGlob
     if (!dictionary || ![dictionary isKindOfClass:[NSDictionary class]])
         return std::nullopt;
 
-    RetainPtr pkPaymentMerchantSession = adoptNS([PAL::allocPKPaymentMerchantSessionInstance() initWithDictionary:dictionary.get()]);
+    RetainPtr pkPaymentMerchantSession = adoptNS([PAL::allocPKPaymentMerchantSessionInstanceSingleton() initWithDictionary:dictionary.get()]);
 
     return PaymentMerchantSession(WTFMove(pkPaymentMerchantSession));
 }

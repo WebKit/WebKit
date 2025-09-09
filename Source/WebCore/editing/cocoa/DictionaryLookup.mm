@@ -280,7 +280,7 @@ std::optional<SimpleRange> DictionaryLookup::rangeForSelection(const VisibleSele
 
     auto fullCharacterRange = *makeSimpleRange(paragraphStart, paragraphEnd);
     String itemString = plainText(fullCharacterRange);
-    NSRange highlightRange = adoptNS([PAL::allocRVItemInstance() initWithText:itemString.createNSString().get() selectedRange:rangeToPass]).get().highlightRange;
+    NSRange highlightRange = adoptNS([PAL::allocRVItemInstanceSingleton() initWithText:itemString.createNSString().get() selectedRange:rangeToPass]).get().highlightRange;
 
     return { { resolveCharacterRange(fullCharacterRange, highlightRange) } };
 
@@ -351,7 +351,7 @@ std::optional<SimpleRange> DictionaryLookup::rangeAtHitTestResult(const HitTestR
     NSRange selectedRange = [PAL::getRVSelectionClass() revealRangeAtIndex:hitIndex selectedRanges:@[[NSValue valueWithRange:selectionRange]] shouldUpdateSelection:nil];
 
     String itemString = plainText(*fullCharacterRange);
-    auto highlightRange = adoptNS([PAL::allocRVItemInstance() initWithText:itemString.createNSString().get() selectedRange:selectedRange]).get().highlightRange;
+    auto highlightRange = adoptNS([PAL::allocRVItemInstanceSingleton() initWithText:itemString.createNSString().get() selectedRange:selectedRange]).get().highlightRange;
 
     if (highlightRange.location == NSNotFound || !highlightRange.length)
         return std::nullopt;
@@ -401,7 +401,7 @@ NSString *DictionaryLookup::stringForPDFSelection(PDFSelection *selection)
     auto fullPlainTextString = [selectionForLookup string];
     auto rangeToPass = NSMakeRange(charactersAddedBeforeStart, 0);
 
-    NSRange extractedRange = adoptNS([PAL::allocRVItemInstance() initWithText:fullPlainTextString selectedRange:rangeToPass]).get().highlightRange;
+    NSRange extractedRange = adoptNS([PAL::allocRVItemInstanceSingleton() initWithText:fullPlainTextString selectedRange:rangeToPass]).get().highlightRange;
     if (extractedRange.location == NSNotFound)
         return selection.string;
 
@@ -437,7 +437,7 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
     if (!textIndicator)
         return nil;
 
-    auto presenter = adoptNS([PAL::allocRVPresenterInstance() init]);
+    auto presenter = adoptNS([PAL::allocRVPresenterInstanceSingleton() init]);
 
     NSRect highlightRect;
     NSPoint pointerLocation;
@@ -466,11 +466,11 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
     auto attributedString = dictionaryPopupInfo.platformData.attributedString.nsAttributedString();
     auto webHighlight = adoptNS([[WebRevealHighlight alloc] initWithHighlightRect:highlightRect useDefaultHighlight:!textIndicator->contentImage() attributedString:attributedString.get() clearTextIndicatorCallback:WTFMove(clearTextIndicator)]);
-    auto item = adoptNS([PAL::allocRVItemInstance() initWithText:attributedString.get().string selectedRange:NSMakeRange(0, attributedString.get().string.length)]);
+    auto item = adoptNS([PAL::allocRVItemInstanceSingleton() initWithText:attributedString.get().string selectedRange:NSMakeRange(0, attributedString.get().string.length)]);
 #else
     RetainPtr text = dictionaryPopupInfo.text.createNSString();
     RetainPtr webHighlight = adoptNS([[WebRevealHighlight alloc] initWithHighlightRect:highlightRect useDefaultHighlight:!textIndicator->contentImage() attributedString:adoptNS([[NSAttributedString alloc] initWithString:text.get()]).get() clearTextIndicatorCallback:WTFMove(clearTextIndicator)]);
-    RetainPtr item = adoptNS([PAL::allocRVItemInstance() initWithText:text.get() selectedRange:NSMakeRange(0, text.get().length)]);
+    RetainPtr item = adoptNS([PAL::allocRVItemInstanceSingleton() initWithText:text.get() selectedRange:NSMakeRange(0, text.get().length)]);
 #endif
 
     auto context = createRVPresentingContextWithRetainedDelegate(pointerLocation, view, webHighlight.get());
@@ -492,10 +492,10 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
     auto webHighlight = adoptNS([[WebRevealHighlight alloc] initWithHighlightRect:[view convertRect:textIndicator->selectionRectInRootViewCoordinates() toView:nil] view:view image:textIndicator->contentImage()]);
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
     auto attributedString = dictionaryPopupInfo.platformData.attributedString.nsAttributedString();
-    auto item = adoptNS([PAL::allocRVItemInstance() initWithText:attributedString.get().string selectedRange:NSMakeRange(0, attributedString.get().string.length)]);
+    auto item = adoptNS([PAL::allocRVItemInstanceSingleton() initWithText:attributedString.get().string selectedRange:NSMakeRange(0, attributedString.get().string.length)]);
 #else
     RetainPtr text = dictionaryPopupInfo.text.createNSString();
-    RetainPtr item = adoptNS([PAL::allocRVItemInstance() initWithText:text.get() selectedRange:NSMakeRange(0, text.get().length)]);
+    RetainPtr item = adoptNS([PAL::allocRVItemInstanceSingleton() initWithText:text.get() selectedRange:NSMakeRange(0, text.get().length)]);
 #endif
 
     [UINSSharedRevealController() revealItem:item.get() locationInWindow:dictionaryPopupInfo.origin window:view.window highlighter:webHighlight.get()];

@@ -448,7 +448,7 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeT
 
 #if HAVE(CORE_MATERIAL)
     case PlatformCALayer::LayerType::LayerTypeMaterialLayer:
-        return makeWithLayer(adoptNS([PAL::allocMTMaterialLayerInstance() init]));
+        return makeWithLayer(adoptNS([PAL::allocMTMaterialLayerInstanceSingleton() init]));
 #endif
 
 #if HAVE(MATERIAL_HOSTING)

@@ -62,7 +62,7 @@ SOFT_LINK_CLASS_OPTIONAL(AVKit, AVBackgroundView)
 
     [self setClipsToBounds:YES];
 #if !PLATFORM(APPLETV)
-    _backgroundView = adoptNS([allocAVBackgroundViewInstance() initWithFrame:frame]);
+    _backgroundView = adoptNS([allocAVBackgroundViewInstanceSingleton() initWithFrame:frame]);
     // FIXME: remove this once AVBackgroundView handles this. https://bugs.webkit.org/show_bug.cgi?id=188022
     [_backgroundView setClipsToBounds:YES];
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN

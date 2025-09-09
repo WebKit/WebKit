@@ -148,7 +148,7 @@ static WebCore::ValidatedMobileDocumentRequest buildValidatedRequest(WKIdentityD
 Vector<WebCore::ValidatedDigitalCredentialRequest> DigitalCredentials::validateRequests(const SecurityOrigin &topOrigin, const Document &document, const Vector<UnvalidatedDigitalCredentialRequest> &unvalidatedRequests)
 {
     RetainPtr convertedTopOrigin = topOrigin.toURL().createNSURL().get();
-    RetainPtr validator = adoptNS([WebKit::allocWKIdentityDocumentRawRequestValidatorInstance() init]);
+    RetainPtr validator = adoptNS([WebKit::allocWKIdentityDocumentRawRequestValidatorInstanceSingleton() init]);
 
     Vector<WebCore::ValidatedDigitalCredentialRequest> validatedRequests;
 
@@ -171,7 +171,7 @@ Vector<WebCore::ValidatedDigitalCredentialRequest> DigitalCredentials::validateR
         RetainPtr convertedEncryptionInfo = mobileDocumentRequest.encryptionInfo.createNSString();
         RetainPtr convertedDeviceRequest = mobileDocumentRequest.deviceRequest.createNSString();
 
-        RetainPtr iso18013Request = adoptNS([WebKit::allocWKISO18013RequestInstance() initWithEncryptionInfo:convertedEncryptionInfo.get() deviceRequest:convertedDeviceRequest.get()]);
+        RetainPtr iso18013Request = adoptNS([WebKit::allocWKISO18013RequestInstanceSingleton() initWithEncryptionInfo:convertedEncryptionInfo.get() deviceRequest:convertedDeviceRequest.get()]);
 
         NSError *error = nil;
         auto validatedISORequest = [validator validateISO18013Request:iso18013Request.get() origin:convertedTopOrigin.get() error:&error];

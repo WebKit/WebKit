@@ -596,7 +596,7 @@ AVCapturePhotoOutput* AVVideoCaptureSource::photoOutput()
     assertIsCurrent(RunLoop::mainSingleton());
 
     if (!m_photoOutput) {
-        m_photoOutput = adoptNS([PAL::allocAVCapturePhotoOutputInstance() init]);
+        m_photoOutput = adoptNS([PAL::allocAVCapturePhotoOutputInstanceSingleton() init]);
 
         if (!m_photoOutput) {
             ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "unable to allocate AVCapturePhotoOutput");
@@ -1090,7 +1090,7 @@ bool AVVideoCaptureSource::setupSession()
     WARNING_LOG_IF(loggerPtr() && mediaEnvironment.isEmpty(), "Media environment is empty");
     // FIXME (119325252): Remove staging code for -[AVCaptureSession initWithMediaEnvironment:]
     if (!mediaEnvironment.isEmpty() && [PAL::getAVCaptureSessionClass() instancesRespondToSelector:@selector(initWithMediaEnvironment:)])
-        m_session = adoptNS([PAL::allocAVCaptureSessionInstance() initWithMediaEnvironment:mediaEnvironment.createNSString().get()]);
+        m_session = adoptNS([PAL::allocAVCaptureSessionInstanceSingleton() initWithMediaEnvironment:mediaEnvironment.createNSString().get()]);
 #endif
 
 #if ENABLE(APP_PRIVACY_REPORT)
@@ -1099,7 +1099,7 @@ bool AVVideoCaptureSource::setupSession()
         ERROR_LOG_IF(loggerPtr() && !identity, LOGIDENTIFIER, "RealtimeMediaSourceCenter::identity() returned null!");
 
         if (identity && [PAL::getAVCaptureSessionClass() instancesRespondToSelector:@selector(initWithAssumedIdentity:)])
-            m_session = adoptNS([PAL::allocAVCaptureSessionInstance() initWithAssumedIdentity:identity.get()]);
+            m_session = adoptNS([PAL::allocAVCaptureSessionInstanceSingleton() initWithAssumedIdentity:identity.get()]);
     }
 #endif
 
@@ -1107,7 +1107,7 @@ bool AVVideoCaptureSource::setupSession()
 #if ENABLE(EXTENSION_CAPABILITIES)
         ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "allocating AVCaptureSession without media environment nor identity");
 #endif
-        m_session = adoptNS([PAL::allocAVCaptureSessionInstance() init]);
+        m_session = adoptNS([PAL::allocAVCaptureSessionInstanceSingleton() init]);
     }
 
     if (!m_session) {
@@ -1158,7 +1158,7 @@ bool AVVideoCaptureSource::setupCaptureSession()
     });
 
     NSError *error = nil;
-    RetainPtr<AVCaptureDeviceInput> videoIn = adoptNS([PAL::allocAVCaptureDeviceInputInstance() initWithDevice:device() error:&error]);
+    RetainPtr<AVCaptureDeviceInput> videoIn = adoptNS([PAL::allocAVCaptureDeviceInputInstanceSingleton() initWithDevice:device() error:&error]);
     if (error) {
         ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "failed to allocate AVCaptureDeviceInput ", error);
         return false;
@@ -1170,7 +1170,7 @@ bool AVVideoCaptureSource::setupCaptureSession()
     }
     [session() addInput:videoIn.get()];
 
-    m_videoOutput = adoptNS([PAL::allocAVCaptureVideoDataOutputInstance() init]);
+    m_videoOutput = adoptNS([PAL::allocAVCaptureVideoDataOutputInstanceSingleton() init]);
     auto settingsDictionary = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys: @(preferedPixelBufferFormat()), kCVPixelBufferPixelFormatTypeKey, nil]);
 
     [m_videoOutput setVideoSettings:settingsDictionary.get()];

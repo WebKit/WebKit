@@ -312,7 +312,7 @@ IGNORE_WARNINGS_END
 
 bool checkSpeechRecognitionServiceAvailability(const String& localeIdentifier)
 {
-    auto recognizer = localeIdentifier.isEmpty() ? adoptNS([PAL::allocSFSpeechRecognizerInstance() init]) : adoptNS([PAL::allocSFSpeechRecognizerInstance() initWithLocale:[NSLocale localeWithLocaleIdentifier:localeIdentifier.createNSString().get()]]);
+    auto recognizer = localeIdentifier.isEmpty() ? adoptNS([PAL::allocSFSpeechRecognizerInstanceSingleton() init]) : adoptNS([PAL::allocSFSpeechRecognizerInstanceSingleton() initWithLocale:[NSLocale localeWithLocaleIdentifier:localeIdentifier.createNSString().get()]]);
     return recognizer && [recognizer isAvailable];
 }
 

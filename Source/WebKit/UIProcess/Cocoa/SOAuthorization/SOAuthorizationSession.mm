@@ -95,7 +95,7 @@ static bool isSameOrigin(const WebCore::ResourceRequest& request, const WebCore:
 } // namespace
 
 SOAuthorizationSession::SOAuthorizationSession(RetainPtr<WKSOAuthorizationDelegate> delegate, Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, InitiatingAction action)
-    : m_soAuthorization(adoptNS([PAL::allocSOAuthorizationInstance() init]))
+    : m_soAuthorization(adoptNS([PAL::allocSOAuthorizationInstanceSingleton() init]))
     , m_navigationAction(WTFMove(navigationAction))
     , m_page(page)
     , m_action(action)

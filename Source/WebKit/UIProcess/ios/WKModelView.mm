@@ -125,7 +125,7 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
     auto bounds = self.bounds;
     ASSERT(!CGRectEqualToRect(bounds, CGRectZero));
 
-    _preview = adoptNS([allocASVInlinePreviewInstance() initWithFrame:bounds]);
+    _preview = adoptNS([allocASVInlinePreviewInstanceSingleton() initWithFrame:bounds]);
     [self.layer addSublayer:[_preview layer]];
 
     RetainPtr url = adoptNS([[NSURL alloc] initFileURLWithPath:_filePath.createNSString().get()]);

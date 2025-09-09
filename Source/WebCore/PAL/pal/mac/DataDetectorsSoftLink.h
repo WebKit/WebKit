@@ -52,12 +52,12 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectors, DDHighlightPointIsOnHighlight,
 
 namespace PAL {
 
-inline WKDDActionContext *allocWKDDActionContextInstance()
+inline WKDDActionContext *allocWKDDActionContextInstanceSingleton()
 {
 #if HAVE(SECURE_ACTION_CONTEXT)
-    return allocDDSecureActionContextInstance();
+    return allocDDSecureActionContextInstanceSingleton();
 #else
-    return allocDDActionContextInstance();
+    return allocDDActionContextInstanceSingleton();
 #endif
 }
 

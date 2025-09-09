@@ -245,7 +245,7 @@ void MockNfcService::platformStartDiscovery()
         Method methodToSwizzle5 = class_getInstanceMethod(getNFReaderSessionClass(), @selector(startPollingWithError:));
         method_setImplementation(methodToSwizzle5, (IMP)NFReaderSessionStartPollingWithError);
 
-        auto readerSession = adoptNS([allocNFReaderSessionInstance() initWithUIType:NFReaderSessionUINone]);
+        auto readerSession = adoptNS([allocNFReaderSessionInstanceSingleton() initWithUIType:NFReaderSessionUINone]);
         setConnection(NfcConnection::create(readerSession.get(), *this));
     }
     LOG_ERROR("No nfc authenticators is available.");
@@ -271,7 +271,7 @@ void MockNfcService::detectTags() const
         if (configuration.nfc->multiplePhysicalTags)
             [tags addObject:adoptNS([[WKMockNFTag alloc] initWithType:NFTagTypeGeneric4A tagID:toNSDataNoCopy(std::span { tagID2 }, FreeWhenDone::No).get()]).get()];
 
-        auto readerSession = adoptNS([allocNFReaderSessionInstance() initWithUIType:NFReaderSessionUINone]);
+        auto readerSession = adoptNS([allocNFReaderSessionInstanceSingleton() initWithUIType:NFReaderSessionUINone]);
         [globalNFReaderSessionDelegate readerSession:readerSession.get() didDetectTags:tags.get()];
     });
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), callback.get());

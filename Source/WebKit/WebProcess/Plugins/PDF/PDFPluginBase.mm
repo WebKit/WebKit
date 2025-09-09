@@ -241,7 +241,7 @@ void PDFPluginBase::destroy()
 
 void PDFPluginBase::createPDFDocument()
 {
-    m_pdfDocument = adoptNS([allocPDFDocumentInstance() initWithData:RetainPtr { originalData() }.get()]);
+    m_pdfDocument = adoptNS([allocPDFDocumentInstanceSingleton() initWithData:RetainPtr { originalData() }.get()]);
 }
 
 bool PDFPluginBase::isFullFramePlugin() const

@@ -325,7 +325,7 @@ static void WebAVPictureInPictureContentViewController_dealloc(id aSelf, SEL)
     super_dealloc(&superClass, @selector(dealloc));
 }
 
-static WebAVPictureInPictureContentViewController *allocWebAVPictureInPictureContentViewControllerInstance()
+static WebAVPictureInPictureContentViewController *allocWebAVPictureInPictureContentViewControllerInstanceSingleton()
 {
     static Class theClass = nil;
     static dispatch_once_t onceToken;
@@ -392,7 +392,7 @@ NS_ASSUME_NONNULL_END
 
     _fullscreenInterface = ThreadSafeWeakPtr { *interface };
 
-    _playerLayerView = adoptNS([WebCore::allocWebAVPlayerLayerViewInstance() init]);
+    _playerLayerView = adoptNS([WebCore::allocWebAVPlayerLayerViewInstanceSingleton() init]);
     RetainPtr playerLayer = (WebAVPlayerLayer *)[_playerLayerView playerLayer];
     if (interface)
         [playerLayer setPresentationModel:interface->videoPresentationModel().get()];
@@ -400,10 +400,10 @@ NS_ASSUME_NONNULL_END
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
 
 #if PLATFORM(APPLETV)
-    _avPlayerViewController = adoptNS([allocAVPlayerViewControllerInstance() init]);
+    _avPlayerViewController = adoptNS([allocAVPlayerViewControllerInstanceSingleton() init]);
     [self configurePlayerViewControllerWithFullscreenInterface:interface];
 #else
-    _avPlayerViewController = adoptNS([allocAVPlayerViewControllerInstance() initWithPlayerLayerView:_playerLayerView.get()]);
+    _avPlayerViewController = adoptNS([allocAVPlayerViewControllerInstanceSingleton() initWithPlayerLayerView:_playerLayerView.get()]);
 #endif
     [_avPlayerViewController setModalPresentationStyle:UIModalPresentationOverFullScreen];
 #if PLATFORM(WATCHOS)
@@ -417,11 +417,11 @@ NS_ASSUME_NONNULL_END
 
 #if HAVE(PIP_CONTROLLER)
     auto *playerController = static_cast<AVPlayerController *>(interface->playerController());
-    _pipContentViewController = adoptNS([allocWebAVPictureInPictureContentViewControllerInstance() initWithController:playerController]);
+    _pipContentViewController = adoptNS([allocWebAVPictureInPictureContentViewControllerInstanceSingleton() initWithController:playerController]);
 
-    auto source = adoptNS([allocAVPictureInPictureControllerContentSourceInstance() initWithSourceView:static_cast<UIView *>(interface->playerLayerView()) contentViewController:_pipContentViewController.get() playerController:playerController]);
+    auto source = adoptNS([allocAVPictureInPictureControllerContentSourceInstanceSingleton() initWithSourceView:static_cast<UIView *>(interface->playerLayerView()) contentViewController:_pipContentViewController.get() playerController:playerController]);
 
-    _pipController = adoptNS([allocAVPictureInPictureControllerInstance() initWithContentSource:source.get()]);
+    _pipController = adoptNS([allocAVPictureInPictureControllerInstanceSingleton() initWithContentSource:source.get()]);
 #endif
 
     return self;

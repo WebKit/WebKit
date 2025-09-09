@@ -109,7 +109,7 @@ static IMP makeQueryParameterRequestHandler(NSArray<NSString *> *parameters, NSA
 {
     return imp_implementationWithBlock([&didHandleRequest, parameters = RetainPtr { parameters }, domains = RetainPtr { domains }, paths = RetainPtr { paths }](WPResources *, WPResourceRequestOptions *, void(^completion)(WPLinkFilteringData *, NSError *)) mutable {
         RunLoop::mainSingleton().dispatch([&didHandleRequest, parameters = WTFMove(parameters), domains = WTFMove(domains), paths = WTFMove(paths), completion = makeBlockPtr(completion)]() mutable {
-            auto data = adoptNS([PAL::allocWPLinkFilteringDataInstance() initWithQueryParameters:parameters.get()
+            auto data = adoptNS([PAL::allocWPLinkFilteringDataInstanceSingleton() initWithQueryParameters:parameters.get()
 #if defined(HAS_WEB_PRIVACY_LINK_FILTERING_RULE_PATH)
                 domains:domains.get() paths:paths.get()
 #endif
@@ -124,7 +124,7 @@ static IMP makeAllowedLinkFilteringDataRequestHandler(NSArray<NSString *> *param
 {
     return imp_implementationWithBlock([parameters = RetainPtr { parameters }](WPResources *, WPResourceRequestOptions *, void(^completion)(WPLinkFilteringData *, NSError *)) mutable {
         RunLoop::mainSingleton().dispatch([parameters = WTFMove(parameters), completion = makeBlockPtr(completion)]() mutable {
-            auto data = adoptNS([PAL::allocWPLinkFilteringDataInstance() initWithQueryParameters:parameters.get()]);
+            auto data = adoptNS([PAL::allocWPLinkFilteringDataInstanceSingleton() initWithQueryParameters:parameters.get()]);
             completion(data.get(), nil);
         });
     });

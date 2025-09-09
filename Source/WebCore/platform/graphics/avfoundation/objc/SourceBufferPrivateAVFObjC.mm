@@ -602,7 +602,7 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivate& track,
     } else {
         RetainPtr renderer = audioRendererForTrackID(trackID);
         if (!renderer) {
-            renderer = adoptNS([PAL::allocAVSampleBufferAudioRendererInstance() init]);
+            renderer = adoptNS([PAL::allocAVSampleBufferAudioRendererInstanceSingleton() init]);
 
             if (!renderer) {
                 ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferAudioRenderer init] returned nil! bailing!");

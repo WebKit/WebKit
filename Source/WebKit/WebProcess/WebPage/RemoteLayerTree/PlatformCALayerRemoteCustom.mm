@@ -155,7 +155,7 @@ Ref<WebCore::PlatformCALayer> PlatformCALayerRemoteCustom::clone(PlatformCALayer
     if (layerType() == PlatformCALayer::LayerType::LayerTypeAVPlayerLayer) {
         
         if (PAL::isAVFoundationFrameworkAvailable() && [platformLayer() isKindOfClass:PAL::getAVPlayerLayerClass()]) {
-            clonedLayer = adoptNS([PAL::allocAVPlayerLayerInstance() init]);
+            clonedLayer = adoptNS([PAL::allocAVPlayerLayerInstanceSingleton() init]);
 
             RetainPtr destinationPlayerLayer = static_cast<AVPlayerLayer *>(clonedLayer.get());
             RetainPtr sourcePlayerLayer = static_cast<AVPlayerLayer *>(platformLayer());

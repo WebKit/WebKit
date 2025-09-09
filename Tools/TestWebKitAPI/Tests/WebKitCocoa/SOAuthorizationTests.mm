@@ -388,8 +388,8 @@ using GetAuthorizationHintsCallback = void (^)(SOAuthorizationHints *authorizati
 static void overrideGetAuthorizationHintsWithURL(id, SEL, NSURL *url, NSInteger responseCode, GetAuthorizationHintsCallback completion)
 {
     EXPECT_EQ(responseCode, 0l);
-    auto soAuthorizationHintsCore = adoptNS([PAL::allocSOAuthorizationHintsCoreInstance() initWithLocalizedExtensionBundleDisplayName:@"Test"]);
-    auto soAuthorizationHints = adoptNS([PAL::allocSOAuthorizationHintsInstance() initWithAuthorizationHintsCore:soAuthorizationHintsCore.get()]);
+    auto soAuthorizationHintsCore = adoptNS([PAL::allocSOAuthorizationHintsCoreInstanceSingleton() initWithLocalizedExtensionBundleDisplayName:@"Test"]);
+    auto soAuthorizationHints = adoptNS([PAL::allocSOAuthorizationHintsInstanceSingleton() initWithAuthorizationHintsCore:soAuthorizationHintsCore.get()]);
     completion(soAuthorizationHints.get(), nullptr);
 }
 

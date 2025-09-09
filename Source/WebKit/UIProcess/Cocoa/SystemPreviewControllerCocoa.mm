@@ -133,10 +133,10 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
     RetainPtr contentType = WebCore::UTIFromMIMEType("model/vnd.usdz+zip"_s).createNSString();
 
 #if HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)
-    RetainPtr previewItem = adoptNS([WebKit::allocARQuickLookPreviewItemInstance() initWithFileAtURL:_downloadedURL.createNSURL().get()]);
+    RetainPtr previewItem = adoptNS([WebKit::allocARQuickLookPreviewItemInstanceSingleton() initWithFileAtURL:_downloadedURL.createNSURL().get()]);
     [previewItem setCanonicalWebPageURL:_originatingPageURL.createNSURL().get()];
 
-    _item = adoptNS([allocARQuickLookWebKitItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType.get() previewTitle:@"Preview" fileSize:@(0) previewItem:previewItem.get()]);
+    _item = adoptNS([allocARQuickLookWebKitItemInstanceSingleton() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType.get() previewTitle:@"Preview" fileSize:@(0) previewItem:previewItem.get()]);
     [_item setDelegate:self];
 
     if ([_item respondsToSelector:(@selector(setAdditionalParameters:))]) {
@@ -145,7 +145,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
     }
 
 #else
-    _item = adoptNS([PAL::allocQLItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0)]);
+    _item = adoptNS([PAL::allocQLItemInstanceSingleton() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0)]);
 #endif
     [_item setUseLoadingTimeout:NO];
 
@@ -455,7 +455,7 @@ void SystemPreviewController::begin(const URL& url, const WebCore::SecurityOrigi
         protectedThis->m_fragmentIdentifier = url.fragmentIdentifier().toString();
 
 #if !PLATFORM(VISION)
-        protectedThis->m_qlPreviewController = adoptNS([PAL::allocQLPreviewControllerInstance() init]);
+        protectedThis->m_qlPreviewController = adoptNS([PAL::allocQLPreviewControllerInstanceSingleton() init]);
 
         protectedThis->m_qlPreviewControllerDelegate = adoptNS([[_WKPreviewControllerDelegate alloc] initWithSystemPreviewController:protectedThis]);
         [protectedThis->m_qlPreviewController setDelegate:protectedThis->m_qlPreviewControllerDelegate.get()];

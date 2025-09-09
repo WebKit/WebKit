@@ -153,7 +153,7 @@ void ARKitInlinePreviewModelPlayerMac::load(WebCore::Model& modelSource, WebCore
 void ARKitInlinePreviewModelPlayerMac::createPreviewsForModelWithURL(const URL& url)
 {
     // First, create the WebProcess preview.
-    m_inlinePreview = adoptNS([allocASVInlinePreviewInstance() initWithFrame:CGRectMake(0, 0, m_size.width(), m_size.height())]);
+    m_inlinePreview = adoptNS([allocASVInlinePreviewInstanceSingleton() initWithFrame:CGRectMake(0, 0, m_size.width(), m_size.height())]);
     LOG(ModelElement, "ARKitInlinePreviewModelPlayerMac::createPreviewsForModelWithURL() created preview with UUID %s and size %f x %f.", ((String)[m_inlinePreview uuid].UUIDString).utf8().data(), m_size.width().toDouble(), m_size.height().toDouble());
 
     auto* client = this->client();

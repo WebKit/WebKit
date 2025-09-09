@@ -198,7 +198,7 @@ DragImageRef createDragImageForRange(LocalFrame& frame, const SimpleRange& range
         return nil;
 
     auto& image = *textIndicator->contentImage();
-    auto render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:image.size()]);
+    auto render = adoptNS([PAL::allocUIGraphicsImageRendererInstanceSingleton() initWithSize:image.size()]);
     UIImage *finalImage = [render imageWithActions:[&image](UIGraphicsImageRendererContext *rendererContext) {
         GraphicsContextCG context(rendererContext.CGContext);
         context.drawImage(image, FloatPoint());
@@ -212,7 +212,7 @@ DragImageRef createDragImageForColor(const Color& color, const FloatRect& elemen
     FloatRect imageRect { 0, 0, elementRect.width() * pageScaleFactor, elementRect.height() * pageScaleFactor };
     FloatRoundedRect swatch { imageRect, FloatRoundedRect::Radii(ColorSwatchCornerRadius * pageScaleFactor) };
 
-    auto render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:imageRect.size()]);
+    auto render = adoptNS([PAL::allocUIGraphicsImageRendererInstanceSingleton() initWithSize:imageRect.size()]);
     UIImage *image = [render imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
         GraphicsContextCG context { rendererContext.CGContext };
         context.translate(0, CGRectGetHeight(imageRect));

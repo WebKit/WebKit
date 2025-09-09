@@ -49,7 +49,7 @@
 
     _activity = activity;
     _imageData = imageData;
-    _item = adoptNS([PAL::allocQLItemInstance() initWithDataProvider:(id)self contentType:UTTypePNG previewTitle:title]);
+    _item = adoptNS([PAL::allocQLItemInstanceSingleton() initWithDataProvider:(id)self contentType:UTTypePNG previewTitle:title]);
     if ([_item respondsToSelector:@selector(setPreviewOptions:)]) {
         auto previewOptions = adoptNS([[NSMutableDictionary alloc] initWithCapacity:2]);
         if (imageURL)

@@ -88,7 +88,7 @@ public:
     void didInsertAttachment(API::Attachment&, const String& source) final;
     void didRemoveAttachment(API::Attachment&) final;
     void didInvalidateDataForAttachment(API::Attachment&) final;
-    NSFileWrapper *allocFileWrapperInstance() const final;
+    NSFileWrapper *allocFileWrapperInstanceSingleton() const final;
     NSSet *serializableFileWrapperClasses() const final;
 #endif
 

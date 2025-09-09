@@ -433,7 +433,7 @@ void ScreenCaptureKitSharingSessionManager::promptForGetDisplayMedia(DisplayCapt
 
 bool ScreenCaptureKitSharingSessionManager::promptWithSCContentSharingSession(DisplayCapturePromptType promptType)
 {
-    m_pendingSession = adoptNS([PAL::allocSCContentSharingSessionInstance() initWithTitle:@"WebKit getDisplayMedia Prompt"]);
+    m_pendingSession = adoptNS([PAL::allocSCContentSharingSessionInstanceSingleton() initWithTitle:@"WebKit getDisplayMedia Prompt"]);
     if (!m_pendingSession) {
         RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::promptWithSCContentSharingSession unable to create sharing session");
         return false;
@@ -450,7 +450,7 @@ bool ScreenCaptureKitSharingSessionManager::promptWithSCContentSharingPicker(Dis
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     ASSERT(useSCContentSharingPicker());
 
-    auto configuration = adoptNS([PAL::allocSCContentSharingPickerConfigurationInstance() init]);
+    auto configuration = adoptNS([PAL::allocSCContentSharingPickerConfigurationInstanceSingleton() init]);
     SCShareableContentStyle shareableContentStyle = SCShareableContentStyleWindow;
     switch (promptType) {
     case DisplayCapturePromptType::Window:
@@ -561,10 +561,10 @@ RefPtr<ScreenCaptureSessionSource> ScreenCaptureKitSharingSessionManager::create
     RetainPtr<SCStream> stream;
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     if (useSCContentSharingPicker())
-        stream = adoptNS([PAL::allocSCStreamInstance() initWithFilter:contentFilter configuration:configuration delegate:(id<SCStreamDelegate> _Nullable)delegate]);
+        stream = adoptNS([PAL::allocSCStreamInstanceSingleton() initWithFilter:contentFilter configuration:configuration delegate:(id<SCStreamDelegate> _Nullable)delegate]);
     else
 #endif
-        stream = adoptNS([PAL::allocSCStreamInstance() initWithSharingSession:sharingSession captureOutputProperties:configuration delegate:(id<SCStreamDelegate> _Nullable)delegate]);
+        stream = adoptNS([PAL::allocSCStreamInstanceSingleton() initWithSharingSession:sharingSession captureOutputProperties:configuration delegate:(id<SCStreamDelegate> _Nullable)delegate]);
 
     if (!stream) {
         RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitSharingSessionManager::createSessionSourceForDevice - unable to create SCStream.");

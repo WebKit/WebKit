@@ -485,7 +485,7 @@ AVContentKeySession* CDMSessionAVContentKeySession::contentKeySession()
     if ([PAL::getAVContentKeySessionClass() respondsToSelector:@selector(contentKeySessionWithKeySystem:storageDirectoryAtURL:)])
         m_contentKeySession = [PAL::getAVContentKeySessionClass() contentKeySessionWithKeySystem:AVContentKeySystemFairPlayStreaming storageDirectoryAtURL:storageURL];
     else
-        m_contentKeySession = adoptNS([PAL::allocAVContentKeySessionInstance() initWithStorageDirectoryAtURL:storageURL]);
+        m_contentKeySession = adoptNS([PAL::allocAVContentKeySessionInstanceSingleton() initWithStorageDirectoryAtURL:storageURL]);
 
     [m_contentKeySession setDelegate:m_contentKeySessionDelegate.get() queue:m_delegateQueue->dispatchQueue()];
 

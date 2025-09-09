@@ -12811,7 +12811,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     ASSERT(self.hasSelectableTextForImageContextMenu || self.hasVisualSearchResultsForImageContextMenu);
 
     ASSERT(!_visualSearchPreviewController);
-    _visualSearchPreviewController = adoptNS([PAL::allocQLPreviewControllerInstance() init]);
+    _visualSearchPreviewController = adoptNS([PAL::allocQLPreviewControllerInstanceSingleton() init]);
     [_visualSearchPreviewController setDelegate:self];
     [_visualSearchPreviewController setDataSource:self];
     [_visualSearchPreviewController setAppearanceActions:appearanceActions];
@@ -12872,7 +12872,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 {
     ASSERT(controller == _visualSearchPreviewController);
     ASSERT(!index);
-    auto item = adoptNS([PAL::allocQLItemInstance() initWithDataProvider:self contentType:UTTypeTIFF.identifier previewTitle:_visualSearchPreviewTitle.get()]);
+    auto item = adoptNS([PAL::allocQLItemInstanceSingleton() initWithDataProvider:self contentType:UTTypeTIFF.identifier previewTitle:_visualSearchPreviewTitle.get()]);
     if ([item respondsToSelector:@selector(setPreviewOptions:)]) {
         auto previewOptions = adoptNS([[NSMutableDictionary alloc] initWithCapacity:2]);
         if (_visualSearchPreviewImageURL)
@@ -13435,7 +13435,7 @@ static BOOL shouldUseMachineReadableCodeMenuFromImageAnalysisResult(CocoaImageAn
 {
     if (!_imageAnalysisInteraction) {
         _imageAnalysisActionButtons = adoptNS([[NSMutableSet alloc] initWithCapacity:1]);
-        _imageAnalysisInteraction = adoptNS([PAL::allocVKCImageAnalysisInteractionInstance() init]);
+        _imageAnalysisInteraction = adoptNS([PAL::allocVKCImageAnalysisInteractionInstanceSingleton() init]);
         [_imageAnalysisInteraction setDelegate:self];
         [_imageAnalysisInteraction setAnalysisButtonRequiresVisibleContentGating:YES];
         [_imageAnalysisInteraction setQuickActionConfigurationUpdateHandler:[weakSelf = WeakObjCPtr<WKContentView>(self)] (UIButton *button) {
@@ -14151,7 +14151,7 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
         [_sourceAnimationIDtoDestinationAnimationID setObject:uuid forKey:data.sourceAnimationUUID.value_or(WTF::UUID(WTF::UUID::emptyValue)).createNSUUID().get()];
 
     if (!_textAnimationManager)
-        _textAnimationManager = adoptNS([WebKit::allocWKTextAnimationManagerInstance() initWithDelegate:self]);
+        _textAnimationManager = adoptNS([WebKit::allocWKTextAnimationManagerInstanceSingleton() initWithDelegate:self]);
 
     [_textAnimationManager addTextAnimationForAnimationID:uuid withStyleType:toWKTextAnimationType(data.style)];
 }

@@ -1257,7 +1257,7 @@ Color RenderThemeIOS::pictureFrameColor(const RenderObject& buttonRenderer)
 RenderThemeCocoa::IconAndSize RenderThemeIOS::iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    auto documentInteractionController = adoptNS([PAL::allocUIDocumentInteractionControllerInstance() init]);
+    auto documentInteractionController = adoptNS([PAL::allocUIDocumentInteractionControllerInstanceSingleton() init]);
 ALLOW_DEPRECATED_DECLARATIONS_END
 
     [documentInteractionController setName:fileName.isEmpty() ? title.createNSString().get() : fileName.createNSString().get()];

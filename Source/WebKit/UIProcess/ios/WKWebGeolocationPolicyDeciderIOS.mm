@@ -57,7 +57,7 @@ static void clearGeolocationCache(CFNotificationCenterRef center, void *observer
 
 static bool appHasPreciseLocationPermission()
 {
-    auto locationManager = adoptNS([allocCLLocationManagerInstance() init]);
+    auto locationManager = adoptNS([allocCLLocationManagerInstanceSingleton() init]);
 
     CLAuthorizationStatus authStatus = [locationManager authorizationStatus];
     return (authStatus == kCLAuthorizationStatusAuthorizedAlways || authStatus == kCLAuthorizationStatusAuthorizedWhenInUse)

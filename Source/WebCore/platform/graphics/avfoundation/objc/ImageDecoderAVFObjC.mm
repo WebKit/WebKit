@@ -348,7 +348,7 @@ ImageDecoderAVFObjC::ImageDecoderAVFObjC(const FragmentedSharedBuffer& data, con
     : ImageDecoder()
     , m_mimeType(mimeType)
     , m_uti(WebCore::UTIFromMIMEType(mimeType))
-    , m_asset(adoptNS([PAL::allocAVURLAssetInstance() initWithURL:customSchemeURL() options:imageDecoderAssetOptions()]))
+    , m_asset(adoptNS([PAL::allocAVURLAssetInstanceSingleton() initWithURL:customSchemeURL() options:imageDecoderAssetOptions()]))
     , m_loader(adoptNS([[WebCoreSharedBufferResourceLoaderDelegate alloc] initWithParent:this]))
     , m_decompressionSession(WebCoreDecompressionSession::createRGB())
     , m_resourceOwner(WTFMove(resourceOwner))
@@ -403,8 +403,8 @@ void ImageDecoderAVFObjC::readSamples()
     if (!m_sampleData.empty())
         return;
 
-    auto assetReader = adoptNS([PAL::allocAVAssetReaderInstance() initWithAsset:m_asset.get() error:nil]);
-    auto referenceOutput = adoptNS([PAL::allocAVAssetReaderSampleReferenceOutputInstance() initWithTrack:m_track.get()]);
+    auto assetReader = adoptNS([PAL::allocAVAssetReaderInstanceSingleton() initWithAsset:m_asset.get() error:nil]);
+    auto referenceOutput = adoptNS([PAL::allocAVAssetReaderSampleReferenceOutputInstanceSingleton() initWithTrack:m_track.get()]);
 
     referenceOutput.get().alwaysCopiesSampleData = NO;
     [assetReader addOutput:referenceOutput.get()];

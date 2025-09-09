@@ -50,29 +50,29 @@ AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const Authe
     : m_manager(manager)
 {
 #if HAVE(ASC_AUTH_UI)
-    m_context = adoptNS([allocASCAuthorizationPresentationContextInstance() initWithRequestContext:nullptr appIdentifier:nullptr]);
+    m_context = adoptNS([allocASCAuthorizationPresentationContextInstanceSingleton() initWithRequestContext:nullptr appIdentifier:nullptr]);
     if ([getASCAuthorizationPresentationContextClass() instancesRespondToSelector:@selector(setServiceName:)])
         [m_context setServiceName:rpId.createNSString().get()];
 
     switch (type) {
     case ClientDataType::Create: {
-        auto options = adoptNS([allocASCPublicKeyCredentialCreationOptionsInstance() init]);
+        auto options = adoptNS([allocASCPublicKeyCredentialCreationOptionsInstanceSingleton() init]);
         [options setUserName:username.createNSString().get()];
 
         if (transports.contains(AuthenticatorTransport::Internal))
-            [m_context addLoginChoice:adoptNS([allocASCPlatformPublicKeyCredentialLoginChoiceInstance() initRegistrationChoiceWithOptions:options.get()]).get()];
+            [m_context addLoginChoice:adoptNS([allocASCPlatformPublicKeyCredentialLoginChoiceInstanceSingleton() initRegistrationChoiceWithOptions:options.get()]).get()];
         if (transports.contains(AuthenticatorTransport::Usb) || transports.contains(AuthenticatorTransport::Nfc))
-            [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initRegistrationChoiceWithOptions:options.get()]).get()];
+            [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstanceSingleton() initRegistrationChoiceWithOptions:options.get()]).get()];
         break;
     }
     case ClientDataType::Get:
         if ((transports.contains(AuthenticatorTransport::Usb) || transports.contains(AuthenticatorTransport::Nfc)) && !transports.contains(AuthenticatorTransport::Internal))
-            [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initAssertionPlaceholderChoice]).get()];
+            [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstanceSingleton() initAssertionPlaceholderChoice]).get()];
         break;
     }
 
     m_presenterDelegate = adoptNS([[WKASCAuthorizationPresenterDelegate alloc] initWithCoordinator:*this]);
-    m_presenter = adoptNS([allocASCAuthorizationPresenterInstance() init]);
+    m_presenter = adoptNS([allocASCAuthorizationPresenterInstanceSingleton() init]);
     [m_presenter setDelegate:m_presenterDelegate.get()];
 
     auto completionHandler = makeBlockPtr([manager = m_manager] (id<ASCCredentialProtocol> credential, NSError *error) mutable {
@@ -145,7 +145,7 @@ void AuthenticatorPresenterCoordinator::updatePresenter(WebAuthenticationStatus 
     }
     case WebAuthenticationStatus::LANoCredential: {
         if (m_delayedPresentationNeedsSecurityKey) {
-            [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initAssertionPlaceholderChoice]).get()];
+            [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstanceSingleton() initAssertionPlaceholderChoice]).get()];
             m_delayedPresentation();
 
             break;
@@ -229,7 +229,7 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
             if (response->userHandle())
                 userHandle = toNSData(response->userHandle()->span());
 
-            auto loginChoice = adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initWithName:response->name().createNSString().get() displayName:response->displayName().createNSString().get() userHandle:userHandle.get()]);
+            auto loginChoice = adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstanceSingleton() initWithName:response->name().createNSString().get() displayName:response->displayName().createNSString().get() userHandle:userHandle.get()]);
             [loginChoices addObject:loginChoice.get()];
 
             m_credentials.add(response->name(), WTFMove(response));
@@ -246,14 +246,14 @@ void AuthenticatorPresenterCoordinator::selectAssertionResponse(Vector<Ref<Authe
             if (response->userHandle())
                 userHandle = toNSData(response->userHandle()->span());
 
-            auto loginChoice = adoptNS([allocASCPlatformPublicKeyCredentialLoginChoiceInstance() initWithName:response->name().createNSString().get() displayName:response->displayName().createNSString().get() userHandle:userHandle.get()]);
+            auto loginChoice = adoptNS([allocASCPlatformPublicKeyCredentialLoginChoiceInstanceSingleton() initWithName:response->name().createNSString().get() displayName:response->displayName().createNSString().get() userHandle:userHandle.get()]);
             [m_context addLoginChoice:loginChoice.get()];
 
             m_credentials.add(response->name(), WTFMove(response));
         }
 
         if (m_delayedPresentationNeedsSecurityKey)
-            [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initAssertionPlaceholderChoice]).get()];
+            [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstanceSingleton() initAssertionPlaceholderChoice]).get()];
         m_delayedPresentation();
         return;
     }
@@ -276,7 +276,7 @@ void AuthenticatorPresenterCoordinator::dimissPresenter(WebAuthenticationResult 
     if (result == WebAuthenticationResult::Succeeded && m_credentialRequestHandler) {
         // FIXME(219767): Replace the ASCAppleIDCredential with the upcoming WebAuthn credentials one.
         // This is just a place holder to tell the UI that the ceremony succeeds.
-        m_credentialRequestHandler(adoptNS([WebKit::allocASCAppleIDCredentialInstance() initWithUser:@"" identityToken:adoptNS([[NSData alloc] init]).get() state:nil]).get(), nil);
+        m_credentialRequestHandler(adoptNS([WebKit::allocASCAppleIDCredentialInstanceSingleton() initWithUser:@"" identityToken:adoptNS([[NSData alloc] init]).get() state:nil]).get(), nil);
     }
 
     [m_presenter dismissWithError:nil];

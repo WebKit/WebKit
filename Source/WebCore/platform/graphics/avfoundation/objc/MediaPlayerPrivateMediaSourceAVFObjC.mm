@@ -103,7 +103,7 @@ String convertEnumerationToString(MediaPlayerPrivateMediaSourceAVFObjC::SeekStat
 
 MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer* player)
     : m_player(player)
-    , m_synchronizer(adoptNS([PAL::allocAVSampleBufferRenderSynchronizerInstance() init]))
+    , m_synchronizer(adoptNS([PAL::allocAVSampleBufferRenderSynchronizerInstanceSingleton() init]))
     , m_seekTimer(*this, &MediaPlayerPrivateMediaSourceAVFObjC::seekInternal)
     , m_networkState(MediaPlayer::NetworkState::Empty)
     , m_readyState(MediaPlayer::ReadyState::HaveNothing)
@@ -906,7 +906,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
 
     destroyVideoLayerIfNeeded();
 
-    m_sampleBufferDisplayLayer = adoptNS([PAL::allocAVSampleBufferDisplayLayerInstance() init]);
+    m_sampleBufferDisplayLayer = adoptNS([PAL::allocAVSampleBufferDisplayLayerInstanceSingleton() init]);
     if (!m_sampleBufferDisplayLayer)
         return;
 
@@ -952,7 +952,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureVideoRenderer()
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_sampleBufferVideoRenderer = adoptNS([PAL::allocAVSampleBufferVideoRendererInstance() init]);
+    m_sampleBufferVideoRenderer = adoptNS([PAL::allocAVSampleBufferVideoRendererInstanceSingleton() init]);
     if (!m_sampleBufferVideoRenderer)
         return;
 

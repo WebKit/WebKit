@@ -146,7 +146,7 @@ RefPtr<LocalSampleBufferDisplayLayer> LocalSampleBufferDisplayLayer::create(Samp
 {
     RetainPtr<AVSampleBufferDisplayLayer> sampleBufferDisplayLayer;
     @try {
-        sampleBufferDisplayLayer = adoptNS([PAL::allocAVSampleBufferDisplayLayerInstance() init]);
+        sampleBufferDisplayLayer = adoptNS([PAL::allocAVSampleBufferDisplayLayerInstanceSingleton() init]);
     } @catch(id exception) {
         RELEASE_LOG_ERROR(WebRTC, "LocalSampleBufferDisplayLayer::create failed to allocate display layer");
     }

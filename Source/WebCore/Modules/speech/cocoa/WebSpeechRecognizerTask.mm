@@ -81,9 +81,9 @@ NS_ASSUME_NONNULL_BEGIN
     _maxAlternatives = alternatives ? alternatives : 1;
 
     if (![localeIdentifier length])
-        _recognizer = adoptNS([PAL::allocSFSpeechRecognizerInstance() init]);
+        _recognizer = adoptNS([PAL::allocSFSpeechRecognizerInstanceSingleton() init]);
     else
-        _recognizer = adoptNS([PAL::allocSFSpeechRecognizerInstance() initWithLocale:[NSLocale localeWithLocaleIdentifier:localeIdentifier]]);
+        _recognizer = adoptNS([PAL::allocSFSpeechRecognizerInstanceSingleton() initWithLocale:[NSLocale localeWithLocaleIdentifier:localeIdentifier]]);
     if (!_recognizer) {
         [self release];
         return nil;
@@ -96,7 +96,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     [_recognizer setDelegate:self];
 
-    _request = adoptNS([PAL::allocSFSpeechAudioBufferRecognitionRequestInstance() init]);
+    _request = adoptNS([PAL::allocSFSpeechAudioBufferRecognitionRequestInstanceSingleton() init]);
     if ([_recognizer supportsOnDeviceRecognition])
         [_request setRequiresOnDeviceRecognition:YES];
     [_request setShouldReportPartialResults:interimResults];

@@ -305,7 +305,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RELEASE_LOG(XR, "%s", __FUNCTION__);
     [super viewWillAppear:animated];
 
-    RetainPtr configuration = adoptNS([WebKit::allocARWorldTrackingConfigurationInstance() init]);
+    RetainPtr configuration = adoptNS([WebKit::allocARWorldTrackingConfigurationInstanceSingleton() init]);
     [_session runWithConfiguration:configuration.get()];
 }
 

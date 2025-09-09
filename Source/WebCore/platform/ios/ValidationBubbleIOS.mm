@@ -80,7 +80,7 @@ static void WebValidationBubbleViewController_viewDidLoad(WebValidationBubbleVie
 {
     callSuper(instance, @selector(viewDidLoad));
 
-    auto label = adoptNS([PAL::allocUILabelInstance() init]);
+    auto label = adoptNS([PAL::allocUILabelInstanceSingleton() init]);
     [label setFont:[PAL::getUIFontClass() preferredFontForTextStyle:PAL::get_UIKit_UIFontTextStyleCallout()]];
     [label setLineBreakMode:NSLineBreakByTruncatingTail];
     [label setNumberOfLines:validationBubbleMaxNumberOfLines];
@@ -100,7 +100,7 @@ static void WebValidationBubbleViewController_viewSafeAreaInsetsDidChange(WebVal
     updateLabelFrame(instance);
 }
 
-static WebValidationBubbleViewController *allocWebValidationBubbleViewControllerInstance()
+static WebValidationBubbleViewController *allocWebValidationBubbleViewControllerInstanceSingleton()
 {
     static Class theClass = nil;
     static dispatch_once_t onceToken;
@@ -129,7 +129,7 @@ static WebValidationBubbleViewController *allocWebValidationBubbleViewController
         return nil;
 
     _popoverController = popoverController;
-    _tapGestureRecognizer = adoptNS([PAL::allocUITapGestureRecognizerInstance() initWithTarget:self action:@selector(dismissPopover)]);
+    _tapGestureRecognizer = adoptNS([PAL::allocUITapGestureRecognizerInstanceSingleton() initWithTarget:self action:@selector(dismissPopover)]);
     [[_popoverController view] addGestureRecognizer:_tapGestureRecognizer.get()];
 
     return self;
@@ -170,7 +170,7 @@ ValidationBubble::ValidationBubble(UIView *view, String&& message, const Setting
     : m_view(view)
     , m_message(WTFMove(message))
 {
-    m_popoverController = adoptNS([allocWebValidationBubbleViewControllerInstance() init]);
+    m_popoverController = adoptNS([allocWebValidationBubbleViewControllerInstanceSingleton() init]);
     [m_popoverController setModalPresentationStyle:UIModalPresentationPopover];
     m_tapRecognizer = adoptNS([[WebValidationBubbleTapRecognizer alloc] initWithPopoverController:m_popoverController.get()]);
 

@@ -83,7 +83,7 @@ std::unique_ptr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriterAVFObjC::c
 {
     NSError *error = nil;
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    RetainPtr writer = adoptNS([PAL::allocAVAssetWriterInstance() initWithFileType:AVFileTypeMPEG4 error:&error]);
+    RetainPtr writer = adoptNS([PAL::allocAVAssetWriterInstanceSingleton() initWithFileType:AVFileTypeMPEG4 error:&error]);
     ALLOW_DEPRECATED_DECLARATIONS_END
     if (error) {
         RELEASE_LOG_ERROR(MediaStream, "create AVAssetWriter instance failed with error code %ld", (long)error.code);
@@ -106,7 +106,7 @@ MediaRecorderPrivateWriterAVFObjC::~MediaRecorderPrivateWriterAVFObjC() = defaul
 std::optional<uint8_t> MediaRecorderPrivateWriterAVFObjC::addAudioTrack(const AudioInfo& info)
 {
     m_audioDescription = createFormatDescriptionFromTrackInfo(info);
-    m_audioAssetWriterInput = adoptNS([PAL::allocAVAssetWriterInputInstance() initWithMediaType:AVMediaTypeAudio outputSettings:nil sourceFormatHint:m_audioDescription.get()]);
+    m_audioAssetWriterInput = adoptNS([PAL::allocAVAssetWriterInputInstanceSingleton() initWithMediaType:AVMediaTypeAudio outputSettings:nil sourceFormatHint:m_audioDescription.get()]);
     [m_audioAssetWriterInput setExpectsMediaDataInRealTime:true];
     if (![m_writer canAddInput:m_audioAssetWriterInput.get()]) {
         RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateWriterAVFObjC::addAudioTrack failed canAddInput for audio with %ld", static_cast<long>([m_writer error].code));
@@ -122,7 +122,7 @@ std::optional<uint8_t> MediaRecorderPrivateWriterAVFObjC::addAudioTrack(const Au
 std::optional<uint8_t> MediaRecorderPrivateWriterAVFObjC::addVideoTrack(const VideoInfo& info, const std::optional<CGAffineTransform>& transform)
 {
     m_videoDescription = createFormatDescriptionFromTrackInfo(info);
-    m_videoAssetWriterInput = adoptNS([PAL::allocAVAssetWriterInputInstance() initWithMediaType:AVMediaTypeVideo outputSettings:nil sourceFormatHint:m_videoDescription.get()]);
+    m_videoAssetWriterInput = adoptNS([PAL::allocAVAssetWriterInputInstanceSingleton() initWithMediaType:AVMediaTypeVideo outputSettings:nil sourceFormatHint:m_videoDescription.get()]);
     [m_videoAssetWriterInput setExpectsMediaDataInRealTime:true];
     if (transform)
         [m_videoAssetWriterInput setTransform:*transform];

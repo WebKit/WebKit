@@ -6613,11 +6613,11 @@ void WebViewImpl::updateMediaTouchBar()
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) && ENABLE(VIDEO_PRESENTATION_MODE)
     if (!m_mediaTouchBarProvider) {
-        m_mediaTouchBarProvider = adoptNS([allocAVTouchBarPlaybackControlsProviderInstance() init]);
+        m_mediaTouchBarProvider = adoptNS([allocAVTouchBarPlaybackControlsProviderInstanceSingleton() init]);
     }
 
     if (!m_mediaPlaybackControlsView) {
-        m_mediaPlaybackControlsView = adoptNS([allocAVTouchBarScrubberInstance() init]);
+        m_mediaPlaybackControlsView = adoptNS([allocAVTouchBarScrubberInstanceSingleton() init]);
         // FIXME: Remove this once setCanShowMediaSelectionButton: is declared in an SDK used by Apple's buildbot.
         if ([m_mediaPlaybackControlsView respondsToSelector:@selector(setCanShowMediaSelectionButton:)])
             [m_mediaPlaybackControlsView setCanShowMediaSelectionButton:YES];
@@ -6781,7 +6781,7 @@ void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContext
     }
 
     auto view = m_view.get();
-    auto translationViewController = adoptNS([PAL::allocLTUITranslationViewControllerInstance() init]);
+    auto translationViewController = adoptNS([PAL::allocLTUITranslationViewControllerInstanceSingleton() init]);
     [translationViewController setText:adoptNS([[NSAttributedString alloc] initWithString:info.text.createNSString().get()]).get()];
     if (info.mode == WebCore::TranslationContextMenuMode::Editable) {
         [translationViewController setIsSourceEditable:YES];
@@ -6791,7 +6791,7 @@ void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContext
         }];
     }
 
-    auto sourceMetadata = adoptNS([PAL::allocLTUISourceMetaInstance() init]);
+    auto sourceMetadata = adoptNS([PAL::allocLTUISourceMetaInstanceSingleton() init]);
     [sourceMetadata setOrigin:info.source == WebCore::TranslationContextMenuSource::Image ? LTUISourceMetaOriginImage : LTUISourceMetaOriginUnspecified];
     [translationViewController setSourceMeta:sourceMetadata.get()];
 
@@ -6852,7 +6852,7 @@ void WebViewImpl::endPreviewPanelControl(QLPreviewPanel *panel)
 void WebViewImpl::handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo& info, const WebCore::IntPoint& clickLocation)
 {
 #if ENABLE(REVEAL)
-    m_revealItemPresenter = adoptNS([[WKRevealItemPresenter alloc] initWithWebViewImpl:*this item:adoptNS([PAL::allocRVItemInstance() initWithDDResult:info.result.get()]).get() frame:info.elementBounds menuLocation:clickLocation]);
+    m_revealItemPresenter = adoptNS([[WKRevealItemPresenter alloc] initWithWebViewImpl:*this item:adoptNS([PAL::allocRVItemInstanceSingleton() initWithDDResult:info.result.get()]).get() frame:info.elementBounds menuLocation:clickLocation]);
     [m_revealItemPresenter setShouldUseDefaultHighlight:NO];
     [m_revealItemPresenter showContextMenu];
 #else
@@ -7016,7 +7016,7 @@ void WebViewImpl::installImageAnalysisOverlayView(RetainPtr<VKCImageAnalysis>&& 
             return;
 
         if (!checkedThis->m_imageAnalysisOverlayView) {
-            checkedThis->m_imageAnalysisOverlayView = adoptNS([PAL::allocVKCImageAnalysisOverlayViewInstance() initWithFrame:[checkedThis->m_view bounds]]);
+            checkedThis->m_imageAnalysisOverlayView = adoptNS([PAL::allocVKCImageAnalysisOverlayViewInstanceSingleton() initWithFrame:[checkedThis->m_view bounds]]);
             checkedThis->m_imageAnalysisOverlayViewDelegate = adoptNS([[WKImageAnalysisOverlayViewDelegate alloc] initWithWebViewImpl:*checkedThis.get()]);
             [checkedThis->m_imageAnalysisOverlayView setDelegate:checkedThis->m_imageAnalysisOverlayViewDelegate.get()];
             prepareImageAnalysisForOverlayView(checkedThis->m_imageAnalysisOverlayView.get());

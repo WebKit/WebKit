@@ -201,7 +201,7 @@ private:
 MediaPlayerEnums::SupportsType SourceBufferParserAVFObjC::isContentTypeSupported(const ContentType& type)
 {
     // Check that AVStreamDataParser is in a functional state.
-    if (!PAL::getAVStreamDataParserClass() || !adoptNS([PAL::allocAVStreamDataParserInstance() init]))
+    if (!PAL::getAVStreamDataParserClass() || !adoptNS([PAL::allocAVStreamDataParserInstanceSingleton() init]))
         return MediaPlayerEnums::SupportsType::IsNotSupported;
 
     String extendedType = type.raw();
@@ -215,7 +215,7 @@ MediaPlayerEnums::SupportsType SourceBufferParserAVFObjC::isContentTypeSupported
 }
 
 SourceBufferParserAVFObjC::SourceBufferParserAVFObjC(const MediaSourceConfiguration& configuration)
-    : m_parser(adoptNS([PAL::allocAVStreamDataParserInstance() init]))
+    : m_parser(adoptNS([PAL::allocAVStreamDataParserInstanceSingleton() init]))
     , m_configuration(configuration)
 {
     m_delegate = adoptNS([[WebAVStreamDataParserWithKeySpecifierListener alloc] initWithParser:m_parser.get() parent:this]);

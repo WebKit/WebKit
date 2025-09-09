@@ -308,7 +308,7 @@ enum class PIPState {
     ASSERT(!_videoViewContainer);
     ASSERT(!_playerLayer);
 
-    _pipViewController = adoptNS([allocPIPViewControllerInstance() init]);
+    _pipViewController = adoptNS([allocPIPViewControllerInstanceSingleton() init]);
     [_pipViewController setDelegate:self];
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_pipViewController setUserCanResize:YES];

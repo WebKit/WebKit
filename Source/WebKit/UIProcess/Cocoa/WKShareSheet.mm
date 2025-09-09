@@ -74,7 +74,7 @@ static NSString *typeIdentifierForFileURL(NSURL *url)
 
 static RetainPtr<LPLinkMetadata> placeholderMetadataWithURLAndTitle(NSURL *url, NSString *title)
 {
-    RetainPtr metadata = adoptNS([PAL::allocLPLinkMetadataInstance() init]);
+    RetainPtr metadata = adoptNS([PAL::allocLPLinkMetadataInstanceSingleton() init]);
     [metadata setOriginalURL:url];
     [metadata setURL:url];
     [metadata setTitle:title];
@@ -116,13 +116,13 @@ static RetainPtr<NSString> nameForFileURLWithTypeIdentifier(NSURL *url, NSString
 
 static RetainPtr<LPLinkMetadata> placeholderMetadataWithFileURL(NSURL *url)
 {
-    RetainPtr metadata = adoptNS([PAL::allocLPLinkMetadataInstance() init]);
+    RetainPtr metadata = adoptNS([PAL::allocLPLinkMetadataInstanceSingleton() init]);
     [metadata setOriginalURL:url];
     [metadata setURL:url];
 
     RetainPtr typeIdentifier = typeIdentifierForFileURL(url);
 
-    RetainPtr fileMetadata = adoptNS([PAL::allocLPFileMetadataInstance() init]);
+    RetainPtr fileMetadata = adoptNS([PAL::allocLPFileMetadataInstanceSingleton() init]);
     [fileMetadata setType:typeIdentifier.get()];
     [fileMetadata setName:nameForFileURLWithTypeIdentifier(url, typeIdentifier.get()).get()];
     [fileMetadata setSize:sizeForFileURL(url)];
@@ -151,7 +151,7 @@ static RetainPtr<LPLinkMetadata> placeholderMetadataWithFileURL(NSURL *url)
 
     _url = url;
 
-    auto provider = adoptNS([PAL::allocLPMetadataProviderInstance() init]);
+    auto provider = adoptNS([PAL::allocLPMetadataProviderInstanceSingleton() init]);
     [provider setShouldFetchSubresources:NO];
 
     _headerMetadata = [provider _startFetchingMetadataForURL:url completionHandler:^(NSError *) { }];

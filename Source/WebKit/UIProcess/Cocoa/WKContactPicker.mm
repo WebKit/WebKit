@@ -164,7 +164,7 @@ SOFT_LINK_CLASS(ContactsUI, CNContactPickerViewController)
         _contactPickerDelegate = adoptNS([[WKCNContactPickerSingleSelectDelegate alloc] initWithContactPickerDelegate:self]);
 
 #if HAVE(CNCONTACTPICKERVIEWCONTROLLER)
-    _contactPickerViewController = adoptNS([allocCNContactPickerViewControllerInstance() init]);
+    _contactPickerViewController = adoptNS([allocCNContactPickerViewControllerInstanceSingleton() init]);
     [_contactPickerViewController setDelegate:_contactPickerDelegate.get()];
     [_contactPickerViewController setPrompt:requestData.url.createNSString().get()];
 
@@ -285,7 +285,7 @@ SOFT_LINK_CLASS(ContactsUI, CNContactPickerViewController)
         if (![jsContact isKindOfClass:[NSDictionary class]])
             continue;
 
-        auto contact = adoptNS([allocCNMutableContactInstance() init]);
+        auto contact = adoptNS([allocCNMutableContactInstanceSingleton() init]);
 
         RetainPtr<id> names = [(NSDictionary *)jsContact objectForKey:@"name"];
         if ([names isKindOfClass:[NSArray class]]) {

@@ -148,7 +148,7 @@ static WebAVPictureInPicturePlayerLayerView *WebAVPlayerLayerView_pictureInPictu
     if (WebAVPictureInPicturePlayerLayerView *pipView = [playerLayerView valueForKey:pictureInPicturePlayerLayerViewKey])
         return pipView;
 
-    auto pipView = adoptNS([allocWebAVPictureInPicturePlayerLayerViewInstance() initWithFrame:CGRectZero]);
+    auto pipView = adoptNS([allocWebAVPictureInPicturePlayerLayerViewInstanceSingleton() initWithFrame:CGRectZero]);
     [playerLayerView setValue:pipView.get() forKey:pictureInPicturePlayerLayerViewKey];
     return pipView.get();
 }
@@ -168,7 +168,7 @@ static void WebAVPlayerLayerView_dealloc(id aSelf, SEL)
 
 #pragma mark - Methods
 
-WebAVPlayerLayerView *allocWebAVPlayerLayerViewInstance()
+WebAVPlayerLayerView *allocWebAVPlayerLayerViewInstanceSingleton()
 {
     static Class theClass = nil;
     static dispatch_once_t onceToken;
@@ -203,7 +203,7 @@ static Class WebAVPictureInPicturePlayerLayerView_layerClass(id, SEL)
     return [WebAVPlayerLayer class];
 }
 
-WebAVPictureInPicturePlayerLayerView *allocWebAVPictureInPicturePlayerLayerViewInstance()
+WebAVPictureInPicturePlayerLayerView *allocWebAVPictureInPicturePlayerLayerViewInstanceSingleton()
 {
     static Class theClass = nil;
     static dispatch_once_t onceToken;

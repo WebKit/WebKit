@@ -49,18 +49,18 @@ using namespace WebCore;
 RetainPtr<CocoaImageAnalyzer> createImageAnalyzer()
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    return adoptNS([PAL::allocVKCImageAnalyzerInstance() init]);
+    return adoptNS([PAL::allocVKCImageAnalyzerInstanceSingleton() init]);
 #else
-    return adoptNS([PAL::allocVKImageAnalyzerInstance() init]);
+    return adoptNS([PAL::allocVKImageAnalyzerInstanceSingleton() init]);
 #endif
 }
 
 RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef image, VKAnalysisTypes types)
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
-    return adoptNS([(PAL::allocVKCImageAnalyzerRequestInstance()) initWithCGImage:image orientation:VKImageOrientationUp requestType:types]);
+    return adoptNS([PAL::allocVKCImageAnalyzerRequestInstanceSingleton() initWithCGImage:image orientation:VKImageOrientationUp requestType:types]);
 #else
-    return adoptNS([PAL::allocVKImageAnalyzerRequestInstance() initWithCGImage:image orientation:VKImageOrientationUp requestType:types]);
+    return adoptNS([PAL::allocVKImageAnalyzerRequestInstanceSingleton() initWithCGImage:image orientation:VKImageOrientationUp requestType:types]);
 #endif
 }
 
@@ -426,11 +426,11 @@ void requestPayloadForQRCode(CGImageRef image, CompletionHandler<void(NSString *
             callCompletionOnMainRunLoopWithResult(nil);
         });
 
-        auto request = adoptNS([PAL::allocVNDetectBarcodesRequestInstance() initWithCompletionHandler:completionHandler.get()]);
+        auto request = adoptNS([PAL::allocVNDetectBarcodesRequestInstanceSingleton() initWithCompletionHandler:completionHandler.get()]);
         [request setSymbologies:@[ PAL::get_Vision_VNBarcodeSymbologyQR() ]];
 
         NSError *error = nil;
-        auto handler = adoptNS([PAL::allocVNImageRequestHandlerInstance() initWithCGImage:adjustedImage.get() options:@{ }]);
+        auto handler = adoptNS([PAL::allocVNImageRequestHandlerInstanceSingleton() initWithCGImage:adjustedImage.get() options:@{ }]);
         [handler performRequests:@[ request.get() ] error:&error];
 
         if (error)

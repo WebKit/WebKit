@@ -59,7 +59,7 @@ RefPtr<Icon> Icon::create(PlatformImagePtr&& platformImage)
 #if USE(APPKIT)
     auto image = adoptNS([[NSImage alloc] initWithCGImage:platformImage.get() size:NSZeroSize]);
 #else
-    auto image = adoptNS([PAL::allocUIImageInstance() initWithCGImage:platformImage.get()]);
+    auto image = adoptNS([PAL::allocUIImageInstanceSingleton() initWithCGImage:platformImage.get()]);
 #endif
     return adoptRef(new Icon(image.get()));
 }

@@ -116,7 +116,7 @@ static WebCore::VideoFrameRotation computeVideoFrameRotation(int rotation)
         if (!avDevice)
             return { };
 
-        RetainPtr coordinator = adoptNS([PAL::allocAVCaptureDeviceRotationCoordinatorInstance() initWithDevice:avDevice.get() previewLayer:layer]);
+        RetainPtr coordinator = adoptNS([PAL::allocAVCaptureDeviceRotationCoordinatorInstanceSingleton() initWithDevice:avDevice.get() previewLayer:layer]);
         [coordinator addObserver:self forKeyPath:@"videoRotationAngleForHorizonLevelPreview" options:NSKeyValueObservingOptionNew context:(void *)nil];
 
         iterator->value = WTFMove(coordinator);

@@ -81,7 +81,7 @@
     _webView = webView;
     _chunkToEffect = adoptNS([[NSMutableDictionary alloc] init]);
 
-    _effectView = adoptNS([PAL::alloc_WTTextEffectViewInstance() initWithAsyncSource:self]);
+    _effectView = adoptNS([PAL::alloc_WTTextEffectViewInstanceSingleton() initWithAsyncSource:self]);
     [_effectView setClipsToBounds:YES];
     [_effectView setFrame:webView.view().bounds];
 
@@ -99,15 +99,15 @@
     }
 
     RetainPtr<id<_WTTextEffect>> effect;
-    RetainPtr chunk = adoptNS([PAL::alloc_WTTextChunkInstance() initChunkWithIdentifier:uuid.UUIDString]);
+    RetainPtr chunk = adoptNS([PAL::alloc_WTTextChunkInstanceSingleton() initChunkWithIdentifier:uuid.UUIDString]);
 
     switch (data.style) {
     case WebCore::TextAnimationType::Initial:
-        effect = adoptNS([PAL::alloc_WTSweepTextEffectInstance() initWithChunk:chunk.get() effectView:_effectView.get()]);
+        effect = adoptNS([PAL::alloc_WTSweepTextEffectInstanceSingleton() initWithChunk:chunk.get() effectView:_effectView.get()]);
         break;
 
     case WebCore::TextAnimationType::Source:
-        effect = adoptNS([PAL::alloc_WTReplaceSourceTextEffectInstance() initWithChunk:chunk.get() effectView:_effectView.get()]);
+        effect = adoptNS([PAL::alloc_WTReplaceSourceTextEffectInstanceSingleton() initWithChunk:chunk.get() effectView:_effectView.get()]);
 
         effect.get().preCompletion = makeBlockPtr([weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), uuid = RetainPtr(uuid), runMode = data.runMode] {
             CheckedPtr webView = weakWebView.get();
@@ -130,7 +130,7 @@
         break;
 
     case WebCore::TextAnimationType::Final:
-        effect = adoptNS([PAL::alloc_WTReplaceDestinationTextEffectInstance() initWithChunk:chunk.get() effectView:_effectView.get()]);
+        effect = adoptNS([PAL::alloc_WTReplaceDestinationTextEffectInstanceSingleton() initWithChunk:chunk.get() effectView:_effectView.get()]);
 
         effect.get().preCompletion = makeBlockPtr([weakWebView = WeakPtr<WebKit::WebViewImpl>(_webView), remainingID = *data.unanimatedRangeUUID] {
             if (CheckedPtr webView = weakWebView.get())
@@ -253,7 +253,7 @@
         for (auto textRectInSnapshotCoordinates : textIndicator->textRectsInBoundingRectCoordinates()) {
             CGRect textLineFrameInBoundingRectCoordinates = CGRectOffset(textRectInSnapshotCoordinates, snapshotRectInBoundingRectCoordinates.origin.x, snapshotRectInBoundingRectCoordinates.origin.y);
             textRectInSnapshotCoordinates.scale(textIndicator->contentImageScaleFactor());
-            [textPreviews addObject:adoptNS([PAL::alloc_WTTextPreviewInstance() initWithSnapshotImage:adoptCF(CGImageCreateWithImageInRect(snapshotPlatformImage.get(), textRectInSnapshotCoordinates)).get() presentationFrame:textLineFrameInBoundingRectCoordinates]).get()];
+            [textPreviews addObject:adoptNS([PAL::alloc_WTTextPreviewInstanceSingleton() initWithSnapshotImage:adoptCF(CGImageCreateWithImageInRect(snapshotPlatformImage.get(), textRectInSnapshotCoordinates)).get() presentationFrame:textLineFrameInBoundingRectCoordinates]).get()];
         }
 
         completionHandler(textPreviews.get());
@@ -272,7 +272,7 @@
             return;
         }
 
-        RetainPtr textPreview = adoptNS([PAL::alloc_WTTextPreviewInstance() initWithSnapshotImage:image presentationFrame:rect]);
+        RetainPtr textPreview = adoptNS([PAL::alloc_WTTextPreviewInstanceSingleton() initWithSnapshotImage:image presentationFrame:rect]);
         completionHandler(textPreview.get());
     });
 }

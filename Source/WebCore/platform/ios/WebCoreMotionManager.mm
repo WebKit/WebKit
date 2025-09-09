@@ -141,7 +141,7 @@ static const double kGravity = 9.80665;
 {
     ASSERT(!WebThreadIsCurrent());
 
-    m_motionManager = adoptNS([allocCMMotionManagerInstance() init]);
+    m_motionManager = adoptNS([allocCMMotionManagerInstanceSingleton() init]);
 
     m_gyroAvailable = m_motionManager.get().deviceMotionAvailable;
 
@@ -150,7 +150,7 @@ static const double kGravity = 9.80665;
     else
         [m_motionManager setAccelerometerUpdateInterval:kMotionUpdateInterval];
 
-    m_locationManager = adoptNS([allocCLLocationManagerInstance() init]);
+    m_locationManager = adoptNS([allocCLLocationManagerInstanceSingleton() init]);
     m_headingAvailable = [getCLLocationManagerClass() headingAvailable];
 
     m_initialized = YES;

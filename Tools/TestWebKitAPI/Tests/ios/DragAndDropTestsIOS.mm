@@ -1094,8 +1094,8 @@ TEST(DragAndDropTests, ExternalSourceOverrideDropFileUpload)
 
 static RetainPtr<NSItemProvider> createMapItemForTesting()
 {
-    auto placemark = adoptNS([allocMKPlacemarkInstance() initWithCoordinate:CLLocationCoordinate2DMake(37.3327, -122.0053)]);
-    auto item = adoptNS([allocMKMapItemInstance() initWithPlacemark:placemark.get()]);
+    auto placemark = adoptNS([allocMKPlacemarkInstanceSingleton() initWithCoordinate:CLLocationCoordinate2DMake(37.3327, -122.0053)]);
+    auto item = adoptNS([allocMKMapItemInstanceSingleton() initWithPlacemark:placemark.get()]);
     [item setName:@"Apple Park"];
 
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
@@ -1107,7 +1107,7 @@ static RetainPtr<NSItemProvider> createMapItemForTesting()
 
 static RetainPtr<NSItemProvider> createContactItemForTesting()
 {
-    auto contact = adoptNS([allocCNMutableContactInstance() init]);
+    auto contact = adoptNS([allocCNMutableContactInstanceSingleton() init]);
     [contact setGivenName:@"Foo"];
     [contact setFamilyName:@"Bar"];
 

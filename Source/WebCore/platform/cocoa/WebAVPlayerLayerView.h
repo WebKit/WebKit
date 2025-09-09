@@ -45,7 +45,7 @@ namespace WebCore {
 WEBCORE_EXPORT WebAVPlayerLayerView *allocWebAVPlayerLayerViewInstance();
 
 #if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
-WEBCORE_EXPORT WebAVPictureInPicturePlayerLayerView *allocWebAVPictureInPicturePlayerLayerViewInstance();
+WEBCORE_EXPORT WebAVPictureInPicturePlayerLayerView *allocWebAVPictureInPicturePlayerLayerViewInstanceSingleton();
 #endif
 
 }

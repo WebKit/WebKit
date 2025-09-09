@@ -642,7 +642,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_videoLayer = adoptNS([PAL::allocAVPlayerLayerInstance() init]);
+    m_videoLayer = adoptNS([PAL::allocAVPlayerLayerInstanceSingleton() init]);
     [m_videoLayer setPlayer:m_avPlayer.get()];
 
     [m_videoLayer setName:@"MediaPlayerPrivate AVPlayerLayer"];
@@ -984,13 +984,13 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
     RetainPtr nsURL = canonicalURL(url);
 
     @try {
-        m_avAsset = adoptNS([PAL::allocAVURLAssetInstance() initWithURL:nsURL.get() options:options.get()]);
+        m_avAsset = adoptNS([PAL::allocAVURLAssetInstanceSingleton() initWithURL:nsURL.get() options:options.get()]);
     } @catch(NSException *exception) {
         ERROR_LOG(LOGIDENTIFIER, "-[AVURLAssetInstance initWithURL:nsURL.get() options:] threw an exception: ", exception.name, ", reason : ", exception.reason);
         nsURL = canonicalURL(conformFragmentIdentifierForURL(url));
 
         @try {
-            m_avAsset = adoptNS([PAL::allocAVURLAssetInstance() initWithURL:nsURL.get() options:options.get()]);
+            m_avAsset = adoptNS([PAL::allocAVURLAssetInstanceSingleton() initWithURL:nsURL.get() options:options.get()]);
         } @catch(NSException *exception) {
             ASSERT_NOT_REACHED();
             ERROR_LOG(LOGIDENTIFIER, "-[AVURLAssetInstance initWithURL:nsURL.get() options:] threw a second exception, bailing: ", exception.name, ", reason : ", exception.reason);
@@ -1064,7 +1064,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_avPlayer = adoptNS([PAL::allocAVPlayerInstance() init]);
+    m_avPlayer = adoptNS([PAL::allocAVPlayerInstanceSingleton() init]);
     for (NSString *keyName in playerKVOProperties())
         [m_avPlayer addObserver:m_objcObserver.get() forKeyPath:keyName options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
     m_automaticallyWaitsToMinimizeStalling = [m_avPlayer automaticallyWaitsToMinimizeStalling];
@@ -1168,7 +1168,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
     ALWAYS_LOG(LOGIDENTIFIER);
 
     // Create the player item so we can load media data.
-    m_avPlayerItem = adoptNS([PAL::allocAVPlayerItemInstance() initWithAsset:m_avAsset.get()]);
+    m_avPlayerItem = adoptNS([PAL::allocAVPlayerItemInstanceSingleton() initWithAsset:m_avAsset.get()]);
 
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(didEnd:) name:AVPlayerItemDidPlayToEndTimeNotification object:m_avPlayerItem.get()];
 
@@ -1195,7 +1195,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     const NSTimeInterval avPlayerOutputAdvanceInterval = 2;
 
     RetainPtr<NSArray> subtypes = adoptNS([[NSArray alloc] initWithObjects:@(kCMSubtitleFormatType_WebVTT), nil]);
-    m_legibleOutput = adoptNS([PAL::allocAVPlayerItemLegibleOutputInstance() initWithMediaSubtypesForNativeRepresentation:subtypes.get()]);
+    m_legibleOutput = adoptNS([PAL::allocAVPlayerItemLegibleOutputInstanceSingleton() initWithMediaSubtypesForNativeRepresentation:subtypes.get()]);
     [m_legibleOutput setSuppressesPlayerRendering:YES];
 
     [m_legibleOutput setDelegate:m_objcObserver.get() queue:dispatch_get_main_queue()];
@@ -1210,11 +1210,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     }
 #endif
 
-    m_metadataCollector = adoptNS([PAL::allocAVPlayerItemMetadataCollectorInstance() initWithIdentifiers:nil classifyingLabels:nil]);
+    m_metadataCollector = adoptNS([PAL::allocAVPlayerItemMetadataCollectorInstanceSingleton() initWithIdentifiers:nil classifyingLabels:nil]);
     [m_metadataCollector setDelegate:m_objcObserver.get() queue:dispatch_get_main_queue()];
     [m_avPlayerItem addMediaDataCollector:m_metadataCollector.get()];
 
-    m_metadataOutput = adoptNS([PAL::allocAVPlayerItemMetadataOutputInstance() initWithIdentifiers:nil]);
+    m_metadataOutput = adoptNS([PAL::allocAVPlayerItemMetadataOutputInstanceSingleton() initWithIdentifiers:nil]);
     [m_metadataOutput setDelegate:m_objcObserver.get() queue:dispatch_get_main_queue()];
     [m_metadataOutput setAdvanceIntervalForDelegateInvocation:avPlayerOutputAdvanceInterval];
     [m_avPlayerItem addOutput:m_metadataOutput.get()];

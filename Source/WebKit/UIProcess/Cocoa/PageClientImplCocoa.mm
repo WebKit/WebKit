@@ -141,7 +141,7 @@ void PageClientImplCocoa::didInvalidateDataForAttachment(API::Attachment& attach
     [m_webView _didInvalidateDataForAttachment:attachment];
 }
 
-NSFileWrapper *PageClientImplCocoa::allocFileWrapperInstance() const
+NSFileWrapper *PageClientImplCocoa::allocFileWrapperInstanceSingleton() const
 {
     RetainPtr cls = [m_webView configuration]._attachmentFileWrapperClass ?: [NSFileWrapper class];
     return [cls.get() alloc];

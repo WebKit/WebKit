@@ -81,7 +81,7 @@ RetainPtr<NSURLRequest> registerQLPreviewConverterIfNeeded(NSURL *url, NSString 
     if ([QLPreviewGetSupportedMIMETypesSet() containsObject:updatedMIMEType.get()]) {
         RetainPtr<NSString> uti = adoptNS(PAL::softLink_QuickLook_QLTypeCopyUTIForURLAndMimeType(url, updatedMIMEType.get()));
 
-        auto converter = adoptNS([PAL::allocQLPreviewConverterInstance() initWithData:data name:nil uti:uti.get() options:nil]);
+        auto converter = adoptNS([PAL::allocQLPreviewConverterInstanceSingleton() initWithData:data name:nil uti:uti.get() options:nil]);
         ResourceRequest previewRequest = [converter previewRequest];
 
         // We use [request URL] here instead of url since it will be

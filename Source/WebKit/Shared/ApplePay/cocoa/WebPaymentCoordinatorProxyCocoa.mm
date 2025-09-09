@@ -102,7 +102,7 @@ void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchant
         return completionHandler(false);
 #endif
 
-    auto passLibrary = adoptNS([PAL::allocPKPassLibraryInstance() init]);
+    auto passLibrary = adoptNS([PAL::allocPKPassLibraryInstanceSingleton() init]);
     [passLibrary openPaymentSetupForMerchantIdentifier:merchantIdentifier.createNSString().get() domain:domainName.createNSString().get() completion:makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL result) mutable {
         RunLoop::mainSingleton().dispatch([completionHandler = WTFMove(completionHandler), result] {
             completionHandler(result);
@@ -183,7 +183,7 @@ static RetainPtr<NSDateComponents> toNSDateComponents(const WebCore::ApplePayDat
 
 static RetainPtr<PKDateComponentsRange> toPKDateComponentsRange(const WebCore::ApplePayDateComponentsRange& dateComponentsRange)
 {
-    return adoptNS([PAL::allocPKDateComponentsRangeInstance() initWithStartDateComponents:toNSDateComponents(dateComponentsRange.startDateComponents).get() endDateComponents:toNSDateComponents(dateComponentsRange.endDateComponents).get()]);
+    return adoptNS([PAL::allocPKDateComponentsRangeInstanceSingleton() initWithStartDateComponents:toNSDateComponents(dateComponentsRange.startDateComponents).get() endDateComponents:toNSDateComponents(dateComponentsRange.endDateComponents).get()]);
 }
 
 #endif // HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
@@ -211,7 +211,7 @@ RetainPtr<PKShippingMethods> toPKShippingMethods(const Vector<WebCore::ApplePayS
             defaultMethod = pkShippingMethod;
         return pkShippingMethod;
     });
-    return adoptNS([PAL::allocPKShippingMethodsInstance() initWithMethods:methods.get() defaultMethod:defaultMethod.get()]);
+    return adoptNS([PAL::allocPKShippingMethodsInstanceSingleton() initWithMethods:methods.get() defaultMethod:defaultMethod.get()]);
 }
 
 #endif // HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
@@ -298,7 +298,7 @@ static PKPaymentRequestAPIType toAPIType(WebCore::ApplePaySessionPaymentRequest:
 
 RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(const URL& originatingURL, const Vector<URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
 {
-    auto result = adoptNS([PAL::allocPKPaymentRequestInstance() init]);
+    auto result = adoptNS([PAL::allocPKPaymentRequestInstanceSingleton() init]);
 
     [result setOriginatingURL:originatingURL.createNSURL().get()];
 
@@ -498,7 +498,7 @@ void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupCo
         return;
     }
 
-    auto request = adoptNS([PAL::allocPKPaymentSetupRequestInstance() init]);
+    auto request = adoptNS([PAL::allocPKPaymentSetupRequestInstanceSingleton() init]);
     [request setConfiguration:configuration.platformConfiguration().get()];
     [request setPaymentSetupFeatures:features.platformFeatures()];
 
@@ -508,7 +508,7 @@ void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupCo
         });
     });
 
-    auto paymentSetupController = adoptNS([PAL::allocPKPaymentSetupControllerInstance() init]);
+    auto paymentSetupController = adoptNS([PAL::allocPKPaymentSetupControllerInstanceSingleton() init]);
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     [paymentSetupController presentPaymentSetupRequest:request.get() completion:completion.get()];
@@ -529,11 +529,11 @@ void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupCo
         return;
     }
 
-    auto request = adoptNS([PAL::allocPKPaymentSetupRequestInstance() init]);
+    auto request = adoptNS([PAL::allocPKPaymentSetupRequestInstanceSingleton() init]);
     [request setConfiguration:configuration.platformConfiguration().get()];
     [request setPaymentSetupFeatures:features.platformFeatures()];
 
-    auto paymentSetupViewController = adoptNS([PAL::allocPKPaymentSetupViewControllerInstance() initWithPaymentSetupRequest:request.get()]);
+    auto paymentSetupViewController = adoptNS([PAL::allocPKPaymentSetupViewControllerInstanceSingleton() initWithPaymentSetupRequest:request.get()]);
     if (!paymentSetupViewController) {
         reply(false);
         return;

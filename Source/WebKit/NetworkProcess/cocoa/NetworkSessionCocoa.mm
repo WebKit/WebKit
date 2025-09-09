@@ -1910,7 +1910,7 @@ DMFWebsitePolicyMonitor *NetworkSessionCocoa::deviceManagementPolicyMonitor()
 #if HAVE(DEVICE_MANAGEMENT)
     ASSERT(m_deviceManagementRestrictionsEnabled);
     if (!m_deviceManagementPolicyMonitor)
-        m_deviceManagementPolicyMonitor = adoptNS([allocDMFWebsitePolicyMonitorInstance() initWithPolicyChangeHandler:nil]);
+        m_deviceManagementPolicyMonitor = adoptNS([allocDMFWebsitePolicyMonitorInstanceSingleton() initWithPolicyChangeHandler:nil]);
     return m_deviceManagementPolicyMonitor.get();
 #else
     RELEASE_ASSERT_NOT_REACHED();
@@ -2439,8 +2439,8 @@ void NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTime> modif
         return;
     }
 
-    RetainPtr<AnalyticsWorkspace> workspace = adoptNS([allocAnalyticsWorkspaceInstance() initWorkspaceWithService:getkSymptomAnalyticsServiceEndpoint()]);
-    RetainPtr<UsageFeed> usageFeed = adoptNS([allocUsageFeedInstance() initWithWorkspace:workspace.get()]);
+    RetainPtr<AnalyticsWorkspace> workspace = adoptNS([allocAnalyticsWorkspaceInstanceSingleton() initWorkspaceWithService:getkSymptomAnalyticsServiceEndpoint()]);
+    RetainPtr<UsageFeed> usageFeed = adoptNS([allocUsageFeedInstanceSingleton() initWithWorkspace:workspace.get()]);
 
     if (![usageFeed.get() respondsToSelector:@selector(performNetworkDomainsActionWithOptions:reply:)]
         || !canLoadkSymptomAnalyticsServiceDomainTrackingClearHistoryKey()

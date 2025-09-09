@@ -77,8 +77,8 @@ AVOutputDeviceMenuController *AVOutputDeviceMenuControllerTargetPicker::devicePi
         return nullptr;
 
     if (!m_outputDeviceMenuController) {
-        RetainPtr<AVOutputContext> context = adoptNS([PAL::allocAVOutputContextInstance() init]);
-        m_outputDeviceMenuController = adoptNS([allocAVOutputDeviceMenuControllerInstance() initWithOutputContext:context.get()]);
+        RetainPtr<AVOutputContext> context = adoptNS([PAL::allocAVOutputContextInstanceSingleton() init]);
+        m_outputDeviceMenuController = adoptNS([allocAVOutputDeviceMenuControllerInstanceSingleton() initWithOutputContext:context.get()]);
 
         [m_outputDeviceMenuController addObserver:m_outputDeviceMenuControllerDelegate.get() forKeyPath:externalOutputDeviceAvailableKeyName options:NSKeyValueObservingOptionNew context:nullptr];
         [m_outputDeviceMenuController addObserver:m_outputDeviceMenuControllerDelegate.get() forKeyPath:externalOutputDevicePickedKeyName options:NSKeyValueObservingOptionNew context:nullptr];

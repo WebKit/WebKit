@@ -2493,8 +2493,8 @@ TEST(WKAttachmentTestsIOS, DragAttachmentInsertedAsData)
 
 static RetainPtr<NSItemProvider> mapItemForTesting()
 {
-    auto placemark = adoptNS([allocMKPlacemarkInstance() initWithCoordinate:CLLocationCoordinate2DMake(37.3327, -122.0053)]);
-    auto mapItem = adoptNS([allocMKMapItemInstance() initWithPlacemark:placemark.get()]);
+    auto placemark = adoptNS([allocMKPlacemarkInstanceSingleton() initWithCoordinate:CLLocationCoordinate2DMake(37.3327, -122.0053)]);
+    auto mapItem = adoptNS([allocMKMapItemInstanceSingleton() initWithPlacemark:placemark.get()]);
     [mapItem setName:@"Apple Park.vcf"];
 
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
@@ -2517,7 +2517,7 @@ static RetainPtr<NSItemProvider> calendarInviteForTesting()
 
 static RetainPtr<NSItemProvider> contactItemForTesting()
 {
-    auto contact = adoptNS([allocCNMutableContactInstance() init]);
+    auto contact = adoptNS([allocCNMutableContactInstanceSingleton() init]);
     [contact setGivenName:@"Foo"];
     [contact setFamilyName:@"Bar"];
 

@@ -216,12 +216,12 @@ Class webAVPlayerControllerClass()
     // FIXME (116592344): Create a phony AVPlayer to satisfy AVPlayerViewController's requirements on tvOS.
     // This can be removed once AVPlayerController API is available on tvOS.
     AVAsset *asset = [PAL::getAVAssetClass() assetWithURL:[NSURL URLWithString:@"about:blank"]];
-    RetainPtr playerItem = adoptNS([PAL::allocAVPlayerItemInstance() initWithAsset:asset]);
-    _player = adoptNS([PAL::allocAVPlayerInstance() initWithPlayerItem:playerItem.get()]);
+    RetainPtr playerItem = adoptNS([PAL::allocAVPlayerItemInstanceSingleton() initWithAsset:asset]);
+    _player = adoptNS([PAL::allocAVPlayerInstanceSingleton() initWithPlayerItem:playerItem.get()]);
 #endif
 
     initAVPlayerController();
-    self.playerControllerProxy = adoptNS([allocAVPlayerControllerInstance() init]).get();
+    self.playerControllerProxy = adoptNS([allocAVPlayerControllerInstanceSingleton() init]).get();
     _liveStreamEventModePossible = YES;
 
     [self addObserver:self forKeyPath:@"seekableTimeRanges" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:WebAVPlayerControllerSeekableTimeRangesObserverContext];
@@ -969,7 +969,7 @@ Class webAVPlayerControllerClass()
     CMTime minSeekable = [seekableTimeRanges.firstObject CMTimeRangeValue].start;
     CMTime maxSeekable = PAL::CMTimeRangeGetEnd([seekableTimeRanges.lastObject CMTimeRangeValue]);
     CMTime duration = PAL::CMTimeSubtract(maxSeekable, minSeekable);
-    return [[allocAVTimeRangeInstance() initWithCMTimeRange:PAL::CMTimeRangeMake(minSeekable, duration)] autorelease];
+    return [[allocAVTimeRangeInstanceSingleton() initWithCMTimeRange:PAL::CMTimeRangeMake(minSeekable, duration)] autorelease];
 }
 
 - (BOOL)hasItem
@@ -1065,7 +1065,7 @@ Class webAVPlayerControllerClass()
 
 - (AVTimeRange *)timeRangeForNavigation
 {
-    return [[allocAVTimeRangeInstance() initWithStartTime:self.minTime endTime:self.maxTime] autorelease];
+    return [[allocAVTimeRangeInstanceSingleton() initWithStartTime:self.minTime endTime:self.maxTime] autorelease];
 }
 
 - (NSTimeInterval)timeFromDisplayTime:(NSTimeInterval)displayTime

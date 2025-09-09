@@ -72,12 +72,12 @@ SOFT_LINK_CONSTANT(CoreLocation, kCLLocationAccuracyHundredMeters, double)
 
 #if USE(APPLE_INTERNAL_SDK) && HAVE(CORE_LOCATION_WEBSITE_IDENTIFIERS)
     if (!websiteIdentifier.isEmpty())
-        _locationManager = adoptNS([allocCLLocationManagerInstance() initWithWebsiteIdentifier:websiteIdentifier.createNSString().get()]);
+        _locationManager = adoptNS([allocCLLocationManagerInstanceSingleton() initWithWebsiteIdentifier:websiteIdentifier.createNSString().get()]);
 #else
     UNUSED_PARAM(websiteIdentifier);
 #endif
     if (!_locationManager)
-        _locationManager = adoptNS([allocCLLocationManagerInstance() init]);
+        _locationManager = adoptNS([allocCLLocationManagerInstanceSingleton() init]);
     _client = &client;
     _websiteIdentifier = websiteIdentifier;
     [_locationManager setDelegate:self];

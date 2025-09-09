@@ -965,7 +965,7 @@ RetainPtr<WKVideoView> VideoPresentationManagerProxy::createViewWithID(PlaybackS
     if (!interface->videoView()) {
         ALWAYS_LOG(LOGIDENTIFIER, model->logIdentifier(), ", Creating AVPlayerLayerView");
         auto initialFrame = CGRectMake(0, 0, initialSize.width(), initialSize.height());
-        auto playerView = adoptNS([allocWebAVPlayerLayerViewInstance() initWithFrame:initialFrame]);
+        auto playerView = adoptNS([allocWebAVPlayerLayerViewInstanceSingleton() initWithFrame:initialFrame]);
 
         model->setVideoDimensions(nativeSize);
 

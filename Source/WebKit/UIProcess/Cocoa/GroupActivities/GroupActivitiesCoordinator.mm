@@ -133,7 +133,7 @@ Ref<GroupActivitiesCoordinator> GroupActivitiesCoordinator::create(GroupActiviti
 GroupActivitiesCoordinator::GroupActivitiesCoordinator(GroupActivitiesSession& session)
     : m_session(session)
     , m_delegate(adoptNS([[WKGroupActivitiesCoordinatorDelegate alloc] initWithParent:*this]))
-    , m_playbackCoordinator(adoptNS([PAL::allocAVDelegatingPlaybackCoordinatorInstance() initWithPlaybackControlDelegate:m_delegate.get()]))
+    , m_playbackCoordinator(adoptNS([PAL::allocAVDelegatingPlaybackCoordinatorInstanceSingleton() initWithPlaybackControlDelegate:m_delegate.get()]))
     , m_stateChangeObserver([this] (auto& session, auto state) { sessionStateChanged(session, state); })
 {
     [session.groupSession() coordinateWithCoordinator:m_playbackCoordinator.get()];

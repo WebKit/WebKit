@@ -159,19 +159,19 @@ void VideoPresentationInterfaceIOS::ensurePipPlacardIsShowing()
     }
 
     @try {
-        RetainPtr pipPlacard = adoptNS([PAL::allocUIViewInstance() initWithFrame:[layerHostView() bounds]]);
+        RetainPtr pipPlacard = adoptNS([PAL::allocUIViewInstanceSingleton() initWithFrame:[layerHostView() bounds]]);
         [pipPlacard setBackgroundColor:blackUIColor()];
         [pipPlacard setTranslatesAutoresizingMaskIntoConstraints:NO];
 
         RetainPtr image = [[[PAL::getUIImageClass() systemImageNamed:@"pip"] imageWithTintColor:greyUIColor() renderingMode:UIImageRenderingModeAlwaysOriginal] imageWithConfiguration:[PAL::getUIImageSymbolConfigurationClass() configurationWithWeight:UIImageSymbolWeightThin]];
 
-        RetainPtr imageView = adoptNS([PAL::allocUIImageViewInstance() initWithImage:image.get()]);
+        RetainPtr imageView = adoptNS([PAL::allocUIImageViewInstanceSingleton() initWithImage:image.get()]);
         [imageView setContentMode:UIViewContentModeScaleAspectFit];
         [imageView setTranslatesAutoresizingMaskIntoConstraints:NO];
 
         [pipPlacard addSubview:imageView.get()];
 
-        auto pipLabel = adoptNS([PAL::allocUILabelInstance() init]);
+        auto pipLabel = adoptNS([PAL::allocUILabelInstanceSingleton() init]);
         [pipLabel setText:@"This video is playing in picture in picture."];
         [pipLabel setTextAlignment:NSTextAlignmentCenter];
         [pipLabel setTextColor:greyUIColor()];
@@ -319,10 +319,10 @@ void VideoPresentationInterfaceIOS::doSetup()
 
 #if !PLATFORM(WATCHOS)
     if (![[m_parentView window] _isHostedInAnotherProcess] && !m_window && !PAL::currentUserInterfaceIdiomIsVision()) {
-        m_window = adoptNS([PAL::allocUIWindowInstance() initWithWindowScene:[[m_parentView window] windowScene]]);
+        m_window = adoptNS([PAL::allocUIWindowInstanceSingleton() initWithWindowScene:[[m_parentView window] windowScene]]);
         [m_window setBackgroundColor:clearUIColor()];
         if (!m_viewController)
-            m_viewController = adoptNS([PAL::allocUIViewControllerInstance() init]);
+            m_viewController = adoptNS([PAL::allocUIViewControllerInstanceSingleton() init]);
         [[m_viewController view] setFrame:[m_window bounds]];
         [m_viewController _setIgnoreAppSupportedOrientations:YES];
         [m_window setRootViewController:m_viewController.get()];

@@ -35,7 +35,7 @@ namespace WebCore {
 
 RetainPtr<RVPresentingContext> createRVPresentingContextWithRetainedDelegate(NSPoint point, NSView *view, id<RVPresenterHighlightDelegate> delegate)
 {
-    auto context = adoptNS([PAL::allocRVPresentingContextInstance() initWithPointerLocationInView:point inView:view highlightDelegate:delegate]);
+    auto context = adoptNS([PAL::allocRVPresentingContextInstanceSingleton() initWithPointerLocationInView:point inView:view highlightDelegate:delegate]);
     static char retainedDelegateKey;
     objc_setAssociatedObject(context.get(), &retainedDelegateKey, delegate, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     return context;

@@ -184,7 +184,7 @@ void MediaUsageManagerCocoa::updateMediaUsage(WebCore::MediaSessionIdentifier id
             if (!mediaUsageInfo.isPlaying)
                 return;
 
-            session->usageTracker = adoptNS([PAL::allocUSVideoUsageInstance() initWithBundleIdentifier:session->bundleIdentifier.createNSString().get() URL:session->pageURL.createNSURL().get()
+            session->usageTracker = adoptNS([PAL::allocUSVideoUsageInstanceSingleton() initWithBundleIdentifier:session->bundleIdentifier.createNSString().get() URL:session->pageURL.createNSURL().get()
                 mediaURL:mediaUsageInfo.mediaURL.createNSURL().get() videoMetadata:metadata]);
             ASSERT(session->usageTracker);
             if (!session->usageTracker)

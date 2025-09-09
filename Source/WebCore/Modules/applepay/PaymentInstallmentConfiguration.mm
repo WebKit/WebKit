@@ -138,7 +138,7 @@ static PKInstallmentRetailChannel platformRetailChannel(ApplePayInstallmentRetai
 static RetainPtr<id> makeNSArrayElement(const ApplePayInstallmentItem& item)
 {
     ASSERT(PAL::getPKPaymentInstallmentItemClass());
-    auto installmentItem = adoptNS([PAL::allocPKPaymentInstallmentItemInstance() init]);
+    auto installmentItem = adoptNS([PAL::allocPKPaymentInstallmentItemInstanceSingleton() init]);
     [installmentItem setInstallmentItemType:platformItemType(item.type)];
     [installmentItem setAmount:toDecimalNumber(item.amount)];
     [installmentItem setCurrencyCode:item.currencyCode.createNSString().get()];
@@ -183,7 +183,7 @@ static RetainPtr<PKPaymentInstallmentConfiguration> createPlatformConfiguration(
     if (!PAL::getPKPaymentInstallmentConfigurationClass())
         return nil;
 
-    auto configuration = adoptNS([PAL::allocPKPaymentInstallmentConfigurationInstance() init]);
+    auto configuration = adoptNS([PAL::allocPKPaymentInstallmentConfigurationInstanceSingleton() init]);
 
     [configuration setFeature:platformFeatureType(coreConfiguration.featureType)];
 

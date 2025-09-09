@@ -70,7 +70,7 @@ RefPtr<GameControllerHapticEffect> GameControllerHapticEffect::create(GameContro
         };
 
         NSError* error;
-        auto pattern = adoptNS([allocCHHapticPatternInstance() initWithDictionary:hapticDict error:&error]);
+        auto pattern = adoptNS([allocCHHapticPatternInstanceSingleton() initWithDictionary:hapticDict error:&error]);
         if (!pattern) {
             RELEASE_LOG_ERROR(Gamepad, "GameControllerHapticEffect: Failed to create a CHHapticPattern");
             return nullptr;

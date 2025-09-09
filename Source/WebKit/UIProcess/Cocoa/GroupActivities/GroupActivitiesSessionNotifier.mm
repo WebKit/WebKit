@@ -51,7 +51,7 @@ GroupActivitiesSessionNotifier& GroupActivitiesSessionNotifier::singleton()
 }
 
 GroupActivitiesSessionNotifier::GroupActivitiesSessionNotifier()
-    : m_sessionObserver(adoptNS([allocWKGroupSessionObserverInstance() init]))
+    : m_sessionObserver(adoptNS([allocWKGroupSessionObserverInstanceSingleton() init]))
     , m_stateChangeObserver([this] (auto& session, auto state) { sessionStateChanged(session, state); })
 {
     m_sessionObserver.get().newSessionCallback = [weakThis = WeakPtr { *this }] (WKGroupSession *groupSession) {

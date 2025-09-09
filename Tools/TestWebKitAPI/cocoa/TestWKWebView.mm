@@ -436,7 +436,7 @@ static NSString *overrideBundleIdentifier(id, SEL)
 
 static RetainPtr<BEKeyEntry> wrap(WebEvent *webEvent)
 {
-    auto uiKeyEvent = adoptNS([allocUIKeyEventInstance() initWithWebEvent:webEvent]);
+    auto uiKeyEvent = adoptNS([allocUIKeyEventInstanceSingleton() initWithWebEvent:webEvent]);
     return adoptNS([[BEKeyEntry alloc] _initWithUIKitKeyEvent:uiKeyEvent.get()]);
 }
 

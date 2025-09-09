@@ -88,7 +88,7 @@ PreviewConverter::PreviewConverter(const ResourceResponse& response, PreviewConv
     , m_originalResponse { response }
     , m_provider { provider }
     , m_platformDelegate { adoptNS([[WebPreviewConverterDelegate alloc] initWithDelegate:*this]) }
-    , m_platformConverter { adoptNS([PAL::allocQLPreviewConverterInstance() initWithConnection:nil delegate:m_platformDelegate.get() response:m_originalResponse.nsURLResponse() options:nil]) }
+    , m_platformConverter { adoptNS([PAL::allocQLPreviewConverterInstanceSingleton() initWithConnection:nil delegate:m_platformDelegate.get() response:m_originalResponse.nsURLResponse() options:nil]) }
 {
 }
 
@@ -152,7 +152,7 @@ static NSDictionary *optionsWithPassword(const String& password)
 
 void PreviewConverter::platformUnlockWithPassword(const String& password)
 {
-    m_platformConverter = adoptNS([PAL::allocQLPreviewConverterInstance() initWithConnection:nil delegate:m_platformDelegate.get() response:m_originalResponse.nsURLResponse() options:optionsWithPassword(password)]);
+    m_platformConverter = adoptNS([PAL::allocQLPreviewConverterInstanceSingleton() initWithConnection:nil delegate:m_platformDelegate.get() response:m_originalResponse.nsURLResponse() options:optionsWithPassword(password)]);
 }
 
 } // namespace WebCore

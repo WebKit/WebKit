@@ -832,20 +832,20 @@ static WebCore::StorageBlockingPolicy core(WebStorageBlockingPolicy storageBlock
     if (!(self = [super init]))
         return nil;
 
-    _dataInteractionImage = [PAL::allocUIImageInstance() initWithCGImage:image scale:scale orientation:UIImageOrientationDownMirrored];
+    _dataInteractionImage = [PAL::allocUIImageInstanceSingleton() initWithCGImage:image scale:scale orientation:UIImageOrientationDownMirrored];
     _selectionRectInRootViewCoordinates = indicator->selectionRectInRootViewCoordinates();
     _textBoundingRectInRootViewCoordinates = indicator->textBoundingRectInRootViewCoordinates();
     _textRectsInBoundingRectCoordinates = createNSArray(indicator->textRectsInBoundingRectCoordinates()).leakRef();
     _contentImageScaleFactor = indicator->contentImageScaleFactor();
     if (indicator->contentImageWithHighlight())
-        _contentImageWithHighlight = [PAL::allocUIImageInstance() initWithCGImage:indicator->contentImageWithHighlight()->nativeImage()->platformImage().get() scale:scale orientation:UIImageOrientationDownMirrored];
+        _contentImageWithHighlight = [PAL::allocUIImageInstanceSingleton() initWithCGImage:indicator->contentImageWithHighlight()->nativeImage()->platformImage().get() scale:scale orientation:UIImageOrientationDownMirrored];
     if (indicator->contentImage())
-        _contentImage = [PAL::allocUIImageInstance() initWithCGImage:indicator->contentImage()->nativeImage()->platformImage().get() scale:scale orientation:UIImageOrientationUp];
+        _contentImage = [PAL::allocUIImageInstanceSingleton() initWithCGImage:indicator->contentImage()->nativeImage()->platformImage().get() scale:scale orientation:UIImageOrientationUp];
 
     if (indicator->contentImageWithoutSelection()) {
         auto nativeImage = indicator->contentImageWithoutSelection()->nativeImage();
         if (nativeImage) {
-            _contentImageWithoutSelection = [PAL::allocUIImageInstance() initWithCGImage:nativeImage->platformImage().get() scale:scale orientation:UIImageOrientationUp];
+            _contentImageWithoutSelection = [PAL::allocUIImageInstanceSingleton() initWithCGImage:nativeImage->platformImage().get() scale:scale orientation:UIImageOrientationUp];
             _contentImageWithoutSelectionRectInRootViewCoordinates = indicator->contentImageWithoutSelectionRectInRootViewCoordinates();
         }
     }
@@ -861,7 +861,7 @@ static WebCore::StorageBlockingPolicy core(WebStorageBlockingPolicy storageBlock
     if (!(self = [super init]))
         return nil;
 
-    _dataInteractionImage = [PAL::allocUIImageInstance() initWithCGImage:image scale:scale orientation:UIImageOrientationDownMirrored];
+    _dataInteractionImage = [PAL::allocUIImageInstanceSingleton() initWithCGImage:image scale:scale orientation:UIImageOrientationDownMirrored];
 
     return self;
 }
@@ -9476,7 +9476,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 {
 #if ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER) && ENABLE(VIDEO_PRESENTATION_MODE)
     if (!_private->mediaTouchBarProvider)
-        _private->mediaTouchBarProvider = adoptNS([allocAVTouchBarPlaybackControlsProviderInstance() init]);
+        _private->mediaTouchBarProvider = adoptNS([allocAVTouchBarPlaybackControlsProviderInstanceSingleton() init]);
 
     if (![_private->mediaTouchBarProvider playbackControlsController]) {
         ASSERT(_private->playbackSessionInterface);
@@ -9598,7 +9598,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
         return;
     }
 
-    auto translationViewController = adoptNS([PAL::allocLTUITranslationViewControllerInstance() init]);
+    auto translationViewController = adoptNS([PAL::allocLTUITranslationViewControllerInstanceSingleton() init]);
     [translationViewController setText:adoptNS([[NSAttributedString alloc] initWithString:info.text.createNSString().get()]).get()];
     if (info.mode == WebCore::TranslationContextMenuMode::Editable) {
         [translationViewController setIsSourceEditable:YES];

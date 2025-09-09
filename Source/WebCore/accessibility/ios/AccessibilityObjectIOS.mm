@@ -206,7 +206,7 @@ void AXRemoteFrame::initializePlatformElementWithRemoteToken(std::span<const uin
         return;
 
     NSString *uuid = [tokenDictionary objectForKey:@"ax-uuid"];
-    RetainPtr remoteElement = adoptNS([allocAXRemoteElementInstance() initWithUUID:uuid andRemotePid:processIdentifier andContextId:0]);
+    RetainPtr remoteElement = adoptNS([allocAXRemoteElementInstanceSingleton() initWithUUID:uuid andRemotePid:processIdentifier andContextId:0]);
     remoteElement.get().onClientSide = YES;
     RefPtr parent = parentObjectUnignored();
     remoteElement.get().accessibilityContainer = parent ?  parent->wrapper() : nil;

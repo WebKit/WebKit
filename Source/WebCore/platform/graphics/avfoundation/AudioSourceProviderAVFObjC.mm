@@ -237,9 +237,9 @@ void AudioSourceProviderAVFObjC::createMixIfNeeded()
     }
     m_tap = adoptCF(tap);
     m_tapStorage = WTFMove(tapStorage);
-    m_avAudioMix = adoptNS([PAL::allocAVMutableAudioMixInstance() init]);
+    m_avAudioMix = adoptNS([PAL::allocAVMutableAudioMixInstanceSingleton() init]);
 
-    RetainPtr<AVMutableAudioMixInputParameters> parameters = adoptNS([PAL::allocAVMutableAudioMixInputParametersInstance() init]);
+    RetainPtr<AVMutableAudioMixInputParameters> parameters = adoptNS([PAL::allocAVMutableAudioMixInputParametersInstanceSingleton() init]);
     [parameters setAudioTapProcessor:m_tap.get()];
 
     CMPersistentTrackID trackID = m_avAssetTrack.get().trackID;

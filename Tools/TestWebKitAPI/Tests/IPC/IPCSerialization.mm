@@ -1761,7 +1761,7 @@ TEST(IPCSerialization, SecureCoding)
     runTestNS({ scannerResult.get() });
 
     // DDActionContext/DDSecureActionContext
-    auto actionContext = adoptNS([PAL::allocWKDDActionContextInstance() init]);
+    auto actionContext = adoptNS([PAL::allocWKDDActionContextInstanceSingleton() init]);
     [actionContext setAllResults:@[ (__bridge id)scannerResult.get().coreResult ]];
     [actionContext setMainResult:scannerResult.get().coreResult];
     auto components = personNameComponentsForTesting();

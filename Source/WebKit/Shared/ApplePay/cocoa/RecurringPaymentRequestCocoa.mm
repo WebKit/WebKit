@@ -39,7 +39,7 @@ using namespace WebCore;
 
 RetainPtr<PKRecurringPaymentRequest> platformRecurringPaymentRequest(const ApplePayRecurringPaymentRequest& webRecurringPaymentRequest)
 {
-    auto pkRecurringPaymentRequest = adoptNS([PAL::allocPKRecurringPaymentRequestInstance() initWithPaymentDescription:webRecurringPaymentRequest.paymentDescription.createNSString().get() regularBilling:platformRecurringSummaryItem(webRecurringPaymentRequest.regularBilling) managementURL:adoptNS([[NSURL alloc] initWithString:webRecurringPaymentRequest.managementURL.createNSString().get()]).get()]);
+    auto pkRecurringPaymentRequest = adoptNS([PAL::allocPKRecurringPaymentRequestInstanceSingleton() initWithPaymentDescription:webRecurringPaymentRequest.paymentDescription.createNSString().get() regularBilling:platformRecurringSummaryItem(webRecurringPaymentRequest.regularBilling) managementURL:adoptNS([[NSURL alloc] initWithString:webRecurringPaymentRequest.managementURL.createNSString().get()]).get()]);
     if (auto& trialBilling = webRecurringPaymentRequest.trialBilling)
         [pkRecurringPaymentRequest setTrialBilling:platformRecurringSummaryItem(*trialBilling)];
     if (auto& billingAgreement = webRecurringPaymentRequest.billingAgreement; !billingAgreement.isNull())

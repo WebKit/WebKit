@@ -111,7 +111,7 @@ static NSString *timePickerDateFormat = @"HH:mm";
 
     self.headerView.hidden = YES;
 
-    _timePicker = adoptNS([allocCLKUIWheelsOfTimeViewInstance() initWithFrame:self.view.bounds style:CLKUIWheelsOfTimeStyleAlarm12]);
+    _timePicker = adoptNS([allocCLKUIWheelsOfTimeViewInstanceSingleton() initWithFrame:self.view.bounds style:CLKUIWheelsOfTimeStyleAlarm12]);
     [_timePicker setDelegate:self];
 
     NSDateComponents *components = self.dateComponentsFromInitialValue;

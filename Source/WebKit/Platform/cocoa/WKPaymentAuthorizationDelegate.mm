@@ -72,7 +72,7 @@
         _shippingMethods = adoptNS([[update shippingMethods] copy]);
 #endif
     } else {
-        update = adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]);
+        update = adoptNS([PAL::allocPKPaymentRequestPaymentMethodUpdateInstanceSingleton() initWithPaymentSummaryItems:_summaryItems.get()]);
 #if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
         [update setAvailableShippingMethods:_availableShippingMethods.get()];
 #elif HAVE(PASSKIT_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_SUMMARY_ITEMS)
@@ -85,7 +85,7 @@
 
 - (void)completePaymentSession:(PKPaymentAuthorizationStatus)status errors:(NSArray<NSError *> *)errors
 {
-    auto result = adoptNS([PAL::allocPKPaymentAuthorizationResultInstance() initWithStatus:status errors:errors]);
+    auto result = adoptNS([PAL::allocPKPaymentAuthorizationResultInstanceSingleton() initWithStatus:status errors:errors]);
     std::exchange(_didAuthorizePaymentCompletion, nil)(result.get());
 }
 
@@ -93,7 +93,7 @@
 
 - (void)completePaymentSession:(PKPaymentAuthorizationStatus)status errors:(NSArray<NSError *> *)errors orderDetails:(PKPaymentOrderDetails *)orderDetails
 {
-    auto result = adoptNS([PAL::allocPKPaymentAuthorizationResultInstance() initWithStatus:status errors:errors]);
+    auto result = adoptNS([PAL::allocPKPaymentAuthorizationResultInstanceSingleton() initWithStatus:status errors:errors]);
     [result setOrderDetails:orderDetails];
     std::exchange(_didAuthorizePaymentCompletion, nil)(result.get());
 }
@@ -111,7 +111,7 @@
         _shippingMethods = adoptNS([[update shippingMethods] copy]);
 #endif
     } else {
-        update = adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]);
+        update = adoptNS([PAL::allocPKPaymentRequestShippingContactUpdateInstanceSingleton() initWithPaymentSummaryItems:_summaryItems.get()]);
 #if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
         [update setAvailableShippingMethods:_availableShippingMethods.get()];
 #else
@@ -133,7 +133,7 @@
         _shippingMethods = adoptNS([[update shippingMethods] copy]);
 #endif
     } else {
-        update = adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]);
+        update = adoptNS([PAL::allocPKPaymentRequestShippingMethodUpdateInstanceSingleton() initWithPaymentSummaryItems:_summaryItems.get()]);
 #if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
         [update setAvailableShippingMethods:_availableShippingMethods.get()];
 #elif HAVE(PASSKIT_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_SUMMARY_ITEMS)
@@ -157,7 +157,7 @@
         _shippingMethods = adoptNS([[update shippingMethods] copy]);
 #endif
     } else {
-        update = adoptNS([PAL::allocPKPaymentRequestCouponCodeUpdateInstance() initWithPaymentSummaryItems:_summaryItems.get()]);
+        update = adoptNS([PAL::allocPKPaymentRequestCouponCodeUpdateInstanceSingleton() initWithPaymentSummaryItems:_summaryItems.get()]);
 #if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
         [update setAvailableShippingMethods:_availableShippingMethods.get()];
 #else

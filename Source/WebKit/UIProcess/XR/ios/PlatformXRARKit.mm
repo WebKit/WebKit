@@ -246,7 +246,7 @@ void ARKitCoordinator::createSessionIfNeeded()
     if (m_session)
         return;
 
-    m_session = adoptNS([WebKit::allocARSessionInstance() init]);
+    m_session = adoptNS([WebKit::allocARSessionInstanceSingleton() init]);
 }
 
 void ARKitCoordinator::renderLoop(Box<RenderState> active)

@@ -94,10 +94,10 @@ static RetainPtr<NSString> getUTIForUSDMIMEType(const String& mimeType)
 
     RetainPtr contentType = getUTIForUSDMIMEType(_mimeType.get());
 
-    _item = adoptNS([PAL::allocQLItemInstance() initWithDataProvider:self contentType:contentType.get() previewTitle:_suggestedFilename.get()]);
+    _item = adoptNS([PAL::allocQLItemInstanceSingleton() initWithDataProvider:self contentType:contentType.get() previewTitle:_suggestedFilename.get()]);
     [_item setUseLoadingTimeout:NO];
 
-    _thumbnailView = adoptNS([allocASVThumbnailViewInstance() init]);
+    _thumbnailView = adoptNS([allocASVThumbnailViewInstanceSingleton() init]);
     [_thumbnailView setDelegate:self];
     [self setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 

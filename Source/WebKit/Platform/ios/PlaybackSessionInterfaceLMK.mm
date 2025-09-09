@@ -277,7 +277,7 @@ static WebCore::NowPlayingMetadataObserver nowPlayingMetadataObserver(PlaybackSe
 
 PlaybackSessionInterfaceLMK::PlaybackSessionInterfaceLMK(WebCore::PlaybackSessionModel& model)
     : PlaybackSessionInterfaceIOS { model }
-    , m_player { adoptNS([allocWKSLinearMediaPlayerInstance() init]) }
+    , m_player { adoptNS([allocWKSLinearMediaPlayerInstanceSingleton() init]) }
     , m_playerDelegate { adoptNS([[WKLinearMediaPlayerDelegate alloc] initWithModel:model]) }
     , m_nowPlayingMetadataObserver { nowPlayingMetadataObserver(*this) }
 {
@@ -328,7 +328,7 @@ void PlaybackSessionInterfaceLMK::seekableRangesChanged(const WebCore::PlatformT
 {
     RetainPtr seekableRanges = adoptNS([[NSMutableArray alloc] initWithCapacity:timeRanges.length()]);
     for (unsigned i = 0; i < timeRanges.length(); ++i) {
-        RetainPtr timeRange = adoptNS([allocWKSLinearMediaTimeRangeInstance() initWithLowerBound:timeRanges.start(i).toDouble() upperBound:timeRanges.end(i).toDouble()]);
+        RetainPtr timeRange = adoptNS([allocWKSLinearMediaTimeRangeInstanceSingleton() initWithLowerBound:timeRanges.start(i).toDouble() upperBound:timeRanges.end(i).toDouble()]);
         [seekableRanges addObject:timeRange.get()];
     }
 
@@ -345,7 +345,7 @@ void PlaybackSessionInterfaceLMK::audioMediaSelectionOptionsChanged(const Vector
 {
     RetainPtr audioTracks = adoptNS([[NSMutableArray alloc] initWithCapacity:options.size()]);
     for (auto& option : options) {
-        RetainPtr audioTrack = adoptNS([allocWKSLinearMediaTrackInstance() initWithLocalizedDisplayName:option.displayName.createNSString().get()]);
+        RetainPtr audioTrack = adoptNS([allocWKSLinearMediaTrackInstanceSingleton() initWithLocalizedDisplayName:option.displayName.createNSString().get()]);
         [audioTracks addObject:audioTrack.get()];
     }
 
@@ -357,7 +357,7 @@ void PlaybackSessionInterfaceLMK::legibleMediaSelectionOptionsChanged(const Vect
 {
     RetainPtr legibleTracks = adoptNS([[NSMutableArray alloc] initWithCapacity:options.size()]);
     for (auto& option : options) {
-        RetainPtr legibleTrack = adoptNS([allocWKSLinearMediaTrackInstance() initWithLocalizedDisplayName:option.displayName.createNSString().get()]);
+        RetainPtr legibleTrack = adoptNS([allocWKSLinearMediaTrackInstanceSingleton() initWithLocalizedDisplayName:option.displayName.createNSString().get()]);
         [legibleTracks addObject:legibleTrack.get()];
     }
 
@@ -421,7 +421,7 @@ void PlaybackSessionInterfaceLMK::spatialVideoMetadataChanged(const std::optiona
 {
     RetainPtr<WKSLinearMediaSpatialVideoMetadata> spatialVideoMetadata;
     if (metadata)
-        spatialVideoMetadata = adoptNS([allocWKSLinearMediaSpatialVideoMetadataInstance() initWithWidth:metadata->size.width() height:metadata->size.height() horizontalFOVDegrees:metadata->horizontalFOVDegrees baseline:metadata->baseline disparityAdjustment:metadata->disparityAdjustment]);
+        spatialVideoMetadata = adoptNS([allocWKSLinearMediaSpatialVideoMetadataInstanceSingleton() initWithWidth:metadata->size.width() height:metadata->size.height() horizontalFOVDegrees:metadata->horizontalFOVDegrees baseline:metadata->baseline disparityAdjustment:metadata->disparityAdjustment]);
     [m_player setSpatialVideoMetadata:spatialVideoMetadata.get()];
 }
 
@@ -465,7 +465,7 @@ static RetainPtr<NSData> artworkData(const WebCore::NowPlayingMetadata& metadata
 
 void PlaybackSessionInterfaceLMK::nowPlayingMetadataChanged(const WebCore::NowPlayingMetadata& metadata)
 {
-    RetainPtr contentMetadata = adoptNS([allocWKSLinearMediaContentMetadataInstance() initWithTitle:metadata.title.createNSString().get() subtitle:metadata.artist.createNSString().get()]);
+    RetainPtr contentMetadata = adoptNS([allocWKSLinearMediaContentMetadataInstanceSingleton() initWithTitle:metadata.title.createNSString().get() subtitle:metadata.artist.createNSString().get()]);
     [m_player setContentMetadata:contentMetadata.get()];
     [m_player setArtwork:artworkData(metadata).get()];
 }

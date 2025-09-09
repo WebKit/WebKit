@@ -39,7 +39,7 @@ using namespace WebCore;
 
 RetainPtr<PKDeferredPaymentRequest> platformDeferredPaymentRequest(const ApplePayDeferredPaymentRequest& webDeferredPaymentRequest)
 {
-    auto pkDeferredPaymentRequest = adoptNS([PAL::allocPKDeferredPaymentRequestInstance()
+    auto pkDeferredPaymentRequest = adoptNS([PAL::allocPKDeferredPaymentRequestInstanceSingleton()
         initWithPaymentDescription:webDeferredPaymentRequest.paymentDescription.createNSString().get()
         deferredBilling:platformDeferredSummaryItem(webDeferredPaymentRequest.deferredBilling)
         managementURL:adoptNS([[NSURL alloc] initWithString:webDeferredPaymentRequest.managementURL.createNSString().get()]).get()]);

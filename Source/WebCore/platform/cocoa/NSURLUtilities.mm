@@ -45,7 +45,7 @@
 #if HAVE(LINK_PRESENTATION_CHANGE_FOR_RADAR_115801517)
     // -[LPLinkMetadata setTitle:] additionally sets the `_title` SPI attribute on
     // the NSURL URL in OS versions where this codepath is compiled.
-    auto metadata = adoptNS([PAL::allocLPLinkMetadataInstance() init]);
+    auto metadata = adoptNS([PAL::allocLPLinkMetadataInstanceSingleton() init]);
     [metadata setURL:self];
     [metadata setTitle:title];
 #else
@@ -58,7 +58,7 @@
 #if HAVE(LINK_PRESENTATION_CHANGE_FOR_RADAR_115801517)
     // -[LPLinkMetadata title] falls back to the `_title` SPI attribute on the NSURL
     // in OS versions where this codepath is compiled.
-    auto metadata = adoptNS([PAL::allocLPLinkMetadataInstance() init]);
+    auto metadata = adoptNS([PAL::allocLPLinkMetadataInstanceSingleton() init]);
     [metadata setURL:self];
     return [metadata title];
 #else

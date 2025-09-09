@@ -78,7 +78,7 @@ void MockLocalConnection::verifyUser(const String&, ClientDataType, SecAccessCon
             break;
         }
 
-        callback(userVerification, adoptNS([allocLAContextInstance() init]).get());
+        callback(userVerification, adoptNS([allocLAContextInstanceSingleton() init]).get());
     });
 }
 

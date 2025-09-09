@@ -151,8 +151,8 @@ RetainPtr<CocoaImage> iconForVideoFile(NSURL *file)
 {
     ASSERT_ARG(file, [file isFileURL]);
 
-    RetainPtr<AVURLAsset> asset = adoptNS([PAL::allocAVURLAssetInstance() initWithURL:file options:nil]);
-    RetainPtr<AVAssetImageGenerator> generator = adoptNS([PAL::allocAVAssetImageGeneratorInstance() initWithAsset:asset.get()]);
+    RetainPtr<AVURLAsset> asset = adoptNS([PAL::allocAVURLAssetInstanceSingleton() initWithURL:file options:nil]);
+    RetainPtr<AVAssetImageGenerator> generator = adoptNS([PAL::allocAVAssetImageGeneratorInstanceSingleton() initWithAsset:asset.get()]);
     [generator setAppliesPreferredTrackTransform:YES];
 
     NSError *error = nil;

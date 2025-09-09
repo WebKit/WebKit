@@ -360,7 +360,7 @@ RetainPtr<SCStreamConfiguration> ScreenCaptureKitCaptureSource::streamConfigurat
     if (m_streamConfiguration)
         return m_streamConfiguration;
 
-    m_streamConfiguration = adoptNS([PAL::allocSCStreamConfigurationInstance() init]);
+    m_streamConfiguration = adoptNS([PAL::allocSCStreamConfigurationInstanceSingleton() init]);
     [m_streamConfiguration setPixelFormat:preferedPixelBufferFormat()];
     [m_streamConfiguration setShowsCursor:YES];
     [m_streamConfiguration setQueueDepth:6];

@@ -156,7 +156,7 @@ void LinkDecorationFilteringController::updateList(CompletionHandler<void()>&& c
     if (lookupCompletionHandlers->size() > 1)
         return;
 
-    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstanceSingleton() init]);
     [options setAfterUpdates:NO];
 
     [[PAL::getWPResourcesClass() sharedInstance] requestLinkFilteringData:options.get() completionHandler:^(WPLinkFilteringData *data, NSError *error) {
@@ -200,7 +200,7 @@ void requestLinkDecorationFilteringData(LinkFilteringRulesCallback&& callback)
     if (lookupCallbacks->size() > 1)
         return;
 
-    auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstanceSingleton() init]);
     [options setAfterUpdates:NO];
 
     [[PAL::getWPResourcesClass() sharedInstance] requestAllowedLinkFilteringData:options.get() completionHandler:^(WPLinkFilteringData *data, NSError *error) {
@@ -273,7 +273,7 @@ void StorageAccessPromptQuirkController::updateList(CompletionHandler<void()>&& 
     if (lookupCompletionHandlers->size() > 1)
         return;
 
-    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstanceSingleton() init]);
     [options setAfterUpdates:NO];
 
     [[PAL::getWPResourcesClass() sharedInstance] requestStorageAccessPromptQuirksData:options.get() completionHandler:^(WPStorageAccessPromptQuirksData *data, NSError *error) {
@@ -315,7 +315,7 @@ void StorageAccessUserAgentStringQuirkController::updateList(CompletionHandler<v
     if (lookupCompletionHandlers->size() > 1)
         return;
 
-    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstanceSingleton() init]);
     [options setAfterUpdates:NO];
 
     [[PAL::getWPResourcesClass() sharedInstance] requestStorageAccessUserAgentStringQuirksData:options.get() completionHandler:^(WPStorageAccessUserAgentStringQuirksData *data, NSError *error) {
@@ -372,7 +372,7 @@ void RestrictedOpenerDomainsController::update()
     if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestRestrictedOpenerDomains:completionHandler:)])
         return;
 
-    auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstanceSingleton() init]);
     [options setAfterUpdates:NO];
 
     [[PAL::getWPResourcesClass() sharedInstance] requestRestrictedOpenerDomains:options.get() completionHandler:^(NSArray<WPRestrictedOpenerDomain *> *domains, NSError *error) {
@@ -530,7 +530,7 @@ public:
             if (!PAL::isWebPrivacyFrameworkAvailable())
                 return;
 
-            auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+            auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstanceSingleton() init]);
             [options setAfterUpdates:YES];
 
             [[PAL::getWPResourcesClass() sharedInstance] requestTrackerNetworkAddresses:options.get() completionHandler:^(NSArray<WPNetworkAddressRange *> *ranges, NSError *error) {
@@ -665,7 +665,7 @@ public:
             if (!canRequestTrackerDomainNames)
                 return;
 
-            auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+            auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstanceSingleton() init]);
             [options setAfterUpdates:YES];
             [[PAL::getWPResourcesClass() sharedInstance] requestTrackerDomainNamesData:options.get() completionHandler:^(NSArray<WPTrackingDomain *> * domains, NSError *error) {
                 if (error) {
@@ -809,7 +809,7 @@ void ScriptTrackingPrivacyController::updateList(CompletionHandler<void()>&& com
     if (pendingCompletionHandlers->size() > 1)
         return;
 
-    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstanceSingleton() init]);
     [options setAfterUpdates:NO];
 
     [[PAL::getWPResourcesClass() sharedInstance] requestFingerprintingScripts:options.get() completionHandler:^(NSArray<WPFingerprintingScript *> *scripts, NSError *error) {

@@ -740,7 +740,7 @@ public:
     virtual void writePromisedAttachmentToPasteboard(WebCore::PromisedAttachmentInfo&&) { }
 #endif
 #if PLATFORM(COCOA)
-    virtual NSFileWrapper *allocFileWrapperInstance() const { return nullptr; }
+    virtual NSFileWrapper *allocFileWrapperInstanceSingleton() const { return nullptr; }
     virtual NSSet *serializableFileWrapperClasses() const { return nullptr; }
 #endif
 #endif

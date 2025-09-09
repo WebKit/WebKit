@@ -146,7 +146,7 @@ Ref<PaymentAuthorizationController> PaymentAuthorizationController::create(Payme
 
 PaymentAuthorizationController::PaymentAuthorizationController(PaymentAuthorizationPresenter::Client& client, PKPaymentRequest *request)
     : PaymentAuthorizationPresenter(client)
-    , m_controller(adoptNS([PAL::allocPKPaymentAuthorizationControllerInstance() initWithPaymentRequest:request]))
+    , m_controller(adoptNS([PAL::allocPKPaymentAuthorizationControllerInstanceSingleton() initWithPaymentRequest:request]))
     , m_delegate(adoptNS([[WKPaymentAuthorizationControllerDelegate alloc] initWithRequest:request presenter:*this]))
 {
     [m_controller setDelegate:m_delegate.get()];

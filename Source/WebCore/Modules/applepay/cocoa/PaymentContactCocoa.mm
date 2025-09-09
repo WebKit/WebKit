@@ -42,7 +42,7 @@ namespace WebCore {
 
 static RetainPtr<PKContact> convert(unsigned version, const ApplePayPaymentContact& contact)
 {
-    auto result = adoptNS([PAL::allocPKContactInstance() init]);
+    auto result = adoptNS([PAL::allocPKContactInstanceSingleton() init]);
 
     RetainPtr<NSString> familyName;
     RetainPtr<NSString> phoneticFamilyName;
@@ -77,10 +77,10 @@ static RetainPtr<PKContact> convert(unsigned version, const ApplePayPaymentConta
         [result setEmailAddress:contact.emailAddress.createNSString().get()];
 
     if (!contact.phoneNumber.isEmpty())
-        [result setPhoneNumber:adoptNS([allocCNPhoneNumberInstance() initWithStringValue:contact.phoneNumber.createNSString().get()]).get()];
+        [result setPhoneNumber:adoptNS([allocCNPhoneNumberInstanceSingleton() initWithStringValue:contact.phoneNumber.createNSString().get()]).get()];
 
     if (contact.addressLines && !contact.addressLines->isEmpty()) {
-        auto address = adoptNS([allocCNMutablePostalAddressInstance() init]);
+        auto address = adoptNS([allocCNMutablePostalAddressInstanceSingleton() init]);
 
         StringBuilder builder;
         for (unsigned i = 0; i < contact.addressLines->size(); ++i) {

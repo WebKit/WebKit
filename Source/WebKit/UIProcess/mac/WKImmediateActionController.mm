@@ -454,7 +454,7 @@
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return nil;
 
-    RetainPtr actionContext = adoptNS([PAL::allocWKDDActionContextInstance() init]);
+    RetainPtr actionContext = adoptNS([PAL::allocWKDDActionContextInstanceSingleton() init]);
     if (!actionContext)
         return nil;
 

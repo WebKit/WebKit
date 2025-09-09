@@ -197,11 +197,11 @@ WCRBrowserEngineClient* ParentalControlsURLFilter::effectiveWCRBrowserEngineClie
 
 #if HAVE(WEBCONTENTRESTRICTIONS_PATH_SPI)
     if (!m_wcrBrowserEngineClient && !m_configurationPath.isEmpty())
-        lazyInitialize(m_wcrBrowserEngineClient, adoptNS([PAL::allocWCRBrowserEngineClientInstance() initWithConfigurationAtPath:m_configurationPath.createNSString().get()]));
+        lazyInitialize(m_wcrBrowserEngineClient, adoptNS([PAL::allocWCRBrowserEngineClientInstanceSingleton() initWithConfigurationAtPath:m_configurationPath.createNSString().get()]));
 #endif
 
     if (!m_wcrBrowserEngineClient)
-        lazyInitialize(m_wcrBrowserEngineClient, adoptNS([PAL::allocWCRBrowserEngineClientInstance() init]));
+        lazyInitialize(m_wcrBrowserEngineClient, adoptNS([PAL::allocWCRBrowserEngineClientInstanceSingleton() init]));
 
     return m_wcrBrowserEngineClient.get();
 }

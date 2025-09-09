@@ -1046,7 +1046,7 @@ void VideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& videoEl
         m_interface = VideoPresentationInterfaceAVKitLegacy::create(sessionInterface.get());
         m_interface->setVideoPresentationModel(this);
 
-        m_videoFullscreenView = adoptNS([PAL::allocUIViewInstance() init]);
+        m_videoFullscreenView = adoptNS([PAL::allocUIViewInstanceSingleton() init]);
 
         m_interface->setupFullscreen(videoElementClientRect, videoDimensions, viewRef.get(), mode, allowsPictureInPicture, false, false);
     });

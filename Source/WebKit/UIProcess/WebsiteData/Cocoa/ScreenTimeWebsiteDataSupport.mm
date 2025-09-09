@@ -46,7 +46,7 @@ void getScreenTimeURLs(std::optional<WTF::UUID> identifier, CompletionHandler<vo
     if (identifier)
         profileIdentifier = [identifier->createNSUUID() UUIDString];
 
-    RetainPtr webHistory = adoptNS([PAL::allocSTWebHistoryInstance() initWithProfileIdentifier:profileIdentifier.get()]);
+    RetainPtr webHistory = adoptNS([PAL::allocSTWebHistoryInstanceSingleton() initWithProfileIdentifier:profileIdentifier.get()]);
 
     [webHistory fetchAllHistoryWithCompletionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSSet<NSURL *> *urls, NSError *error) mutable {
         ensureOnMainRunLoop([completionHandler = WTFMove(completionHandler), urls = retainPtr(urls), error = retainPtr(error)] mutable {
@@ -73,7 +73,7 @@ void removeScreenTimeData(const HashSet<URL>& websitesToRemove, const WebsiteDat
     if (configuration.identifier())
         profileIdentifier = [configuration.identifier()->createNSUUID() UUIDString];
 
-    RetainPtr webHistory = adoptNS([PAL::allocSTWebHistoryInstance() initWithProfileIdentifier:profileIdentifier.get()]);
+    RetainPtr webHistory = adoptNS([PAL::allocSTWebHistoryInstanceSingleton() initWithProfileIdentifier:profileIdentifier.get()]);
 
     RetainPtr<NSMutableSet<NSString *>> websitesToRemoveDomains = [NSMutableSet set];
     for (auto& url : websitesToRemove)
@@ -99,7 +99,7 @@ void removeScreenTimeDataWithInterval(WallTime modifiedSince, const WebsiteDataS
     if (configuration.identifier())
         profileIdentifier = [configuration.identifier()->createNSUUID() UUIDString];
 
-    RetainPtr webHistory = adoptNS([PAL::allocSTWebHistoryInstance() initWithProfileIdentifier:profileIdentifier.get()]);
+    RetainPtr webHistory = adoptNS([PAL::allocSTWebHistoryInstanceSingleton() initWithProfileIdentifier:profileIdentifier.get()]);
 
     if (!modifiedSince.isNaN()) {
         NSTimeInterval timeInterval = modifiedSince.secondsSinceEpoch().seconds();

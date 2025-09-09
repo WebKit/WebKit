@@ -240,9 +240,9 @@ static NSString * firstUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers, U
 - (void)start
 {
 #if HAVE(PX_ACTIVITY_PROGRESS_CONTROLLER)
-    _progressController = adoptNS([allocPXActivityProgressControllerInstance() init]);
+    _progressController = adoptNS([allocPXActivityProgressControllerInstanceSingleton() init]);
 #else
-    _progressController = adoptNS([allocPUActivityProgressControllerInstance() init]);
+    _progressController = adoptNS([allocPUActivityProgressControllerInstanceSingleton() init]);
 #endif
     [_progressController setTitle:WEB_UI_STRING_KEY("Preparing…", "Preparing (file upload)", "Title for file upload progress view").createNSString().get()];
     [_progressController showAnimated:YES allowDelay:YES];
@@ -295,8 +295,8 @@ static NSString * firstUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers, U
     NSString *filePath = [temporaryDirectory stringByAppendingPathComponent:fileName];
     NSURL *outputURL = [NSURL fileURLWithPath:filePath isDirectory:NO];
 
-    RetainPtr<AVURLAsset> asset = adoptNS([PAL::allocAVURLAssetInstance() initWithURL:item.fileURL options:nil]);
-    _exportSession = adoptNS([PAL::allocAVAssetExportSessionInstance() initWithAsset:asset.get() presetName:AVAssetExportPresetHighestQuality]);
+    RetainPtr<AVURLAsset> asset = adoptNS([PAL::allocAVURLAssetInstanceSingleton() initWithURL:item.fileURL options:nil]);
+    _exportSession = adoptNS([PAL::allocAVAssetExportSessionInstanceSingleton() initWithAsset:asset.get() presetName:AVAssetExportPresetHighestQuality]);
     [_exportSession setOutputURL:outputURL];
     [_exportSession setOutputFileType:AVFileTypeQuickTimeMovie];
 
@@ -916,7 +916,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 - (void)_showPhotoPicker
 {
 #if HAVE(PHOTOS_UI)
-    auto configuration = adoptNS([allocPHPickerConfigurationInstance() init]);
+    auto configuration = adoptNS([allocPHPickerConfigurationInstanceSingleton() init]);
     [configuration setSelectionLimit:_allowMultipleFiles ? 0 : 1];
     [configuration setPreferredAssetRepresentationMode:[self _preferredAssetRepresentationMode]];
     [configuration _setAllowsDownscaling:YES];
@@ -931,7 +931,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     _uploadFileManager = adoptNS([[NSFileManager alloc] init]);
     _uploadFileCoordinator = adoptNS([[NSFileCoordinator alloc] init]);
 
-    _photoPicker = adoptNS([allocPHPickerViewControllerInstance() initWithConfiguration:configuration.get()]);
+    _photoPicker = adoptNS([allocPHPickerViewControllerInstanceSingleton() initWithConfiguration:configuration.get()]);
     [_photoPicker setDelegate:self];
     [_photoPicker presentationController].delegate = self;
 

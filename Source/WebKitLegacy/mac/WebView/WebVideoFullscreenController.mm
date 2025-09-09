@@ -104,7 +104,7 @@ static void WebAVPlayerView_exitFullScreen(id aSelf, SEL, id sender)
     [playerView.webDelegate playerViewRequestExitFullscreen:playerView];
 }
 
-static WebAVPlayerView *allocWebAVPlayerViewInstance()
+static WebAVPlayerView *allocWebAVPlayerViewInstanceSingleton()
 {
     static Class theClass = nil;
     static dispatch_once_t onceToken;
@@ -184,7 +184,7 @@ static WebAVPlayerView *allocWebAVPlayerViewInstance()
     [window setHasShadow:YES]; // This is nicer with a shadow.
     [window setLevel:NSPopUpMenuWindowLevel-1];
 
-    _playerView = adoptNS([allocWebAVPlayerViewInstance() initWithFrame:window.contentLayoutRect]);
+    _playerView = adoptNS([allocWebAVPlayerViewInstanceSingleton() initWithFrame:window.contentLayoutRect]);
     _playerView.get().controlsStyle = AVPlayerViewControlsStyleNone;
     _playerView.get().showsFullScreenToggleButton = YES;
     _playerView.get().showsAudioOnlyIndicatorView = NO;

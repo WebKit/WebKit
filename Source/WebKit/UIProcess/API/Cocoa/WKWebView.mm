@@ -427,7 +427,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     if (!_page->preferences().screenTimeEnabled() || !_page->mainFrame()->url().protocolIsInHTTPFamily())
         return;
 
-    _screenTimeWebpageController = adoptNS([PAL::allocSTWebpageControllerInstance() init]);
+    _screenTimeWebpageController = adoptNS([PAL::allocSTWebpageControllerInstanceSingleton() init]);
     [_screenTimeWebpageController addObserver:self forKeyPath:@"URLIsBlocked" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:&screenTimeWebpageControllerBlockedKVOContext];
     _isBlockedByScreenTime = NO;
 
@@ -2466,9 +2466,9 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     _page->didBeginWritingToolsSession(*webSession, contextData);
 
     if (session.type == WTSessionTypeProofreading)
-        _intelligenceTextEffectCoordinator = adoptNS([WebKit::allocWKIntelligenceReplacementTextEffectCoordinatorInstance() initWithDelegate:(id<WKIntelligenceTextEffectCoordinatorDelegate>)self]);
+        _intelligenceTextEffectCoordinator = adoptNS([WebKit::allocWKIntelligenceReplacementTextEffectCoordinatorInstanceSingleton() initWithDelegate:(id<WKIntelligenceTextEffectCoordinatorDelegate>)self]);
     else if (session.type == WTSessionTypeComposition && session.compositionSessionType == WTCompositionSessionTypeSmartReply)
-        _intelligenceTextEffectCoordinator = adoptNS([WebKit::allocWKIntelligenceSmartReplyTextEffectCoordinatorInstance() initWithDelegate:(id<WKIntelligenceTextEffectCoordinatorDelegate>)self]);
+        _intelligenceTextEffectCoordinator = adoptNS([WebKit::allocWKIntelligenceSmartReplyTextEffectCoordinatorInstanceSingleton() initWithDelegate:(id<WKIntelligenceTextEffectCoordinatorDelegate>)self]);
     else
         _intelligenceTextEffectCoordinator = nil;
 

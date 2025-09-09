@@ -591,7 +591,7 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
     if (canLoadWithRealityKit)
         m_modelRKEntity = model->rootRKEntity();
     else if (model->rootEntity())
-        m_modelRKEntity = adoptNS([allocWKRKEntityInstance() initWithCoreEntity:model->rootEntity()]);
+        m_modelRKEntity = adoptNS([allocWKRKEntityInstanceSingleton() initWithCoreEntity:model->rootEntity()]);
     [m_modelRKEntity setDelegate:m_objCAdapter.get()];
 
     m_originalBoundingBoxExtents = [m_modelRKEntity boundingBoxExtents];
@@ -622,7 +622,7 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
         REEntitySetParent(model->rootEntity(), clientComponentEntity);
     }
 
-    m_stageModeInteractionDriver = adoptNS([allocWKStageModeInteractionDriverInstance() initWithModel:m_modelRKEntity.get() container:clientComponentEntity delegate:m_objCAdapter.get()]);
+    m_stageModeInteractionDriver = adoptNS([allocWKStageModeInteractionDriverInstanceSingleton() initWithModel:m_modelRKEntity.get() container:clientComponentEntity delegate:m_objCAdapter.get()]);
 
     REEntitySubtreeAddNetworkComponentRecursive([m_stageModeInteractionDriver interactionContainerRef]);
     RENetworkMarkEntityMetadataDirty([m_stageModeInteractionDriver interactionContainerRef]);
