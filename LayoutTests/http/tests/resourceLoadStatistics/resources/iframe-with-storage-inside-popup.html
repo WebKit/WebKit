@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <head>
+    <script>
+        const dbName = "IframeTestDatabase";
+        const objectStoreName = "IframeTestObjectStore";
+        const storageKey = "key";
+        const storageValue = "value";
+    </script>
+    <script src="common-storage.js"></script>
+    <script src="utilities.js"></script>
+  </head>
+<body>
+<script>
+initStorage(storageKey, storageValue);
+addFrameEventListener();
+</script>
+</body>
+</html>
