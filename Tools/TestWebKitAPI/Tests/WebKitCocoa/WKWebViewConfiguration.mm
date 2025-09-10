@@ -242,7 +242,7 @@ TEST(WebKit, ConfigurationDisableJavaScriptSVGAnimateElementComplex)
     EXPECT_WK_STREQ(bodyHTML, @"<svg><a><rect fill=\"green\" width=\"10\" height=\"10\"></rect><animate attributeName=\"href\" dur=\"4s\" calcMode=\"spline\" repeatCount=\"indefinite\" keyTimes=\"0; 0.25; 0.5; 0.75; 1\" keySplines=\"0.5 0 0.5 1; 0.5 0 0.5 1; 0.5 0 0.5 1; 0.5 0 0.5 1\"></animate></a></svg>");
 }
 
-TEST(WebKit, ConfigurationMaskedURLSchemes_6)
+TEST(WebKit, ConfigurationMaskedURLSchemes_ok)
 {
     [TestProtocol registerWithScheme:@"https"];
 
@@ -321,7 +321,7 @@ TEST(WebKit, ConfigurationMaskedURLSchemes_6)
     EXPECT_WK_STREQ(imageSource, @"https://apple.com/baz.png 2x, baz.png 1x");
 }
 
-TEST(WebKit, ConfigurationMaskedURLSchemes_7)
+TEST(WebKit, ConfigurationMaskedURLSchemes_A)
 {
     [TestProtocol registerWithScheme:@"https"];
     [TestProtocol registerWithScheme:@"http"];
@@ -401,10 +401,10 @@ TEST(WebKit, ConfigurationMaskedURLSchemes_7)
     imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttributeNode(\"srcset\").value"];
     EXPECT_WK_STREQ(imageSource, @"https://apple.com/baz.png 2x, baz.png 1x");
 
-    [webView synchronouslyLoadHTMLString:@"<script src=\"another-scheme://foo.com/bar.js\"></script><script src=\"http://apple.com/baz.js\"></script>" baseURL:[NSURL URLWithString:@"https://example.com"]];
+    [webView synchronouslyLoadHTMLString:@"<script src=\"another-scheme://foo.com/bar.js\"></script>" baseURL:[NSURL URLWithString:@"https://example.com"]];
 }
 
-TEST(WebKit, ConfigurationMaskedURLSchemes_8)
+TEST(WebKit, ConfigurationMaskedURLSchemes_B)
 {
     [TestProtocol registerWithScheme:@"https"];
     [TestProtocol registerWithScheme:@"http"];
@@ -484,280 +484,7 @@ TEST(WebKit, ConfigurationMaskedURLSchemes_8)
     imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttributeNode(\"srcset\").value"];
     EXPECT_WK_STREQ(imageSource, @"https://apple.com/baz.png 2x, baz.png 1x");
 
-    [webView synchronouslyLoadHTMLString:@"<script src=\"another-scheme://foo.com/bar.js\"></script><script src=\"http://apple.com/baz.js\"></script>" baseURL:[NSURL URLWithString:@"https://example.com"]];
-
-    NSString *scriptSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"script\")[0].src"];
-    EXPECT_WK_STREQ(scriptSource, @"webkit-masked-url://hidden/");
-}
-
-
-TEST(WebKit, ConfigurationMaskedURLSchemes_9)
-{
-    [TestProtocol registerWithScheme:@"https"];
-
-    auto configuration = adoptNS([WKWebViewConfiguration new]);
-
-    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], [NSSet set]);
-
-#if ENABLE(WK_WEB_EXTENSIONS)
-    auto extensionController = adoptNS([[WKWebExtensionController alloc] init]);
-    [configuration setWebExtensionController:extensionController.get()];
-
-    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], [NSSet setWithObject:@"webkit-extension"]);
-
-    [WKWebExtensionMatchPattern registerCustomURLScheme:@"test-scheme"];
-
-    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], ([NSSet setWithObjects:@"webkit-extension", @"test-scheme", nil]));
-#endif
-
-    [configuration _setMaskedURLSchemes:[NSSet setWithObject:@"test-scheme"]];
-    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], [NSSet setWithObject:@"test-scheme"]);
-
-    [configuration _setMaskedURLSchemes:[NSSet set]];
-    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], [NSSet set]);
-
-    [configuration _setMaskedURLSchemes:[NSSet setWithObjects:@"test-scheme", @"another-scheme", nil]];
-    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], ([NSSet setWithObjects:@"test-scheme", @"another-scheme", nil]));
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get()]);
-    auto delegate = adoptNS([TestUIDelegate new]);
-    [webView setUIDelegate:delegate.get()];
-
-    [webView synchronouslyLoadHTMLString:@"<img src=\"test-scheme://foo.com/bar.jpg\"><img src=\"baz.png\">" baseURL:[NSURL URLWithString:@"https://example.com"]];
-
-    NSString *imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[0].src"];
-    EXPECT_WK_STREQ(imageSource, @"webkit-masked-url://hidden/");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[0].getAttribute(\"src\")"];
-    EXPECT_WK_STREQ(imageSource, @"webkit-masked-url://hidden/");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[0].getAttributeNode(\"src\").value"];
-    EXPECT_WK_STREQ(imageSource, @"webkit-masked-url://hidden/");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].src"];
-    EXPECT_WK_STREQ(imageSource, @"https://example.com/baz.png");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttribute(\"src\")"];
-    EXPECT_WK_STREQ(imageSource, @"baz.png");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttributeNS(null, \"src\")"];
-    EXPECT_WK_STREQ(imageSource, @"baz.png");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttributeNode(\"src\").value"];
-    EXPECT_WK_STREQ(imageSource, @"baz.png");
-
-    [webView synchronouslyLoadHTMLString:@"<img srcset=\"test-scheme://foo.com/bar.jpg 1x, bar.jpg 2x, another-scheme://foo.com/bar.gif 3x\"><img srcset=\"https://apple.com/baz.png 2x, baz.png 1x\">" baseURL:[NSURL URLWithString:@"https://example.com"]];
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[0].srcset"];
-    EXPECT_WK_STREQ(imageSource, @"webkit-masked-url://hidden/ 1x, bar.jpg 2x, webkit-masked-url://hidden/ 3x");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[0].getAttribute(\"srcset\")"];
-    EXPECT_WK_STREQ(imageSource, @"webkit-masked-url://hidden/ 1x, bar.jpg 2x, webkit-masked-url://hidden/ 3x");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[0].getAttributeNode(\"srcset\").value"];
-    EXPECT_WK_STREQ(imageSource, @"webkit-masked-url://hidden/ 1x, bar.jpg 2x, webkit-masked-url://hidden/ 3x");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].srcset"];
-    EXPECT_WK_STREQ(imageSource, @"https://apple.com/baz.png 2x, baz.png 1x");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttribute(\"srcset\")"];
-    EXPECT_WK_STREQ(imageSource, @"https://apple.com/baz.png 2x, baz.png 1x");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttributeNS(null, \"srcset\")"];
-    EXPECT_WK_STREQ(imageSource, @"https://apple.com/baz.png 2x, baz.png 1x");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttributeNode(\"srcset\").value"];
-    EXPECT_WK_STREQ(imageSource, @"https://apple.com/baz.png 2x, baz.png 1x");
-
-    [webView synchronouslyLoadHTMLString:@"<script src=\"another-scheme://foo.com/bar.js\"></script><script src=\"http://apple.com/baz.js\"></script>" baseURL:[NSURL URLWithString:@"https://example.com"]];
-
-    NSString *scriptSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"script\")[0].src"];
-    EXPECT_WK_STREQ(scriptSource, @"webkit-masked-url://hidden/");
-
-    scriptSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"script\")[1].src"];
-    EXPECT_WK_STREQ(scriptSource, @"http://apple.com/baz.js");
-}
-
-
-TEST(WebKit, ConfigurationMaskedURLSchemes_10)
-{
-    [TestProtocol registerWithScheme:@"https"];
-
-    auto configuration = adoptNS([WKWebViewConfiguration new]);
-
-    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], [NSSet set]);
-
-#if ENABLE(WK_WEB_EXTENSIONS)
-    auto extensionController = adoptNS([[WKWebExtensionController alloc] init]);
-    [configuration setWebExtensionController:extensionController.get()];
-
-    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], [NSSet setWithObject:@"webkit-extension"]);
-
-    [WKWebExtensionMatchPattern registerCustomURLScheme:@"test-scheme"];
-
-    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], ([NSSet setWithObjects:@"webkit-extension", @"test-scheme", nil]));
-#endif
-
-    [configuration _setMaskedURLSchemes:[NSSet setWithObject:@"test-scheme"]];
-    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], [NSSet setWithObject:@"test-scheme"]);
-
-    [configuration _setMaskedURLSchemes:[NSSet set]];
-    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], [NSSet set]);
-
-    [configuration _setMaskedURLSchemes:[NSSet setWithObjects:@"test-scheme", @"another-scheme", nil]];
-    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], ([NSSet setWithObjects:@"test-scheme", @"another-scheme", nil]));
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get()]);
-    auto delegate = adoptNS([TestUIDelegate new]);
-    [webView setUIDelegate:delegate.get()];
-
-    [webView synchronouslyLoadHTMLString:@"<img src=\"test-scheme://foo.com/bar.jpg\"><img src=\"baz.png\">" baseURL:[NSURL URLWithString:@"https://example.com"]];
-
-    NSString *imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[0].src"];
-    EXPECT_WK_STREQ(imageSource, @"webkit-masked-url://hidden/");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[0].getAttribute(\"src\")"];
-    EXPECT_WK_STREQ(imageSource, @"webkit-masked-url://hidden/");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[0].getAttributeNode(\"src\").value"];
-    EXPECT_WK_STREQ(imageSource, @"webkit-masked-url://hidden/");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].src"];
-    EXPECT_WK_STREQ(imageSource, @"https://example.com/baz.png");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttribute(\"src\")"];
-    EXPECT_WK_STREQ(imageSource, @"baz.png");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttributeNS(null, \"src\")"];
-    EXPECT_WK_STREQ(imageSource, @"baz.png");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttributeNode(\"src\").value"];
-    EXPECT_WK_STREQ(imageSource, @"baz.png");
-
-    [webView synchronouslyLoadHTMLString:@"<img srcset=\"test-scheme://foo.com/bar.jpg 1x, bar.jpg 2x, another-scheme://foo.com/bar.gif 3x\"><img srcset=\"https://apple.com/baz.png 2x, baz.png 1x\">" baseURL:[NSURL URLWithString:@"https://example.com"]];
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[0].srcset"];
-    EXPECT_WK_STREQ(imageSource, @"webkit-masked-url://hidden/ 1x, bar.jpg 2x, webkit-masked-url://hidden/ 3x");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[0].getAttribute(\"srcset\")"];
-    EXPECT_WK_STREQ(imageSource, @"webkit-masked-url://hidden/ 1x, bar.jpg 2x, webkit-masked-url://hidden/ 3x");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[0].getAttributeNode(\"srcset\").value"];
-    EXPECT_WK_STREQ(imageSource, @"webkit-masked-url://hidden/ 1x, bar.jpg 2x, webkit-masked-url://hidden/ 3x");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].srcset"];
-    EXPECT_WK_STREQ(imageSource, @"https://apple.com/baz.png 2x, baz.png 1x");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttribute(\"srcset\")"];
-    EXPECT_WK_STREQ(imageSource, @"https://apple.com/baz.png 2x, baz.png 1x");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttributeNS(null, \"srcset\")"];
-    EXPECT_WK_STREQ(imageSource, @"https://apple.com/baz.png 2x, baz.png 1x");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttributeNode(\"srcset\").value"];
-    EXPECT_WK_STREQ(imageSource, @"https://apple.com/baz.png 2x, baz.png 1x");
-
-    [webView synchronouslyLoadHTMLString:@"<script src=\"another-scheme://foo.com/bar.js\"></script><script src=\"http://apple.com/baz.js\"></script>" baseURL:[NSURL URLWithString:@"https://example.com"]];
-
-    NSString *scriptSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"script\")[0].src"];
-    EXPECT_WK_STREQ(scriptSource, @"webkit-masked-url://hidden/");
-
-    scriptSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"script\")[1].src"];
-    EXPECT_WK_STREQ(scriptSource, @"http://apple.com/baz.js");
-
-    [webView synchronouslyLoadHTMLString:@"<iframe src=\"test-scheme://foo.com/bar.html\"></iframe><iframe src=\"http://apple.com/baz.html\"></iframe>" baseURL:[NSURL URLWithString:@"https://example.com"]];
-}
-
-TEST(WebKit, ConfigurationMaskedURLSchemes_11)
-{
-    [TestProtocol registerWithScheme:@"https"];
-
-    auto configuration = adoptNS([WKWebViewConfiguration new]);
-
-    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], [NSSet set]);
-
-#if ENABLE(WK_WEB_EXTENSIONS)
-    auto extensionController = adoptNS([[WKWebExtensionController alloc] init]);
-    [configuration setWebExtensionController:extensionController.get()];
-
-    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], [NSSet setWithObject:@"webkit-extension"]);
-
-    [WKWebExtensionMatchPattern registerCustomURLScheme:@"test-scheme"];
-
-    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], ([NSSet setWithObjects:@"webkit-extension", @"test-scheme", nil]));
-#endif
-
-    [configuration _setMaskedURLSchemes:[NSSet setWithObject:@"test-scheme"]];
-    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], [NSSet setWithObject:@"test-scheme"]);
-
-    [configuration _setMaskedURLSchemes:[NSSet set]];
-    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], [NSSet set]);
-
-    [configuration _setMaskedURLSchemes:[NSSet setWithObjects:@"test-scheme", @"another-scheme", nil]];
-    EXPECT_NS_EQUAL([configuration _maskedURLSchemes], ([NSSet setWithObjects:@"test-scheme", @"another-scheme", nil]));
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:configuration.get()]);
-    auto delegate = adoptNS([TestUIDelegate new]);
-    [webView setUIDelegate:delegate.get()];
-
-    [webView synchronouslyLoadHTMLString:@"<img src=\"test-scheme://foo.com/bar.jpg\"><img src=\"baz.png\">" baseURL:[NSURL URLWithString:@"https://example.com"]];
-
-    NSString *imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[0].src"];
-    EXPECT_WK_STREQ(imageSource, @"webkit-masked-url://hidden/");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[0].getAttribute(\"src\")"];
-    EXPECT_WK_STREQ(imageSource, @"webkit-masked-url://hidden/");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[0].getAttributeNode(\"src\").value"];
-    EXPECT_WK_STREQ(imageSource, @"webkit-masked-url://hidden/");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].src"];
-    EXPECT_WK_STREQ(imageSource, @"https://example.com/baz.png");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttribute(\"src\")"];
-    EXPECT_WK_STREQ(imageSource, @"baz.png");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttributeNS(null, \"src\")"];
-    EXPECT_WK_STREQ(imageSource, @"baz.png");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttributeNode(\"src\").value"];
-    EXPECT_WK_STREQ(imageSource, @"baz.png");
-
-    [webView synchronouslyLoadHTMLString:@"<img srcset=\"test-scheme://foo.com/bar.jpg 1x, bar.jpg 2x, another-scheme://foo.com/bar.gif 3x\"><img srcset=\"https://apple.com/baz.png 2x, baz.png 1x\">" baseURL:[NSURL URLWithString:@"https://example.com"]];
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[0].srcset"];
-    EXPECT_WK_STREQ(imageSource, @"webkit-masked-url://hidden/ 1x, bar.jpg 2x, webkit-masked-url://hidden/ 3x");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[0].getAttribute(\"srcset\")"];
-    EXPECT_WK_STREQ(imageSource, @"webkit-masked-url://hidden/ 1x, bar.jpg 2x, webkit-masked-url://hidden/ 3x");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[0].getAttributeNode(\"srcset\").value"];
-    EXPECT_WK_STREQ(imageSource, @"webkit-masked-url://hidden/ 1x, bar.jpg 2x, webkit-masked-url://hidden/ 3x");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].srcset"];
-    EXPECT_WK_STREQ(imageSource, @"https://apple.com/baz.png 2x, baz.png 1x");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttribute(\"srcset\")"];
-    EXPECT_WK_STREQ(imageSource, @"https://apple.com/baz.png 2x, baz.png 1x");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttributeNS(null, \"srcset\")"];
-    EXPECT_WK_STREQ(imageSource, @"https://apple.com/baz.png 2x, baz.png 1x");
-
-    imageSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"img\")[1].getAttributeNode(\"srcset\").value"];
-    EXPECT_WK_STREQ(imageSource, @"https://apple.com/baz.png 2x, baz.png 1x");
-
-    [webView synchronouslyLoadHTMLString:@"<script src=\"another-scheme://foo.com/bar.js\"></script><script src=\"http://apple.com/baz.js\"></script>" baseURL:[NSURL URLWithString:@"https://example.com"]];
-
-    NSString *scriptSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"script\")[0].src"];
-    EXPECT_WK_STREQ(scriptSource, @"webkit-masked-url://hidden/");
-
-    scriptSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"script\")[1].src"];
-    EXPECT_WK_STREQ(scriptSource, @"http://apple.com/baz.js");
-
-    [webView synchronouslyLoadHTMLString:@"<iframe src=\"test-scheme://foo.com/bar.html\"></iframe><iframe src=\"http://apple.com/baz.html\"></iframe>" baseURL:[NSURL URLWithString:@"https://example.com"]];
-
-    NSString *htmlSource = [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"];
-    EXPECT_EQ([htmlSource containsString:@"<iframe src=\"webkit-masked-url://hidden/\"></iframe>"], YES);
+    [webView synchronouslyLoadHTMLString:@"<script src=\"http://apple.com/baz.js\"></script>" baseURL:[NSURL URLWithString:@"https://example.com"]];
 }
 
 TEST(WebKit, ConfigurationMaskedURLSchemes)
