@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) CGSize _contentSize WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 @property (nonatomic, readonly) CGSize _visibleContentSize WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 @property (nonatomic, readonly) CGSize _visibleContentSizeExcludingScrollbars WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
-@property (nonatomic, readonly, nullable) SecTrustRef _serverTrust WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, readonly, nullable) SecTrustRef _serverTrust WK_API_AVAILABLE(macos(26.0), ios(26.0), visionos(26.0));
 
 - (BOOL)_isSameFrame:(WKFrameInfo *)frame WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 NS_ASSUME_NONNULL_END

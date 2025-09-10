@@ -151,7 +151,7 @@ struct UIEdgeInsets;
 
 - (void)_webViewClose:(WKWebView *)webView;
 - (void)_webViewFullscreenMayReturnToInline:(WKWebView *)webView;
-- (void)_webViewWillEnterFullscreen:(WKWebView *)webView WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)_webViewWillEnterFullscreen:(WKWebView *)webView WK_API_AVAILABLE(macos(26.0), ios(26.0), visionos(26.0));
 - (void)_webViewDidEnterFullscreen:(WKWebView *)webView WK_API_AVAILABLE(macos(10.11), ios(8.3));
 - (void)_webViewDidExitFullscreen:(WKWebView *)webView WK_API_AVAILABLE(macos(10.11), ios(8.3));
 - (void)_webViewRequestPointerLock:(WKWebView *)webView WK_API_AVAILABLE(macos(10.12.4));

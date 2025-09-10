@@ -194,6 +194,6 @@ WK_CLASS_AVAILABLE(macos(14.5), ios(17.5), visionos(1.2))
 
 @interface WKProcessPool (WKPrivateMac)
 
-- (void)_registerAdditionalFonts:(NSArray<NSString *> *)fontNames WK_API_AVAILABLE(macos(WK_MAC_TBA));
+- (void)_registerAdditionalFonts:(NSArray<NSString *> *)fontNames WK_API_AVAILABLE(macos(26.0));
 
 @end

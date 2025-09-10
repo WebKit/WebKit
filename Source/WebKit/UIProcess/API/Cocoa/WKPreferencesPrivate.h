@@ -201,7 +201,7 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 @property (nonatomic, setter=_setModelProcessEnabled:) BOOL _modelProcessEnabled WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 @property (nonatomic, setter=_setModelNoPortalAttributeEnabled:) BOOL _modelNoPortalAttributeEnabled WK_API_AVAILABLE(visionos(2.4));
 @property (nonatomic, setter=_setRequiresPageVisibilityForVideoToBeNowPlayingForTesting:) BOOL _requiresPageVisibilityForVideoToBeNowPlayingForTesting WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
-@property (nonatomic, setter=_setSiteIsolationEnabled:) BOOL _siteIsolationEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic, setter=_setSiteIsolationEnabled:) BOOL _siteIsolationEnabled WK_API_AVAILABLE(macos(26.0), ios(26.0), visionos(26.0));
 
 #if !TARGET_OS_IPHONE
 @property (nonatomic, setter=_setWebGLEnabled:) BOOL _webGLEnabled WK_API_AVAILABLE(macos(10.13.4));

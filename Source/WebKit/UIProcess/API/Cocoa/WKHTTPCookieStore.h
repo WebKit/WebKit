@@ -67,7 +67,7 @@ WK_SWIFT_UI_ACTOR
  @param cookies An array of cookies to set.
  @param completionHandler A block to invoke once the cookies have been stored.
 */
-- (void)setCookies:(NSArray<NSHTTPCookie *> *)cookies completionHandler:(nullable WK_SWIFT_UI_ACTOR void (^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)setCookies:(NSArray<NSHTTPCookie *> *)cookies completionHandler:(nullable WK_SWIFT_UI_ACTOR void (^)(void))completionHandler WK_API_AVAILABLE(macos(26.0), ios(26.0), visionos(26.0));
 
 /*! @abstract Delete the specified cookie.
  @param completionHandler A block to invoke once the cookie has been deleted.

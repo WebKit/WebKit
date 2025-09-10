@@ -69,8 +69,8 @@ typedef NS_ENUM(NSInteger, _WKAutomationSessionWebExtensionResourceOptions) {
 - (void)_automationSession:(_WKAutomationSession *)automationSession dismissCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13), ios(11.0));
 - (void)_automationSession:(_WKAutomationSession *)automationSession acceptCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13), ios(11.0));
 - (nullable NSString *)_automationSession:(_WKAutomationSession *)automationSession messageOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13), ios(11.0));
-- (nullable NSString *)_automationSession:(_WKAutomationSession *)automationSession userInputOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
-- (nullable NSString *)_automationSession:(_WKAutomationSession *)automationSession defaultTextOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (nullable NSString *)_automationSession:(_WKAutomationSession *)automationSession userInputOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(26.0), ios(26.0), visionos(26.0));
+- (nullable NSString *)_automationSession:(_WKAutomationSession *)automationSession defaultTextOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(26.0), ios(26.0), visionos(26.0));
 - (void)_automationSession:(_WKAutomationSession *)automationSession setUserInput:(NSString *)value forCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13), ios(11.0));
 - (_WKAutomationSessionJavaScriptDialogType)_automationSession:(_WKAutomationSession *)automationSession typeOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.14), ios(12.0));
 - (_WKAutomationSessionBrowsingContextPresentation)_automationSession:(_WKAutomationSession *)automationSession currentPresentationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.15), ios(13.0));
