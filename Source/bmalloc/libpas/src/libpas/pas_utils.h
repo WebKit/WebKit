@@ -190,7 +190,7 @@ PAS_BEGIN_EXTERN_C;
  * To achieve that, when we are not building with ARM LSE Atomics, we use inline assembly instead of
  * clang's builtin (e.g. __c11_atomic_compare_exchange_weak).
  */
-#define PAS_COMPILER_ARM64_ATOMICS_LL_SC 1
+#define PAS_COMPILER_ARM64_ATOMICS_LL_SC 0
 #endif
 
 #ifdef __cplusplus
