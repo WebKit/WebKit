@@ -31,8 +31,10 @@
 
 #include "CachedHTMLCollection.h"
 #include "Document.h"
+#include "DocumentType.h"
 #include "Element.h"
 #include "SpaceSplitString.h"
+#include "TextResourceDecoder.h"
 
 namespace WebCore {
 
@@ -54,9 +56,14 @@ private:
 
 inline ClassCollection::ClassCollection(ContainerNode& rootNode, CollectionType type, const AtomString& classNames)
     : CachedHTMLCollection(rootNode, type)
-    , m_classNames(classNames, rootNode.document().inQuirksMode() ? SpaceSplitString::ShouldFoldCase::Yes : SpaceSplitString::ShouldFoldCase::No)
     , m_originalClassNames(classNames)
 {
+    auto& document = rootNode.document();
+    bool shouldUseCaseInsensitive = document.decoder() && document.decoder()->encoding().name() == "UTF-8"_s
+        && document.doctype() && document.doctype()->publicId().isEmpty()
+        && document.doctype()->systemId().isEmpty();
+
+    m_classNames = SpaceSplitString(classNames, rootNode.document().inQuirksMode() || shouldUseCaseInsensitive ? SpaceSplitString::ShouldFoldCase::Yes : SpaceSplitString::ShouldFoldCase::No);
 }
 
 inline bool ClassCollection::elementMatches(Element& element) const

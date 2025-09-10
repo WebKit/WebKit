@@ -50,6 +50,7 @@
 #include "DocumentFullscreen.h"
 #include "DocumentInlines.h"
 #include "DocumentSharedObjectPool.h"
+#include "DocumentType.h"
 #include "Editing.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "ElementAnimationRareData.h"
@@ -2585,19 +2586,24 @@ void Element::classAttributeChanged(const AtomString& newClassString, AttributeM
             classList->associatedAttributeValueChanged();
     }
 
+    bool shouldUseCaseInsensitive = document().decoder() && document().decoder()->encoding().name() == "UTF-8"_s
+        && document().doctype()
+        && document().doctype()->publicId().isEmpty()
+        && document().doctype()->systemId().isEmpty();
+
     if (reason == AttributeModificationReason::Parser) {
         // If ElementData is ShareableElementData created in parserSetAttributes,
         // it is possible that SpaceSplitString is already created and set.
         // We also do not need to invalidate caches / styles since it is not inserted to the tree yet.
         if (elementData()->classNames().keyString() == newClassString)
             return;
-        auto shouldFoldCase = document().inQuirksMode() ? SpaceSplitString::ShouldFoldCase::Yes : SpaceSplitString::ShouldFoldCase::No;
+        auto shouldFoldCase = document().inQuirksMode() || shouldUseCaseInsensitive ? SpaceSplitString::ShouldFoldCase::Yes : SpaceSplitString::ShouldFoldCase::No;
         SpaceSplitString newClassNames(newClassString, shouldFoldCase);
         elementData()->setClassNames(WTFMove(newClassNames));
         return;
     }
 
-    auto shouldFoldCase = document().inQuirksMode() ? SpaceSplitString::ShouldFoldCase::Yes : SpaceSplitString::ShouldFoldCase::No;
+    auto shouldFoldCase = document().inQuirksMode() || shouldUseCaseInsensitive ? SpaceSplitString::ShouldFoldCase::Yes : SpaceSplitString::ShouldFoldCase::No;
     SpaceSplitString newClassNames(newClassString, shouldFoldCase);
     Style::ClassChangeInvalidation styleInvalidation(*this, elementData()->classNames(), newClassNames);
     document().invalidateQuerySelectorAllResultsForClassAttributeChange(*this, elementData()->classNames(), newClassNames);
