@@ -485,7 +485,7 @@ void WebAutomationSession::switchToBrowsingContext(const Inspector::Protocol::Au
 
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!WebFrameProxy::webFrame(frameID.value()), FrameNotFound);
 
-        page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::FocusFrame(page->webPageIDInMainFrameProcess(), frameID.value()), WTF::CompletionHandler<void(std::optional<String>&&)> { [callback = WTFMove(callback)] (std::optional<String>&& optionalError) mutable {
+        page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::FocusFrame(page->webPageIDInMainFrameProcess(), frameID), WTF::CompletionHandler<void(std::optional<String>&&)> { [callback = WTFMove(callback)] (std::optional<String>&& optionalError) mutable {
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF_SET(optionalError);
             callback({ });
             }
