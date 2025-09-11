@@ -2198,7 +2198,7 @@ using WebCore::PlatformColorSpace = sk_sp<SkColorSpace>;
 #endif
 
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::DestinationColorSpace {
-        WebCore::PlatformColorSpace serializableColorSpace();
+        [Validator='*serializableColorSpace'] WebCore::PlatformColorSpace serializableColorSpace();
 };
 
 struct WebCore::WindowFeatures {

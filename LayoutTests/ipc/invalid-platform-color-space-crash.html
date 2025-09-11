@@ -1,0 +1,46 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<p>This test passes if WebKit does not crash.</p>
+<script src="../resources/ipc.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    window.setTimeout(async () => {
+        if (!window.IPC)
+            return window.testRunner?.notifyDone();
+
+        const { CoreIPC } = await import('./coreipc.js');
+
+        const renderingBackendIdentifier = randomIPCID();
+        const connection = CoreIPC.newStreamConnection();
+        CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, { renderingBackendIdentifier: renderingBackendIdentifier, connectionHandle: connection });
+        const remoteBackend = connection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
+
+        const didInitializeReply = connection.connection.waitForMessage(renderingBackendIdentifier, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 1)
+        connection.connection.setSemaphores(didInitializeReply[0].value, didInitializeReply[1].value);
+
+        remoteBackend.CreateImageBuffer(
+            {
+                logicalSize: { width: 34, height: 103 },
+                renderingMode: 0,
+                renderingPurpose: 5,
+                resolutionScale: 41,
+                colorSpace: {
+                    serializableColorSpace: {
+                        alias: {
+                            m_cgColorSpace: {
+                                alias: {
+                                    variantType: 'RetainPtr<CFStringRef>', variant: 'A'
+                                }
+                            }
+                        }
+                    }
+                }, pixelFormat: 2, identifier: 393235, contextIdentifier: 393236
+            });;
+
+        connection.connection.invalidate();
+        window.testRunner?.notifyDone();
+    }, 10);
+</script>
