@@ -580,7 +580,7 @@ String SizeFrameRateAndZoom::toJSONString() const
 
 bool RealtimeVideoCaptureSource::canBePowerEfficient()
 {
-    return std::ranges::any_of(presets(), [](auto& preset) { return preset.isEfficient(); }) && std::ranges::any_of(presets(), [](auto& preset) { return !preset.isEfficient(); });
+    return WTF::anyOf(presets(), [](auto& preset) { return preset.isEfficient(); }) && WTF::anyOf(presets(), [](auto& preset) { return !preset.isEfficient(); });
 }
 
 

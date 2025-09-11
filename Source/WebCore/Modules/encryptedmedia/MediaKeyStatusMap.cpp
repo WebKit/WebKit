@@ -71,7 +71,7 @@ bool MediaKeyStatusMap::has(const BufferSource& keyId)
         return false;
 
     auto& statuses = m_session->statuses();
-    return std::ranges::any_of(statuses, [&keyId] (auto& it) { return keyIdsMatch(it.first, keyId); });
+    return WTF::anyOf(statuses, [&keyId] (auto& it) { return keyIdsMatch(it.first, keyId); });
 }
 
 JSC::JSValue MediaKeyStatusMap::get(JSC::JSGlobalObject& state, const BufferSource& keyId)

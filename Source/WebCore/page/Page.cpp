@@ -4855,7 +4855,7 @@ OptionSet<FilterRenderingMode> Page::preferredFilterRenderingModes() const
 
 bool Page::shouldDisableCorsForRequestTo(const URL& url) const
 {
-    return std::ranges::any_of(m_corsDisablingPatterns, [&](auto& pattern) {
+    return WTF::anyOf(m_corsDisablingPatterns, [&](auto& pattern) {
         return pattern.matches(url);
     });
 }

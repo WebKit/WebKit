@@ -822,7 +822,7 @@ bool ContentSecurityPolicy::requireTrustedTypesForSinkGroup(const String& sinkGr
 // https://w3c.github.io/trusted-types/dist/spec/#should-block-sink-type-mismatch
 bool ContentSecurityPolicy::allowMissingTrustedTypesForSinkGroup(const String& stringContext, const String& sink, const String& sinkGroup, StringView source) const
 {
-    return std::ranges::all_of(m_policies, [&](auto& policy) {
+    return WTF::allOf(m_policies, [&](auto& policy) {
         bool isAllowed = true;
         if (policy->requiresTrustedTypesForScript() && sinkGroup == "script"_s) {
             if (!policy->isReportOnly())

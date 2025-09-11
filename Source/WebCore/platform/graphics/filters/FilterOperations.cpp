@@ -147,17 +147,17 @@ bool FilterOperations::inverseTransformColor(Color& color) const
 
 bool FilterOperations::hasFilterThatAffectsOpacity() const
 {
-    return std::ranges::any_of(m_operations, [](auto& op) { return op->affectsOpacity(); });
+    return WTF::anyOf(m_operations, [](auto& op) { return op->affectsOpacity(); });
 }
 
 bool FilterOperations::hasFilterThatMovesPixels() const
 {
-    return std::ranges::any_of(m_operations, [](auto& op) { return op->movesPixels(); });
+    return WTF::anyOf(m_operations, [](auto& op) { return op->movesPixels(); });
 }
 
 bool FilterOperations::hasFilterThatShouldBeRestrictedBySecurityOrigin() const
 {
-    return std::ranges::any_of(m_operations, [](auto& op) { return op->shouldBeRestrictedBySecurityOrigin(); });
+    return WTF::anyOf(m_operations, [](auto& op) { return op->shouldBeRestrictedBySecurityOrigin(); });
 }
 
 bool FilterOperations::canInterpolate(const FilterOperations& to, CompositeOperation compositeOperation) const

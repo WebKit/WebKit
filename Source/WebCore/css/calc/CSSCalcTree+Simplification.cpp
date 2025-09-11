@@ -559,7 +559,7 @@ std::optional<Child> simplify(Sum& root, const SimplificationOptions& options)
     // 8. If root is a Sum node:
 
     // 8.1. For each of root’s children that are Sum nodes, replace them with their children.
-    if (std::ranges::any_of(root.children, [](auto& child) { return WTF::holdsAlternative<IndirectNode<Sum>>(child); })) {
+    if (WTF::anyOf(root.children, [](auto& child) { return WTF::holdsAlternative<IndirectNode<Sum>>(child); })) {
         Vector<Child> newChildren;
         for (auto& child : root.children) {
             if (auto* childSum = get_if<IndirectNode<Sum>>(&child))
@@ -773,7 +773,7 @@ std::optional<Child> simplify(Product& root, const SimplificationOptions& option
                     return makeChildWithValueBasedOn(numeric.value * numericProduct->value, numeric);
                 },
                 [&](IndirectNode<Sum>& sum) -> std::optional<Child> {
-                    if (!std::ranges::all_of(sum->children, isNumeric))
+                    if (!WTF::allOf(sum->children, [](auto& v) { return isNumeric(v); }))
                         return { };
 
                     for (auto& child : sum->children) {
@@ -931,7 +931,7 @@ std::optional<Child> simplify(Negate& root, const SimplificationOptions&)
         [](IndirectNode<Sum>& a) -> std::optional<Child> {
             // Not stated in spec, but needed for tests.
 
-            if (!std::ranges::all_of(a->children, isNumeric))
+            if (!WTF::allOf(a->children, [](auto& v) { return isNumeric(v); }))
                 return { };
 
             for (auto& child : a->children) {
@@ -946,7 +946,7 @@ std::optional<Child> simplify(Negate& root, const SimplificationOptions&)
         [](IndirectNode<Product>& a) -> std::optional<Child> {
             // Not stated in spec, but needed for tests.
 
-            if (!std::ranges::all_of(a->children, isNumeric))
+            if (!WTF::allOf(a->children, [](auto& v) { return isNumeric(v); }))
                 return { };
 
             for (auto& child : a->children) {

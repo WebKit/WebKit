@@ -126,7 +126,7 @@ void FillLayers<Layer>::computeClipMax() const
 template<typename Layer>
 bool FillLayers<Layer>::imagesAreLoaded(const RenderElement* renderer) const
 {
-    return std::ranges::all_of(*this, [&renderer](auto& layer) {
+    return WTF::allOf(*this, [&renderer](auto& layer) {
         RefPtr image = layer.image().tryStyleImage();
         return !image || image->isLoaded(renderer);
     });
@@ -135,7 +135,7 @@ bool FillLayers<Layer>::imagesAreLoaded(const RenderElement* renderer) const
 template<typename Layer>
 bool FillLayers<Layer>::hasImageInAnyLayer() const
 {
-    return std::ranges::any_of(*this, [](auto& layer) {
+    return WTF::anyOf(*this, [](auto& layer) {
         return layer.hasImage();
     });
 }
@@ -143,7 +143,7 @@ bool FillLayers<Layer>::hasImageInAnyLayer() const
 template<typename Layer>
 bool FillLayers<Layer>::hasImageWithAttachment(FillAttachment attachment) const
 {
-    return std::ranges::any_of(*this, [&attachment](auto& layer) {
+    return WTF::anyOf(*this, [&attachment](auto& layer) {
         return layer.hasImage() && layer.attachment() == attachment;
     });
 }
@@ -151,7 +151,7 @@ bool FillLayers<Layer>::hasImageWithAttachment(FillAttachment attachment) const
 template<typename Layer>
 bool FillLayers<Layer>::hasHDRContent() const
 {
-    return std::ranges::any_of(*this, [](auto& layer) {
+    return WTF::anyOf(*this, [](auto& layer) {
         RefPtr image = layer.image().tryStyleImage();
         if (auto* cachedImage = image ? image->cachedImage() : nullptr) {
             if (cachedImage->hasHDRContent())
@@ -164,7 +164,7 @@ bool FillLayers<Layer>::hasHDRContent() const
 template<typename Layer>
 bool FillLayers<Layer>::hasEntirelyFixedBackground() const
 {
-    return std::ranges::all_of(*this, [](auto& layer) {
+    return WTF::allOf(*this, [](auto& layer) {
         return layer.hasImage() && layer.attachment() == FillAttachment::FixedBackground;
     });
 }
@@ -172,7 +172,7 @@ bool FillLayers<Layer>::hasEntirelyFixedBackground() const
 template<typename Layer>
 bool FillLayers<Layer>::hasAnyBackgroundClipText() const
 {
-    return std::ranges::any_of(*this, [](auto& layer) {
+    return WTF::anyOf(*this, [](auto& layer) {
         return layer.clip() == FillBox::Text;
     });
 }

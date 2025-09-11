@@ -32,6 +32,7 @@
 #include "RefLogger.h"
 #include "Test.h"
 #include <string>
+#include <wtf/Algorithm.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/UniqueRef.h>
@@ -1315,22 +1316,22 @@ TEST(WTF_HashMap, KeysValuesRangesAllAnyNoneOf)
     map.add(2, 2);
     map.add(3, 3);
 
-    EXPECT_TRUE(std::ranges::all_of(map.keys(), [] (int el) {
+    EXPECT_TRUE(WTF::allOf(map.keys(), [] (int el) {
         return el < 4;
     }));
-    EXPECT_TRUE(std::ranges::none_of(map.keys(), [] (int el) {
+    EXPECT_TRUE(WTF::noneOf(map.keys(), [] (int el) {
         return el > 4;
     }));
-    EXPECT_TRUE(std::ranges::any_of(map.keys(), [] (int el) {
+    EXPECT_TRUE(WTF::anyOf(map.keys(), [] (int el) {
         return el < 2;
     }));
-    EXPECT_TRUE(std::ranges::all_of(map.values(), [] (int el) {
+    EXPECT_TRUE(WTF::allOf(map.values(), [] (int el) {
         return el < 4;
     }));
-    EXPECT_TRUE(std::ranges::none_of(map.values(), [] (int el) {
+    EXPECT_TRUE(WTF::noneOf(map.values(), [] (int el) {
         return el > 4;
     }));
-    EXPECT_TRUE(std::ranges::any_of(map.values(), [] (int el) {
+    EXPECT_TRUE(WTF::anyOf(map.values(), [] (int el) {
         return el < 2;
     }));
 }

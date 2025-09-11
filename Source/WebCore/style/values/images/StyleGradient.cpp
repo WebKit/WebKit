@@ -1193,7 +1193,7 @@ static bool stopColorIsCacheable(const Markable<Color>& stopColor)
 
 template<typename Gradient> static bool stopsAreCacheable(const Gradient& gradient)
 {
-    return std::ranges::all_of(gradient.parameters.stops, [](auto& stop) {
+    return WTF::allOf(gradient.parameters.stops, [](auto& stop) {
         return stopColorIsCacheable(stop.color);
     });
 }
@@ -1209,7 +1209,7 @@ template<typename T> static bool isOpaque(const T& gradient, const RenderStyle& 
 {
     bool hasColorFilter = style.hasAppleColorFilter();
 
-    return std::ranges::all_of(gradient.parameters.stops, [&](auto& stop) {
+    return WTF::allOf(gradient.parameters.stops, [&](auto& stop) {
         return resolveColorStopColor(stop.color, style, hasColorFilter).isOpaque();
     });
 }

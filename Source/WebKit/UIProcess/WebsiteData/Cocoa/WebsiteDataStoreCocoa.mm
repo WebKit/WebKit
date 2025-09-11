@@ -266,8 +266,8 @@ std::optional<bool> WebsiteDataStore::useNetworkLoader()
 bool WebsiteDataStore::isOptInCookiePartitioningEnabled() const
 {
 #if defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
-    return std::ranges::any_of(m_processes, [](auto& process) {
-        return std::ranges::any_of(process.pages(), [](auto& page) {
+    return WTF::anyOf(m_processes, [](auto& process) {
+        return WTF::anyOf(process.pages(), [](auto& page) {
             return page->preferences().optInPartitionedCookiesEnabled();
         });
     });

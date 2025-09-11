@@ -29,6 +29,7 @@
 #include <WebCore/WritingMode.h>
 #include <array>
 #include <concepts>
+#include <wtf/Algorithm.h>
 #include <wtf/OptionSet.h>
 #include <wtf/text/TextStream.h>
 
@@ -143,17 +144,17 @@ public:
 
     template<typename F> bool anyOf(F&& functor) const
     {
-        return std::ranges::any_of(m_sides, std::forward<F>(functor));
+        return WTF::anyOf(m_sides, std::forward<F>(functor));
     }
 
     template<typename F> bool allOf(F&& functor) const
     {
-        return std::ranges::all_of(m_sides, std::forward<F>(functor));
+        return WTF::allOf(m_sides, std::forward<F>(functor));
     }
 
     template<typename F> bool noneOf(F&& functor) const
     {
-        return std::ranges::none_of(m_sides, std::forward<F>(functor));
+        return WTF::noneOf(m_sides, std::forward<F>(functor));
     }
 
     bool isZero() const

@@ -712,7 +712,7 @@ bool CoordinatedPlatformLayer::needsBackingStore() const
         return false;
 
     // Check if there's a filter that sets the opacity to zero.
-    bool hasOpacityZeroFilter = std::ranges::any_of(m_filters, [](auto& operation) {
+    bool hasOpacityZeroFilter = WTF::anyOf(m_filters, [](auto& operation) {
         return operation->type() == FilterOperation::Type::Opacity && !downcast<BasicComponentTransferFilterOperation>(operation.get()).amount();
     });
 

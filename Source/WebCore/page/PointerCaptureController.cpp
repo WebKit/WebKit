@@ -184,7 +184,7 @@ void PointerCaptureController::reset()
 
 void PointerCaptureController::updateHaveAnyCapturingElement()
 {
-    m_haveAnyCapturingElement = std::ranges::any_of(m_activePointerIdsToCapturingData.values(), [&](auto& capturingData) {
+    m_haveAnyCapturingElement = WTF::anyOf(m_activePointerIdsToCapturingData.values(), [&](auto& capturingData) {
         return capturingData->hasAnyElement();
     });
 }

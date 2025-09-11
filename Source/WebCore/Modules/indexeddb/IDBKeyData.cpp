@@ -404,7 +404,7 @@ bool IDBKeyData::isValidValue(const ValueVariant& variant)
     }, [&](const Date& date) {
         return !std::isnan(date.value);
     }, [&](const Vector<IDBKeyData>& keys) {
-        return std::ranges::all_of(keys, IDBKeyData::isValidValue, &IDBKeyData::value);
+        return WTF::allOf(keys, [](auto& value) { return IDBKeyData::isValidValue(value); }, &IDBKeyData::value);
     }, [&](const auto&) {
         return true;
     });

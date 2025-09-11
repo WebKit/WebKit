@@ -769,7 +769,7 @@ public:
 
         // FIXME: Something like LLVM ADT's zip_shortest (https://llvm.org/doxygen/structllvm_1_1detail_1_1zip__shortest.html) would allow this to be done without indexing:
         //
-        // return std::ranges::all_of(
+        // return WTF::allOf(
         //     zip_shortest(makeReversedRange(fromShadowList), makeReversedRange(toShadowList)),
         //     [](const auto& pair) {
         //         return shadowStyle(std::get<0>(pair)) == shadowStyle(std::get<1>(pair));

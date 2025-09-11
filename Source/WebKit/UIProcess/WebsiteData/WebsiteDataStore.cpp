@@ -1093,7 +1093,7 @@ void WebsiteDataStore::resetServiceWorkerTimeoutForTesting()
 
 bool WebsiteDataStore::hasServiceWorkerBackgroundActivityForTesting() const
 {
-    return std::ranges::any_of(WebProcessPool::allProcessPools(), [](auto& pool) { return pool->hasServiceWorkerBackgroundActivityForTesting(); });
+    return WTF::anyOf(WebProcessPool::allProcessPools(), [](auto& pool) { return pool->hasServiceWorkerBackgroundActivityForTesting(); });
 }
 
 void WebsiteDataStore::runningOrTerminatingServiceWorkerCountForTesting(CompletionHandler<void(unsigned)>&& completionHandler)
@@ -2001,8 +2001,8 @@ void WebsiteDataStore::setPrivateTokenIPCForTesting(bool enabled)
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES) && !PLATFORM(COCOA)
 bool WebsiteDataStore::isOptInCookiePartitioningEnabled() const
 {
-    return std::ranges::any_of(m_processes, [](auto& process) {
-        return std::ranges::any_of(process.pages(), [](auto& page) {
+    return WTF::anyOf(m_processes, [](auto& process) {
+        return WTF::anyOf(process.pages(), [](auto& page) {
             return page->preferences().optInPartitionedCookiesEnabled();
         });
     });
@@ -2708,7 +2708,7 @@ void WebsiteDataStore::resumeDownload(const DownloadProxy& downloadProxy, const 
 bool WebsiteDataStore::hasActivePages()
 {
     // FIXME: Drop SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE once <rdar://150855062> is fixed.
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return std::ranges::any_of(WebProcessPool::allProcessPools(), [&](auto& pool) {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return WTF::anyOf(WebProcessPool::allProcessPools(), [&](auto& pool) {
         return pool->hasPagesUsingWebsiteDataStore(*this);
     });
 }

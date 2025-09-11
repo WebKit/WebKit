@@ -512,7 +512,7 @@ void WebSWServerConnection::registerServiceWorkerClientInternal(WebCore::ClientO
 
     MESSAGE_CHECK(!contextOrigin.isNull());
 
-    bool isNewOrigin = std::ranges::all_of(m_clientOrigins.values(), [&contextOrigin](auto& origin) {
+    bool isNewOrigin = WTF::allOf(m_clientOrigins.values(), [&contextOrigin](auto& origin) {
         return contextOrigin != origin.clientOrigin;
     });
     RefPtr server = this->server();
@@ -558,7 +558,7 @@ void WebSWServerConnection::unregisterServiceWorkerClient(const ScriptExecutionC
     if (!m_isThrottleable)
         updateThrottleState();
 
-    bool isDeletedOrigin = std::ranges::all_of(m_clientOrigins.values(), [&clientOrigin](auto& origin) {
+    bool isDeletedOrigin = WTF::allOf(m_clientOrigins.values(), [&clientOrigin](auto& origin) {
         return clientOrigin.clientOrigin != origin.clientOrigin;
     });
 
@@ -575,7 +575,7 @@ void WebSWServerConnection::unregisterServiceWorkerClient(const ScriptExecutionC
 
 bool WebSWServerConnection::hasMatchingClient(const RegistrableDomain& domain) const
 {
-    return std::ranges::any_of(m_clientOrigins.values(), [&domain](auto& origin) {
+    return WTF::anyOf(m_clientOrigins.values(), [&domain](auto& origin) {
         return domain.matches(origin.clientOrigin);
     });
 }
@@ -586,7 +586,7 @@ bool WebSWServerConnection::computeThrottleState(const RegistrableDomain& domain
     if (!server)
         return true;
 
-    return std::ranges::all_of(server->connections().values(), [&domain](auto& serverConnection) {
+    return WTF::allOf(server->connections().values(), [&domain](auto& serverConnection) {
         Ref connection = downcast<WebSWServerConnection>(serverConnection.get());
         return connection->isThrottleable() || !connection->hasMatchingClient(domain);
     });

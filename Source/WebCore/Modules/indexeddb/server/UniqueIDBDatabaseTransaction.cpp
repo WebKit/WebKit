@@ -129,7 +129,7 @@ bool UniqueIDBDatabaseTransaction::shouldAbortDueToUnhandledRequestError(uint64_
     }
 
     auto pendingRequestResults = m_requestResults.subspan(handledRequestResultsCount);
-    return std::ranges::any_of(pendingRequestResults, [&](auto& error) {
+    return WTF::anyOf(pendingRequestResults, [&](auto& error) {
         return !error.isNull();
     });
 }

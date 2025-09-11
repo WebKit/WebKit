@@ -3568,6 +3568,10 @@ def check_safer_cpp(clean_lines, line_number, error):
     if uses_atoi:
         error(line_number, 'safercpp/atoi', 4, "Use parseInteger<int>() instead of atoi().")
 
+    uses_ranges_algorithm = search(r'std::ranges::*_of\(', line)
+    if uses_ranges_algorithm:
+        error(line_number, 'safercpp/ranges', 4, "Use WTF::allOf() / WTF::anyOf() / WTF::noneOf() instead of std::ranges::all_of() / std::ranges::any_of() / std::ranges::none_of().")
+
     uses_memset = search(r'memset\(', line)
     if uses_memset:
         error(line_number, 'safercpp/memset', 4, "Use memsetSpan() / zeroSpan() instead of memset().")
@@ -5014,6 +5018,7 @@ class CppChecker(object):
         'safercpp/memmove',
         'safercpp/memset',
         'safercpp/memset_s',
+        'safercpp/ranges',
         'safercpp/weak_ref_exception',
         'safercpp/strcmp',
         'safercpp/strncmp',

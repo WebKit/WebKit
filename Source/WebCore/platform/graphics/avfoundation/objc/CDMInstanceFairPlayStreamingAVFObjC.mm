@@ -626,7 +626,7 @@ CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC:
             continue;
 
         auto sessionKeys = sessionInterface->keyIDs();
-        if (std::ranges::any_of(sessionKeys, [&](auto& sessionKey) {
+        if (WTF::anyOf(sessionKeys, [&](auto& sessionKey) {
             return keyIDs.containsIf([&](auto& keyID) {
                 return keyID.get() == sessionKey.get();
             });

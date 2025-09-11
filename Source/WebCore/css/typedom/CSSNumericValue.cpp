@@ -212,7 +212,7 @@ static ExceptionOr<Ref<CSSNumericValue>> invert(Ref<CSSNumericValue>&& value)
 template<typename T>
 static RefPtr<CSSNumericValue> operationOnValuesOfSameUnit(T&& operation, const Vector<Ref<CSSNumericValue>>& values)
 {
-    bool allValuesHaveSameUnit = values.size() && std::ranges::all_of(values, [&](auto& value) {
+    bool allValuesHaveSameUnit = values.size() && WTF::allOf(values, [&](auto& value) {
         auto* unitValue = dynamicDowncast<CSSUnitValue>(value.get());
         return unitValue ? unitValue->unitEnum() == downcast<CSSUnitValue>(values[0].get()).unitEnum() : false;
     });
@@ -266,7 +266,7 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::multiplyInternal(Vector<Ref<C
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-mul
     auto values = prependItemsOfTypeOrThis<CSSMathProduct>(WTFMove(numericValues));
 
-    bool allUnitValues = std::ranges::all_of(values, [](auto& value) {
+    bool allUnitValues = WTF::allOf(values, [](auto& value) {
         return is<CSSUnitValue>(value.get());
     });
     if (allUnitValues) {
@@ -348,7 +348,7 @@ bool CSSNumericValue::equals(FixedVector<CSSNumberish>&& values)
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-equals
     auto numericValues = WTF::map(WTFMove(values), rectifyNumberish);
     // FIXME: Drop SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE once <rdar://150855062> is fixed.
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return std::ranges::all_of(numericValues, [&](auto& value) {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return WTF::allOf(numericValues, [&](auto& value) {
         return this->equals(value.get());
     });
 }

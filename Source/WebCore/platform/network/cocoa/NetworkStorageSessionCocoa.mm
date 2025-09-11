@@ -702,7 +702,7 @@ void NetworkStorageSession::deleteCookies(const ClientOrigin& origin, Completion
     auto domain = origin.clientOrigin.host();
 
     deleteCookiesMatching([&domain, &cachePartitions](auto *cookie) {
-        bool partitionMatched = std::ranges::any_of(cachePartitions, [&cookie](auto& cachePartition) {
+        bool partitionMatched = WTF::anyOf(cachePartitions, [&cookie](auto& cachePartition) {
             return equalIgnoringNullity(cachePartition, String(cookie._storagePartition));
         });
         return partitionMatched && domain == String(cookie.domain);

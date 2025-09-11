@@ -199,7 +199,7 @@ static bool isAudioTransceiver(const RTCPeerConnection::AddTransceiverTrackOrKin
 static std::optional<Exception> validateSendEncodings(Vector<RTCRtpEncodingParameters>& encodings, bool isAudio)
 {
     size_t encodingIndex = 0;
-    bool hasAnyScaleResolutionDownBy = !isAudio && std::ranges::any_of(encodings, [](auto& encoding) { return !!encoding.scaleResolutionDownBy; });
+    bool hasAnyScaleResolutionDownBy = !isAudio && WTF::anyOf(encodings, [](auto& encoding) { return !!encoding.scaleResolutionDownBy; });
     for (auto& encoding: encodings) {
         // FIXME: Validate rid and codec
         if (isAudio) {
@@ -847,7 +847,7 @@ RTCPeerConnectionState RTCPeerConnection::computeConnectionState()
     iceTransports.removeAllMatching([&](auto& iceTransport) {
         if (m_sctpTransport && &m_sctpTransport->transport().iceTransport() == iceTransport.ptr())
             return false;
-        return std::ranges::all_of(m_transceiverSet.list(), [&iceTransport](auto& transceiver) {
+        return WTF::allOf(m_transceiverSet.list(), [&iceTransport](auto& transceiver) {
             return !isIceTransportUsedByTransceiver(iceTransport.get(), *transceiver);
         });
     });
@@ -856,24 +856,24 @@ RTCPeerConnectionState RTCPeerConnection::computeConnectionState()
     dtlsTransports.removeAllMatching([&](auto& dtlsTransport) {
         if (m_sctpTransport && &m_sctpTransport->transport() == dtlsTransport.ptr())
             return false;
-        return std::ranges::all_of(m_transceiverSet.list(), [&dtlsTransport](auto& transceiver) {
+        return WTF::allOf(m_transceiverSet.list(), [&dtlsTransport](auto& transceiver) {
             return transceiver->sender().transport() != dtlsTransport.ptr();
         });
     });
 
-    if (std::ranges::any_of(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Failed; }) || std::ranges::any_of(dtlsTransports, [](auto& transport) { return transport->state() == RTCDtlsTransportState::Failed; }))
+    if (WTF::anyOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Failed; }) || WTF::anyOf(dtlsTransports, [](auto& transport) { return transport->state() == RTCDtlsTransportState::Failed; }))
         return RTCPeerConnectionState::Failed;
 
-    if (std::ranges::any_of(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Disconnected; }))
+    if (WTF::anyOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Disconnected; }))
         return RTCPeerConnectionState::Disconnected;
 
-    if (std::ranges::all_of(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::New || transport->state() == RTCIceTransportState::Closed; }) && std::ranges::all_of(dtlsTransports, [](auto& transport) { return transport->state() == RTCDtlsTransportState::New || transport->state() == RTCDtlsTransportState::Closed; }))
+    if (WTF::allOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::New || transport->state() == RTCIceTransportState::Closed; }) && WTF::allOf(dtlsTransports, [](auto& transport) { return transport->state() == RTCDtlsTransportState::New || transport->state() == RTCDtlsTransportState::Closed; }))
         return RTCPeerConnectionState::New;
 
-    if (std::ranges::any_of(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::New || transport->state() == RTCIceTransportState::Checking; }) || std::ranges::any_of(dtlsTransports, [](auto& transport) { return transport->state() == RTCDtlsTransportState::New || transport->state() == RTCDtlsTransportState::Connecting; }))
+    if (WTF::anyOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::New || transport->state() == RTCIceTransportState::Checking; }) || WTF::anyOf(dtlsTransports, [](auto& transport) { return transport->state() == RTCDtlsTransportState::New || transport->state() == RTCDtlsTransportState::Connecting; }))
         return RTCPeerConnectionState::Connecting;
 
-    ASSERT(std::ranges::all_of(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Connected || transport->state() == RTCIceTransportState::Completed || transport->state() == RTCIceTransportState::Closed; }) && std::ranges::all_of(dtlsTransports, [](auto& transport) { return transport->state() == RTCDtlsTransportState::Connected || transport->state() == RTCDtlsTransportState::Closed; }));
+    ASSERT(WTF::allOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Connected || transport->state() == RTCIceTransportState::Completed || transport->state() == RTCIceTransportState::Closed; }) && WTF::allOf(dtlsTransports, [](auto& transport) { return transport->state() == RTCDtlsTransportState::Connected || transport->state() == RTCDtlsTransportState::Closed; }));
     return RTCPeerConnectionState::Connected;
 }
 
@@ -901,22 +901,22 @@ RTCIceConnectionState RTCPeerConnection::computeIceConnectionStateFromIceTranspo
     iceTransports.removeAllMatching([&](auto& iceTransport) {
         if (m_sctpTransport && &m_sctpTransport->transport().iceTransport() == iceTransport.ptr())
             return false;
-        return std::ranges::all_of(m_transceiverSet.list(), [&iceTransport](auto& transceiver) {
+        return WTF::allOf(m_transceiverSet.list(), [&iceTransport](auto& transceiver) {
             return !isIceTransportUsedByTransceiver(iceTransport.get(), *transceiver);
         });
     });
 
-    if (std::ranges::any_of(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Failed; }))
+    if (WTF::anyOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Failed; }))
         return RTCIceConnectionState::Failed;
-    if (std::ranges::any_of(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Disconnected; }))
+    if (WTF::anyOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Disconnected; }))
         return RTCIceConnectionState::Disconnected;
-    if (std::ranges::all_of(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::New || transport->state() == RTCIceTransportState::Closed; }))
+    if (WTF::allOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::New || transport->state() == RTCIceTransportState::Closed; }))
         return RTCIceConnectionState::New;
-    if (std::ranges::any_of(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::New || transport->state() == RTCIceTransportState::Checking; }))
+    if (WTF::anyOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::New || transport->state() == RTCIceTransportState::Checking; }))
         return RTCIceConnectionState::Checking;
-    if (std::ranges::all_of(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Completed || transport->state() == RTCIceTransportState::Closed; }))
+    if (WTF::allOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Completed || transport->state() == RTCIceTransportState::Closed; }))
         return RTCIceConnectionState::Completed;
-    ASSERT(std::ranges::all_of(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Connected || transport->state() == RTCIceTransportState::Completed || transport->state() == RTCIceTransportState::Closed; }));
+    ASSERT(WTF::allOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Connected || transport->state() == RTCIceTransportState::Completed || transport->state() == RTCIceTransportState::Closed; }));
     return RTCIceConnectionState::Connected;
 }
 

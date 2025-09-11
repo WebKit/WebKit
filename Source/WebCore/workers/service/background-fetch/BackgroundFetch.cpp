@@ -211,7 +211,7 @@ void BackgroundFetch::handleStoreResult(BackgroundFetchStore::StoreResult result
 
 void BackgroundFetch::recordIsCompleted()
 {
-    if (std::ranges::any_of(m_records, [](auto& record) { return !record->isCompleted(); }))
+    if (WTF::anyOf(m_records, [](auto& record) { return !record->isCompleted(); }))
         return;
     updateBackgroundFetchStatus(BackgroundFetchResult::Success, BackgroundFetchFailureReason::EmptyString);
 }

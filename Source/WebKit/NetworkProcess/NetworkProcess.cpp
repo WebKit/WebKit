@@ -1171,7 +1171,7 @@ void NetworkProcess::hasLocalStorage(PAL::SessionID sessionID, const Registrable
 
     auto types = OptionSet<WebsiteDataType> { WebsiteDataType::LocalStorage };
     session->storageManager().fetchData(types, NetworkStorageManager::ShouldComputeSize::No, [domain, completionHandler = WTFMove(completionHandler)](auto entries) mutable {
-        completionHandler(std::ranges::any_of(entries, [&domain](auto& entry) {
+        completionHandler(WTF::anyOf(entries, [&domain](auto& entry) {
             return domain.matches(entry.origin);
         }));
     });
@@ -3091,7 +3091,7 @@ void NetworkProcess::clearBundleIdentifier(CompletionHandler<void()>&& completio
 
 bool NetworkProcess::shouldDisableCORSForRequestTo(PageIdentifier pageIdentifier, const URL& url) const
 {
-    return std::ranges::any_of(m_extensionCORSDisablingPatterns.get(pageIdentifier), [&](auto& pattern) {
+    return WTF::anyOf(m_extensionCORSDisablingPatterns.get(pageIdentifier), [&](auto& pattern) {
         return pattern.matches(url);
     });
 }

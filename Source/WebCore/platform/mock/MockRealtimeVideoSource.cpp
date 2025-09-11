@@ -311,7 +311,7 @@ auto MockRealtimeVideoSource::getPhotoSettings() -> Ref<PhotoSettingsNativePromi
 
 static bool isZoomSupported(const Vector<VideoPreset>& presets)
 {
-    return std::ranges::any_of(presets, [](auto& preset) {
+    return WTF::anyOf(presets, [](auto& preset) {
         return preset.isZoomSupported();
     });
 }

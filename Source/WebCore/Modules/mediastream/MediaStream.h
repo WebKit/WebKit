@@ -91,7 +91,7 @@ public:
     bool active() const { return m_isActive; }
     bool muted() const { return m_private->muted(); }
 
-    template<typename Function> bool hasMatchingTrack(Function&& function) const { return std::ranges::any_of(m_trackMap.values(), std::forward<Function>(function)); }
+    template<typename Function> bool hasMatchingTrack(NOESCAPE const Function& function) const { return WTF::anyOf(m_trackMap.values(), function); }
 
     MediaStreamPrivate& privateStream() { return m_private.get(); }
     Ref<MediaStreamPrivate> protectedPrivateStream();

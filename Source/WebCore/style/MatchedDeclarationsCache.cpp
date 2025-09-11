@@ -125,7 +125,7 @@ unsigned MatchedDeclarationsCache::computeHash(const MatchResult& matchResult, c
         return 0;
 
     if (matchResult.userAgentDeclarations.isEmpty() && matchResult.userDeclarations.isEmpty()) {
-        bool allNonCacheable = std::ranges::all_of(matchResult.authorDeclarations, [](auto& matchedProperties) {
+        bool allNonCacheable = WTF::allOf(matchResult.authorDeclarations, [](auto& matchedProperties) {
             return matchedProperties.isCacheable != IsCacheable::Yes;
         });
         // No point of caching if we are not applying any properties.

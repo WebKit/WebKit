@@ -144,7 +144,7 @@ bool MediaSessionManagerInterface::activeAudioSessionRequired() const
     if (anyOfSessions([] (auto& session) { return session.activeAudioSessionRequired(); }))
         return true;
 
-    return std::ranges::any_of(m_audioCaptureSources, [](auto& source) {
+    return WTF::anyOf(m_audioCaptureSources, [](auto& source) {
         return source.isCapturingAudio();
     });
 #else

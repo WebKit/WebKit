@@ -847,9 +847,9 @@ bool UserMediaPermissionRequestManagerProxy::shouldChangeDeniedToPromptForCamera
     if (!protocolHostAndPortAreEqual(URL(page->protectedPageLoadState()->activeURL()), origin.topOrigin.toURL()))
         return true;
 
-    return !std::ranges::any_of(m_deniedRequests, [](auto& request) { return request.isVideoDenied; })
-        && !std::ranges::any_of(m_pregrantedRequests, [](auto& request) { return request->requiresVideoCapture(); })
-        && !std::ranges::any_of(m_grantedRequests, [](auto& request) { return request->requiresVideoCapture(); });
+    return !WTF::anyOf(m_deniedRequests, [](auto& request) { return request.isVideoDenied; })
+        && !WTF::anyOf(m_pregrantedRequests, [](auto& request) { return request->requiresVideoCapture(); })
+        && !WTF::anyOf(m_grantedRequests, [](auto& request) { return request->requiresVideoCapture(); });
 }
 
 bool UserMediaPermissionRequestManagerProxy::shouldChangeDeniedToPromptForMicrophone(const ClientOrigin& origin) const
@@ -861,9 +861,9 @@ bool UserMediaPermissionRequestManagerProxy::shouldChangeDeniedToPromptForMicrop
     if (!protocolHostAndPortAreEqual(URL(page->protectedPageLoadState()->activeURL()), origin.topOrigin.toURL()))
         return true;
 
-    return !std::ranges::any_of(m_deniedRequests, [](auto& request) { return request.isAudioDenied; })
-        && !std::ranges::any_of(m_pregrantedRequests, [](auto& request) { return request->requiresAudioCapture(); })
-        && !std::ranges::any_of(m_grantedRequests, [](auto& request) { return request->requiresAudioCapture(); });
+    return !WTF::anyOf(m_deniedRequests, [](auto& request) { return request.isAudioDenied; })
+        && !WTF::anyOf(m_pregrantedRequests, [](auto& request) { return request->requiresAudioCapture(); })
+        && !WTF::anyOf(m_grantedRequests, [](auto& request) { return request->requiresAudioCapture(); });
 }
 
 bool UserMediaPermissionRequestManagerProxy::shouldChangePromptToGrantForCamera(const ClientOrigin& origin) const

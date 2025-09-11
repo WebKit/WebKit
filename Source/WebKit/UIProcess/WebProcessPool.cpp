@@ -2032,7 +2032,7 @@ void WebProcessPool::updateProcessAssertions()
 bool WebProcessPool::isServiceWorkerPageID(WebPageProxyIdentifier pageID) const
 {
     // FIXME: This is inefficient.
-    return std::ranges::any_of(remoteWorkerProcesses(), [pageID](auto& process) {
+    return WTF::anyOf(remoteWorkerProcesses(), [pageID](auto& process) {
         return process.hasServiceWorkerPageProxy(pageID);
     });
     return false;
@@ -2479,7 +2479,7 @@ void WebProcessPool::setUseSeparateServiceWorkerProcess(bool useSeparateServiceW
 
 bool WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion()
 {
-    return std::ranges::any_of(WebProcessPool::allProcessPools(), [](auto& processPool) {
+    return WTF::anyOf(WebProcessPool::allProcessPools(), [](auto& processPool) {
         return processPool->shouldTakeUIBackgroundAssertion();
     });
 }
@@ -2536,14 +2536,14 @@ void WebProcessPool::isJITDisabledInAllRemoteWorkerProcesses(CompletionHandler<v
 
 bool WebProcessPool::hasServiceWorkerForegroundActivityForTesting() const
 {
-    return std::ranges::any_of(remoteWorkerProcesses(), [](auto& process) {
+    return WTF::anyOf(remoteWorkerProcesses(), [](auto& process) {
         return process.hasServiceWorkerForegroundActivityForTesting();
     });
 }
 
 bool WebProcessPool::hasServiceWorkerBackgroundActivityForTesting() const
 {
-    return std::ranges::any_of(remoteWorkerProcesses(), [](auto& process) {
+    return WTF::anyOf(remoteWorkerProcesses(), [](auto& process) {
         return process.hasServiceWorkerBackgroundActivityForTesting();
     });
 }

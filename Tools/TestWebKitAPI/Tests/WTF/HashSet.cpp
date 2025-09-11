@@ -31,6 +31,7 @@
 #include "RefLogger.h"
 #include "Test.h"
 #include <functional>
+#include <wtf/Algorithm.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/MakeString.h>
@@ -946,13 +947,13 @@ TEST(WTF_HashSet, FormSymmetricDifference)
 TEST(WTF_HashSet, RangesAllAnyNoneOf)
 {
     HashSet<int> set1 { 1, 2, 3 };
-    EXPECT_TRUE(std::ranges::all_of(set1, [] (int el) {
+    EXPECT_TRUE(WTF::allOf(set1, [] (int el) {
         return el < 4;
     }));
-    EXPECT_TRUE(std::ranges::none_of(set1, [] (int el) {
+    EXPECT_TRUE(WTF::noneOf(set1, [] (int el) {
         return el > 4;
     }));
-    EXPECT_TRUE(std::ranges::any_of(set1, [] (int el) {
+    EXPECT_TRUE(WTF::anyOf(set1, [] (int el) {
         return el < 2;
     }));
 }

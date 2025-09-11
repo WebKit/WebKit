@@ -28,6 +28,7 @@
 #include <WebCore/BoxSides.h>
 #include <array>
 #include <type_traits>
+#include <wtf/Algorithm.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -81,17 +82,17 @@ public:
 
     template<typename F> bool anyOf(F&& functor) const
     {
-        return std::ranges::any_of(m_corners, std::forward<F>(functor));
+        return WTF::anyOf(m_corners, std::forward<F>(functor));
     }
 
     template<typename F> bool allOf(F&& functor) const
     {
-        return std::ranges::all_of(m_corners, std::forward<F>(functor));
+        return WTF::allOf(m_corners, std::forward<F>(functor));
     }
 
     template<typename F> bool noneOf(F&& functor) const
     {
-        return std::ranges::none_of(m_corners, std::forward<F>(functor));
+        return WTF::noneOf(m_corners, std::forward<F>(functor));
     }
 
     bool isZero() const

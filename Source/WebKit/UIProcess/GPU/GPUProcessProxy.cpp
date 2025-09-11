@@ -470,7 +470,7 @@ void GPUProcessProxy::setShouldListenToVoiceActivity(const WebPageProxy& proxy, 
             return;
     }
 
-    bool shouldListenToVoiceActivity = std::ranges::any_of(m_pagesListeningToVoiceActivity, [](auto& page) {
+    bool shouldListenToVoiceActivity = WTF::anyOf(m_pagesListeningToVoiceActivity, [](auto& page) {
         return page.shouldListenToVoiceActivity();
     });
     if (m_shouldListenToVoiceActivity == shouldListenToVoiceActivity)

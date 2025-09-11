@@ -135,7 +135,7 @@ static void updateApplicationBackgroundState()
 {
     static bool s_isApplicationInBackground = false;
     auto isAnyStateTrackerInForeground = []() -> bool {
-        return std::ranges::any_of(allApplicationStateTrackers(), [](auto& tracker) {
+        return WTF::anyOf(allApplicationStateTrackers(), [](auto& tracker) {
             return !tracker.isInBackground();
         });
     };

@@ -78,7 +78,7 @@ template<TupleLike CSSType> struct StyleImageIsUncacheable<CSSType> {
 };
 
 template<RangeLike CSSType> struct StyleImageIsUncacheable<CSSType> {
-    bool operator()(const auto& value) { return std::ranges::any_of(value, [](auto& element) { return styleImageIsUncacheable(element); }); }
+    bool operator()(const auto& value) { return WTF::anyOf(value, [](auto& element) { return styleImageIsUncacheable(element); }); }
 };
 
 template<VariantLike CSSType> struct StyleImageIsUncacheable<CSSType> {

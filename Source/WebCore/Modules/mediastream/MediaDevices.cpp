@@ -343,7 +343,7 @@ static inline bool exposeSpeakersWithoutMicrophoneAccess(const Document& documen
 
 static inline bool haveMicrophoneDevice(const Vector<CaptureDeviceWithCapabilities>& devices, const String& deviceId)
 {
-    return std::ranges::any_of(devices, [&deviceId](auto& deviceWithCapabilities) {
+    return WTF::anyOf(devices, [&deviceId](auto& deviceWithCapabilities) {
         auto& device = deviceWithCapabilities.device;
         return device.persistentId() == deviceId && device.type() == CaptureDevice::DeviceType::Microphone;
     });

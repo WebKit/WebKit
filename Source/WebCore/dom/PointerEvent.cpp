@@ -243,7 +243,7 @@ Vector<Ref<PointerEvent>> PointerEvent::getCoalescedEvents() const
 
         ASSERT(timestampsAreMonotonicallyIncreasing, "Coalesced event timestamps are not monotonically increasing.");
 
-        auto canBubbleOrIsCancelable = std::ranges::any_of(m_coalescedEvents, [](const auto& event) {
+        auto canBubbleOrIsCancelable = WTF::anyOf(m_coalescedEvents, [](const auto& event) {
             return event->bubbles() || event->cancelable();
         });
 
@@ -271,7 +271,7 @@ Vector<Ref<PointerEvent>> PointerEvent::getPredictedEvents() const
         if (!m_predictedEvents.isEmpty())
             ASSERT(m_predictedEvents.first()->timeStamp() >= this->timeStamp(), "Predicted events must have a timestamp greater than or equal to the dispatched event.");
 
-        auto canBubbleOrIsCancelable = std::ranges::any_of(m_predictedEvents, [](const auto& event) {
+        auto canBubbleOrIsCancelable = WTF::anyOf(m_predictedEvents, [](const auto& event) {
             return event->bubbles() || event->cancelable();
         });
 

@@ -824,7 +824,7 @@ void ServiceWorkerContainer::cookieChangeSubscriptions(ServiceWorkerRegistration
 
 void ServiceWorkerContainer::whenRegisterJobsAreFinished(CompletionHandler<void()>&& completionHandler)
 {
-    bool isRegistering = std::ranges::any_of(m_jobMap.values(), [](auto& ongoing) {
+    bool isRegistering = WTF::anyOf(m_jobMap.values(), [](auto& ongoing) {
         return ongoing.job->isRegistering();
     });
 

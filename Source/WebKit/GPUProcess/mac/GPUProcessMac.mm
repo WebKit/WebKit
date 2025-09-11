@@ -101,7 +101,7 @@ void GPUProcess::setScreenProperties(const WebCore::ScreenProperties& screenProp
         return;
     }
 
-    bool allScreensAreHDR = std::ranges::all_of(screenProperties.screenDataMap.values(), [](auto& screenData) {
+    bool allScreensAreHDR = WTF::allOf(screenProperties.screenDataMap.values(), [](auto& screenData) {
         return screenData.screenSupportsHighDynamicRange;
     });
     setShouldOverrideScreenSupportsHighDynamicRange(true, allScreensAreHDR);

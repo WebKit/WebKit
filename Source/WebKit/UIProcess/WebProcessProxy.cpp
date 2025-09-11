@@ -797,7 +797,7 @@ bool WebProcessProxy::shouldDropNearSuspendedAssertionAfterDelay() const
         // The setting come from pages but this process has no page, we thus use the default setting value.
         return defaultShouldDropNearSuspendedAssertionAfterDelay();
     }
-    return std::ranges::any_of(m_pageMap.values(), [](auto& page) { return page->preferences().shouldDropNearSuspendedAssertionAfterDelay(); });
+    return WTF::anyOf(m_pageMap.values(), [](auto& page) { return page->preferences().shouldDropNearSuspendedAssertionAfterDelay(); });
 }
 
 void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataStore beginsUsingDataStore)
@@ -1937,14 +1937,14 @@ String WebProcessProxy::environmentIdentifier() const
 
 void WebProcessProxy::updateAudibleMediaAssertions()
 {
-    bool hasAudibleMainPage = std::ranges::any_of(pages(), [](auto& page) {
+    bool hasAudibleMainPage = WTF::anyOf(pages(), [](auto& page) {
 #if ENABLE(EXTENSION_CAPABILITIES)
         if (page->preferences().mediaCapabilityGrantsEnabled())
             return false;
 #endif
         return page->isPlayingAudio();
     });
-    bool hasAudibleRemotePage = std::ranges::any_of(remotePages(), [](auto& remotePage) {
+    bool hasAudibleRemotePage = WTF::anyOf(remotePages(), [](auto& remotePage) {
 #if ENABLE(EXTENSION_CAPABILITIES)
         if (RefPtr page = remotePage ? remotePage->protectedPage() : nullptr) {
             if (page->preferences().mediaCapabilityGrantsEnabled())
@@ -1972,10 +1972,10 @@ void WebProcessProxy::updateAudibleMediaAssertions()
 
 void WebProcessProxy::updateMediaStreamingActivity()
 {
-    bool hasMediaStreamingMainPage = std::ranges::any_of(pages(), [](auto& page) {
+    bool hasMediaStreamingMainPage = WTF::anyOf(pages(), [](auto& page) {
         return page->hasMediaStreaming();
     });
-    bool hasMediaStreamingRemotePage = std::ranges::any_of(remotePages(), [](auto& remotePage) {
+    bool hasMediaStreamingRemotePage = WTF::anyOf(remotePages(), [](auto& remotePage) {
         return remotePage ? remotePage->mediaState().contains(MediaProducerMediaState::HasStreamingActivity) : false;
     });
     bool hasMediaStreamingWebPage = hasMediaStreamingMainPage || hasMediaStreamingRemotePage;
@@ -2613,7 +2613,7 @@ void WebProcessProxy::updateRemoteWorkerProcessAssertion(RemoteWorkerType worker
     WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateRemoteWorkerProcessAssertion: workerType=%" PUBLIC_LOG_STRING, workerType == RemoteWorkerType::SharedWorker ? "shared" : "service");
 
     // FIXME: Drop SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE once <rdar://150855062> is fixed.
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE bool shouldTakeForegroundActivity = std::ranges::any_of(workerInformation->clientProcesses, [&](auto& process) {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE bool shouldTakeForegroundActivity = WTF::anyOf(workerInformation->clientProcesses, [&](auto& process) {
         return &process != this && !!process.m_foregroundToken;
     });
     if (shouldTakeForegroundActivity) {
@@ -2623,7 +2623,7 @@ void WebProcessProxy::updateRemoteWorkerProcessAssertion(RemoteWorkerType worker
     }
 
     // FIXME: Drop SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE once <rdar://150855062> is fixed.
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE bool shouldTakeBackgroundActivity = std::ranges::any_of(workerInformation->clientProcesses, [&](auto& process) {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE bool shouldTakeBackgroundActivity = WTF::anyOf(workerInformation->clientProcesses, [&](auto& process) {
         return &process != this && !!process.m_backgroundToken;
     });
     if (shouldTakeBackgroundActivity) {
@@ -2988,7 +2988,7 @@ void WebProcessProxy::updateRuntimeStatistics()
 
 bool WebProcessProxy::isAlwaysOnLoggingAllowed() const
 {
-    return std::ranges::all_of(pages(), [](auto& page) {
+    return WTF::allOf(pages(), [](auto& page) {
         return page->isAlwaysOnLoggingAllowed();
     });
 }

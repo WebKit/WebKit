@@ -95,7 +95,7 @@ void UserMediaController::checkDocumentForVoiceActivity(const Document* document
             return;
     }
 
-    bool shouldListenToVoiceActivity = std::ranges::any_of(m_voiceActivityDocuments, [](auto& document) {
+    bool shouldListenToVoiceActivity = WTF::anyOf(m_voiceActivityDocuments, [](auto& document) {
         return document.mediaState().containsAny(MediaProducer::IsCapturingAudioMask);
     });
     if (m_shouldListenToVoiceActivity == shouldListenToVoiceActivity)

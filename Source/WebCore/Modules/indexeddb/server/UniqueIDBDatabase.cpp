@@ -1405,7 +1405,7 @@ RefPtr<UniqueIDBDatabaseTransaction> UniqueIDBDatabase::takeNextRunnableTransact
     if (m_pendingTransactions.isEmpty())
         return nullptr;
 
-    bool hasReadWriteTransactionInProgress = std::ranges::any_of(m_inProgressTransactions, [&](auto& entry) {
+    bool hasReadWriteTransactionInProgress = WTF::anyOf(m_inProgressTransactions, [&](auto& entry) {
         return !entry.value->isReadOnly();
     });
     Deque<RefPtr<UniqueIDBDatabaseTransaction>> deferredTransactions;

@@ -163,7 +163,7 @@ ExceptionOr<void> RTCRtpSFrameTransformer::setEncryptionKey(const Vector<uint8_t
 bool RTCRtpSFrameTransformer::hasKey(uint64_t keyId) const
 {
     Locker locker { m_keyLock };
-    return std::ranges::any_of(m_keys, [keyId](auto& key) { return keyId == key.keyId; });
+    return WTF::anyOf(m_keys, [keyId](auto& key) { return keyId == key.keyId; });
 }
 
 ExceptionOr<void> RTCRtpSFrameTransformer::updateEncryptionKey(const Vector<uint8_t>& rawKey, std::optional<uint64_t> keyId, ShouldUpdateKeys shouldUpdateKeys)

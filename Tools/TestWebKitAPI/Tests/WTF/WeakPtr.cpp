@@ -1698,7 +1698,7 @@ TEST(WTF_WeakPtr, WeakHashMapIterators)
             ASSERT(pairs.size(), 40U);
             for (unsigned i = 0; i < 50; ++i) {
                 if (!(i % 5))
-                    EXPECT_TRUE(std::ranges::all_of(pairs, [&](auto& item) { return item.first != objects[i].get(); }));
+                    EXPECT_TRUE(WTF::allOf(pairs, [&](auto& item) { return item.first != objects[i].get(); }));
                 else if (!(i % 6))
                     EXPECT_TRUE(pairs.contains(std::pair { objects[i].get(), i * 51 }));
                 else
@@ -1716,7 +1716,7 @@ TEST(WTF_WeakPtr, WeakHashMapIterators)
             ASSERT(pairs.size(), 36U);
             for (unsigned i = 0; i < 50; ++i) {
                 if (!(i % 5) || !(i % 9))
-                    EXPECT_TRUE(std::ranges::all_of(pairs, [&](auto& item) { return item.first != objects[i].get(); }));
+                    EXPECT_TRUE(WTF::allOf(pairs, [&](auto& item) { return item.first != objects[i].get(); }));
                 else if (!(i % 6))
                     EXPECT_TRUE(pairs.contains(std::pair { objects[i].get(), i * 51 }));
                 else

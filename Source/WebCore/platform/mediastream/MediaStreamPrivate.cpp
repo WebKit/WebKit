@@ -127,7 +127,7 @@ void MediaStreamPrivate::forEachTrack(NOESCAPE const Function<void(MediaStreamTr
 
 bool MediaStreamPrivate::computeActiveState()
 {
-    return std::ranges::any_of(m_trackSet, [](auto& track) { return !track.value->ended(); });
+    return WTF::anyOf(m_trackSet, [](auto& track) { return !track.value->ended(); });
 }
 
 void MediaStreamPrivate::updateActiveState()

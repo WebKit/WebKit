@@ -47,7 +47,7 @@ Color toStyleColor(const CSS::ColorLayers& unresolved, ColorResolutionState& sta
         return toStyleColor(color, state);
     }) };
 
-    if (std::ranges::any_of(colors, [](auto& color) { return color.isResolvedColor(); })) {
+    if (WTF::anyOf(colors, [](auto& color) { return color.isResolvedColor(); })) {
         // If the any of the layer's colors are not resolved, we cannot fully resolve the
         // color yet. Instead we return a Style::ColorLayers to be resolved at use time.
         return Color {
@@ -87,7 +87,7 @@ WebCore::Color resolveColor(const ColorLayers& colorLayers, const WebCore::Color
 
 bool containsCurrentColor(const ColorLayers& colorLayers)
 {
-    return std::ranges::any_of(colorLayers.colors, [&](auto& color) {
+    return WTF::anyOf(colorLayers.colors, [&](auto& color) {
         return WebCore::Style::containsCurrentColor(color);
     });
 }

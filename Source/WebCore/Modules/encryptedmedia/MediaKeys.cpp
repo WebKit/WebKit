@@ -175,7 +175,7 @@ void MediaKeys::attemptToResumePlaybackOnClients()
 
 bool MediaKeys::hasOpenSessions() const
 {
-    return std::ranges::any_of(m_sessions,
+    return WTF::anyOf(m_sessions,
         [](auto& session) {
             return !session->isClosed();
         });

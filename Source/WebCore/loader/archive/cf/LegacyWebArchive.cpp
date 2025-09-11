@@ -842,7 +842,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createInternal(const String& markupSt
 
         ResolveURLs resolveURLs = ResolveURLs::No;
         // Base element is excluded, so all URLs should be replaced with absolute URL.
-        bool baseElementExcluded = std::ranges::any_of(options.markupExclusionRules, [&](auto& rule) {
+        bool baseElementExcluded = WTF::anyOf(options.markupExclusionRules, [&](auto& rule) {
             return rule.elementLocalName == "base"_s;
         });
         if (!document->baseElementURL().isEmpty() && baseElementExcluded)

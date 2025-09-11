@@ -140,7 +140,7 @@ ExceptionOr<Ref<CSSTransformComponent>> CSSTransformValue::setItem(size_t index,
 bool CSSTransformValue::is2D() const
 {
     // https://drafts.css-houdini.org/css-typed-om/#dom-csstransformvalue-is2d
-    return std::ranges::all_of(m_components, [](auto& component) {
+    return WTF::allOf(m_components, [](auto& component) {
         return component->is2D();
     });
 }

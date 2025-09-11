@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <algorithm>
+#include <wtf/Algorithm.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -176,7 +176,7 @@ public:
     bool hasNullReferences() const
     {
         unsigned count = 0;
-        auto result = std::ranges::any_of(m_set, [&](auto& value) {
+        auto result = WTF::anyOf(m_set, [&](auto& value) {
             ++count;
             return !value.get();
         });

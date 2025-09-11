@@ -99,7 +99,7 @@ private:
 
 template<FilterOperation::Type type> bool FilterOperations::hasFilterOfType() const
 {
-    return std::ranges::any_of(m_operations, [](auto& op) { return op->type() == type; });
+    return WTF::anyOf(m_operations, [](auto& op) { return op->type() == type; });
 }
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FilterOperations&);

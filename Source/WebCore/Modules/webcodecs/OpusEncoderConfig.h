@@ -37,7 +37,7 @@ struct OpusEncoderConfig {
     bool isValid()
     {
         float frameDurationMs = frameDuration / 1000.0;
-        if (!std::ranges::any_of(std::initializer_list<float> { 2.5, 5, 10, 20, 40, 60, 120 }, [frameDurationMs](auto value) {
+        if (!WTF::anyOf(std::initializer_list<float> { 2.5, 5, 10, 20, 40, 60, 120 }, [frameDurationMs](auto value) {
             return WTF::areEssentiallyEqual(value, frameDurationMs);
         })) {
             return false;

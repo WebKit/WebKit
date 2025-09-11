@@ -147,7 +147,7 @@ bool MediaSourcePrivate::hasAudio() const
 {
     ASSERT(m_dispatcher->isCurrent() || Thread::mayBeGCThread());
 
-    return std::ranges::any_of(m_activeSourceBuffers, [](auto* sourceBuffer) {
+    return WTF::anyOf(m_activeSourceBuffers, [](auto* sourceBuffer) {
         return sourceBuffer->hasAudio();
     });
 }
@@ -156,7 +156,7 @@ bool MediaSourcePrivate::hasVideo() const
 {
     assertIsCurrent(m_dispatcher);
 
-    return std::ranges::any_of(m_activeSourceBuffers, [](auto* sourceBuffer) {
+    return WTF::anyOf(m_activeSourceBuffers, [](auto* sourceBuffer) {
         return sourceBuffer->hasVideo();
     });
 }

@@ -454,7 +454,7 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
             if (nextObject.get() == this) {
                 // WebKit accessibility objects use DOM nodes as the "primary key" (i.e. in m_nodeIdMapping).
                 // This can cause a bit of trouble for continuations, which result in multiple renderers being associated
-                // with the same node. That can cause us to get into this branch — if nextSibling or us is a continuation,
+                // with the same node. That can cause us to get into this branch — if nextSibling or us is a continuation,
                 // we will be different renderers with the same node, and thus `nextObject` will be us.
                 //
                 // Fallback to walking the DOM in this case to avoid looping infinitely.
@@ -2567,7 +2567,7 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
         // If native tag of the parent element matches an acceptable name, then return
         // based on its presentational status.
         auto& name = node->tagQName();
-        if (std::ranges::any_of(parentTags, [&name](auto* possibleName) { return possibleName->get() == name; }))
+        if (WTF::anyOf(parentTags, [&name](auto* possibleName) { return possibleName->get() == name; }))
             return parent->role() == AccessibilityRole::Presentational;
     }
 

@@ -88,7 +88,7 @@ bool annotationCheckerInternal(PDFAnnotation *annotation, std::initializer_list<
         return annotationCheckerInternal(annotation.get(), std::forward<decltype(type)>(type), WTFMove(converter));
     };
     ASSERT(std::ranges::count_if(types, checker) <= 1);
-    return std::ranges::any_of(WTFMove(types), WTFMove(checker));
+    return WTF::anyOf(WTFMove(types), WTFMove(checker));
 }
 
 bool annotationIsOfType(PDFAnnotation *annotation, AnnotationType type)

@@ -52,14 +52,14 @@ WebCore::Color createColor(const ColorLayers& value, PlatformColorResolutionStat
 
 bool containsCurrentColor(const ColorLayers& value)
 {
-    return std::ranges::any_of(value.colors, [](const auto& color) {
+    return WTF::anyOf(value.colors, [](const auto& color) {
         return containsCurrentColor(color);
     });
 }
 
 bool containsColorSchemeDependentColor(const ColorLayers& value)
 {
-    return std::ranges::any_of(value.colors, [](const auto& color) {
+    return WTF::anyOf(value.colors, [](const auto& color) {
         return containsColorSchemeDependentColor(color);
     });
 }

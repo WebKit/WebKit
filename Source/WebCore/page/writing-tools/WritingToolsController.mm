@@ -1052,7 +1052,7 @@ void WritingToolsController::updateStateForSelectedSuggestionIfNeeded()
 
 static bool appliedCommandIsWritingToolsCommand(const Vector<Ref<WritingToolsCompositionCommand>>& commands, EditCommandComposition* composition)
 {
-    return std::ranges::any_of(commands, [composition](const auto& command) {
+    return WTF::anyOf(commands, [composition](const auto& command) {
         return &command->ensureComposition() == composition;
     });
 }
@@ -1306,7 +1306,7 @@ void WritingToolsController::replaceContentsOfRangeInSession(CompositionState& s
         return;
     }
 
-    auto hasAttributes = std::ranges::any_of(replacementText.attributes, [](auto& rangeAndAttributeValues) {
+    auto hasAttributes = WTF::anyOf(replacementText.attributes, [](auto& rangeAndAttributeValues) {
         return !rangeAndAttributeValues.second.isEmpty();
     });
     auto matchStyle = hasAttributes ? WritingToolsCompositionCommand::MatchStyle::No : WritingToolsCompositionCommand::MatchStyle::Yes;

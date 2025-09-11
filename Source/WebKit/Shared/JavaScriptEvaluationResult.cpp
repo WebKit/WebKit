@@ -135,11 +135,11 @@ static bool isSerializable(API::Object* object)
     case API::Object::Type::SerializedNode:
         return true;
     case API::Object::Type::Array:
-        return std::ranges::all_of(downcast<API::Array>(object)->elements(), [] (const RefPtr<API::Object>& element) {
+        return WTF::allOf(downcast<API::Array>(object)->elements(), [] (const RefPtr<API::Object>& element) {
             return isSerializable(element.get());
         });
     case API::Object::Type::Dictionary:
-        return std::ranges::all_of(downcast<API::Dictionary>(object)->map(), [] (const KeyValuePair<String, RefPtr<API::Object>>& pair) {
+        return WTF::allOf(downcast<API::Dictionary>(object)->map(), [] (const KeyValuePair<String, RefPtr<API::Object>>& pair) {
             return isSerializable(pair.value.get());
         });
     default:

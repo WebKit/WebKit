@@ -248,7 +248,7 @@ std::optional<CoreAudioCaptureDevice> CoreAudioCaptureDeviceManager::coreAudioDe
 
 static inline bool hasDevice(const Vector<CoreAudioCaptureDevice>& devices, uint32_t deviceID, CaptureDevice::DeviceType deviceType)
 {
-    return std::ranges::any_of(devices, [&deviceID, deviceType](auto& device) {
+    return WTF::anyOf(devices, [&deviceID, deviceType](auto& device) {
         return device.deviceID() == deviceID && device.type() == deviceType;
     });
 }

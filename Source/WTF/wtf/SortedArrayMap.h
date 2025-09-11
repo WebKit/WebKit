@@ -26,7 +26,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#include <ranges>
+#include <wtf/Algorithm.h>
 #include <wtf/IndexedRange.h>
 #include <wtf/text/StringView.h>
 
@@ -162,7 +162,7 @@ template<ASCIISubset subset, typename CharacterType> constexpr std::make_unsigne
 template<ASCIISubset subset> constexpr ComparableASCIISubsetLiteral<subset>::ComparableASCIISubsetLiteral(ASCIILiteral inputLiteral)
     : literal { inputLiteral }
 {
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(std::ranges::all_of(literal.span(), isInSubset<subset>));
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(WTF::allOf(literal.span(), [](char c) { return isInSubset<subset>(c); }));
 }
 
 template<typename ArrayType> constexpr SortedArrayMap<ArrayType>::SortedArrayMap(const ArrayType& array)

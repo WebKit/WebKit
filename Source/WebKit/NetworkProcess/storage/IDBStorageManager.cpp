@@ -215,7 +215,7 @@ bool IDBStorageManager::isActive() const
 
 bool IDBStorageManager::hasDataInMemory() const
 {
-    return std::ranges::any_of(m_databases.values(), [&](auto& database) {
+    return WTF::anyOf(m_databases.values(), [&](auto& database) {
         return database->hasDataInMemory();
     });
 }

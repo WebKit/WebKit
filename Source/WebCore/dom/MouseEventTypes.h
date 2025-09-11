@@ -26,8 +26,8 @@
 
 #pragma once
 
-#include <algorithm>
 #include <array>
+#include <wtf/Algorithm.h>
 #include <wtf/EnumTraits.h>
 
 namespace WebCore {
@@ -47,7 +47,7 @@ enum class MouseButton : int8_t { None = -2, PointerHasNotChanged, Left, Middle,
 inline MouseButton buttonFromShort(int16_t buttonValue)
 {
     static constexpr std::array knownMouseButtonCases { MouseButton::None, MouseButton::PointerHasNotChanged, MouseButton::Left, MouseButton::Middle, MouseButton::Right };
-    bool isKnownButton = std::ranges::any_of(knownMouseButtonCases, [buttonValue](MouseButton button) {
+    bool isKnownButton = WTF::anyOf(knownMouseButtonCases, [buttonValue](MouseButton button) {
         return buttonValue == enumToUnderlyingType(button);
     });
     return isKnownButton ? static_cast<MouseButton>(buttonValue) : MouseButton::Other;

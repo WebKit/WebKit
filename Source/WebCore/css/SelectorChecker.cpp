@@ -1329,7 +1329,7 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
             if (list.size() == 1)
                 return true;
 
-            return std::ranges::all_of(list.span().subspan(1),
+            return WTF::allOf(list.span().subspan(1),
                 [&](const AtomString& classSelector) {
                     return checkingContext.classList.contains(classSelector);
                 }

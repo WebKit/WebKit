@@ -31,7 +31,7 @@
 #include "InitDataRegistry.h"
 #include "SharedBuffer.h"
 #include <JavaScriptCore/ArrayBuffer.h>
-#include <algorithm>
+#include <wtf/Algorithm.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
@@ -149,10 +149,10 @@ bool MockCDM::supportsConfiguration(const MediaKeySystemConfiguration& configura
         return true;
     };
 
-    if (!configuration.audioCapabilities.isEmpty() && !std::ranges::any_of(configuration.audioCapabilities, capabilityHasSupportedEncryptionScheme))
+    if (!configuration.audioCapabilities.isEmpty() && !WTF::anyOf(configuration.audioCapabilities, capabilityHasSupportedEncryptionScheme))
         return false;
 
-    if (!configuration.videoCapabilities.isEmpty() && !std::ranges::any_of(configuration.videoCapabilities, capabilityHasSupportedEncryptionScheme))
+    if (!configuration.videoCapabilities.isEmpty() && !WTF::anyOf(configuration.videoCapabilities, capabilityHasSupportedEncryptionScheme))
         return false;
 
     return true;

@@ -191,7 +191,7 @@ void BaseAudioSharedUnit::devicesChanged()
     if (persistentID.isEmpty())
         return;
 
-    if (std::ranges::any_of(devices, [&persistentID](auto& device) { return persistentID == device.persistentId(); })) {
+    if (WTF::anyOf(devices, [&persistentID](auto& device) { return persistentID == device.persistentId(); })) {
         validateOutputDevice(m_outputDeviceID);
         return;
     }

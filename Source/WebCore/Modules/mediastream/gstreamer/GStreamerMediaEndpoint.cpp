@@ -1756,7 +1756,7 @@ ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::createTran
         scaleValues.reserveInitialCapacity(sendEncodings.size());
         if (sendEncodings.size() == 1 && sendEncodings[0].scaleResolutionDownBy)
             scaleValues.append(sendEncodings[0].scaleResolutionDownBy.value());
-        else if (std::ranges::all_of(sendEncodings, [](auto& encoding) { return encoding.scaleResolutionDownBy.value_or(1) == 1; })) {
+        else if (WTF::allOf(sendEncodings, [](auto& encoding) { return encoding.scaleResolutionDownBy.value_or(1) == 1; })) {
             for (unsigned i = sendEncodings.size() - 1; i >= 1; i--)
                 scaleValues.append(i * 2);
             scaleValues.append(1);
@@ -1781,7 +1781,7 @@ ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::createTran
         }
         if (allRids.isEmpty() && sendEncodings.size() > 1)
             return Exception { ExceptionCode::TypeError, "Missing rid"_s };
-        if (allRids.size() > 1 && std::ranges::any_of(allRids, [](auto& rid) { return rid.isNull() || rid.isEmpty(); }))
+        if (allRids.size() > 1 && WTF::anyOf(allRids, [](auto& rid) { return rid.isNull() || rid.isEmpty(); }))
             return Exception { ExceptionCode::TypeError, "Empty rid"_s };
         if (allRids.size() == 1 && allRids[0] == emptyString())
             return Exception { ExceptionCode::TypeError, "Empty rid"_s };
