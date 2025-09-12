@@ -648,7 +648,7 @@ static void* RunWebThread(void*)
     WebCore::populateJITOperations();
     
     // Make sure that the WebThread and the main thread share the same ThreadGlobalData objects.
-    WebCore::threadGlobalData().setWebCoreThreadData();
+    WebCore::threadGlobalDataSingleton().setWebCoreThreadData();
 
 #if HAVE(PTHREAD_SETNAME_NP)
     pthread_setname_np("WebThread");
@@ -696,7 +696,7 @@ static void StartWebThread()
 
     // Initialize ThreadGlobalData on the main UI thread so that the WebCore thread
     // can later set it's thread-specific data to point to the same objects.
-    WebCore::ThreadGlobalData& unused = WebCore::threadGlobalData();
+    WebCore::ThreadGlobalData& unused = WebCore::threadGlobalDataSingleton();
     UNUSED_PARAM(unused);
 
     // register class for WebThread deallocation

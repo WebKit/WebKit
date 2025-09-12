@@ -47,7 +47,7 @@ class JSExecState {
 public:
     static JSC::JSGlobalObject* currentState()
     {
-        return threadGlobalData().currentState();
+        return threadGlobalDataSingleton().currentState();
     }
     
     static JSC::JSValue call(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSValue functionObject, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args, NakedPtr<JSC::Exception>& returnedException)
@@ -178,7 +178,7 @@ private:
 
     static void setCurrentState(JSC::JSGlobalObject* lexicalGlobalObject)
     {
-        threadGlobalData().setCurrentState(lexicalGlobalObject);
+        threadGlobalDataSingleton().setCurrentState(lexicalGlobalObject);
     }
 
     JSC::JSGlobalObject* const m_previousState;

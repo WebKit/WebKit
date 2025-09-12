@@ -67,12 +67,12 @@ static ThreadGlobalData* sharedMainThreadStaticData { nullptr };
 void ThreadGlobalData::setWebCoreThreadData()
 {
     ASSERT(isWebThread());
-    ASSERT(&threadGlobalData() != sharedMainThreadStaticData);
+    ASSERT(&threadGlobalDataSingleton() != sharedMainThreadStaticData);
 
     // Set WebThread's ThreadGlobalData object to be the same as the main UI thread.
     Thread::currentSingleton().m_clientData = adoptRef(sharedMainThreadStaticData);
 
-    ASSERT(&threadGlobalData() == sharedMainThreadStaticData);
+    ASSERT(&threadGlobalDataSingleton() == sharedMainThreadStaticData);
 }
 
 ThreadGlobalData& threadGlobalDataSlow()
@@ -144,9 +144,9 @@ void ThreadGlobalData::initializeFontCache()
 
 namespace PAL {
 
-ThreadGlobalData& threadGlobalData()
+ThreadGlobalData& threadGlobalDataSingleton()
 {
-    return WebCore::threadGlobalData();
+    return WebCore::threadGlobalDataSingleton();
 }
 
 } // namespace PAL

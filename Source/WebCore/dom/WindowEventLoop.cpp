@@ -290,7 +290,7 @@ void WindowEventLoop::breakToAllowRenderingUpdate()
     // Avoid running timers and doing other work (like processing asyncronous IPC) until it is completed.
 
     // FIXME: Also bail out from the task loop in EventLoop::run().
-    threadGlobalData().threadTimers().breakFireLoopForRenderingUpdate();
+    threadGlobalDataSingleton().threadTimers().breakFireLoopForRenderingUpdate();
 
     RunLoop::mainSingleton().suspendFunctionDispatchForCurrentCycle();
 #endif

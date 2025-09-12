@@ -136,17 +136,17 @@ struct FontCache::FontDataCaches {
 
 CheckedRef<FontCache> FontCache::forCurrentThread()
 {
-    return threadGlobalData().fontCache();
+    return threadGlobalDataSingleton().fontCache();
 }
 
 FontCache* FontCache::forCurrentThreadIfExists()
 {
-    return threadGlobalData().fontCacheIfExists();
+    return threadGlobalDataSingleton().fontCacheIfExists();
 }
 
 FontCache* FontCache::forCurrentThreadIfNotDestroyed()
 {
-    return threadGlobalData().fontCacheIfNotDestroyed();
+    return threadGlobalDataSingleton().fontCacheIfNotDestroyed();
 }
 
 FontCache::FontCache()

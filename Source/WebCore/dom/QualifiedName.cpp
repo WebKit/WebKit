@@ -48,18 +48,18 @@ static QualifiedNameComponents makeComponents(const AtomString& prefix, const At
 }
 
 QualifiedName::QualifiedName(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI)
-    : m_impl(threadGlobalData().qualifiedNameCache().getOrCreate(makeComponents(prefix, localName, namespaceURI)))
+    : m_impl(threadGlobalDataSingleton().qualifiedNameCache().getOrCreate(makeComponents(prefix, localName, namespaceURI)))
 {
 }
 
 QualifiedName::QualifiedName(const AtomString& prefix, const AtomString& localName, const AtomString& namespaceURI, Namespace nodeNamespace, NodeName nodeName)
-    : m_impl(threadGlobalData().qualifiedNameCache().getOrCreate(makeComponents(prefix, localName, namespaceURI), nodeNamespace, nodeName))
+    : m_impl(threadGlobalDataSingleton().qualifiedNameCache().getOrCreate(makeComponents(prefix, localName, namespaceURI), nodeNamespace, nodeName))
 {
 }
 
 QualifiedName::QualifiedNameImpl::~QualifiedNameImpl()
 {
-    threadGlobalData().qualifiedNameCache().remove(*this);
+    threadGlobalDataSingleton().qualifiedNameCache().remove(*this);
 }
 
 // Global init routines

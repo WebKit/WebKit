@@ -150,7 +150,7 @@ TextCodecICU::~TextCodecICU()
 {
     if (m_converter) {
         ucnv_reset(m_converter.get());
-        threadGlobalData().cachedConverterICU().converter = WTFMove(m_converter);
+        threadGlobalDataSingleton().cachedConverterICU().converter = WTFMove(m_converter);
     }
 }
 
@@ -158,7 +158,7 @@ void TextCodecICU::createICUConverter() const
 {
     ASSERT(!m_converter);
 
-    auto& cachedConverter = threadGlobalData().cachedConverterICU().converter;
+    auto& cachedConverter = threadGlobalDataSingleton().cachedConverterICU().converter;
     if (cachedConverter) {
         UErrorCode error = U_ZERO_ERROR;
         const char* cachedConverterName = ucnv_getName(cachedConverter.get(), &error);

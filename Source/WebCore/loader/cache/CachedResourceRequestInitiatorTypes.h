@@ -48,7 +48,7 @@ private:
 
 inline const CachedResourceRequestInitiatorTypes& cachedResourceRequestInitiatorTypes()
 {
-    return threadGlobalData().cachedResourceRequestInitiatorTypes();
+    return threadGlobalDataSingleton().cachedResourceRequestInitiatorTypes();
 }
 
 } // namespace WebCore

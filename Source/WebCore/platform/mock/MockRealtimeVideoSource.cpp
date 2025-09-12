@@ -172,7 +172,7 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, AtomString&&
 MockRealtimeVideoSource::~MockRealtimeVideoSource()
 {
     m_runLoop->dispatch([] {
-        threadGlobalData().destroy();
+        threadGlobalDataSingleton().destroy();
         RunLoop::currentSingleton().stop();
     });
 

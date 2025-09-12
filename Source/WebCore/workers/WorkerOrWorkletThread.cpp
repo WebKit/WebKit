@@ -232,7 +232,7 @@ void WorkerOrWorkletThread::destroyWorkerGlobalScope(Ref<WorkerOrWorkletThread>&
         callOnMainThread(WTFMove(stoppedCallback));
 
     // Clean up WebCore::ThreadGlobalData before WTF::Thread goes away!
-    threadGlobalData().destroy();
+    threadGlobalDataSingleton().destroy();
 
     // Send the last WorkerThread Ref to be Deref'ed on the main thread.
     callOnMainThread([protectedThis = WTFMove(protectedThis)] { });

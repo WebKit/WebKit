@@ -676,7 +676,6 @@ page/writing-tools/WritingToolsController.mm
 platform/Cursor.h
 platform/DragImage.cpp
 platform/Length.cpp
-platform/MIMETypeRegistry.cpp
 platform/ScrollAnimationSmooth.cpp
 platform/ScrollAnimator.cpp
 platform/ScrollView.cpp

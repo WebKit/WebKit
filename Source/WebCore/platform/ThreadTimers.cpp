@@ -70,7 +70,7 @@ void ThreadTimers::setSharedTimer(SharedTimer* sharedTimer)
     m_sharedTimer = sharedTimer;
     
     if (sharedTimer) {
-        sharedTimer->setFiredFunction([] { threadGlobalData().threadTimers().sharedTimerFiredInternal(); });
+        sharedTimer->setFiredFunction([] { threadGlobalDataSingleton().threadTimers().sharedTimerFiredInternal(); });
         updateSharedTimer();
     }
 }

@@ -123,7 +123,7 @@ void MicrotaskQueue::performMicrotaskCheckpoint()
     JSC::JSLockHolder locker(vm);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
     {
-        SUPPRESS_UNCOUNTED_ARG auto& data = threadGlobalData();
+        SUPPRESS_UNCOUNTED_ARG auto& data = threadGlobalDataSingleton();
         auto* previousState = data.currentState();
         m_microtaskQueue.performMicrotaskCheckpoint(vm,
             [&](JSC::QueuedTask& task) ALWAYS_INLINE_LAMBDA {

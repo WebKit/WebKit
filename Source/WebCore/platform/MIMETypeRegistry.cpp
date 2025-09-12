@@ -477,10 +477,10 @@ std::unique_ptr<MIMETypeRegistryThreadGlobalData> MIMETypeRegistry::createMIMETy
     HashSet<String, ASCIICaseInsensitiveHash> supportedImageMIMETypesForEncoding;
     CFIndex count = CFArrayGetCount(supportedTypes.get());
     for (CFIndex i = 0; i < count; i++) {
-        CFStringRef supportedType = reinterpret_cast<CFStringRef>(CFArrayGetValueAtIndex(supportedTypes.get(), i));
-        if (!isSupportedImageType(supportedType))
+        RetainPtr supportedType = reinterpret_cast<CFStringRef>(CFArrayGetValueAtIndex(supportedTypes.get(), i));
+        if (!isSupportedImageType(supportedType.get()))
             continue;
-        String mimeType = MIMETypeForImageType(supportedType);
+        String mimeType = MIMETypeForImageType(supportedType.get());
         if (mimeType.isEmpty())
             continue;
         supportedImageMIMETypesForEncoding.add(mimeType);
@@ -516,7 +516,7 @@ bool MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(const String& mimeTyp
 {
     if (mimeType.isEmpty())
         return false;
-    return threadGlobalData().mimeTypeRegistryThreadGlobalData().supportedImageMIMETypesForEncoding().contains(mimeType);
+    return threadGlobalDataSingleton().mimeTypeRegistryThreadGlobalData().supportedImageMIMETypesForEncoding().contains(mimeType);
 }
 
 bool MIMETypeRegistry::isSupportedJavaScriptMIMEType(const String& mimeType)

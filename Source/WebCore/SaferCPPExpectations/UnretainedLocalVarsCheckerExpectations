@@ -22,7 +22,6 @@ page/mac/EventHandlerMac.mm
 page/scrolling/mac/ScrollingStateScrollingNodeMac.mm
 page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
 page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm
-platform/MIMETypeRegistry.cpp
 platform/VideoFrame.mm
 platform/audio/cocoa/AudioEncoderCocoa.cpp
 platform/audio/cocoa/AudioFileReaderCocoa.cpp

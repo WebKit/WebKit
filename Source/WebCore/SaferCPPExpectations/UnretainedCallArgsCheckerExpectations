@@ -57,7 +57,6 @@ page/mac/ServicesOverlayController.mm
 page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm
 page/scrolling/mac/ScrollingTreePluginScrollingNodeMac.mm
 page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm
-platform/LocalizedStrings.cpp
 platform/audio/cocoa/AudioFileReaderCocoa.cpp
 platform/audio/cocoa/AudioSampleBufferConverter.mm
 platform/audio/cocoa/AudioSessionCocoa.mm

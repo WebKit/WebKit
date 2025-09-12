@@ -129,7 +129,7 @@ private:
 
     bool m_isInRemoveAllEventListeners { false };
 
-    friend ThreadGlobalData& threadGlobalData();
+    friend ThreadGlobalData& threadGlobalDataSingleton();
 };
 
 
@@ -140,9 +140,9 @@ WEBCORE_EXPORT ThreadGlobalData& threadGlobalDataSlow() PURE_FUNCTION;
 #endif
 
 #if USE(WEB_THREAD)
-inline ThreadGlobalData& threadGlobalData()
+inline ThreadGlobalData& threadGlobalDataSingleton()
 #else
-inline PURE_FUNCTION ThreadGlobalData& threadGlobalData()
+inline PURE_FUNCTION ThreadGlobalData& threadGlobalDataSingleton()
 #endif
 {
 #if HAVE(FAST_TLS)

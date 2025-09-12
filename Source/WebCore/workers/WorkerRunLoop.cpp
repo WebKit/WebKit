@@ -142,7 +142,7 @@ public:
     {
         if (!m_runLoop.m_nestedCount) {
             m_runLoop.m_sharedTimer = makeUnique<WorkerSharedTimer>();
-            threadGlobalData().threadTimers().setSharedTimer(m_runLoop.m_sharedTimer.get());
+            threadGlobalDataSingleton().threadTimers().setSharedTimer(m_runLoop.m_sharedTimer.get());
         }
         m_runLoop.m_nestedCount++;
         if (m_isForDebugging == IsForDebugging::Yes)
@@ -153,7 +153,7 @@ public:
     {
         m_runLoop.m_nestedCount--;
         if (!m_runLoop.m_nestedCount) {
-            threadGlobalData().threadTimers().setSharedTimer(nullptr);
+            threadGlobalDataSingleton().threadTimers().setSharedTimer(nullptr);
             m_runLoop.m_sharedTimer = nullptr;
         }
         if (m_isForDebugging == IsForDebugging::Yes)

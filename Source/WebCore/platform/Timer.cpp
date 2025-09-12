@@ -61,7 +61,7 @@ class TimerHeapReference;
 #if ASSERT_ENABLED
 static ThreadTimerHeap& threadGlobalTimerHeap()
 {
-    return threadGlobalData().threadTimers().timerHeap();
+    return threadGlobalDataSingleton().threadTimers().timerHeap();
 }
 #endif
 
@@ -70,7 +70,7 @@ WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED_IMPL(ThreadTimerHeapItem);
 inline ThreadTimerHeapItem::ThreadTimerHeapItem(TimerBase& timer, MonotonicTime time, unsigned insertionOrder)
     : time(time)
     , insertionOrder(insertionOrder)
-    , m_threadTimers(threadGlobalData().threadTimers())
+    , m_threadTimers(threadGlobalDataSingleton().threadTimers())
     , m_timer(&timer)
 {
     ASSERT(m_timer);
@@ -534,7 +534,7 @@ void TimerBase::setNextFireTime(MonotonicTime newTime)
     }
 
     if (oldTime != newTime) {
-        auto newOrder = threadGlobalData().threadTimers().nextHeapInsertionCount();
+        auto newOrder = threadGlobalDataSingleton().threadTimers().nextHeapInsertionCount();
 
         RefPtr item = m_heapItemWithBitfields.pointer();
         if (!item) {
@@ -551,7 +551,7 @@ void TimerBase::setNextFireTime(MonotonicTime newTime)
         bool isFirstTimerInHeap = item->isFirstInHeap();
 
         if (wasFirstTimerInHeap || isFirstTimerInHeap)
-            threadGlobalData().threadTimers().updateSharedTimer();
+            threadGlobalDataSingleton().threadTimers().updateSharedTimer();
     }
 
     checkConsistency();
@@ -560,7 +560,7 @@ void TimerBase::setNextFireTime(MonotonicTime newTime)
 void TimerBase::fireTimersInNestedEventLoop()
 {
     // Redirect to ThreadTimers.
-    threadGlobalData().threadTimers().fireTimersInNestedEventLoop();
+    threadGlobalDataSingleton().threadTimers().fireTimersInNestedEventLoop();
 }
 
 void TimerBase::didChangeAlignmentInterval()
