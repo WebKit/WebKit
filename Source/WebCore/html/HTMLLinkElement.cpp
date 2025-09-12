@@ -260,9 +260,13 @@ void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomStri
             m_styleScope->didChangeActiveStyleSheetCandidates();
         break;
     }
-    case AttributeNames::disabledAttr:
+    case AttributeNames::disabledAttr: {
+        bool disabledValue = !newValue.isNull();
+        if (disabledValue && rel() != "stylesheet"_s)
+            setBooleanAttribute(name, false);
         setDisabledState(!newValue.isNull());
         break;
+    }
     case AttributeNames::titleAttr:
         if (m_sheet && !isInShadowTree())
             m_sheet->setTitle(newValue);
