@@ -2513,8 +2513,6 @@ imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-under-
 
 webkit.org/b/297346 workers/message-port-gc.html [ Pass Crash ]
 
-webkit.org/b/297434 imported/w3c/web-platform-tests/event-timing/retrievability.html [ Pass Failure ]
-
 webkit.org/b/294931 ipc/LocalSampleBufferDisplayLayer-LogIdentifier-data-race-uaf.html [ Skip ]
 
 webkit.org/b/297551 imported/w3c/web-platform-tests/event-timing/buffered-and-duration-threshold.html [ Pass Failure ] 
