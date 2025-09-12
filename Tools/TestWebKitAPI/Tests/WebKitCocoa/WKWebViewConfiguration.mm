@@ -588,13 +588,16 @@ TEST(WebKit, ConfigurationMaskedURLSchemes_C)
 
             [webView loadHTMLString:@"<script src=\"http://apple.com/baz.js\"></script>" baseURL:[NSURL URLWithString:@"https://example.com"]];
 
-            TestWebKitAPI::Util::run(&finished);
+            TestWebKitAPI::Util::runFor(&finished, 5.0_s);
 
             navigationDelegate.get().didFinishNavigation = nil;
         }
 
         webView.get().navigationDelegate = oldNavigationDelegate;
     }
+
+    NSString *scriptSource = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll(\"script\")[0].src"];
+    EXPECT_WK_STREQ(scriptSource, @"http://apple.com/baz.js");
 }
 
 TEST(WebKit, ConfigurationMaskedURLSchemes)
