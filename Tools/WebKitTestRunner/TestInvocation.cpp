@@ -165,7 +165,7 @@ static String addQueryParameter(const String& urlString, ASCIILiteral parameter)
 
 void TestInvocation::loadTestInCrossOriginIframe()
 {
-    WKRetainPtr<WKURLRef> baseURL = adoptWK(WKURLCreateWithUTF8CString("http://localhost:8000"));
+    WKRetainPtr<WKURLRef> baseURL = adoptWK(WKURLCreateWithUTF8CString("http://127.0.0.1:8000"));
     auto url = addQueryParameter(m_urlString, "runInCrossOriginFrame=true"_s);
     WKRetainPtr<WKStringRef> htmlString = toWK(makeString(
         "<script>"
