@@ -41,6 +41,7 @@
 #include "PageLoadState.h"
 #include "RestrictedOpenerType.h"
 #include "ShouldGrandfatherStatistics.h"
+#include "SiteIsolationEnforcementManager.h"
 #include "StorageAccessStatus.h"
 #include "UnifiedOriginStorageLevel.h"
 #include "WebBackForwardCache.h"
@@ -480,6 +481,9 @@ static void resolveDirectories(WebsiteDataStoreConfiguration::Directories& direc
     if (!directories.resourceMonitorThrottlerDirectory.isEmpty())
         directories.resourceMonitorThrottlerDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.resourceMonitorThrottlerDirectory);
 #endif
+
+    if (directories.siteIsolationEnforcementDirectory.isEmpty())
+        directories.siteIsolationEnforcementDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.siteIsolationEnforcementDirectory);
 }
 
 const WebsiteDataStoreConfiguration::Directories& WebsiteDataStore::resolvedDirectories() const
@@ -2470,6 +2474,15 @@ std::optional<double> WebsiteDataStore::defaultTotalQuotaRatio()
 
 #endif // !PLATFORM(COCOA)
 
+String WebsiteDataStore::defaultSiteIsolationEnforcementDirectory(const String& baseDataDirectory)
+{
+#if PLATFORM(PLAYSTATION) || USE(GLIB)
+    return websiteDataDirectoryFileSystemRepresentation("siteisolationenforcement"_s, baseDataDirectory);
+#else
+    return websiteDataDirectoryFileSystemRepresentation("SiteIsolationEnforcement"_s, baseDataDirectory);
+#endif
+}
+
 void WebsiteDataStore::renameOriginInWebsiteData(WebCore::SecurityOriginData&& oldOrigin, WebCore::SecurityOriginData&& newOrigin, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
 {
     protectedNetworkProcess()->renameOriginInWebsiteData(m_sessionID, oldOrigin, newOrigin, dataTypes, WTFMove(completionHandler));
@@ -2895,6 +2908,15 @@ void WebsiteDataStore::setStorageAccessPermissionForTesting(bool granted, WebPag
 void WebsiteDataStore::clearStorageAccessForTesting(CompletionHandler<void()>&& completionHandler)
 {
     protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::ClearStorageAccessForTesting(m_sessionID), WTFMove(completionHandler));
+}
+
+SiteIsolationEnforcementManager& WebsiteDataStore::siteIsolationEnforcementManager() const
+{
+    if (!m_siteIsolationEnforcementManager) {
+        lazyInitialize(m_siteIsolationEnforcementManager, WTF::makeUnique<SiteIsolationEnforcementManager>(
+            FileSystem::pathByAppendingComponent(m_configuration->siteIsolationEnforcementDirectory(), "siteIsolationEnforcementDatabase"_s)));
+    }
+    return *m_siteIsolationEnforcementManager;
 }
 
 } // namespace WebKit

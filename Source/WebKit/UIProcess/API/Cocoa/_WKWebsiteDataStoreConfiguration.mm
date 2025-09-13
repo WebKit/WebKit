@@ -282,6 +282,23 @@ static void checkURLArgument(NSURL *url)
     _configuration->setServiceWorkerRegistrationDirectory(url.path);
 }
 
+- (NSURL *)_siteIsolationEnforcementDirectory
+{
+    return [NSURL fileURLWithPath:_configuration->siteIsolationEnforcementDirectory().createNSString().get() isDirectory:YES];
+}
+
+- (void)_setSiteIsolationEnforcementDirectory:(NSURL *)url
+{
+    if (!_configuration->isPersistent())
+        [NSException raise:NSInvalidArgumentException format:@"Cannot set _siteIsolationEnforcement on a non-persistent _WKWebsiteDataStoreConfiguration."];
+
+    if (_configuration->identifier())
+        [NSException raise:NSGenericException format:@"Cannot set _siteIsolationEnforcement on a _WKWebsiteDataStoreConfiguration created with identifier"];
+
+    checkURLArgument(url);
+    _configuration->setSiteIsolationEnforcementDirectory(url.path);
+}
+
 - (BOOL)serviceWorkerProcessTerminationDelayEnabled
 {
     return _configuration->serviceWorkerProcessTerminationDelayEnabled();

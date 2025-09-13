@@ -98,6 +98,7 @@ class DeviceIdHashSaltStorage;
 class DownloadProxy;
 class NetworkProcessProxy;
 class SOAuthorizationCoordinator;
+class SiteIsolationEnforcementManager;
 class VirtualAuthenticatorManager;
 class WebPageProxy;
 class WebProcessPool;
@@ -394,6 +395,7 @@ public:
     static String defaultMediaKeysHashSaltsStorageDirectory(const String& baseDataDirectory = nullString());
 #endif
     static String defaultJavaScriptConfigurationDirectory(const String& baseDataDirectory = nullString());
+    static String defaultSiteIsolationEnforcementDirectory(const String& baseDataDirectory = nullString());
 
 #if ENABLE(CONTENT_EXTENSIONS)
     static String defaultResourceMonitorThrottlerDirectory(const String& baseDataDirectory = nullString());
@@ -518,6 +520,8 @@ public:
 
     void setStorageAccessPermissionForTesting(bool, WebPageProxyIdentifier, const String& topFrameDomain, const String& subFrameDomain, CompletionHandler<void()>&&);
     void clearStorageAccessForTesting(CompletionHandler<void()>&&);
+
+    SiteIsolationEnforcementManager& siteIsolationEnforcementManager() const;
 
 private:
     enum class ForceReinitialization : bool { No, Yes };
@@ -668,6 +672,8 @@ private:
 
     RemoveDataTaskCounter m_removeDataTaskCounter;
     uint64_t m_cookiesVersion { 0 };
+
+    const std::unique_ptr<SiteIsolationEnforcementManager> m_siteIsolationEnforcementManager;
 };
 
 }

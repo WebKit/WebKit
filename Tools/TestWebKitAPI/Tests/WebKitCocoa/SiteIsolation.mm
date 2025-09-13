@@ -38,6 +38,8 @@
 #import "Utilities.h"
 #import "WKWebViewConfigurationExtras.h"
 #import "WKWebViewFindStringFindDelegate.h"
+#import <WebCore/SQLiteDatabase.h>
+#import <WebCore/SQLiteStatement.h>
 #import <WebKit/WKFrameInfoPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
@@ -59,6 +61,8 @@
 #import <WebKit/_WKTextManipulationToken.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/FileSystem.h>
+#import <wtf/Scope.h>
 #import <wtf/text/MakeString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -159,14 +163,23 @@ static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> si
     return { WTFMove(webView), WTFMove(navigationDelegate) };
 }
 
-static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewWithSharedProcess(const HTTPServer& server)
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewWithSharedProcess(const HTTPServer& server, String dataStoreDirectory = { }, String siteIsolationEnforcementDirectory = { })
 {
-    auto* configuration = server.httpsProxyConfiguration();
+    NSURL *dataStoreDirectoryURL = nil;
+    if (!dataStoreDirectory.isNull())
+        dataStoreDirectoryURL = [NSURL fileURLWithFileSystemRepresentation:dataStoreDirectory.utf8().data() isDirectory:YES relativeToURL:nil];
+    auto storeConfiguration = adoptNS(dataStoreDirectoryURL ? [[_WKWebsiteDataStoreConfiguration alloc] initWithDirectory:dataStoreDirectoryURL] : [[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    if (!siteIsolationEnforcementDirectory.isNull())
+        storeConfiguration.get()._siteIsolationEnforcementDirectory =  [NSURL fileURLWithFileSystemRepresentation:siteIsolationEnforcementDirectory.utf8().data() isDirectory:YES relativeToURL:nil];;
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate allowAnyTLSCertificate];
-    enableSiteIsolation(configuration);
-    enableFeature(configuration, @"SiteIsolationSharedProcessEnabled");
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    enableSiteIsolation(configuration.get());
+    enableFeature(configuration.get(), @"SiteIsolationSharedProcessEnabled");
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     webView.get().navigationDelegate = navigationDelegate.get();
     return { WTFMove(webView), WTFMove(navigationDelegate) };
 }
@@ -5169,6 +5182,57 @@ TEST(SiteIsolation, SharedProcessMostBasic)
         {
             RemoteFrame,
             { { "https://webkit.org"_s, { { "https://apple.com"_s } } } }
+        },
+    });
+}
+
+TEST(SiteIsolation, SharedProcessNavigationWithDatabaseEntry)
+{
+    String dataStoreTemporayDirectoryPath = FileSystem::createTemporaryDirectory(@"WebsiteDataStore");
+    FileSystem::deleteNonEmptyDirectory(dataStoreTemporayDirectoryPath);
+    FileSystem::makeAllDirectories(dataStoreTemporayDirectoryPath);
+
+    String temporayDatabaseDirectoryPath = FileSystem::createTemporaryDirectory(@"SiteIsolationEnforcement");
+    FileSystem::deleteNonEmptyDirectory(temporayDatabaseDirectoryPath);
+    FileSystem::makeAllDirectories(temporayDatabaseDirectoryPath);
+
+    auto cleanup = makeScopeExit([&] {
+        FileSystem::deleteNonEmptyDirectory(dataStoreTemporayDirectoryPath);
+        FileSystem::deleteNonEmptyDirectory(temporayDatabaseDirectoryPath);
+    });
+
+    auto path = FileSystem::pathByAppendingComponent(temporayDatabaseDirectoryPath, "siteIsolationEnforcementDatabase"_s);
+    auto sqliteDB = makeUnique<WebCore::SQLiteDatabase>();
+    sqliteDB->open(path, WebCore::SQLiteDatabase::OpenMode::ReadWriteCreate, WebCore::SQLiteDatabase::OpenOptions::CanSuspendWhileLocked);
+
+    sqliteDB->executeCommand("CREATE TABLE records (registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL, isIsolated INTEGER NOT NULL)"_s);
+    sqliteDB->executeCommand("CREATE INDEX index_records_registrable_domain ON records(registrableDomain)"_s);
+    sqliteDB->executeCommand("INSERT INTO records (registrableDomain, isIsolated) VALUES (\"apple.com\", 1)"_s);
+
+    sqliteDB->close();
+
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/iframe'></iframe><iframe src='https://apple.com/iframe'></iframe><iframe src='https://w3.org/alert_when_loaded'></iframe>"_s } },
+        { "/iframe"_s, { "<script>fetch('/example')</script>"_s } },
+        { "/alert_when_loaded"_s, { "<script>alert('loaded second iframe')</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewWithSharedProcess(server, dataStoreTemporayDirectoryPath, temporayDatabaseDirectoryPath);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        {
+            "https://example.com"_s,
+            { { RemoteFrame }, { RemoteFrame }, { RemoteFrame } }
+        },
+        {
+            RemoteFrame,
+            { { "https://webkit.org"_s }, { RemoteFrame }, { "https://w3.org"_s } }
+        },
+        {
+            RemoteFrame,
+            { { RemoteFrame }, { "https://apple.com"_s }, { RemoteFrame } }
         },
     });
 }

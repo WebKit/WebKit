@@ -32,6 +32,7 @@
 #include "PageLoadState.h"
 #include "ProvisionalPageProxy.h"
 #include "RemotePageProxy.h"
+#include "SiteIsolationEnforcementManager.h"
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
@@ -54,6 +55,8 @@ RefPtr<FrameProcess> BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore
     if (site.isEmpty())
         return nullptr;
     if (websitePolicies && !websitePolicies->allowSharedProcess() && !m_sharedProcessSites.contains(site))
+        return nullptr;
+    if (websiteDataStore.siteIsolationEnforcementManager().shouldIsolateSite(site))
         return nullptr;
     m_sharedProcessSites.add(site);
     if (m_sharedProcess)

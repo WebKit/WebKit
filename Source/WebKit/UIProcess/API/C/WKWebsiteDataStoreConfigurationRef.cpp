@@ -229,3 +229,13 @@ void WKWebsiteDataStoreConfigurationSetResourceMonitorThrottlerDirectory(WKWebsi
     WebKit::toImpl(configuration)->setResourceMonitorThrottlerDirectory(WebKit::toProtectedImpl(directory)->string());
 #endif
 }
+
+WKStringRef WKWebsiteDataStoreConfigurationCopySiteIsolationEnforcementDirectory(WKWebsiteDataStoreConfigurationRef configuration)
+{
+    return WebKit::toCopiedAPI(WebKit::toImpl(configuration)->siteIsolationEnforcementDirectory());
+}
+
+void WKWebsiteDataStoreConfigurationSetSiteIsolationEnforcementDirectory(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef directory)
+{
+    WebKit::toImpl(configuration)->setSiteIsolationEnforcementDirectory(WebKit::toProtectedImpl(directory)->string());
+}

@@ -83,6 +83,8 @@ WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
     case WebsiteDataType::ScreenTime:
         return WebsiteDataProcessType::UI;
 #endif
+    case WebsiteDataType::SiteIsolationEnforcement:
+        return WebsiteDataProcessType::UI;
     }
 
     RELEASE_ASSERT_NOT_REACHED();

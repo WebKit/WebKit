@@ -183,10 +183,13 @@ public:
 
     const String& webPushPartitionString() const { return m_webPushPartitionString; }
     void setWebPushPartitionString(String&& string) { m_webPushPartitionString = WTFMove(string); }
-    
+
     const String& serviceWorkerRegistrationDirectory() const { return m_directories.serviceWorkerRegistrationDirectory; }
     void setServiceWorkerRegistrationDirectory(String&& directory) { m_directories.serviceWorkerRegistrationDirectory = WTFMove(directory); }
-    
+
+    const String& siteIsolationEnforcementDirectory() const { return m_directories.siteIsolationEnforcementDirectory; }
+    void setSiteIsolationEnforcementDirectory(String&& directory) { m_directories.siteIsolationEnforcementDirectory = WTFMove(directory); }
+
     bool serviceWorkerProcessTerminationDelayEnabled() const { return m_serviceWorkerProcessTerminationDelayEnabled; }
     void setServiceWorkerProcessTerminationDelayEnabled(bool enabled) { m_serviceWorkerProcessTerminationDelayEnabled = enabled; }
 
@@ -277,6 +280,7 @@ public:
         String resourceLoadStatisticsDirectory;
         String searchFieldHistoryDirectory;
         String serviceWorkerRegistrationDirectory;
+        String siteIsolationEnforcementDirectory;
         String webSQLDatabaseDirectory;
 #if ENABLE(ARKIT_INLINE_PREVIEW)
         String modelElementCacheDirectory;

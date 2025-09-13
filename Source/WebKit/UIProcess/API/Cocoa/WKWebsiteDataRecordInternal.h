@@ -82,6 +82,8 @@ static inline std::optional<WebsiteDataType> toWebsiteDataType(NSString *website
     if ([websiteDataType isEqualToString:WKWebsiteDataTypeScreenTime])
         return WebsiteDataType::ScreenTime;
 #endif
+    if ([websiteDataType isEqualToString:_WKWebsiteDataTypeSiteIsolationEnforcement])
+        return WebsiteDataType::SiteIsolationEnforcement;
     return std::nullopt;
 }
 
@@ -143,6 +145,8 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(OptionSet<WebKit::WebsiteDat
     if (websiteDataTypes.contains(WebsiteDataType::ScreenTime))
         [wkWebsiteDataTypes addObject:WKWebsiteDataTypeScreenTime];
 #endif
+    if (websiteDataTypes.contains(WebsiteDataType::SiteIsolationEnforcement))
+        [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeSiteIsolationEnforcement];
 
     return wkWebsiteDataTypes;
 }

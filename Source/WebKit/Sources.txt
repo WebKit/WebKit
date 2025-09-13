@@ -421,6 +421,7 @@ UIProcess/RemotePagePlaybackSessionManagerProxy.cpp
 UIProcess/RemotePageProxy.cpp
 UIProcess/RemotePageVideoPresentationManagerProxy.cpp
 UIProcess/ResponsivenessTimer.cpp
+UIProcess/SiteIsolationEnforcementManager.cpp
 UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp
 UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp
 UIProcess/SpeechRecognitionServer.cpp

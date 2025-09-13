@@ -7341,6 +7341,8 @@
 		9B5499AE2362A7A700DF8BA5 /* _WKTextManipulationConfiguration.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKTextManipulationConfiguration.mm; sourceTree = "<group>"; };
 		9B5499B02362A7EC00DF8BA5 /* _WKTextManipulationExclusionRule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTextManipulationExclusionRule.h; sourceTree = "<group>"; };
 		9B5499B12362A7EC00DF8BA5 /* _WKTextManipulationExclusionRule.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKTextManipulationExclusionRule.mm; sourceTree = "<group>"; };
+		9B54A9C62E7398E200A44DBF /* SiteIsolationEnforcementManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SiteIsolationEnforcementManager.h; sourceTree = "<group>"; };
+		9B54A9C72E7398E200A44DBF /* SiteIsolationEnforcementManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SiteIsolationEnforcementManager.cpp; sourceTree = "<group>"; };
 		9B5BEC242400F4A90070C6EF /* WebMediaStrategy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMediaStrategy.h; sourceTree = "<group>"; };
 		9B5BEC252400F4A90070C6EF /* WebMediaStrategy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebMediaStrategy.cpp; sourceTree = "<group>"; };
 		9B5BEC28240101580070C6EF /* RemoteAudioDestinationProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioDestinationProxy.h; sourceTree = "<group>"; };
@@ -14990,6 +14992,8 @@
 				5CEB40A22A534EE100563C91 /* RemotePageVisitedLinkStoreRegistration.h */,
 				BC111B08112F5E3C00337BAB /* ResponsivenessTimer.cpp */,
 				1A30066C1110F4F70031937C /* ResponsivenessTimer.h */,
+				9B54A9C72E7398E200A44DBF /* SiteIsolationEnforcementManager.cpp */,
+				9B54A9C62E7398E200A44DBF /* SiteIsolationEnforcementManager.h */,
 				93D6B7B0255268A10058DD3A /* SpeechRecognitionPermissionManager.cpp */,
 				93D6B7B2255268A20058DD3A /* SpeechRecognitionPermissionManager.h */,
 				93D6B7AF255268A10058DD3A /* SpeechRecognitionPermissionRequest.h */,

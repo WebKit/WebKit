@@ -929,8 +929,8 @@ WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfigurat
 
 void TestController::configureWebsiteDataStoreTemporaryDirectories(WKWebsiteDataStoreConfigurationRef configuration)
 {
-    if (const char* dumpRenderTreeTemp = libraryPathForTesting()) {
-        String temporaryFolder = String::fromUTF8(dumpRenderTreeTemp);
+    if (const char* testWebKitAPITempDir = libraryPathForTesting()) {
+        String temporaryFolder = String::fromUTF8(testWebKitAPITempDir);
         auto randomNumber = cryptographicallyRandomNumber<uint32_t>();
 
         WKWebsiteDataStoreConfigurationSetNetworkCacheDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "Cache"_s, pathSeparator, randomNumber)).get());
@@ -942,6 +942,7 @@ void TestController::configureWebsiteDataStoreTemporaryDirectories(WKWebsiteData
         WKWebsiteDataStoreConfigurationSetServiceWorkerRegistrationDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "ServiceWorkers"_s, pathSeparator, randomNumber)).get());
         WKWebsiteDataStoreConfigurationSetGeneralStorageDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "Default"_s, pathSeparator, randomNumber)).get());
         WKWebsiteDataStoreConfigurationSetResourceMonitorThrottlerDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "ResourceMonitorThrottler"_s, pathSeparator, randomNumber)).get());
+        WKWebsiteDataStoreConfigurationSetSiteIsolationEnforcementDirectory(configuration, toWK(makeString(temporaryFolder, pathSeparator, "SiteIsolationEnforcement"_s, pathSeparator, randomNumber)).get());
 #if PLATFORM(WIN)
         WKWebsiteDataStoreConfigurationSetCookieStorageFile(configuration, toWK(makeString(temporaryFolder, pathSeparator, "cookies"_s, pathSeparator, randomNumber, pathSeparator, "cookiejar.db"_s)).get());
 #endif
