@@ -72,6 +72,8 @@ static constexpr CFRunLoopActivity cfRunLoopActivity(OptionSet<RunLoopObserver::
 void RunLoopObserver::runLoopObserverFired(CFRunLoopObserverRef, CFRunLoopActivity, void* context)
 {
     static_cast<RunLoopObserver*>(context)->runLoopObserverFired();
+    // if (!isRepeating())
+    //     m_isScheduled = false;
 }
 
 void RunLoopObserver::schedule(PlatformRunLoop runLoop, OptionSet<Activity> activity)
@@ -82,26 +84,29 @@ void RunLoopObserver::schedule(PlatformRunLoop runLoop, OptionSet<Activity> acti
     // Make sure we wake up the loop or the observer could be delayed until some other source fires.
     CFRunLoopWakeUp(runLoop);
 
-    if (m_runLoopObserver)
+    if (m_isScheduled)
         return;
 
-    CFRunLoopObserverContext context = { 0, this, 0, 0, 0 };
-    m_runLoopObserver = adoptCF(CFRunLoopObserverCreate(kCFAllocatorDefault, cfRunLoopActivity(activity), isRepeating(), cfRunLoopOrder(m_order), runLoopObserverFired, &context));
+    if (!m_runLoopObserver) {
+        CFRunLoopObserverContext context = { 0, this, 0, 0, 0 };
+        m_runLoopObserver = adoptCF(CFRunLoopObserverCreate(kCFAllocatorDefault, cfRunLoopActivity(activity), isRepeating(), cfRunLoopOrder(m_order), runLoopObserverFired, &context));
+    }
 
     CFRunLoopAddObserver(runLoop, m_runLoopObserver.get(), kCFRunLoopCommonModes);
+    m_isScheduled = true;
 }
 
 void RunLoopObserver::invalidate()
 {
-    if (m_runLoopObserver) {
+    if (m_isScheduled) {
         CFRunLoopObserverInvalidate(m_runLoopObserver.get());
-        m_runLoopObserver = nullptr;   
+        m_isScheduled = false;
     }
 }
 
 bool RunLoopObserver::isScheduled() const
 {
-    return !!m_runLoopObserver;
+    return m_isScheduled;
 }
 
 } // namespace WebCore

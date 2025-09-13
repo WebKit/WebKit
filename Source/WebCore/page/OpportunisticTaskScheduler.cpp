@@ -42,9 +42,15 @@ namespace WebCore {
 OpportunisticTaskScheduler::OpportunisticTaskScheduler(Page& page)
     : m_page(&page)
     , m_runLoopObserver(makeUniqueRef<RunLoopObserver>(RunLoopObserver::WellKnownOrder::OpportunisticTask, [weakThis = WeakPtr { this }] {
-        if (auto protectedThis = weakThis.get())
+        // if (true)
+        //     return;
+        if (auto protectedThis = weakThis.get()) {
             protectedThis->runLoopObserverFired();
-    }, RunLoopObserver::Type::OneShot))
+            RefPtr page = protectedThis->m_page.get();
+            if (!page->hasOpportunisticWork())
+                protectedThis->m_runLoopObserver->invalidate();
+        }
+    }, RunLoopObserver::Type::Repeating))
 {
 }
 
@@ -64,9 +70,10 @@ void OpportunisticTaskScheduler::rescheduleIfNeeded(MonotonicTime deadline)
 
     m_runloopCountAfterBeingScheduled = 0;
     m_currentDeadline = deadline;
-    m_runLoopObserver->invalidate();
-    if (!m_runLoopObserver->isScheduled())
-        m_runLoopObserver->schedule();
+    // m_runLoopObserver->invalidate();
+    // if (!m_runLoopObserver->isScheduled())
+    //     m_runLoopObserver->schedule();
+    m_runLoopObserver->schedule();
 }
 
 Ref<ImminentlyScheduledWorkScope> OpportunisticTaskScheduler::makeScheduledWorkScope()
@@ -121,8 +128,8 @@ void OpportunisticTaskScheduler::runLoopObserverFired()
 
     if (!shouldRunTask) {
         dataLogLnIf(verbose, "[OPPORTUNISTIC TASK] GaveUp: task gets rescheduled ", remainingTime, " ", hasImminentlyScheduledWork(), " ", page->preferredRenderingUpdateInterval(), " ", m_runloopCountAfterBeingScheduled, " signpost:(", JSC::activeJSGlobalObjectSignpostIntervalCount.load(), ")");
-        m_runLoopObserver->invalidate();
-        m_runLoopObserver->schedule();
+        // m_runLoopObserver->invalidate();
+        // m_runLoopObserver->schedule();
         return;
     }
 

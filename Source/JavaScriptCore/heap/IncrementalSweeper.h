@@ -42,6 +42,7 @@ public:
     void doWorkUntil(VM&, MonotonicTime deadline);
     void doWork(VM&) final;
     void stopSweeping();
+    bool hasWork();
 
 private:
     enum class SweepTrigger : bool { Timer, OpportunisticTask };
@@ -51,6 +52,7 @@ private:
     
     BlockDirectory* m_currentDirectory;
     bool m_lastOpportunisticTaskDidFinishSweeping { false };
+    bool m_hasWork { false };
 };
 
 } // namespace JSC

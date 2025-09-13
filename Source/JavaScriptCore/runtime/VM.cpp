@@ -1744,6 +1744,11 @@ void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSe
     heap.sweeper().doWorkUntil(*this, deadline);
 }
 
+bool VM::hasOpportunisticWork()
+{
+    return (heap.m_shouldDoOpportunisticFullCollection && heap.m_totalBytesVisitedAfterLastFullCollect) || (heap.totalBytesAllocatedThisCycle() && heap.m_bytesAllocatedBeforeLastEdenCollect) || heap.sweeper().hasWork();
+}
+
 void VM::invalidateStructureChainIntegrity(StructureChainIntegrityEvent)
 {
     if (auto* megamorphicCache = this->megamorphicCache())

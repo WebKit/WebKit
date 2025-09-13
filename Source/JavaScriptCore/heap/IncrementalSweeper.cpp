@@ -50,6 +50,7 @@ IncrementalSweeper::IncrementalSweeper(JSC::Heap* heap)
 
 void IncrementalSweeper::doWorkUntil(VM& vm, MonotonicTime deadline)
 {
+    m_hasWork = true; // assume true since we might reset to first directory and we'll clear this anyway if we're wrong
     if (!m_currentDirectory)
         m_currentDirectory = vm.heap.objectSpace().firstDirectory();
 
@@ -87,6 +88,7 @@ void IncrementalSweeper::doSweep(VM& vm, MonotonicTime deadline, SweepTrigger tr
         m_lastOpportunisticTaskDidFinishSweeping = true;
 
     cancelTimer();
+    m_hasWork = false;
 }
 
 bool IncrementalSweeper::sweepNextBlock(VM& vm, SweepTrigger trigger)
@@ -133,6 +135,12 @@ void IncrementalSweeper::stopSweeping()
 {
     m_currentDirectory = nullptr;
     cancelTimer();
+    m_hasWork = false;
+}
+
+bool IncrementalSweeper::hasWork()
+{
+    return m_hasWork;
 }
 
 } // namespace JSC

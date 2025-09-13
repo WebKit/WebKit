@@ -99,6 +99,7 @@ private:
 #if USE(CF)
     WellKnownOrder m_order { WellKnownOrder::GraphicsCommit };
     RetainPtr<PlatformRunLoopObserver> m_runLoopObserver;
+    bool m_isScheduled { false };
 #endif
 };
 

@@ -353,6 +353,7 @@ public:
         HasImminentlyScheduledWork = 1 << 0,
     };
     JS_EXPORT_PRIVATE void performOpportunisticallyScheduledTasks(MonotonicTime deadline, OptionSet<SchedulerOptions>);
+    JS_EXPORT_PRIVATE bool hasOpportunisticWork();
 
     Structure* cellButterflyStructure(IndexingType indexingType) { return rawImmutableButterflyStructure(indexingType).get(); }
 

@@ -42,6 +42,8 @@ void RunLoopObserver::runLoopObserverFired()
     ASSERT(m_runLoopObserver);
 #endif
     m_callback();
+    if (!isRepeating())
+        m_isScheduled = false;
 }
 
 #if !USE(CF)

@@ -5281,6 +5281,11 @@ void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
     deleteRemovedNodesAndDetachedRenderers();
 }
 
+bool Page::hasOpportunisticWork()
+{
+    return commonVM().hasOpportunisticWork();
+}
+
 void Page::deleteRemovedNodesAndDetachedRenderers()
 {
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
