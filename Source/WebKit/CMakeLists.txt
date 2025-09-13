@@ -219,6 +219,7 @@ set(WebKit_MESSAGES_IN_FILES
     GPUProcess/graphics/WebGPU/RemoteXRView
 
     GPUProcess/media/RemoteAudioDestinationManager
+    GPUProcess/media/RemoteAudioVideoRendererProxyManager
     GPUProcess/media/RemoteAudioSessionProxy
     GPUProcess/media/RemoteCDMFactoryProxy
     GPUProcess/media/RemoteCDMInstanceProxy
@@ -341,6 +342,7 @@ set(WebKit_MESSAGES_IN_FILES
 
     WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy
 
+    WebProcess/GPU/media/AudioVideoRendererRemoteMessageReceiver
     WebProcess/GPU/media/RemoteAudioHardwareListener
     WebProcess/GPU/media/MediaPlayerPrivateRemote
     WebProcess/GPU/media/MediaSourcePrivateRemoteMessageReceiver
@@ -677,6 +679,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     WebProcess/GPU/media/MediaOverridesForTesting.serialization.in
     WebProcess/GPU/media/MediaTimeUpdateData.serialization.in
     WebProcess/GPU/media/RemoteAudioSessionConfiguration.serialization.in
+    WebProcess/GPU/media/RemoteAudioVideoRendererState.serialization.in
     WebProcess/GPU/media/RemoteCDMConfiguration.serialization.in
     WebProcess/GPU/media/RemoteCDMInstanceConfiguration.serialization.in
     WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in

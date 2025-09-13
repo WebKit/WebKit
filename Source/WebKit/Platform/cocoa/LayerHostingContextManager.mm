@@ -81,7 +81,7 @@ std::optional<WebCore::HostingContext> LayerHostingContextManager::createHosting
     return m_inlineLayerHostingContext ? m_inlineLayerHostingContext->hostingContext() : WebCore::HostingContext { };
 }
 
-void LayerHostingContextManager::setVideoLayerSizeFenced(const WebCore::FloatSize& size, WTF::MachSendRightAnnotated&& sendRightAnnotated, CompletionHandler<void()>&& postCommitAction)
+void LayerHostingContextManager::setVideoLayerSizeFenced(const WebCore::FloatSize& size, WTF::MachSendRightAnnotated&& sendRightAnnotated, NOESCAPE CompletionHandler<void()>&& postCommitAction)
 {
 #if USE(EXTENSIONKIT)
     RetainPtr<BELayerHierarchyHostingTransactionCoordinator> hostingUpdateCoordinator;

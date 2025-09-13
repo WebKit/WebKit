@@ -46,6 +46,9 @@ private:
 #if ENABLE(WEB_AUDIO)
     Ref<WebCore::AudioDestination> createAudioDestination(const WebCore::AudioDestinationCreationOptions&) override;
 #endif
+#if ENABLE(VIDEO) && ENABLE(GPU_PROCESS)
+    RefPtr<WebCore::AudioVideoRenderer> createAudioVideoRenderer(const Logger&, uint64_t) const final;
+#endif
     std::unique_ptr<WebCore::NowPlayingManager> createNowPlayingManager() const final;
     bool hasThreadSafeMediaSourceSupport() const final;
 #if ENABLE(MEDIA_SOURCE)

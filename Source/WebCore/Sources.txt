@@ -2314,6 +2314,7 @@ platform/Logging.cpp
 platform/LowPowerModeNotifier.cpp
 platform/MIMETypeRegistry.cpp
 platform/MainThreadSharedTimer.cpp
+platform/MediaSamplesBlock.cpp
 platform/MediaStrategy.cpp
 platform/NotImplemented.cpp
 platform/NowPlayingManager.cpp

@@ -25,34 +25,19 @@
 
 #pragma once
 
-#include "LayerHostingContext.h"
 #include <WebCore/FloatSize.h>
-#include <WebCore/PlatformLayer.h>
-#include <wtf/CompletionHandler.h>
-#include <wtf/Vector.h>
+#include <WebCore/VideoPlaybackQualityMetrics.h>
+#include <wtf/MediaTime.h>
 
 namespace WebKit {
 
-class LayerHostingContextManager {
-public:
-    LayerHostingContextManager() = default;
-    LayerHostingContextManager(LayerHostingContextManager&&) = default;
-    LayerHostingContextManager& operator=(LayerHostingContextManager&&) = default;
-    ~LayerHostingContextManager();
-
-
-    using LayerHostingContextCallback = CompletionHandler<void(WebCore::HostingContext)>;
-
-    void requestHostingContext(LayerHostingContextCallback&&);
-    std::optional<WebCore::HostingContext> createHostingContextIfNeeded(const PlatformLayerContainer&, bool canShowWhileLocked = false);
-    void setVideoLayerSizeFenced(const WebCore::FloatSize&, WTF::MachSendRightAnnotated&&, NOESCAPE CompletionHandler<void()>&& postCommitAction);
-    WebCore::FloatSize videoLayerSize() const { return m_videoLayerSize; }
-    void setVideoLayerSizeIfPossible();
-
-private:
-    Vector<LayerHostingContextCallback> m_layerHostingContextRequests;
-    std::unique_ptr<LayerHostingContext> m_inlineLayerHostingContext;
-    WebCore::FloatSize m_videoLayerSize;
+struct RemoteAudioVideoRendererState {
+    MediaTime currentTime { MediaTime::invalidTime() };
+    bool paused { false };
+    bool seeking { false };
+    bool timeIsProgressing { false };
+    double effectiveRate { 0 };
+    std::optional<WebCore::VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics { };
 };
 
-} // namespace WebKit
+}

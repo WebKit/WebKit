@@ -38,11 +38,13 @@
 #import "MediaPlaybackTarget.h"
 #import "MediaPlayer.h"
 #import "MediaSampleAVFObjC.h"
+#import "MediaStrategy.h"
 #import "NativeImage.h"
 #import "NotImplemented.h"
 #import "PixelBufferConformerCV.h"
 #import "PlatformDynamicRangeLimitCocoa.h"
 #import "PlatformMediaResourceLoader.h"
+#import "PlatformStrategies.h"
 #import "ResourceError.h"
 #import "ResourceRequest.h"
 #import "ResourceResponse.h"
@@ -77,6 +79,15 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaPlayerPrivateWebM);
 
 static const MediaTime discontinuityTolerance = MediaTime(1, 1);
 
+Ref<AudioVideoRenderer> MediaPlayerPrivateWebM::createRenderer(const Logger& logger, uint64_t logIdentifier)
+{
+    if (hasPlatformStrategies()) {
+        if (RefPtr renderer = platformStrategies()->mediaStrategy()->createAudioVideoRenderer(logger, logIdentifier))
+            return renderer.releaseNonNull();
+    }
+    return AudioVideoRendererAVFObjC::create(logger, logIdentifier);
+}
+
 MediaPlayerPrivateWebM::MediaPlayerPrivateWebM(MediaPlayer* player)
     : m_player(player)
     , m_parser(SourceBufferParserWebM::create().releaseNonNull())
@@ -84,7 +95,8 @@ MediaPlayerPrivateWebM::MediaPlayerPrivateWebM(MediaPlayer* player)
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
     , m_seekTimer(*this, &MediaPlayerPrivateWebM::seekInternal)
-    , m_renderer(AudioVideoRendererAVFObjC::create(m_logger, m_logIdentifier))
+    , m_renderer(createRenderer(m_logger, m_logIdentifier))
+    , m_playerIdentifier(MediaPlayerIdentifier::generate())
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_parser->setLogger(m_logger, m_logIdentifier);
@@ -148,6 +160,12 @@ MediaPlayerPrivateWebM::MediaPlayerPrivateWebM(MediaPlayer* player)
 
     m_renderer->setPreferences(VideoMediaSampleRendererPreference::PrefersDecompressionSession);
 
+    m_renderer->notifyVideoLayerSizeChanged([weakThis = WeakPtr { *this }](const MediaTime&, FloatSize size) {
+        if (RefPtr protectedThis = weakThis.get()) {
+            if (RefPtr player = protectedThis->m_player.get())
+                player->videoLayerSizeDidChange(size);
+        }
+    });
 #if HAVE(SPATIAL_TRACKING_LABEL)
     m_defaultSpatialTrackingLabel = player->defaultSpatialTrackingLabel();
     m_spatialTrackingLabel = player->spatialTrackingLabel();
@@ -343,7 +361,7 @@ void MediaPlayerPrivateWebM::cancelLoad()
 
 PlatformLayer* MediaPlayerPrivateWebM::platformLayer() const
 {
-    return m_renderer->platformVideoLayer().get();
+    return m_renderer->platformVideoLayer();
 }
 
 void MediaPlayerPrivateWebM::prepareToPlay()
@@ -1517,6 +1535,16 @@ void MediaPlayerPrivateWebM::setLayerRequiresFlush()
 std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateWebM::videoPlaybackQualityMetrics()
 {
     return m_renderer->videoPlaybackQualityMetrics();
+}
+
+WebCore::HostingContext MediaPlayerPrivateWebM::hostingContext() const
+{
+    return m_renderer->hostingContext();
+}
+
+void MediaPlayerPrivateWebM::setVideoLayerSizeFenced(const WebCore::FloatSize& size, WTF::MachSendRightAnnotated&& sendRightAnnotated)
+{
+    m_renderer->setVideoLayerSizeFenced(size, WTFMove(sendRightAnnotated));
 }
 
 } // namespace WebCore

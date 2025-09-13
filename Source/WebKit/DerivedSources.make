@@ -208,6 +208,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy \
 	WebProcess/GPU/webrtc/LibWebRTCCodecs \
 	WebProcess/GPU/webrtc/SampleBufferDisplayLayer \
+	WebProcess/GPU/media/AudioVideoRendererRemoteMessageReceiver \
 	WebProcess/GPU/media/MediaPlayerPrivateRemote \
 	WebProcess/GPU/media/MediaSourcePrivateRemoteMessageReceiver \
 	WebProcess/GPU/media/RemoteAudioHardwareListener \
@@ -321,6 +322,7 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/media/RemoteLegacyCDMSessionProxy \
 	GPUProcess/media/RemoteLegacyCDMFactoryProxy \
 	GPUProcess/media/RemoteAudioSessionProxy \
+	GPUProcess/media/RemoteAudioVideoRendererProxyManager \
 	GPUProcess/media/RemoteCDMInstanceSessionProxy \
 	GPUProcess/media/RemoteCDMProxy \
 	GPUProcess/media/ios/RemoteMediaSessionHelperProxy \
@@ -909,6 +911,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	WebProcess/GPU/media/RemoteCDMInstanceConfiguration.serialization.in \
 	WebProcess/GPU/media/RemoteAudioSessionConfiguration.serialization.in \
 	WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in \
+	WebProcess/GPU/media/RemoteAudioVideoRendererState.serialization.in \
 	WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in \
 	WebProcess/GPU/media/RemoteVideoFrameProxyProperties.serialization.in \
 	WebProcess/GPU/webrtc/SharedVideoFrame.serialization.in \

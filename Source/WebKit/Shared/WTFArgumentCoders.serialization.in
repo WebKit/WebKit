@@ -91,6 +91,7 @@ template: struct WebKit::ContentWorldIdentifierType
 template: enum class WebKit::ImageAnalysisRequestIdentifierType
 template: enum class WebKit::MediaDevicePermissionRequestIdentifierType
 template: enum class WebKit::RemoteAudioSessionIdentifierType
+template: struct WebKit::RemoteAudioVideoRendererIdentifierType
 template: struct WebKit::RemoteCDMIdentifierType
 template: struct WebKit::RemoteCDMInstanceIdentifierType
 template: struct WebKit::RemoteCDMInstanceSessionIdentifierType
@@ -192,6 +193,7 @@ template: enum class WebCore::RTCDataChannelLocalIdentifierType
 template: enum class WebCore::RTCRtpScriptTransformerIdentifierType
 template: struct WebCore::RenderingResourceIdentifierType
 template: struct WebCore::ResourceLoaderIdentifierType
+template: struct WebCore::SamplesRendererTrackIdentifierType
 template: struct WebCore::ServiceWorkerIdentifierType
 template: struct WebCore::ServiceWorkerJobIdentifierType
 template: struct WebCore::ServiceWorkerRegistrationIdentifierType

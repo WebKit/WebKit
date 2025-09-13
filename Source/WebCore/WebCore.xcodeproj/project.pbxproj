@@ -2150,6 +2150,7 @@
 		5185FCB41BB4C4E80012898F /* WindowOrWorkerGlobalScopeIndexedDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D719B2181106E00016DC51 /* WindowOrWorkerGlobalScopeIndexedDatabase.h */; };
 		5185FCB91BB4CBF80012898F /* IDBConnectionToClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A58FE1BB07AA500C19282 /* IDBConnectionToClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5185FCBB1BB4CBF80012898F /* IDBServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A58F01BAB720F00C19282 /* IDBServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51867B662E7549DE00F956CB /* WebAVSampleBufferListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F6CA3C2B4D14C900F273C8 /* WebAVSampleBufferListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5187E8452B79F9690053BFF5 /* MediaSourceHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5187E8422B79F8100053BFF5 /* MediaSourceHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		518864E11BBAF57400E540C9 /* UniqueIDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 518864DF1BBAF30F00E540C9 /* UniqueIDBDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51895F8A2D123D0900E8D471 /* DocumentClasses.h in Headers */ = {isa = PBXBuildFile; fileRef = 51895F892D123D0900E8D471 /* DocumentClasses.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11908,6 +11909,7 @@
 		513C7B6B2E7C2A0E00079881 /* TrackInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackInfo.h; sourceTree = "<group>"; };
 		513C7B6C2E7C2BC700079881 /* MediaSamplesBlock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSamplesBlock.h; sourceTree = "<group>"; };
 		513C7B6F2E7C312E00079881 /* TrackInfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TrackInfo.cpp; sourceTree = "<group>"; };
+		513C7B762E7CD9CA00079881 /* MediaSamplesBlock.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSamplesBlock.cpp; sourceTree = "<group>"; };
 		513F14510AB634C400094DDF /* IconLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = IconLoader.cpp; sourceTree = "<group>"; };
 		513F14520AB634C400094DDF /* IconLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IconLoader.h; sourceTree = "<group>"; };
 		51405C86190B014400754F94 /* SelectionGeometryGatherer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectionGeometryGatherer.cpp; sourceTree = "<group>"; };
@@ -37116,6 +37118,7 @@
 				CDF2B003181F059C00F2B424 /* MediaDescription.h */,
 				5154F6EE2B02340900B857D9 /* MediaPromiseTypes.h */,
 				CD641EC7181ED60100EE4C41 /* MediaSample.h */,
+				513C7B762E7CD9CA00079881 /* MediaSamplesBlock.cpp */,
 				513C7B6C2E7C2BC700079881 /* MediaSamplesBlock.h */,
 				A17D275D1EAC579800BF01E7 /* MediaSelectionOption.h */,
 				416ECAE325B58CC400B34DA5 /* MediaSessionGroupIdentifier.h */,
@@ -46893,6 +46896,7 @@
 				CDB6354923F6023A00C0F9DE /* WebAVPlayerController.h in Headers */,
 				511D6703286C1DA7008C2AED /* WebAVPlayerLayer.h in Headers */,
 				CD0445E12992F1740059B997 /* WebAVPlayerLayerView.h in Headers */,
+				51867B662E7549DE00F956CB /* WebAVSampleBufferListener.h in Headers */,
 				1F36EA9C1E21BA1700621E25 /* WebBackgroundTaskController.h in Headers */,
 				41CDC67028F73A0B00603E59 /* WebCodecsAlphaOption.h in Headers */,
 				9A87D9E82A82951B00EE7A8A /* WebCodecsAudioData.h in Headers */,

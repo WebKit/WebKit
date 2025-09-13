@@ -9091,6 +9091,22 @@ WebLocksAPIEnabled:
   sharedPreferenceForWebProcess: true
   richJavaScript: true
 
+WebMUseRemoteAudioVideoRenderer:
+  type: bool
+  status: unstable
+  category: media
+  humanReadableName: "WebM player uses GPU renderer"
+  humanReadableDescription: "WebM player uses GPU renderer"
+  condition: PLATFORM(COCOA) && ENABLE(VIDEO)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+  sharedPreferenceForWebProcess: true
+
 WebPageSpatialBackdropEnabled:
   type: bool
   status: testable

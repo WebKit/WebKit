@@ -306,8 +306,9 @@ static void buildMediaEnginesVector() WTF_REQUIRES_LOCK(mediaEngineVectorLock)
     if (DeprecatedGlobalSettings::isAVFoundationEnabled()) {
 
 #if ENABLE(COCOA_WEBM_PLAYER)
+        bool useRemoteRenderer = hasPlatformStrategies() && platformStrategies()->mediaStrategy()->hasRemoteRendererFor(MediaPlayerMediaEngineIdentifier::CocoaWebM);
         if (!hasPlatformStrategies() || platformStrategies()->mediaStrategy()->enableWebMMediaPlayer()) {
-            if (registerRemoteEngine)
+            if (registerRemoteEngine && !useRemoteRenderer)
                 registerRemoteEngine(addMediaEngine, MediaPlayerEnums::MediaEngineIdentifier::CocoaWebM);
             else
                 MediaPlayerPrivateWebM::registerMediaEngine(addMediaEngine);

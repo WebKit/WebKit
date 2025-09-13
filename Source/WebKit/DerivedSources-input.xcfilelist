@@ -92,6 +92,7 @@ $(PROJECT_DIR)/GPUProcess/media/RemoteAudioDestinationManager.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteAudioSessionProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteAudioSessionProxyManager.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteAudioTrackProxy.messages.in
+$(PROJECT_DIR)/GPUProcess/media/RemoteAudioVideoRendererProxyManager.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteCDMFactoryProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteCDMInstanceProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteCDMInstanceSessionProxy.messages.in
@@ -619,15 +620,16 @@ $(PROJECT_DIR)/WebProcess/GPU/graphics/RemoteImageBufferProxy.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/graphics/RemoteImageBufferSetProxy.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/graphics/RemoteRenderingBackendProxy.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy.messages.in
+$(PROJECT_DIR)/WebProcess/GPU/media/AudioVideoRendererRemoteMessageReceiver.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/MediaOverridesForTesting.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in
-$(PROJECT_DIR)/WebProcess/GPU/media/MediaSourcePrivateRemote.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/MediaSourcePrivateRemoteMessageReceiver.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/MediaTimeUpdateData.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteAudioHardwareListener.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteAudioSession.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteAudioSessionConfiguration.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteAudioSourceProviderManager.messages.in
+$(PROJECT_DIR)/WebProcess/GPU/media/RemoteAudioVideoRendererState.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteCDMConfiguration.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteCDMInstance.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteCDMInstanceConfiguration.serialization.in

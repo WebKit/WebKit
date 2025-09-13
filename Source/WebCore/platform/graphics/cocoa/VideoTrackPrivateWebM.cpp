@@ -30,6 +30,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaSample.h"
+#include "TrackInfo.h"
 
 namespace WebCore {
 

@@ -282,6 +282,11 @@ private:
     void setAllTracksForReenqueuing();
     void setTrackForReenqueuing(TrackID);
 
+    // Remote layer support
+    WebCore::HostingContext hostingContext() const final;
+    void setVideoLayerSizeFenced(const WebCore::FloatSize&, WTF::MachSendRightAnnotated&&) final;
+    std::optional<MediaPlayerIdentifier> identifier() const final { return m_playerIdentifier; }
+
     const Logger& logger() const final { return m_logger.get(); }
     Ref<const Logger> protectedLogger() const { return logger(); }
     ASCIILiteral logClassName() const final { return "MediaPlayerPrivateWebM"_s; }
@@ -295,6 +300,8 @@ private:
 
     void maybeFinishLoading();
     void readyToProcessData();
+
+    static Ref<AudioVideoRenderer> createRenderer(const Logger&, uint64_t);
 
     URL m_assetURL;
     MediaPlayer::Preload m_preload { MediaPlayer::Preload::Auto };
@@ -377,6 +384,7 @@ private:
     String m_spatialTrackingLabel;
 #endif
     const Ref<AudioVideoRenderer> m_renderer;
+    const MediaPlayerIdentifier m_playerIdentifier;
 };
 
 } // namespace WebCore

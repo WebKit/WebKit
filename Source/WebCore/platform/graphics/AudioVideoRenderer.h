@@ -82,7 +82,7 @@ public:
     virtual void flushAndRemoveImage() { };
     virtual RefPtr<VideoFrame> currentVideoFrame() const = 0;
     virtual std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() = 0;
-    virtual PlatformLayerContainer platformVideoLayer() const { return nullptr; }
+    virtual PlatformLayer* platformVideoLayer() const { return nullptr; }
 
     using LayerHostingContextCallback = CompletionHandler<void(HostingContext)>;
     virtual void requestHostingContext(LayerHostingContextCallback&& completionHandler) { completionHandler({ }); }
@@ -119,7 +119,7 @@ public:
     virtual bool seeking() const = 0;
 };
 
-enum class SamplesRendererTrackIdentifierType { };
+struct SamplesRendererTrackIdentifierType;
 using SamplesRendererTrackIdentifier = AtomicObjectIdentifier<SamplesRendererTrackIdentifierType>;
 
 class TracksRendererManager {
@@ -164,7 +164,7 @@ public:
 #endif
 };
 
-class AudioVideoRenderer : public AudioInterface, public VideoInterface, public VideoFullscreenInterface, public SynchronizerInterface, public TracksRendererManager, public AbstractThreadSafeRefCountedAndCanMakeWeakPtr {
+class WEBCORE_EXPORT AudioVideoRenderer : public AudioInterface, public VideoInterface, public VideoFullscreenInterface, public SynchronizerInterface, public TracksRendererManager, public AbstractThreadSafeRefCountedAndCanMakeWeakPtr {
 public:
     virtual ~AudioVideoRenderer() = default;
 };

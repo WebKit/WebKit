@@ -77,6 +77,7 @@ GPUProcess/media/RemoteAudioHardwareListenerProxy.cpp
 GPUProcess/media/RemoteAudioSessionProxy.cpp
 GPUProcess/media/RemoteAudioSessionProxyManager.cpp
 GPUProcess/media/RemoteAudioTrackProxy.cpp
+GPUProcess/media/RemoteAudioVideoRendererProxyManager.cpp
 GPUProcess/media/RemoteCDMFactoryProxy.cpp
 GPUProcess/media/RemoteCDMInstanceProxy.cpp
 GPUProcess/media/RemoteCDMInstanceSessionProxy.cpp
@@ -792,6 +793,7 @@ WebProcess/GPU/graphics/RemoteSnapshotRecorderProxy.cpp
 WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp
 WebProcess/GPU/graphics/RemoteResourceCacheProxy.cpp
 WebProcess/GPU/media/AudioTrackPrivateRemote.cpp
+WebProcess/GPU/media/AudioVideoRendererRemote.cpp
 WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp
 WebProcess/GPU/media/MediaSourcePrivateRemote.cpp
 WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp
@@ -934,6 +936,7 @@ WebProcess/WebStorage/WebStorageNamespaceProvider.cpp
 
 WebProcess/XR/PlatformXRSystemProxy.cpp
 
+AudioVideoRendererRemoteMessageReceiverMessageReceiver.cpp
 IPCConnectionTesterMessageReceiver.cpp
 IPCStreamTesterMessageReceiver.cpp
 IPCStreamTesterProxyMessageReceiver.cpp
@@ -954,6 +957,7 @@ PlatformXRSystemMessageReceiver.cpp
 PlatformXRSystemProxyMessageReceiver.cpp
 PushClientConnectionMessageReceiver.cpp
 RemoteAdapterMessageReceiver.cpp
+RemoteAudioVideoRendererProxyManagerMessageReceiver.cpp
 RemoteBarcodeDetectorMessageReceiver.cpp
 RemoteBindGroupMessageReceiver.cpp
 RemoteBindGroupLayoutMessageReceiver.cpp

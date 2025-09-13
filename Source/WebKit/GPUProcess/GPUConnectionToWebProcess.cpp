@@ -76,6 +76,10 @@
 #include <WebCore/MediaSessionManagerCocoa.h>
 #include <WebCore/MediaSessionManagerIOS.h>
 #endif
+#if ENABLE(VIDEO)
+#include "RemoteAudioVideoRendererProxyManager.h"
+#include "RemoteAudioVideoRendererProxyManagerMessages.h"
+#endif
 
 #if ENABLE(WEBGL)
 #include "RemoteGraphicsContextGL.h"
@@ -651,6 +655,21 @@ Ref<RemoteAudioMediaStreamTrackRendererInternalUnitManager> GPUConnectionToWebPr
 }
 #endif
 
+#if ENABLE(VIDEO)
+RemoteAudioVideoRendererProxyManager& GPUConnectionToWebProcess::remoteAudioVideoRendererProxyManager()
+{
+    if (!m_remoteAudioVideoRendererProxyManager)
+        lazyInitialize(m_remoteAudioVideoRendererProxyManager, makeUniqueWithoutRefCountedCheck<RemoteAudioVideoRendererProxyManager>(*this));
+
+    return *m_remoteAudioVideoRendererProxyManager;
+}
+
+Ref<RemoteAudioVideoRendererProxyManager> GPUConnectionToWebProcess::protectedRemoteAudioVideoRendererProxyManager()
+{
+    return remoteAudioVideoRendererProxyManager();
+}
+#endif
+
 #if ENABLE(ENCRYPTED_MEDIA)
 RemoteCDMFactoryProxy& GPUConnectionToWebProcess::cdmFactoryProxy()
 {
@@ -1025,6 +1044,12 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         return true;
     }
 #endif
+#if ENABLE(VIDEO)
+    if (decoder.messageReceiverName() == Messages::RemoteAudioVideoRendererProxyManager::messageReceiverName()) {
+        protectedRemoteAudioVideoRendererProxyManager()->didReceiveMessage(connection, decoder);
+        return true;
+    }
+#endif
 #if PLATFORM(IOS_FAMILY)
     if (decoder.messageReceiverName() == Messages::RemoteMediaSessionHelperProxy::messageReceiverName()) {
         mediaSessionHelperProxy().didReceiveMessageFromWebProcess(connection, decoder);
@@ -1124,6 +1149,12 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
 #if USE(AUDIO_SESSION)
     if (decoder.messageReceiverName() == Messages::RemoteAudioSessionProxy::messageReceiverName()) {
         protectedAudioSessionProxy()->didReceiveSyncMessage(connection, decoder, replyEncoder);
+        return true;
+    }
+#endif
+#if ENABLE(VIDEO)
+    if (decoder.messageReceiverName() == Messages::RemoteAudioVideoRendererProxyManager::messageReceiverName()) {
+        protectedRemoteAudioVideoRendererProxyManager()->didReceiveSyncMessage(connection, decoder, replyEncoder);
         return true;
     }
 #endif

@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "AudioMediaStreamTrackRendererInternalUnitManager.h"
+#include "AudioVideoRendererRemoteMessageReceiverMessages.h"
 #include "GPUConnectionToWebProcessMessages.h"
 #include "GPUProcessConnectionInfo.h"
 #include "GPUProcessConnectionMessages.h"
@@ -248,6 +249,12 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
         WebProcess::singleton().protectedRemoteMediaPlayerManager()->didReceivePlayerMessage(connection, decoder);
         return true;
     }
+
+    if (decoder.messageReceiverName() == Messages::AudioVideoRendererRemoteMessageReceiver::messageReceiverName()) {
+        RELEASE_LOG_ERROR(Media, "The AudioVideoRendererRemoteMessageReceiver object has beed destroyed");
+        return true;
+    }
+
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)

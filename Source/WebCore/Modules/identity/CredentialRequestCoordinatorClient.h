@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-class SecurityOriginData;
+class SecurityOrigin;
 class Document;
 template<typename T> class ExceptionOr;
 

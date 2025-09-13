@@ -59,7 +59,7 @@ class AudioVideoRendererAVFObjC
     , public WebAVSampleBufferListenerClient
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioVideoRendererAVFObjC>
     , private LoggerHelper {
-    WTF_MAKE_TZONE_ALLOCATED(AudioVideoRendererAVFObjC);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AudioVideoRendererAVFObjC, WEBCORE_EXPORT);
 public:
     static Ref<AudioVideoRendererAVFObjC> create(const Logger& logger, uint64_t logIdentifier) { return adoptRef(*new AudioVideoRendererAVFObjC(logger, logIdentifier)); }
 
@@ -133,7 +133,7 @@ public:
     void setResourceOwner(const ProcessIdentity& resourceOwner) final { m_resourceOwner = resourceOwner; }
     RefPtr<VideoFrame> currentVideoFrame() const final;
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
-    PlatformLayerContainer platformVideoLayer() const final;
+    PlatformLayer* platformVideoLayer() const final;
     void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRightAnnotated&&) final;
 
     // VideoFullscreenInterface
@@ -145,7 +145,7 @@ public:
     void isInFullscreenOrPictureInPictureChanged(bool) final;
 
 private:
-    AudioVideoRendererAVFObjC(const Logger&, uint64_t);
+    WEBCORE_EXPORT AudioVideoRendererAVFObjC(const Logger&, uint64_t);
 
     MediaTime clampTimeToLastSeekTime(const MediaTime&) const;
     void maybeCompleteSeek();

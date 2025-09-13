@@ -26,6 +26,10 @@
 #include "config.h"
 #include "MediaStrategy.h"
 
+#include "AudioVideoRenderer.h"
+#if USE(AVFOUNDATION)
+#include "AudioVideoRendererAVFObjC.h"
+#endif
 #include "MediaPlayer.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -80,6 +84,32 @@ bool MediaStrategy::mockMediaSourceEnabled() const
 void MediaStrategy::addMockMediaSourceEngine()
 {
     MediaPlayerFactorySupport::callRegisterMediaEngine(MockMediaPlayerMediaSource::registerMediaEngine);
+}
+#endif
+
+#if ENABLE(VIDEO)
+RefPtr<AudioVideoRenderer> MediaStrategy::createAudioVideoRenderer(const Logger& logger, uint64_t logIdentifier) const
+{
+#if USE(AVFOUNDATION)
+    return AudioVideoRendererAVFObjC::create(logger, logIdentifier);
+#else
+    UNUSED_PARAM(logger);
+    UNUSED_PARAM(logIdentifier);
+    return nullptr;
+#endif
+}
+
+bool MediaStrategy::hasRemoteRendererFor(MediaPlayerMediaEngineIdentifier type) const
+{
+    return m_remoteRenderersEnabled & 1 << static_cast<uint32_t>(type);
+}
+
+void MediaStrategy::enableRemoteRenderer(MediaPlayerMediaEngineIdentifier type, bool enabled)
+{
+    if (enabled)
+    m_remoteRenderersEnabled |= 1 << static_cast<uint32_t>(type);
+    else
+        m_remoteRenderersEnabled &= ~(1 << static_cast<uint32_t>(type));
 }
 #endif
 

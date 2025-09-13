@@ -806,7 +806,7 @@ std::optional<VideoPlaybackQualityMetrics> AudioVideoRendererAVFObjC::videoPlayb
     };
 }
 
-PlatformLayerContainer AudioVideoRendererAVFObjC::platformVideoLayer() const
+PlatformLayer* AudioVideoRendererAVFObjC::platformVideoLayer() const
 {
     if (!m_videoRenderer)
         return nullptr;
