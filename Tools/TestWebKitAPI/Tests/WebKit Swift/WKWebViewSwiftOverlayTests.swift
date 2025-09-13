@@ -32,7 +32,8 @@ struct WKWebViewSwiftOverlayTests {
     func evaluateJavaScriptYieldsExpectedResponse() async throws {
         let webView = WKWebView()
 
-        let response = try await webView.evaluateJavaScript("1 + 2") as! Int
+        // Safety: this is actually safe; false positive is rdar://154775389
+        let response = try await unsafe webView.evaluateJavaScript("1 + 2") as! Int
         #expect(response == 3)
     }
 
@@ -40,7 +41,8 @@ struct WKWebViewSwiftOverlayTests {
     func evaluateJavaScriptWithNilResponse() async throws {
         let webView = WKWebView()
         
-        let response: Any? = try await webView.evaluateJavaScript("console.log('hello')")
+        // Safety: this is actually safe; false positive is rdar://154775389
+        let response: Any? = try await unsafe webView.evaluateJavaScript("console.log('hello')")
         #expect(response == nil)
     }
 }
