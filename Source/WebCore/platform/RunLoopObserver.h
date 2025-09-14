@@ -82,7 +82,7 @@ public:
 
     static constexpr OptionSet defaultActivities = { Activity::BeforeWaiting, Activity::Exit };
     WEBCORE_EXPORT void schedule(PlatformRunLoop = nullptr, OptionSet<Activity> = defaultActivities);
-    WEBCORE_EXPORT void invalidate();
+    WEBCORE_EXPORT void invalidate(PlatformRunLoop = nullptr);
     WEBCORE_EXPORT bool isScheduled() const;
 
     bool isRepeating() const { return m_type == Type::Repeating; }
@@ -99,6 +99,7 @@ private:
 #if USE(CF)
     WellKnownOrder m_order { WellKnownOrder::GraphicsCommit };
     RetainPtr<PlatformRunLoopObserver> m_runLoopObserver;
+    bool m_isScheduled { false };
 #endif
 };
 

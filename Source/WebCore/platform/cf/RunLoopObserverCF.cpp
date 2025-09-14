@@ -82,26 +82,33 @@ void RunLoopObserver::schedule(PlatformRunLoop runLoop, OptionSet<Activity> acti
     // Make sure we wake up the loop or the observer could be delayed until some other source fires.
     CFRunLoopWakeUp(runLoop);
 
-    if (m_runLoopObserver)
+    if (m_isScheduled)
         return;
 
-    CFRunLoopObserverContext context = { 0, this, 0, 0, 0 };
-    m_runLoopObserver = adoptCF(CFRunLoopObserverCreate(kCFAllocatorDefault, cfRunLoopActivity(activity), isRepeating(), cfRunLoopOrder(m_order), runLoopObserverFired, &context));
+    if (!m_runLoopObserver) {
+        CFRunLoopObserverContext context = { 0, this, 0, 0, 0 };
+        m_runLoopObserver = adoptCF(CFRunLoopObserverCreate(kCFAllocatorDefault, cfRunLoopActivity(activity), isRepeating(), cfRunLoopOrder(m_order), runLoopObserverFired, &context));
+    }
 
     CFRunLoopAddObserver(runLoop, m_runLoopObserver.get(), kCFRunLoopCommonModes);
+    m_isScheduled = true;
 }
 
-void RunLoopObserver::invalidate()
+void RunLoopObserver::invalidate(PlatformRunLoop runLoop)
 {
-    if (m_runLoopObserver) {
-        CFRunLoopObserverInvalidate(m_runLoopObserver.get());
-        m_runLoopObserver = nullptr;   
+    if (!runLoop)
+        runLoop = CFRunLoopGetCurrent();
+
+    if (m_isScheduled) {
+        // remove rather than invalidate so we can reschedule efficiently
+        CFRunLoopRemoveObserver(runLoop, m_runLoopObserver.get(), kCFRunLoopCommonModes);
+        m_isScheduled = false;
     }
 }
 
 bool RunLoopObserver::isScheduled() const
 {
-    return !!m_runLoopObserver;
+    return m_isScheduled;
 }
 
 } // namespace WebCore

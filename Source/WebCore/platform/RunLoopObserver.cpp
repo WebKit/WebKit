@@ -42,6 +42,13 @@ void RunLoopObserver::runLoopObserverFired()
     ASSERT(m_runLoopObserver);
 #endif
     m_callback();
+#if USE(CF)
+    if (!isRepeating()) {
+        m_isScheduled = false;
+        // observer was invalidated by CF and must be recreated if we reschedule
+        m_runLoopObserver = nullptr;
+    }
+#endif
 }
 
 #if !USE(CF)
