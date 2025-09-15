@@ -2069,6 +2069,9 @@
 		B6E5F2A5299C105500DBCEA3 /* WebExtensionAPILocalization.h in Headers */ = {isa = PBXBuildFile; fileRef = B6E5F2A4299C105500DBCEA3 /* WebExtensionAPILocalization.h */; };
 		B6E5F2A7299C10B100DBCEA3 /* WebExtensionAPILocalizationCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6E5F2A6299C10B100DBCEA3 /* WebExtensionAPILocalizationCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		B6F6CA172AA91EC300DC14B5 /* WebExtensionAPIScriptingCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6F6CA162AA91EC200DC14B5 /* WebExtensionAPIScriptingCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		B77A35A32E58DBBE006CE38D /* NetworkParkableStringStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = B77A35A12E58DBB4006CE38D /* NetworkParkableStringStorage.h */; };
+		B77A35A82E58DC49006CE38D /* WebParkableStringProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = B77A35A42E58DC3D006CE38D /* WebParkableStringProvider.h */; };
+		B77A35A92E58DC4D006CE38D /* WebParkableStringStorageConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = B77A35A62E58DC3D006CE38D /* WebParkableStringStorageConnection.h */; };
 		B878B615133428DC006888E9 /* CorrectionPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = B878B613133428DC006888E9 /* CorrectionPanel.h */; };
 		BC017D0716260FF4007054F5 /* WKDOMDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = BC017CFF16260FF4007054F5 /* WKDOMDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC017D0916260FF4007054F5 /* WKDOMElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC017D0116260FF4007054F5 /* WKDOMElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7572,6 +7575,12 @@
 		B6E5F2A4299C105500DBCEA3 /* WebExtensionAPILocalization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebExtensionAPILocalization.h; path = WebProcess/Extensions/API/WebExtensionAPILocalization.h; sourceTree = SOURCE_ROOT; };
 		B6E5F2A6299C10B100DBCEA3 /* WebExtensionAPILocalizationCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPILocalizationCocoa.mm; sourceTree = "<group>"; };
 		B6F6CA162AA91EC200DC14B5 /* WebExtensionAPIScriptingCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPIScriptingCocoa.mm; sourceTree = "<group>"; };
+		B77A35A12E58DBB4006CE38D /* NetworkParkableStringStorage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkParkableStringStorage.h; sourceTree = "<group>"; };
+		B77A35A22E58DBB4006CE38D /* NetworkParkableStringStorage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkParkableStringStorage.cpp; sourceTree = "<group>"; };
+		B77A35A42E58DC3D006CE38D /* WebParkableStringProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebParkableStringProvider.h; sourceTree = "<group>"; };
+		B77A35A52E58DC3D006CE38D /* WebParkableStringProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebParkableStringProvider.cpp; sourceTree = "<group>"; };
+		B77A35A62E58DC3D006CE38D /* WebParkableStringStorageConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebParkableStringStorageConnection.h; sourceTree = "<group>"; };
+		B77A35A72E58DC3D006CE38D /* WebParkableStringStorageConnection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebParkableStringStorageConnection.cpp; sourceTree = "<group>"; };
 		B878B613133428DC006888E9 /* CorrectionPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorrectionPanel.h; sourceTree = "<group>"; };
 		B878B614133428DC006888E9 /* CorrectionPanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CorrectionPanel.mm; sourceTree = "<group>"; };
 		BC017CFF16260FF4007054F5 /* WKDOMDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDOMDocument.h; sourceTree = "<group>"; };
@@ -13199,6 +13208,10 @@
 				46C5B7CD27AADDBE000C5B47 /* RemoteWorkerFrameLoaderClient.h */,
 				46C5B7CB27AADDBE000C5B47 /* RemoteWorkerLibWebRTCProvider.h */,
 				417BA3332995624C007AEAB4 /* RetrieveRecordResponseBodyCallbackIdentifier.h */,
+				B77A35A52E58DC3D006CE38D /* WebParkableStringProvider.cpp */,
+				B77A35A42E58DC3D006CE38D /* WebParkableStringProvider.h */,
+				B77A35A72E58DC3D006CE38D /* WebParkableStringStorageConnection.cpp */,
+				B77A35A62E58DC3D006CE38D /* WebParkableStringStorageConnection.h */,
 				4131F3E01F98712C0059995A /* WebServiceWorkerFetchTaskClient.cpp */,
 				419ACF9B1F981D26009F1A83 /* WebServiceWorkerFetchTaskClient.h */,
 				51BEB6291F3A5ACD005029B9 /* WebServiceWorkerProvider.cpp */,
@@ -14265,6 +14278,8 @@
 				93E799CB2760497A0074008A /* LocalStorageManager.h */,
 				93E799D8276121080074008A /* MemoryStorageArea.cpp */,
 				93E799D5276121070074008A /* MemoryStorageArea.h */,
+				B77A35A22E58DBB4006CE38D /* NetworkParkableStringStorage.cpp */,
+				B77A35A12E58DBB4006CE38D /* NetworkParkableStringStorage.h */,
 				93085DC326E1BBBD000EC6A7 /* NetworkStorageManager.cpp */,
 				93085DC426E1BBBD000EC6A7 /* NetworkStorageManager.h */,
 				93085DC726E1C6EE000EC6A7 /* NetworkStorageManager.messages.in */,
@@ -17628,6 +17643,7 @@
 				839149651BEA838500D2D953 /* NetworkLoadParameters.h in Headers */,
 				E47FC8A025B8331C005495FC /* NetworkLoadScheduler.h in Headers */,
 				514526ED271E1647000467B6 /* NetworkNotificationManager.h in Headers */,
+				B77A35A32E58DBBE006CE38D /* NetworkParkableStringStorage.h in Headers */,
 				5179556A162876F300FA43B6 /* NetworkProcess.h in Headers */,
 				517CF0E4163A486C00C2950E /* NetworkProcessConnectionMessages.h in Headers */,
 				86D1970929AE4E930083B077 /* NetworkProcessConnectionParameters.h in Headers */,
@@ -18182,6 +18198,8 @@
 				0201B9522C238F4800227220 /* WebPageProxyTesting.h in Headers */,
 				0201B9552C238FA800227220 /* WebPageTesting.h in Headers */,
 				C0CE72A11A47E71D00BC0EC4 /* WebPageTestingMessages.h in Headers */,
+				B77A35A82E58DC49006CE38D /* WebParkableStringProvider.h in Headers */,
+				B77A35A92E58DC4D006CE38D /* WebParkableStringStorageConnection.h in Headers */,
 				512127C41908239A00DAF35C /* WebPasteboardOverrides.h in Headers */,
 				7C4694D11A51E36800AD5845 /* WebPasteboardProxy.h in Headers */,
 				7C4694CA1A4B4EA100AD5845 /* WebPasteboardProxyMessages.h in Headers */,

@@ -2975,7 +2975,12 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/text/BidiResolver.h
     platform/text/BidiRunList.h
     platform/text/DateTimeFormat.h
+    platform/text/DiskDataAllocator.h
+    platform/text/DiskDataMetadata.h
     platform/text/LocaleToScriptMapping.h
+    platform/text/ParkableString.h
+    platform/text/ParkableStringManager.h
+    platform/text/ParkableStringProvider.h
     platform/text/PlatformLocale.h
     platform/text/SegmentedString.h
     platform/text/StringWithDirection.h

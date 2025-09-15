@@ -4877,6 +4877,11 @@
 		B6D9D23514EABD260090D75E /* FocusEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B6D9D23314EABD260090D75E /* FocusEvent.h */; };
 		B6D9D27B14EAC0860090D75E /* JSFocusEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B6D9D27914EAC0860090D75E /* JSFocusEvent.h */; };
 		B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B776D43A1104525D00BEB0EC /* PrintContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B77A359B2E58DB53006CE38D /* DiskDataMetadata.h in Headers */ = {isa = PBXBuildFile; fileRef = B77A35972E58DB53006CE38D /* DiskDataMetadata.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B77A359C2E58DB53006CE38D /* ParkableStringProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = B77A35992E58DB53006CE38D /* ParkableStringProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B77A359D2E58DB53006CE38D /* DiskDataAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = B77A35952E58DB53006CE38D /* DiskDataAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B79EF4092E036DDC004C241C /* ParkableString.h in Headers */ = {isa = PBXBuildFile; fileRef = B79EF4002E036DDC004C241C /* ParkableString.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B7D555D62E0B1C8A00E3AAAE /* ParkableStringManager.h in Headers */ = {isa = PBXBuildFile; fileRef = B7D555D42E0B1C7800E3AAAE /* ParkableStringManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = B8DBDB48130B0F8A00F5CDB1 /* SetSelectionCommand.h */; };
 		B8DBDB4E130B0F8A00F5CDB1 /* SpellingCorrectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = B8DBDB4A130B0F8A00F5CDB1 /* SpellingCorrectionCommand.h */; };
 		B9CA3B402CAB1D3E00B2607C /* SpatialImageControls.h in Headers */ = {isa = PBXBuildFile; fileRef = B9CA3B3E2CAB1D3E00B2607C /* SpatialImageControls.h */; };
@@ -18086,6 +18091,16 @@
 		B6D9D27A14EAC0860090D75E /* JSFocusEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFocusEvent.cpp; sourceTree = "<group>"; };
 		B776D43A1104525D00BEB0EC /* PrintContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintContext.h; sourceTree = "<group>"; };
 		B776D43C1104527500BEB0EC /* PrintContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrintContext.cpp; sourceTree = "<group>"; };
+		B77A35952E58DB53006CE38D /* DiskDataAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DiskDataAllocator.h; sourceTree = "<group>"; };
+		B77A35962E58DB53006CE38D /* DiskDataAllocator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DiskDataAllocator.cpp; sourceTree = "<group>"; };
+		B77A35972E58DB53006CE38D /* DiskDataMetadata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DiskDataMetadata.h; sourceTree = "<group>"; };
+		B77A35982E58DB53006CE38D /* DiskDataMetadata.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DiskDataMetadata.cpp; sourceTree = "<group>"; };
+		B77A35992E58DB53006CE38D /* ParkableStringProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParkableStringProvider.h; sourceTree = "<group>"; };
+		B77A359A2E58DB53006CE38D /* ParkableStringProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ParkableStringProvider.cpp; sourceTree = "<group>"; };
+		B79EF4002E036DDC004C241C /* ParkableString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParkableString.h; sourceTree = "<group>"; };
+		B79EF4012E036DDC004C241C /* ParkableString.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ParkableString.cpp; sourceTree = "<group>"; };
+		B7D555D42E0B1C7800E3AAAE /* ParkableStringManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParkableStringManager.h; sourceTree = "<group>"; };
+		B7D555D52E0B1C7800E3AAAE /* ParkableStringManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ParkableStringManager.cpp; sourceTree = "<group>"; };
 		B8DBDB47130B0F8A00F5CDB1 /* SetSelectionCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetSelectionCommand.cpp; sourceTree = "<group>"; };
 		B8DBDB48130B0F8A00F5CDB1 /* SetSelectionCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetSelectionCommand.h; sourceTree = "<group>"; };
 		B8DBDB49130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpellingCorrectionCommand.cpp; sourceTree = "<group>"; };
@@ -34991,9 +35006,19 @@
 				A8C402921348B2220063F1E5 /* BidiRunList.h */,
 				0FDA7C2018832BCC00C954B5 /* DateTimeFormat.cpp */,
 				453EB635159C570400001BB7 /* DateTimeFormat.h */,
+				B77A35962E58DB53006CE38D /* DiskDataAllocator.cpp */,
+				B77A35952E58DB53006CE38D /* DiskDataAllocator.h */,
+				B77A35982E58DB53006CE38D /* DiskDataMetadata.cpp */,
+				B77A35972E58DB53006CE38D /* DiskDataMetadata.h */,
 				375CD231119D43C800A2A859 /* Hyphenation.h */,
 				7633A72513D8B33A008501B6 /* LocaleToScriptMapping.cpp */,
 				7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */,
+				B79EF4012E036DDC004C241C /* ParkableString.cpp */,
+				B79EF4002E036DDC004C241C /* ParkableString.h */,
+				B7D555D52E0B1C7800E3AAAE /* ParkableStringManager.cpp */,
+				B7D555D42E0B1C7800E3AAAE /* ParkableStringManager.h */,
+				B77A359A2E58DB53006CE38D /* ParkableStringProvider.cpp */,
+				B77A35992E58DB53006CE38D /* ParkableStringProvider.h */,
 				F544F78615CFB2A800AF33A8 /* PlatformLocale.cpp */,
 				F544F78715CFB2A800AF33A8 /* PlatformLocale.h */,
 				379E371413736A6600B9E919 /* QuotedPrintable.cpp */,
@@ -42225,6 +42250,8 @@
 				835D54C51F4DE53800E60671 /* DirectoryFileListCreator.h in Headers */,
 				F47A09D120A93A9700240FAE /* DisabledAdaptations.h in Headers */,
 				7EDAAFC919A2CCDC0034DFD1 /* DiskCacheMonitorCocoa.h in Headers */,
+				B77A359D2E58DB53006CE38D /* DiskDataAllocator.h in Headers */,
+				B77A359B2E58DB53006CE38D /* DiskDataMetadata.h in Headers */,
 				07ED19382762769400AF1EC5 /* DisplayCaptureManager.h in Headers */,
 				07C6778629ACFB820083C923 /* DisplayCapturePromptType.h in Headers */,
 				07BB1E7027176CD9001DF289 /* DisplayCaptureSourceCocoa.h in Headers */,
@@ -44741,6 +44768,9 @@
 				A18890AF1AA13F250026C301 /* ParentalControlsContentFilter.h in Headers */,
 				3ACF57B32D8892CD0067DE45 /* ParentalControlsURLFilter.h in Headers */,
 				3A2A9AB42E4BAF48009E5497 /* ParentalControlsURLFilterParameters.h in Headers */,
+				B79EF4092E036DDC004C241C /* ParkableString.h in Headers */,
+				B7D555D62E0B1C8A00E3AAAE /* ParkableStringManager.h in Headers */,
+				B77A359C2E58DB53006CE38D /* ParkableStringProvider.h in Headers */,
 				CDCD41E81C3DDB0A00965D99 /* ParsedContentRange.h in Headers */,
 				447958041643B49A001E0A7F /* ParsedContentType.h in Headers */,
 				5C4A0FDA25C3449A00D9EE97 /* ParsedRequestRange.h in Headers */,

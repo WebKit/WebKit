@@ -183,6 +183,7 @@ NetworkProcess/storage/IDBStorageManager.cpp
 NetworkProcess/storage/IDBStorageRegistry.cpp
 NetworkProcess/storage/LocalStorageManager.cpp
 NetworkProcess/storage/MemoryStorageArea.cpp
+NetworkProcess/storage/NetworkParkableStringStorage.cpp
 NetworkProcess/storage/NetworkStorageManager.cpp
 NetworkProcess/storage/OriginQuotaManager.cpp
 NetworkProcess/storage/OriginStorageManager.cpp
@@ -843,6 +844,8 @@ WebProcess/Plugins/WebPluginInfoProvider.cpp
 WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp
 
 WebProcess/Storage/RemoteWorkerFrameLoaderClient.cpp
+WebProcess/Storage/WebParkableStringProvider.cpp
+WebProcess/Storage/WebParkableStringStorageConnection.cpp
 WebProcess/Storage/WebSWClientConnection.cpp
 WebProcess/Storage/WebSWContextManagerConnection.cpp
 WebProcess/Storage/WebSWOriginTable.cpp

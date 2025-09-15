@@ -48,6 +48,13 @@
 #include "WebProcess.h"
 #include "WebRTCMonitor.h"
 #include "WebRTCMonitorMessages.h"
+#if ENABLE(PARKABLE_STRINGS)
+#include "WebParkableStringStorageConnection.h"
+#endif
+#if ENABLE(PARKABLE_STRINGS)
+#include <WebCore/ParkableStringManager.h>
+#include <WebCore/ParkableStringProvider.h>
+#endif
 #include "WebRTCResolverMessages.h"
 #include "WebResourceLoaderMessages.h"
 #include "WebSWClientConnection.h"
@@ -361,5 +368,51 @@ void NetworkProcessConnection::storageAccessPermissionChanged(const WebCore::Reg
 {
     WebCore::PermissionController::singleton().storageAccessPermissionChanged(topFrameDomain, subFrameDomain);
 }
+
+// Parkable strings hybrid approach message handlers
+void NetworkProcessConnection::parkableStringRequestCandidates(uint32_t maxCount, uint64_t maxTotalSize, CompletionHandler<void(Vector<String>&&, Vector<Vector<uint8_t>>&&, Vector<uint32_t>&&)>&& completionHandler)
+{
+#if ENABLE(PARKABLE_STRINGS)
+    // Use Provider pattern to handle candidate request
+    auto& provider = WebCore::ParkableStringProvider::singleton();
+    provider.handleCandidateRequest(maxCount, maxTotalSize, WTFMove(completionHandler));
+#else
+    // If parkable strings disabled, return empty vectors
+    Vector<String> digests;
+    Vector<Vector<uint8_t>> compressedData;
+    Vector<uint32_t> originalSizes;
+
+    completionHandler(WTFMove(digests), WTFMove(compressedData), WTFMove(originalSizes));
+#endif
+}
+
+void NetworkProcessConnection::parkableStringGrantFileAccess(String&& tempFilePath, SandboxExtension::Handle&& sandboxExtensionHandle, CompletionHandler<void()>&& completionHandler)
+{
+#if ENABLE(PARKABLE_STRINGS)
+    // Direct call to storage connection since we have the proper Handle type here
+    auto& storageConnection = webParkableStringStorageConnection();
+    storageConnection.grantDiskReadAccess(tempFilePath, WTFMove(sandboxExtensionHandle));
+#endif
+
+    completionHandler();
+}
+
+void NetworkProcessConnection::parkableStringStorageComplete(String&& digest, bool success, CompletionHandler<void()>&& completionHandler)
+{
+#if ENABLE(PARKABLE_STRINGS)
+    // Use Provider pattern to handle storage completion notification
+    auto& provider = WebCore::ParkableStringProvider::singleton();
+    provider.notifyStorageComplete(digest, success);
+#endif
+
+    completionHandler();
+}
+
+#if ENABLE(PARKABLE_STRINGS)
+WebParkableStringStorageConnection& NetworkProcessConnection::webParkableStringStorageConnection()
+{
+    return WebParkableStringStorageConnection::singleton();
+}
+#endif
 
 } // namespace WebKit

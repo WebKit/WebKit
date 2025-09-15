@@ -59,6 +59,10 @@
     [EnabledBy=LocalStorageEnabled || SessionStorageEnabled] RemoveItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String urlString) -> (bool hasError, HashMap<String, String> allItems)
     [EnabledBy=LocalStorageEnabled || SessionStorageEnabled] Clear(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String urlString) -> ()
 
+    # Parkable strings hybrid approach
+    ParkableStringNotifyCandidatesAvailable(uint32_t candidateCount, uint64_t estimatedSize) -> ()
+    ParkableStringGetDiskLocation(String digest) -> (std::optional<uint64_t> offset, std::optional<uint64_t> size)
+
     [EnabledBy=IndexedDBAPIEnabled] OpenDatabase(WebCore::IDBOpenRequestData requestData)
     [EnabledBy=IndexedDBAPIEnabled] OpenDBRequestCancelled(WebCore::IDBOpenRequestData requestData)
     [EnabledBy=IndexedDBAPIEnabled] DeleteDatabase(WebCore::IDBOpenRequestData requestData)
