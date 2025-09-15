@@ -1673,14 +1673,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 }
 
-#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
-
 - (NSScrollPocket *)_topScrollPocket
 {
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
     return _impl->topScrollPocket();
+#else
+    // Tools/Scripts/check-for-inappropriate-macros-in-external-headers
+    // prevents ifdefing the method declaration based on an ENABLE() macro. So
+    // the best we can do is return nil here.
+    return nil;
+#endif
 }
 
-#endif
 
 - (void)_setUsesAutomaticContentInsetBackgroundFill:(BOOL)value
 {

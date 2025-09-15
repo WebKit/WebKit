@@ -1087,7 +1087,10 @@
 #define ENABLE_MACH_PORT_LAYER_HOSTING 1
 #endif
 
+// TODO(webkit.org/b/297336): Re-enable for public sdks when the build is fixed,
+// i.e. when usages of NSScrollPocket are properly #ifdefed.
 #if !defined(ENABLE_CONTENT_INSET_BACKGROUND_FILL) \
+    && defined(USE_APPLE_INTERNAL_SDK)
     && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 160000) \
     || ((PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 190000) \
     || (PLATFORM(VISION) && __VISION_OS_VERSION_MIN_REQUIRED >= 30000) \

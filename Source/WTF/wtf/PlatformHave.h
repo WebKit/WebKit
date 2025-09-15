@@ -1704,7 +1704,11 @@
 #define HAVE_NWSETTINGS_UNIFIED_HTTP 1
 #endif
 
+// TODO(webkit.org/b/297329): Re-enable for public sdks when the build is fixed,
+// i.e. when WKMaterialHostingSupport.swift properly ifdefs uses of internal
+// APIs.
 #if !defined(HAVE_MATERIAL_HOSTING) \
+    && defined(USE_APPLE_INTERNAL_SDK)
     && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 160000) \
     || ((PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 190000))
 #define HAVE_MATERIAL_HOSTING 1
@@ -1755,7 +1759,10 @@
 #define HAVE_DRAGGING_ITEM_INIT_WITH_PASTEBOARD_ITEM 1
 #endif
 
+// TODO(webkit.org/b/297336): Re-enable for public sdks when the build is fixed,
+// i.e. when usages of NSScrollPocket are properly #ifdefed.
 #if !defined(HAVE_LIQUID_GLASS) \
+    && defined(USE_APPLE_INTERNAL_SDK)
     && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 260000) \
     || ((PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 260000) \
     || (PLATFORM(VISION) && __VISION_OS_VERSION_MIN_REQUIRED >= 260000) \
