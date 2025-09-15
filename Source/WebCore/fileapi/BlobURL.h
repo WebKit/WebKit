@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include "Document.h"
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -51,7 +52,7 @@ public:
     static URL createInternalURL();
 
     static URL getOriginURL(const URL&);
-    static bool isSecureBlobURL(const URL&);
+    static const Document* getOwnerDocument(const URL&);
 #if ASSERT_ENABLED
     static bool isInternalURL(const URL&);
 #endif
