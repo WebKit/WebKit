@@ -57,19 +57,49 @@ SVGLengthContext::SVGLengthContext(const SVGElement* context)
 
 SVGLengthContext::~SVGLengthContext() = default;
 
+static inline float dimensionForLengthMode(SVGLengthMode mode, FloatSize viewportSize)
+{
+    switch (mode) {
+    case SVGLengthMode::Width:
+        return viewportSize.width();
+    case SVGLengthMode::Height:
+        return viewportSize.height();
+    case SVGLengthMode::Other:
+        return viewportSize.diagonalLength() / std::numbers::sqrt2_v<float>;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 FloatRect SVGLengthContext::resolveRectangle(const SVGElement* context, SVGUnitTypes::SVGUnitType type, const FloatRect& viewport, const SVGLengthValue& x, const SVGLengthValue& y, const SVGLengthValue& width, const SVGLengthValue& height)
 {
     ASSERT(type != SVGUnitTypes::SVG_UNIT_TYPE_UNKNOWN);
-    if (type != SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE) {
-        auto viewportSize = viewport.size();
-        return FloatRect(
-            convertValueFromPercentageToUserUnits(x.valueAsPercentage(), x.lengthMode(), viewportSize) + viewport.x(),
-            convertValueFromPercentageToUserUnits(y.valueAsPercentage(), y.lengthMode(), viewportSize) + viewport.y(),
-            convertValueFromPercentageToUserUnits(width.valueAsPercentage(), width.lengthMode(), viewportSize),
-            convertValueFromPercentageToUserUnits(height.valueAsPercentage(), height.lengthMode(), viewportSize));
-    }
 
     SVGLengthContext lengthContext(context);
+    auto viewportSize = lengthContext.viewportSize().value_or(FloatSize { });
+
+    if (type != SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE || viewportSize.isEmpty()) {
+        viewportSize = viewport.size();
+
+        auto convertLength = [&](const SVGLengthValue& length) -> float {
+            if (length.lengthType() == SVGLengthType::Percentage)
+                return length.valueAsPercentage() * dimensionForLengthMode(length.lengthMode(), viewportSize);
+
+            float rawValue = length.valueInSpecifiedUnits();
+
+            // userSpaceOnUse with empty viewport: unitless values
+            // need percentage conversion
+            if (type == SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
+                rawValue = rawValue / 100.f;
+
+            return rawValue * dimensionForLengthMode(length.lengthMode(), viewportSize);
+        };
+
+        return FloatRect(
+            convertLength(x) + viewport.x(), convertLength(y) + viewport.y(),
+            convertLength(width), convertLength(height));
+    }
+
     return FloatRect(x.value(lengthContext), y.value(lengthContext), width.value(lengthContext), height.value(lengthContext));
 }
 
@@ -95,20 +125,6 @@ float SVGLengthContext::resolveLength(const SVGElement* context, SVGUnitTypes::S
 
     // FIXME: valueAsPercentage() won't be correct for eg. cm units. They need to be resolved in user space and then be considered in objectBoundingBox space.
     return x.valueAsPercentage();
-}
-
-static inline float dimensionForLengthMode(SVGLengthMode mode, FloatSize viewportSize)
-{
-    switch (mode) {
-    case SVGLengthMode::Width:
-        return viewportSize.width();
-    case SVGLengthMode::Height:
-        return viewportSize.height();
-    case SVGLengthMode::Other:
-        return viewportSize.diagonalLength() / std::numbers::sqrt2_v<float>;
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
 }
 
 float SVGLengthContext::valueForLength(const Length& length, SVGLengthMode lengthMode)
