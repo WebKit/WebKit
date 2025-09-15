@@ -795,6 +795,16 @@ static gboolean webKitWebSrcQuery(GstBaseSrc* baseSrc, GstQuery* query)
         result = TRUE;
     }
 
+    if (GST_QUERY_TYPE(query) == GST_QUERY_DURATION) {
+        DataMutexLocker members { src->priv->dataMutex };
+        GstFormat format;
+        gst_query_parse_duration(query, &format, nullptr);
+        if (format == GST_FORMAT_BYTES && members->size && members->isDurationSet) {
+            gst_query_set_duration(query, format, *members->size);
+            return TRUE;
+        }
+    }
+
     if (!result)
         result = GST_BASE_SRC_CLASS(webkit_web_src_parent_class)->query(baseSrc, query);
 

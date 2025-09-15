@@ -503,6 +503,8 @@ private:
 
     ImageOrientation getVideoOrientation(const GstTagList*);
 
+    void maybeNotifyClientOfReadyAndNetworkChanges(MediaPlayerEnums::NetworkState, MediaPlayerEnums::ReadyState);
+
     GstElement* createVideoSink();
     GstElement* createAudioSink();
     GstElement* audioSink() const { return m_audioSink.get(); }
@@ -558,7 +560,9 @@ private:
     void setPlaybinURL(const URL& urlString);
 
     void updateTracks(const GRefPtr<GstObject>& collectionOwner);
-    void updateVideoSizeAndOrientationFromCaps(const GstCaps*);
+    bool updateVideoSizeAndOrientationFromCaps(GstCaps*);
+    bool updateVideoSizeAndOrientationFromCapsAndTags(const GRefPtr<GstCaps>&, const GRefPtr<GstTagList>&);
+    bool updateVideoSizeAndOrientationFromStream(GstStream*);
     bool hasFirstVideoSampleReachedSink() const;
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -692,6 +696,7 @@ private:
     std::optional<VideoFrameGStreamer::Info> m_videoInfo;
 
     bool m_volumeLocked { false };
+    GRefPtr<GstElement> m_parseBin;
 };
 
 } // namespace WebCore
