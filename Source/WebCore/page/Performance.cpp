@@ -69,20 +69,6 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Performance);
 
 static Seconds timePrecision { 1_ms };
 
-static bool isSignpostEnabled()
-{
-    static bool flag = false;
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [&] {
-        const char* value = getenv("WebKitPerformanceSignpostEnabled");
-        if (value) {
-            if (auto result = parseInteger<int>(StringView::fromLatin1(value)); result && result.value())
-                flag = true;
-        }
-    });
-    return flag;
-}
-
 Performance::Performance(ScriptExecutionContext* context, MonotonicTime timeOrigin)
     : ContextDestructionObserver(context)
     , m_resourceTimingBufferFullTimer(*this, &Performance::resourceTimingBufferFullTimerFired) // FIXME: Migrate this to the event loop as well. https://bugs.webkit.org/show_bug.cgi?id=229044
@@ -489,31 +475,29 @@ ExceptionOr<Ref<PerformanceMeasure>> Performance::measure(JSC::JSGlobalObject& g
     if (measure.hasException())
         return measure.releaseException();
 
-    if (isSignpostEnabled()) {
-        Ref entry { measure.returnValue() };
-        auto message = measureName.utf8();
+    Ref entry { measure.returnValue() };
+    auto message = measureName.utf8();
 #if OS(DARWIN)
-        {
-            auto startTime = m_continuousTimeOrigin + Seconds::fromMilliseconds(entry->startTime());
-            auto endTime = m_continuousTimeOrigin + Seconds::fromMilliseconds(entry->startTime() + entry->duration());
-            uint64_t platformStartTime = startTime.toMachContinuousTime();
-            uint64_t platformEndTime = endTime.toMachContinuousTime();
-            uint64_t correctedStartTime = std::min(platformStartTime, platformEndTime);
-            uint64_t correctedEndTime = std::max(platformStartTime, platformEndTime);
-            // Because signpost intervals are closed invervals [start, end], we decrease the endTime by 1 if startTime and endTime is not the same.
-            if (correctedStartTime != correctedEndTime)
-                correctedEndTime -= 1;
+    {
+        auto startTime = m_continuousTimeOrigin + Seconds::fromMilliseconds(entry->startTime());
+        auto endTime = m_continuousTimeOrigin + Seconds::fromMilliseconds(entry->startTime() + entry->duration());
+        uint64_t platformStartTime = startTime.toMachContinuousTime();
+        uint64_t platformEndTime = endTime.toMachContinuousTime();
+        uint64_t correctedStartTime = std::min(platformStartTime, platformEndTime);
+        uint64_t correctedEndTime = std::max(platformStartTime, platformEndTime);
+        // Because signpost intervals are closed invervals [start, end], we decrease the endTime by 1 if startTime and endTime is not the same.
+        if (correctedStartTime != correctedEndTime)
+            correctedEndTime -= 1;
 
-            WTFBeginSignpostAlwaysWithSpecificTime(entry.ptr(), WebKitPerformance, correctedStartTime, "%" PUBLIC_LOG_STRING, message.data());
-            WTFEndSignpostAlwaysWithSpecificTime(entry.ptr(), WebKitPerformance, correctedEndTime, "%" PUBLIC_LOG_STRING, message.data());
-        }
+        WTFBeginSignpostAlwaysWithSpecificTime(entry.ptr(), WebKitPerformance, correctedStartTime, "%" PUBLIC_LOG_STRING, message.data());
+        WTFEndSignpostAlwaysWithSpecificTime(entry.ptr(), WebKitPerformance, correctedEndTime, "%" PUBLIC_LOG_STRING, message.data());
+    }
 #endif
-        {
-            auto timeOrigin = m_continuousTimeOrigin.approximateMonotonicTime();
-            auto startTime = timeOrigin + Seconds::fromMilliseconds(entry->startTime());
-            auto endTime = timeOrigin + Seconds::fromMilliseconds(entry->startTime() + entry->duration());
-            JSC::ProfilerSupport::markInterval(entry.ptr(), JSC::ProfilerSupport::Category::WebKitPerformanceSignpost, startTime, endTime, WTFMove(message));
-        }
+    {
+        auto timeOrigin = m_continuousTimeOrigin.approximateMonotonicTime();
+        auto startTime = timeOrigin + Seconds::fromMilliseconds(entry->startTime());
+        auto endTime = timeOrigin + Seconds::fromMilliseconds(entry->startTime() + entry->duration());
+        JSC::ProfilerSupport::markInterval(entry.ptr(), JSC::ProfilerSupport::Category::WebKitPerformanceSignpost, startTime, endTime, WTFMove(message));
     }
 
     queueEntry(measure.returnValue().get());
