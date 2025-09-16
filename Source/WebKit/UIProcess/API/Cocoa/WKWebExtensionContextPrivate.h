@@ -37,6 +37,9 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 /*! @abstract The extension background content URL for the extension, or `nil` if the extension does not have background content. */
 @property (nonatomic, nullable, readonly) NSURL *_backgroundContentURL;
 
+/*! @abstract Whether or not `browser.declarativeNetRequest` debugging APIs such as `onRuleMatchedDebug` are allowed. */
+@property (nonatomic) BOOL _declarativeNetRequestAdditionalAnalyticsIsEnabled;
+
 /*!
  @abstract Sends a message to the JavaScript `browser.test.onMessage` API.
  @discussion Allows code to trigger a `browser.test.onMessage` event, enabling bidirectional communication during testing.

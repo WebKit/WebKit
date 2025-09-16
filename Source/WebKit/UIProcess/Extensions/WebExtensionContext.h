@@ -584,6 +584,9 @@ public:
 
 #if ENABLE(DNR_ON_RULE_MATCHED_DEBUG)
     void handleContentRuleListMatchedRule(WebExtensionTab&, WebCore::ContentRuleListMatchedRule&);
+
+    bool declarativeNetRequestAdditionalAnalyticsIsEnabled();
+    void setDeclarativeNetRequestAdditionalAnalyticsIsEnabled(bool);
 #endif
 
     // Returns whether or not there are any matched rules after the purge.

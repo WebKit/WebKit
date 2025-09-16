@@ -38,7 +38,7 @@ using namespace WebKit;
 
 @implementation _WKWebExtensionDeclarativeNetRequestTranslator
 
-+ (NSArray<NSDictionary<NSString *, id> *> *)translateRules:(NSDictionary<NSString *, NSArray<NSDictionary *> *> *)jsonObjects errorStrings:(NSArray **)outErrorStrings
++ (NSArray<NSDictionary<NSString *, id> *> *)translateRules:(NSDictionary<NSString *, NSArray<NSDictionary *> *> *)jsonObjects additionalAnalyticsEnabled:(BOOL)additionalAnalyticsEnabled errorStrings:(NSArray * _Nullable * _Nullable)outErrorStrings
 {
     NSMutableArray<_WKWebExtensionDeclarativeNetRequestRule *> *allValidatedRules = [NSMutableArray array];
     NSMutableDictionary<NSString *, NSMutableSet<NSNumber *> *> *rulesetIDsToRuleIDs = [NSMutableDictionary dictionary];
@@ -48,7 +48,7 @@ using namespace WebKit;
     for (NSString *rulesetID in jsonObjects.allKeys) {
         for (NSDictionary *ruleJSON in jsonObjects[rulesetID]) {
             NSString *errorString;
-            _WKWebExtensionDeclarativeNetRequestRule *rule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:ruleJSON rulesetID:rulesetID errorString:&errorString];
+            _WKWebExtensionDeclarativeNetRequestRule *rule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:ruleJSON rulesetID:rulesetID additionalAnalyticsEnabled:additionalAnalyticsEnabled errorString:&errorString];
 
             if (!rulesetIDsToRuleIDs[rulesetID])
                 rulesetIDsToRuleIDs[rulesetID] = [NSMutableSet set];
