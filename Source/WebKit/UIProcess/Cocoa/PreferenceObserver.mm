@@ -29,6 +29,7 @@
 #import "WebProcessPool.h"
 #import <pal/spi/cocoa/NSUserDefaultsSPI.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 @interface WKUserDefaults : NSUserDefaults {
 @private
@@ -97,7 +98,7 @@
         return;
     }
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [self, protectedSelf = retainPtr(self), oldValues = retainPtr(oldValues), newValues = retainPtr(newValues)] {
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [self, protectedSelf = retainPtr(self), oldValues = retainPtr(oldValues), newValues = retainPtr(newValues)] {
         [self findPreferenceChangesAndNotifyForKeys:oldValues.get() toValuesForKeys:newValues.get()];
     });
 }

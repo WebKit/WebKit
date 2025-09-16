@@ -27,12 +27,12 @@
 #import "NetworkCacheData.h"
 
 #import <WebCore/SharedMemory.h>
-#import <dispatch/dispatch.h>
 #import <sys/mman.h>
 #import <sys/stat.h>
 #import <wtf/FileHandle.h>
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 namespace WebKit {
 namespace NetworkCache {
@@ -108,7 +108,7 @@ Data Data::adoptMap(FileSystem::MappedFileData&& mappedFile, FileSystem::FileHan
     ASSERT(span.data());
     ASSERT(span.data() != MAP_FAILED);
     outputHandle = { };
-    auto bodyMap = adoptOSObject(dispatch_data_create(span.data(), span.size(), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [span] {
+    auto bodyMap = adoptOSObject(dispatch_data_create(span.data(), span.size(), globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [span] {
         munmap(span.data(), span.size());
     }));
     return { WTFMove(bodyMap), Data::Backing::Map };

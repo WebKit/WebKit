@@ -34,6 +34,12 @@ inline dispatch_queue_main_t mainDispatchQueueSingleton()
     return dispatch_get_main_queue(); // NOLINT
 }
 
+inline dispatch_queue_t globalDispatchQueueSingleton(intptr_t identifier, uintptr_t flags)
+{
+    return dispatch_get_global_queue(identifier, flags);
+}
+
 } // namespace WTF
 
 using WTF::mainDispatchQueueSingleton;
+using WTF::globalDispatchQueueSingleton;

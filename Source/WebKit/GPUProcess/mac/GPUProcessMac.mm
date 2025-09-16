@@ -42,6 +42,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/ProcessPrivilege.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -113,8 +114,7 @@ void GPUProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& handle
     auto cacheInvalidationHandler = [handle = WTFMove(handle)] () mutable {
         AuxiliaryProcess::openDirectoryCacheInvalidated(WTFMove(handle));
     };
-    RetainPtr queue = dispatch_get_global_queue(QOS_CLASS_UTILITY, 0);
-    dispatch_async(queue.get(), makeBlockPtr(WTFMove(cacheInvalidationHandler)).get());
+    dispatch_async(globalDispatchQueueSingleton(QOS_CLASS_UTILITY, 0), makeBlockPtr(WTFMove(cacheInvalidationHandler)).get());
 }
 #endif // PLATFORM(MAC)
 

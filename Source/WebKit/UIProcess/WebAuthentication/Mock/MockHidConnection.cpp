@@ -36,6 +36,7 @@
 #include <wtf/BlockPtr.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/RunLoop.h>
+#include <wtf/darwin/DispatchExtras.h>
 #include <wtf/text/Base64.h>
 
 namespace WebKit {
@@ -97,7 +98,7 @@ void MockHidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback
             callback(sent);
         });
     });
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), task.get());
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), task.get());
 }
 
 void MockHidConnection::registerDataReceivedCallbackInternal()

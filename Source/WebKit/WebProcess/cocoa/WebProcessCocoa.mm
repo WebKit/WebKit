@@ -131,6 +131,7 @@
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/spi/cocoa/OSLogSPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/MakeString.h>
@@ -412,7 +413,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         // FIXME: remove this once <rdar://90127163> is fixed.
         // Dispatch this work on a thread to avoid blocking the main thread. We will wait for this to complete at the end of this method.
         codeCheckSemaphore = adoptOSObject(dispatch_semaphore_create(0));
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0), [codeCheckSemaphore = codeCheckSemaphore] {
+        dispatch_async(globalDispatchQueueSingleton(QOS_CLASS_USER_INTERACTIVE, 0), [codeCheckSemaphore = codeCheckSemaphore] {
             auto bundleURL = adoptCF(CFBundleCopyBundleURL(CFBundleGetMainBundle()));
             SecStaticCodeRef code = nullptr;
             if (bundleURL)
@@ -1159,7 +1160,7 @@ void WebProcess::destroyRenderingResources()
 void WebProcess::releaseSystemMallocMemory()
 {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
 #if !RELEASE_LOG_DISABLED
         MonotonicTime startTime = MonotonicTime::now();
 #endif
@@ -1560,7 +1561,7 @@ void WebProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& handle
             bootstrapExtension->revoke();
     };
 
-    dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), makeBlockPtr(WTFMove(cacheInvalidationHandler)).get());
+    dispatch_async(globalDispatchQueueSingleton(QOS_CLASS_UTILITY, 0), makeBlockPtr(WTFMove(cacheInvalidationHandler)).get());
 }
 #endif
 

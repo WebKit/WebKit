@@ -37,6 +37,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 #import "NearFieldSoftLink.h"
 
@@ -274,7 +275,7 @@ void MockNfcService::detectTags() const
         auto readerSession = adoptNS([allocNFReaderSessionInstance() initWithUIType:NFReaderSessionUINone]);
         [globalNFReaderSessionDelegate readerSession:readerSession.get() didDetectTags:tags.get()];
     });
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), callback.get());
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), callback.get());
 #endif // HAVE(NEAR_FIELD)
 }
 

@@ -84,6 +84,10 @@
 #include "MediaCapability.h"
 #endif
 
+#if HAVE(POWERLOG_TASK_MODE_QUERY)
+#include <wtf/darwin/DispatchExtras.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -657,7 +661,7 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
         processPool->gpuProcessDidFinishLaunching(processID());
 
 #if HAVE(POWERLOG_TASK_MODE_QUERY)
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([weakThis = WeakPtr { *this }] () mutable {
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([weakThis = WeakPtr { *this }] () mutable {
         if (!isPowerLoggingInTaskMode())
             return;
         RunLoop::mainSingleton().dispatch([weakThis = WTFMove(weakThis)] () {

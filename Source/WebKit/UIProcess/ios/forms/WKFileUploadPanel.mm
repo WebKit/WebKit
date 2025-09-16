@@ -54,6 +54,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/SetForScope.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/StringView.h>
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
@@ -973,7 +974,7 @@ static RetainPtr<NSString> displayStringForDocumentsAtURLs(NSArray<NSURL *> *url
     ASSERT(urlsFromUIKit.count);
     [self _dismissDisplayAnimated:YES];
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([retainedSelf = retainPtr(self), urlsFromUIKit = retainPtr(urlsFromUIKit)] () mutable {
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([retainedSelf = retainPtr(self), urlsFromUIKit = retainPtr(urlsFromUIKit)] () mutable {
         // When using UIDocumentPickerModeOpen, which is required for selecting directories, urlsFromUIKit consists of urls
         // pointing directly to selected items rather than imported copies of the items.
         bool filesImportedByUIKit = !retainedSelf->_allowDirectories;
@@ -1245,7 +1246,7 @@ static RetainPtr<NSString> displayStringForDocumentsAtURLs(NSArray<NSURL *> *url
 {
     ASSERT_ARG(image, image);
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         // FIXME: Different compression for different devices?
         // FIXME: Different compression for different UIImage sizes?
         // FIXME: Should EXIF data be maintained?

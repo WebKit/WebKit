@@ -37,6 +37,7 @@
 #include <wtf/BlockPtr.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/RunLoop.h>
+#include <wtf/darwin/DispatchExtras.h>
 
 namespace WebKit {
 using namespace cbor;
@@ -90,7 +91,7 @@ void VirtualHidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callb
             callback(DataSent::Yes);
         });
     });
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), task.get());
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), task.get());
 }
 
 void VirtualHidConnection::assembleRequest(Vector<uint8_t>&& data)

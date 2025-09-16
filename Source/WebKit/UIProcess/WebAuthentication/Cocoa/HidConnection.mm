@@ -32,6 +32,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/TZoneMallocInlines.h>
+#import <wtf/darwin/DispatchExtras.h>
 
 namespace WebKit {
 using namespace fido;
@@ -128,7 +129,7 @@ void HidConnection::send(Vector<uint8_t>&& data, DataSentCallback&& callback)
             callback(sent);
         });
     });
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), task.get());
+    dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), task.get());
 }
 
 void HidConnection::registerDataReceivedCallback(DataReceivedCallback&& callback)
