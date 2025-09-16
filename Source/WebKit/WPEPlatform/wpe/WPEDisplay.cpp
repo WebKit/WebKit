@@ -256,7 +256,7 @@ WPEDisplay* wpe_display_get_default(void)
                     s_defaultDisplay = WTFMove(display);
                     return;
                 }
-                g_error("Failed to connect to display of type %s: %s", extensionName, error->message);
+                g_error("Failed to connect to display of type %s: %s", extensionName, error ? error->message : "unknown error");
             } else
                 g_error("Display of type %s was not found", extensionName);
             return;

@@ -39,7 +39,7 @@ static String getString(WPESettings* settings, const char* key, const String& de
     GUniqueOutPtr<GError> error;
     const char* value;
     if (!(value = wpe_settings_get_string(settings, key, &error.outPtr()))) {
-        g_warning("Failed to access %s setting: %s", key, error->message);
+        g_warning("Failed to access %s setting: %s", key, error ? error->message : "unknown error");
         return defaultValue;
     }
 

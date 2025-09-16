@@ -163,7 +163,7 @@ void AcceleratedBackingStore::renderPendingBuffer()
 
     GUniqueOutPtr<GError> error;
     if (!wpe_view_render_buffer(m_wpeView.get(), m_pendingBuffer.get(), rects, m_pendingDamageRects.size(), &error.outPtr())) {
-        g_warning("Failed to render frame: %s", error->message);
+        g_warning("Failed to render frame: %s", error ? error->message : "unknown error");
         frameDone();
         m_pendingBuffer = nullptr;
     }

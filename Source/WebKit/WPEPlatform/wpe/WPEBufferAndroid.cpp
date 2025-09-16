@@ -104,7 +104,7 @@ static gpointer wpeBufferAndroidImportToEGLImage(WPEBuffer* buffer, GError** err
     GUniqueOutPtr<GError> eglError;
     auto* eglDisplay = wpe_display_get_egl_display(display, &eglError.outPtr());
     if (eglDisplay == EGL_NO_DISPLAY) {
-        g_set_error(error, WPE_BUFFER_ERROR, WPE_BUFFER_ERROR_IMPORT_FAILED, "Failed to get EGLDisplay when importing buffer to EGL image: %s", eglError->message);
+        g_set_error(error, WPE_BUFFER_ERROR, WPE_BUFFER_ERROR_IMPORT_FAILED, "Failed to get EGLDisplay when importing buffer to EGL image: %s", eglError ? eglError->message : "unknown error");
         return nullptr;
     }
 

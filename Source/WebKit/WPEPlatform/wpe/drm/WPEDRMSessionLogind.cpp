@@ -69,7 +69,7 @@ SessionLogind::SessionLogind(GRefPtr<GDBusProxy>&& sessionProxy, GUniquePtr<char
     GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_sync(m_sessionProxy.get(), "TakeControl", g_variant_new("(b)", FALSE),
         G_DBUS_CALL_FLAGS_NONE, -1, nullptr, &error.outPtr()));
     if (!result) {
-        g_warning("Failed to take control of session: %s", error->message);
+        g_warning("Failed to take control of session: %s", error ? error->message : "unknown error");
         return;
     }
 
@@ -105,7 +105,7 @@ int SessionLogind::openDevice(const char* path, int flags)
     GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_with_unix_fd_list_sync(m_sessionProxy.get(), "TakeDevice", g_variant_new("(uu)", major(st.st_rdev), minor(st.st_rdev)),
         G_DBUS_CALL_FLAGS_NONE, -1, nullptr, &fdList.outPtr(), nullptr, &error.outPtr()));
     if (!result) {
-        g_warning("Session failed to take device %s: %s", path, error->message);
+        g_warning("Session failed to take device %s: %s", path, error ? error->message : "unknown error");
         errno = ENODEV;
         return -1;
     }
@@ -134,7 +134,7 @@ int SessionLogind::closeDevice(int deviceID)
     GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_sync(m_sessionProxy.get(), "ReleaseDevice", g_variant_new("(uu)", major(st.st_rdev), minor(st.st_rdev)),
         G_DBUS_CALL_FLAGS_NONE, -1, nullptr, &error.outPtr()));
     if (!result) {
-        g_warning("Session failed to release device %d: %s", deviceID, error->message);
+        g_warning("Session failed to release device %d: %s", deviceID, error ? error->message : "unknown error");
         errno = ENODEV;
         return -1;
     }

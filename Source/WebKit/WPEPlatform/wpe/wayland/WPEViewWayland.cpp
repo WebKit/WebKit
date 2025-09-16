@@ -261,13 +261,13 @@ static DMABufBuffer* createWaylandBufferFromEGLImage(WPEView* view, WPEBuffer* b
     GUniqueOutPtr<GError> bufferError;
     auto* eglDisplay = wpe_display_get_egl_display(wpe_view_get_display(view), &bufferError.outPtr());
     if (!eglDisplay) {
-        g_set_error(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: can't create Wayland buffer because failed to get EGL display: %s", bufferError->message);
+        g_set_error(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: can't create Wayland buffer because failed to get EGL display: %s", bufferError ? bufferError->message : "unknown error");
         return nullptr;
     }
 
     auto eglImage = wpe_buffer_import_to_egl_image(buffer, &bufferError.outPtr());
     if (!eglImage) {
-        g_set_error(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: failed to import buffer to EGL image: %s", bufferError->message);
+        g_set_error(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: failed to import buffer to EGL image: %s", bufferError ? bufferError->message : "unknown error");
         return nullptr;
     }
 
