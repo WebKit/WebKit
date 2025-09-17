@@ -62,7 +62,7 @@ private:
     // Complex text only.
     SVGTextMetrics m_complexStartToCurrentMetrics;
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || (USE(HARFBUZZ) && USE(SKIA))
     std::unique_ptr<ComplexTextController> m_complexTextController;
 #endif
 };

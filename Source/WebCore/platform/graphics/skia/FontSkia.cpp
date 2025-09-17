@@ -30,6 +30,7 @@
 #include "NotImplemented.h"
 #include "PathSkia.h"
 #include "SkiaHarfBuzzFont.h"
+#include <hb-ot.h>
 #include <skia/core/SkFont.h>
 #include <skia/core/SkFontMetrics.h>
 
@@ -173,6 +174,119 @@ bool Font::platformSupportsCodePoint(char32_t character, std::optional<char32_t>
         return !!skiaHarfBuzzFont->glyph(character, variation);
 
     return m_platformData.skFont().getTypeface()->unicharToGlyph(character);
+}
+
+static inline float harfBuzzPositionToFloat(hb_position_t value)
+{
+    return static_cast<float>(value) / (1 << 16);
+}
+
+GlyphBufferAdvance Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned beginningGlyphIndex, unsigned beginningStringIndex, bool enableKerning, bool requiresShaping, const AtomString& locale, StringView text, TextDirection textDirection) const
+{
+    if (!enableKerning && !requiresShaping)
+        return makeGlyphBufferAdvance();
+
+    if (!platformData().size())
+        return makeGlyphBufferAdvance();
+
+    bool hasVisibleGlyphs = [&] {
+        for (unsigned i = beginningGlyphIndex; i < glyphBuffer.size(); ++i) {
+            // For now we only considered deletedGlyph.
+            if (glyphBuffer.glyphAt(i) != deletedGlyph)
+                return true;
+        }
+        return false;
+    }();
+    if (!hasVisibleGlyphs)
+        return makeGlyphBufferAdvance();
+
+    auto* hbFont = platformData().hbFont();
+    RELEASE_ASSERT(hbFont);
+
+    const auto& features = platformData().features();
+
+    bool requiresHarfbuzzShaping = [&] {
+        bool hasEnabledFeatures = features.containsIf([](const auto& feature) {
+            return !!feature.value;
+        });
+        if (hasEnabledFeatures)
+            return true;
+
+        if (enableKerning && platformData().skFont().getTypeface()->getKerningPairAdjustments({ }, { }))
+            return true;
+
+        if (!requiresShaping)
+            return false;
+
+        auto* hbFace = hb_font_get_face(hbFont);
+        if (!hbFace || !hb_ot_layout_has_substitution(hbFace))
+            return false;
+
+        return true;
+    }();
+    if (!requiresHarfbuzzShaping)
+        return makeGlyphBufferAdvance();
+
+    // Kerning is not handled as font features, so only in case it's explicitly disabled
+    // we need to create a new vector to include kern feature.
+    const hb_feature_t* featuresData = features.isEmpty() ? nullptr : features.span().data();
+    unsigned featuresSize = features.size();
+    Vector<hb_feature_t> featuresWithKerning;
+    if (!enableKerning) {
+        featuresWithKerning.reserveInitialCapacity(featuresSize + 1);
+        static constexpr hb_feature_t kernFeature { HB_TAG('k', 'e', 'r', 'n'), 0, 0, static_cast<unsigned>(-1) };
+        featuresWithKerning.append(kernFeature);
+        featuresWithKerning.appendVector(features);
+        featuresData = featuresWithKerning.span().data();
+        featuresSize = featuresWithKerning.size();
+    }
+
+    static thread_local HbUniquePtr<hb_buffer_t> buffer(hb_buffer_create());
+
+    // The computed "locale" equals the "lang" attribute. The latter must be a valid BCP 47 language tag,
+    // according to <https://html.spec.whatwg.org/multipage/dom.html#attr-lang>.
+    // This is exactly what hb_language_from_string() expects, so we can pass directly.
+    ASSERT(locale.is8Bit());
+    auto language = hb_language_from_string(reinterpret_cast<const char*>(locale.span8().data()), -1);
+    hb_buffer_set_language(buffer.get(), language);
+    hb_buffer_set_direction(buffer.get(), textDirection == TextDirection::RTL ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
+
+    auto glyphBufferGlyphCount = glyphBuffer.size() - beginningGlyphIndex;
+    auto characters = text.substring(beginningStringIndex, glyphBufferGlyphCount);
+    if (characters.is8Bit())
+        hb_buffer_add_latin1(buffer.get(), characters.span8().data(), characters.span8().size(), 0, -1);
+    else
+        hb_buffer_add_utf16(buffer.get(), reinterpret_cast<const uint16_t*>(characters.span16().data()), characters.span16().size(), 0, -1);
+    hb_shape(hbFont, buffer.get(), featuresData, featuresSize);
+
+    unsigned glyphCount = hb_buffer_get_length(buffer.get());
+    if (glyphCount < glyphBufferGlyphCount)
+        glyphBuffer.shrink(beginningGlyphIndex + glyphCount);
+    else if (glyphCount > glyphBufferGlyphCount)
+        glyphBuffer.makeHole(beginningGlyphIndex + glyphBufferGlyphCount, glyphCount - glyphBufferGlyphCount, this);
+
+    auto* infos = hb_buffer_get_glyph_infos(buffer.get(), nullptr);
+    auto* positions = hb_buffer_get_glyph_positions(buffer.get(), nullptr);
+    for (unsigned i = 0; i < glyphCount; ++i) {
+        if (glyphBuffer.glyphAt(i) == deletedGlyph)
+            continue;
+
+        Glyph glyph = infos[i].codepoint;
+        glyphBuffer.glyphs(beginningGlyphIndex).data()[i] = glyph;
+        glyphBuffer.offsetsInString(beginningGlyphIndex).data()[i] = beginningStringIndex + infos[i].cluster;
+        if (isZeroWidthSpaceGlyph(glyph))
+            continue;
+
+        glyphBuffer.advances(beginningGlyphIndex).data()[i] = { harfBuzzPositionToFloat(positions[i].x_advance), harfBuzzPositionToFloat(positions[i].y_advance) };
+        glyphBuffer.origins(beginningGlyphIndex).data()[i] = { harfBuzzPositionToFloat(positions[i].x_offset), harfBuzzPositionToFloat(positions[i].y_offset) };
+    }
+
+    hb_buffer_reset(buffer.get());
+
+    if (textDirection == TextDirection::RTL)
+        glyphBuffer.reverse(beginningGlyphIndex, glyphBuffer.size() - beginningGlyphIndex);
+
+    return makeGlyphBufferAdvance();
 }
 
 } // namespace WebCore

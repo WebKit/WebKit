@@ -234,18 +234,6 @@ public:
     enum class CodePath : uint8_t { Auto, Simple, Complex, SimpleWithGlyphOverflow };
     WEBCORE_EXPORT CodePath codePath(const TextRun&, std::optional<unsigned> from = std::nullopt, std::optional<unsigned> to = std::nullopt) const;
 
-    CodePath codePathForShaping(const TextRun& run, std::optional<unsigned> from = std::nullopt, std::optional<unsigned> to = std::nullopt) const
-    {
-#if ENABLE(COMPLEX_TEXT_CONTROLLER_FOR_SIMPLE_CODE_PATH)
-        UNUSED_PARAM(run);
-        UNUSED_PARAM(from);
-        UNUSED_PARAM(to);
-        return CodePath::Complex;
-#else
-        return codePath(run, from, to);
-#endif
-    }
-
     static CodePath characterRangeCodePath(std::span<const LChar>) { return CodePath::Simple; }
     WEBCORE_EXPORT static CodePath characterRangeCodePath(std::span<const char16_t>);
 
@@ -280,6 +268,7 @@ private:
     float widthForComplexText(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
     int offsetForPositionForComplexText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForComplexText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;
+    bool canHandleRunWithSimpleText(const TextRun&, unsigned from, unsigned to) const;
 
     static std::pair<unsigned, bool> expansionOpportunityCountInternal(std::span<const LChar>, TextDirection, ExpansionBehavior);
     static std::pair<unsigned, bool> expansionOpportunityCountInternal(std::span<const char16_t>, TextDirection, ExpansionBehavior);
@@ -471,15 +460,7 @@ inline float FontCascade::widthForTextUsingSimplifiedMeasuring(StringView text, 
     if (cacheEntry && !std::isnan(*cacheEntry))
         return *cacheEntry;
 
-#if !ENABLE(COMPLEX_TEXT_CONTROLLER_FOR_SIMPLE_CODE_PATH)
     return widthForSimpleTextSlow(text, textDirection, cacheEntry);
-#else
-    TextRun run { text, 0, 0, ExpansionBehavior::defaultBehavior(), textDirection, false, false };
-    float width = widthForComplexText(run, nullptr, nullptr);
-    if (cacheEntry)
-        *cacheEntry = width;
-    return width;
-#endif // !ENABLE(COMPLEX_TEXT_CONTROLLER_FOR_SIMPLE_CODE_PATH)
 }
 
 bool shouldSynthesizeSmallCaps(bool, const Font*, char32_t, std::optional<char32_t>, FontVariantCaps, bool);

@@ -79,7 +79,7 @@ void SVGTextMetricsBuilder::advanceComplexText()
 
     // FIXME: NON-COCOA platforms shifts some pixels for SVGText when x,y, and rotate are used.
     // webkit.org/b/291636
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || (USE(HARFBUZZ) && USE(SKIA))
     float beforeWidth = 0;
     float afterWidth = 0;
 
@@ -91,7 +91,6 @@ void SVGTextMetricsBuilder::advanceComplexText()
 
     m_currentMetrics = SVGTextMetrics(*m_text, metricsLength, afterWidth - beforeWidth);
     m_complexStartToCurrentMetrics = SVGTextMetrics(*m_text, m_textPosition + metricsLength, afterWidth);
-
 #else
     m_currentMetrics = SVGTextMetrics::measureCharacterRange(*m_text, m_textPosition, metricsLength);
     m_complexStartToCurrentMetrics = SVGTextMetrics::measureCharacterRange(*m_text, 0, m_textPosition + metricsLength);
@@ -120,7 +119,13 @@ void SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer(RenderSVGInlin
 
     const FontCascade& scaledFont = text.scaledFont();
     m_run = SVGTextMetrics::constructTextRun(text);
-    m_isComplexText = scaledFont.codePathForShaping(m_run) == FontCascade::CodePath::Complex;
+
+#if USE(HARFBUZZ) && USE(SKIA)
+    // FIXME: many SVG tests fail with simple text, so for now force complex text when kerning or ligatures are enabled.
+    m_isComplexText = scaledFont.codePath(m_run) == FontCascade::CodePath::Complex || scaledFont.enableKerning() || scaledFont.requiresShaping();
+#else
+    m_isComplexText = scaledFont.codePath(m_run) == FontCascade::CodePath::Complex;
+#endif
 
     if (m_isComplexText)
         FontCascadeCache::forCurrentThread().invalidate();
@@ -209,7 +214,7 @@ std::tuple<unsigned, char16_t> SVGTextMetricsBuilder::measureTextRenderer(Render
 
     if (!m_isComplexText)
         m_simpleWidthIterator = makeUnique<WidthIterator>(scaledFont, m_run);
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || (USE(HARFBUZZ) && USE(SKIA))
     else
         m_complexTextController = makeUnique<ComplexTextController>(scaledFont, m_run, true, nullptr);
 #endif
@@ -241,7 +246,7 @@ std::tuple<unsigned, char16_t> SVGTextMetricsBuilder::measureTextRenderer(Render
     }
 
     m_simpleWidthIterator = nullptr;
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || (USE(HARFBUZZ) && USE(SKIA))
     m_complexTextController = nullptr;
 #endif
     return std::tuple { valueListPosition + m_textPosition - skippedCharacters, lastCharacter };

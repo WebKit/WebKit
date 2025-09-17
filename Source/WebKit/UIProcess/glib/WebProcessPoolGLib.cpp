@@ -143,6 +143,10 @@ static void seatDevicesChangedCallback(GdkSeat* seat, GdkDevice*, WebProcessPool
 
 void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization)
 {
+#if USE(CAIRO)
+    m_alwaysUsesComplexTextCodePath = true;
+#endif
+
     if (const char* forceComplexText = getenv("WEBKIT_FORCE_COMPLEX_TEXT"))
         m_alwaysUsesComplexTextCodePath = !strcmp(forceComplexText, "1");
 
