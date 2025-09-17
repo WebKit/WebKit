@@ -4376,6 +4376,7 @@ struct WebKit::RunJavaScriptParameters {
     WebCore::RemoveTransientActivation removeTransientActivation;
 }
 
+
 header: <WebCore/FontAttributes.h>
 [CustomHeader] struct WebCore::TextList {
     WebCore::Style::ListStyleType styleType;
@@ -4397,6 +4398,23 @@ header: <WebCore/FontAttributes.h>
     Natural
 };
 
+#if PLATFORM(COCOA)
+[CustomHeader, CreateUsing=fromSerializedData] struct WebCore::FontAttributes {
+    String postScriptName();
+    double pointSize();
+    bool hasBold();
+    bool hasItalics();
+    WebCore::Color backgroundColor
+    WebCore::Color foregroundColor
+    WebCore::FontShadow fontShadow
+    WebCore::FontAttributes::SubscriptOrSuperscript subscriptOrSuperscript
+    WebCore::FontAttributes::HorizontalAlignment horizontalAlignment
+    Vector<WebCore::TextList> textLists
+    bool hasUnderline
+    bool hasStrikeThrough
+    bool hasMultipleFonts
+};
+#else
 [CustomHeader] struct WebCore::FontAttributes {
     RefPtr<WebCore::Font> font
     WebCore::Color backgroundColor
@@ -4409,6 +4427,7 @@ header: <WebCore/FontAttributes.h>
     bool hasStrikeThrough
     bool hasMultipleFonts
 };
+#endif
 
 header: <WebCore/WritingDirection.h>
 enum class WebCore::WritingDirection : uint8_t {

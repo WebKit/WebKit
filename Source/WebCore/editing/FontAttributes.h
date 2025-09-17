@@ -48,12 +48,30 @@ struct TextList {
 #endif
 };
 
-struct FontAttributes {
+struct WEBCORE_EXPORT FontAttributes {
     enum class SubscriptOrSuperscript : uint8_t { None, Subscript, Superscript };
     enum class HorizontalAlignment : uint8_t { Left, Center, Right, Justify, Natural };
 
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT RetainPtr<NSDictionary> createDictionary() const;
+    RetainPtr<NSDictionary> createDictionary() const;
+    static std::optional<FontAttributes> fromSerializedData(String postScriptName,
+                                                            double pointSize,
+                                                            bool hasBold,
+                                                            bool hasItalics,
+                                                            Color backgroundColor,
+                                                            Color foregroundColor,
+                                                            FontShadow,
+                                                            FontAttributes::SubscriptOrSuperscript,
+                                                            FontAttributes::HorizontalAlignment,
+                                                            Vector<TextList> textLists,
+                                                            bool hasUnderline,
+                                                            bool hasStrikeThrough,
+                                                            bool hasMultipleFonts);
+
+    String postScriptName() const;
+    double pointSize() const;
+    bool hasBold() const;
+    bool hasItalics() const;
 #endif
 
     RefPtr<Font> font;

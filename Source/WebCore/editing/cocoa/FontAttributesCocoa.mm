@@ -29,6 +29,8 @@
 #import "CSSValueKeywords.h"
 #import "ColorCocoa.h"
 #import "FontCocoa.h"
+#import <CoreText/CTFont.h>
+#import <CoreText/CoreText.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -172,6 +174,71 @@ RetainPtr<NSDictionary> FontAttributes::createDictionary() const
         attributes[NSStrikethroughStyleAttributeName] = @(NSUnderlineStyleSingle);
 
     return attributes;
+}
+
+String FontAttributes::postScriptName() const
+{
+    return font ? String(adoptCF(CTFontCopyPostScriptName(font->getCTFont())).get()) : String();
+}
+
+double FontAttributes::pointSize() const
+{
+    return font ? CTFontGetSize(font->getCTFont()) : 0.0;
+}
+
+bool FontAttributes::hasBold() const
+{
+    if (!font)
+        return false;
+    CTFontSymbolicTraits traits = CTFontGetSymbolicTraits(font->getCTFont());
+    return traits & kCTFontTraitBold;
+}
+
+bool FontAttributes::hasItalics() const
+{
+    if (!font)
+        return false;
+    CTFontSymbolicTraits traits = CTFontGetSymbolicTraits(font->getCTFont());
+    return traits & kCTFontTraitItalic;
+}
+
+std::optional<FontAttributes> FontAttributes::fromSerializedData(
+    String postScriptName,
+    double pointSize,
+    bool hasBold,
+    bool hasItalics,
+    Color backgroundColor,
+    Color foregroundColor,
+    FontShadow fontShadow,
+    SubscriptOrSuperscript subscriptOrSuperscript,
+    HorizontalAlignment horizontalAlignment,
+    Vector<TextList> textLists,
+    bool hasUnderline,
+    bool hasStrikeThrough,
+    bool hasMultipleFonts)
+{
+    auto descriptor = adoptCF(CTFontDescriptorCreateWithNameAndSize(postScriptName.createCFString().get(), pointSize));
+
+    CTFontSymbolicTraits traits = 0;
+    if (hasBold)
+        traits |= kCTFontTraitBold;
+    if (hasItalics)
+        traits |= kCTFontTraitItalic;
+
+    auto traitsDescriptor = adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(descriptor.get(), traits, traits));
+
+    return { {
+        Font::create(FontPlatformData(adoptCF(CTFontCreateWithFontDescriptor(traitsDescriptor.get(), CGFloat(pointSize), NULL)), pointSize)),
+        backgroundColor,
+        foregroundColor,
+        fontShadow,
+        subscriptOrSuperscript,
+        horizontalAlignment,
+        textLists,
+        hasUnderline,
+        hasStrikeThrough,
+        hasMultipleFonts
+    } };
 }
 
 } // namespace WebCore
