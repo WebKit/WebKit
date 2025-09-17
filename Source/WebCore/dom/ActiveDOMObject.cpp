@@ -185,7 +185,7 @@ void ActiveDOMObject::queueTaskToDispatchEventInternal(EventTarget& target, Task
 {
     ASSERT(!event->target() || &target == event->target());
     RefPtr context = scriptExecutionContext();
-    if (!context)
+    if (!context || isContextStopped())
         return;
     auto& eventLoopTaskGroup = context->eventLoop();
     auto task = makeUnique<ActiveDOMObjectEventDispatchTask>(source, eventLoopTaskGroup, *this, [target = Ref { target }, event = WTFMove(event)] {
@@ -198,7 +198,7 @@ void ActiveDOMObject::queueCancellableTaskToDispatchEventInternal(EventTarget& t
 {
     ASSERT(!event->target() || &target == event->target());
     RefPtr context = scriptExecutionContext();
-    if (!context)
+    if (!context || isContextStopped())
         return;
     auto& eventLoopTaskGroup = context->eventLoop();
     auto task = makeUnique<ActiveDOMObjectEventDispatchTask>(source, eventLoopTaskGroup, *this, CancellableTask(cancellationGroup, [target = Ref { target }, event = WTFMove(event)] {

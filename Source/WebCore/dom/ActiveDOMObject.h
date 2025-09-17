@@ -112,6 +112,9 @@ public:
         // Calls the template member function outside of lambda init-captures to work around a MSVC bug.
         auto activity = object.ActiveDOMObject::makePendingActivity(object);
         object.queueTaskInEventLoop(source, [protectedObject = Ref { object }, activity = WTFMove(activity), task = WTFMove(task)]() mutable {
+            if (protectedObject->ActiveDOMObject::isContextStopped())
+                return;
+
             task(protectedObject.get());
         });
     }
@@ -120,6 +123,8 @@ public:
     static void queueCancellableTaskKeepingObjectAlive(T& object, TaskSource source, TaskCancellationGroup& cancellationGroup, Task&& task)
     {
         CancellableTask cancellableTask(cancellationGroup, [task = WTFMove(task), protectedObject = Ref { object }]() mutable {
+            if (protectedObject->ActiveDOMObject::isContextStopped())
+                return;
             task(protectedObject.get());
         });
         // Calls the template member function outside of lambda init-captures to work around a MSVC bug.
