@@ -817,7 +817,7 @@ void AXObjectCache::addSortedObjects(Vector<Ref<AccessibilityObject>>&& objectsT
 
     Vector<AXID>& sortedList = type == PreSortedObjectType::LiveRegion ? m_sortedLiveRegionIDs : m_sortedNonRootWebAreaIDs;
     auto updateIsolatedTree = [&] () {
-        if (RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID)) {
+        if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID)) {
             if (type == PreSortedObjectType::LiveRegion)
                 tree->sortedLiveRegionsDidChange(m_sortedLiveRegionIDs);
             else
@@ -883,7 +883,7 @@ void AXObjectCache::removeLiveRegion(AccessibilityObject& object)
         return;
 
     if (m_sortedLiveRegionIDs.removeAll(object.objectID())) {
-        if (RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID))
+        if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID))
             tree->sortedLiveRegionsDidChange(m_sortedLiveRegionIDs);
     }
 }
@@ -907,7 +907,7 @@ void AXObjectCache::initializeSortedIDLists()
         }
     }
 
-    if (RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID)) {
+    if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID)) {
         if (m_sortedLiveRegionIDs.size())
             tree->sortedLiveRegionsDidChange(m_sortedLiveRegionIDs);
         if (m_sortedNonRootWebAreaIDs.size())

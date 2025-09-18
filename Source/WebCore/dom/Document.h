@@ -2745,7 +2745,7 @@ private:
     mutable std::unique_ptr<PermissionsPolicy> m_permissionsPolicy;
 
     // FIXME: This will need to be re-evaluated for site isolation.
-    mutable WeakPtr<AXObjectCache> m_topAXObjectCache;
+    mutable std::unique_ptr<AXObjectCache> m_axObjectCache;
     RefPtr<FrameMemoryMonitor> m_frameMemoryMonitor;
 
 #if ENABLE(CONTENT_EXTENSIONS)

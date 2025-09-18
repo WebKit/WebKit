@@ -486,13 +486,13 @@ bool AXCoreObject::isEmptyGroup()
         && ![renderWidgetChildren(*this) count];
 }
 
-AXCoreObject::AccessibilityChildrenVector AXCoreObject::sortedDescendants(size_t limit, PreSortedObjectType type) const
+AXCoreObject::AccessibilityChildrenVector AXCoreObject::crossFrameSortedDescendants(size_t limit, PreSortedObjectType type) const
 {
     ASSERT(type == PreSortedObjectType::LiveRegion || type == PreSortedObjectType::WebArea);
     auto sortedObjects = type == PreSortedObjectType::LiveRegion ? allSortedLiveRegions() : allSortedNonRootWebAreas();
     AXCoreObject::AccessibilityChildrenVector results;
     for (const Ref<AXCoreObject>& object : sortedObjects) {
-        if (isAncestorOfObject(object)) {
+        if (crossFrameIsAncestorOfObject(object)) {
             results.append(object);
             if (results.size() >= limit)
                 break;
@@ -638,6 +638,7 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::Model, NSAccessibilityGroupRole },
         { AccessibilityRole::Suggestion, NSAccessibilityGroupRole },
         { AccessibilityRole::RemoteFrame, NSAccessibilityGroupRole },
+        { AccessibilityRole::LocalFrame, NSAccessibilityGroupRole },
     };
     PlatformRoleMap roleMap;
     for (auto& role : roles)

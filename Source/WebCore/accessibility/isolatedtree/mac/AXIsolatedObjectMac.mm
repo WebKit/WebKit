@@ -182,6 +182,16 @@ bool AXIsolatedObject::isDetached() const
 
 void AXIsolatedObject::attachPlatformWrapper(AccessibilityObjectWrapper* wrapper)
 {
+#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+    if (role() == AccessibilityRole::LocalFrame) {
+        AXIsolatedObject* crossFrameChild = crossFrameChildObject();
+        if (crossFrameChild) {
+            [wrapper attachIsolatedObject:*crossFrameChild];
+            crossFrameChild->setWrapper(wrapper);
+            return;
+        }
+    }
+#endif // ENABLE_ACCESSIBILITY_LOCAL_FRAME
     [wrapper attachIsolatedObject:*this];
     setWrapper(wrapper);
 }

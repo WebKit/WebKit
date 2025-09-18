@@ -579,8 +579,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
     if (!backingObject)
         return nil;
 
+    // TODO: we definitely don't want to do this for most ScrollViews.
+    // Figure out some more specific logic to do this only when needed.
+#if !ENABLE_ACCESSIBILITY_LOCAL_FRAME
     if (backingObject->isAttachment())
         return [[self attachmentView] accessibilityAttributeNames];
+#endif // !ENABLE_ACCESSIBILITY_LOCAL_FRAME
 
     static NeverDestroyed<RetainPtr<NSArray>> attributes = @[
         NSAccessibilityRoleAttribute,
@@ -1143,6 +1147,11 @@ static id scrollViewParent(AXCoreObject& axObject)
     if (!axObject.isScrollView())
         return nil;
 
+#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+    if (RefPtr crossFrameParent = axObject.crossFrameParentObject())
+        return crossFrameParent->wrapper();
+#endif
+
     // If this scroll view provides it's parent object (because it's a sub-frame), then
     // we should not find the remoteAccessibilityParent.
     if (axObject.parentObject())
@@ -1209,10 +1218,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
         if (!parent)
             return nil;
 
+#if !ENABLE_ACCESSIBILITY_LOCAL_FRAME
         // In WebKit1, the scroll view is provided by the system (the attachment view), so the parent
         // should be reported directly as such.
         if (backingObject->isWebArea() && parent->isAttachment())
             return [parent->protectedWrapper() attachmentView];
+#endif // !ENABLE_ACCESSIBILITY_LOCAL_FRAME
 
         return parent->wrapper();
     }
@@ -2067,7 +2078,7 @@ id attributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString 
     if (!backingObject)
         return nil;
 
-    RefPtr focusedObject = backingObject->focusedUIElement();
+    RefPtr focusedObject = backingObject->focusedUIElementInAnyLocalFrame();
     return focusedObject ? focusedObject->wrapper() : nil;
 }
 
@@ -2215,8 +2226,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
     if (!backingObject)
         return nil;
 
+#if !ENABLE_ACCESSIBILITY_LOCAL_FRAME
     if (backingObject->isAttachment())
         return nil;
+#endif // !ENABLE_ACCESSIBILITY_LOCAL_FRAME
 
     static NeverDestroyed<RetainPtr<NSArray>> paramAttrs = @[
         NSAccessibilityUIElementForTextMarkerAttribute,
@@ -2284,9 +2297,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
         [tempArray addObject:NSAccessibilityIndexForTextMarkerAttribute];
         return tempArray;
     }();
+    static NeverDestroyed secureFieldParamAttrs = [] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] init]);
+        [tempArray addObject:NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute];
+        return tempArray;
+    }();
 
     if (backingObject->isSecureField())
-        return @[ NSAccessibilityUIElementsForSearchPredicateParameterizedAttribute ];
+        return secureFieldParamAttrs.get().get();
 
     if (backingObject->isTextControl())
         return textParamAttrs.get().get();

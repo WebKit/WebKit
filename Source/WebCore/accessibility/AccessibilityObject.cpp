@@ -3062,9 +3062,31 @@ AccessibilityObject* AccessibilityObject::elementAccessibilityHitTest(const IntP
 
 AccessibilityObject* AccessibilityObject::focusedUIElement() const
 {
+    CheckedPtr axObjectCache = this->axObjectCache();
+    return axObjectCache ? axObjectCache->focusedObjectForLocalFrame() : nullptr;
+}
+
+AccessibilityObject* AccessibilityObject::focusedUIElementInAnyLocalFrame() const
+{
     RefPtr page = this->page();
-    auto* axObjectCache = this->axObjectCache();
-    return page && axObjectCache ? axObjectCache->focusedObjectForPage(page.get()) : nullptr;
+
+    RefPtr focusedOrMainFrame = page->focusController().focusedOrMainFrame();
+    if (!focusedOrMainFrame)
+        return nullptr;
+
+    RefPtr focusedDocument = focusedOrMainFrame->document();
+    if (!focusedDocument)
+        return nullptr;
+
+    auto* axObjectCache = focusedDocument->axObjectCache();
+    if (!axObjectCache)
+        return nullptr;
+
+#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+    return axObjectCache->focusedObjectForLocalFrame();
+#else
+    return axObjectCache->focusedObjectForPage(page.get());
+#endif
 }
 
 void AccessibilityObject::setSelectedRows(AccessibilityChildrenVector&& selectedRows)
@@ -4151,11 +4173,6 @@ AccessibilityObject* AccessibilityObject::containingWebArea() const
     CheckedPtr cache = axObjectCache();
     RefPtr root = cache ? dynamicDowncast<AccessibilityScrollView>(cache->getOrCreate(frameView.get())) : nullptr;
     return root ? root->webAreaObject() : nullptr;
-}
-
-bool AccessibilityObject::isVisible() const
-{
-    return !isHidden();
 }
 
 } // namespace WebCore

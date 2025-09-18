@@ -732,6 +732,15 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
     case AXProperty::ColumnIndexRange:
         stream << "ColumnIndexRange";
         break;
+    case AXProperty::CrossFrameChildFrameID:
+        stream << "CrossFrameChildFrameID";
+        break;
+    case AXProperty::CrossFrameParentFrameID:
+        stream << "CrossFrameParentFrameID";
+        break;
+    case AXProperty::CrossFrameParentAXID:
+        stream << "CrossFrameParentAXID";
+        break;
     case AXProperty::CurrentState:
         stream << "CurrentState";
         break;

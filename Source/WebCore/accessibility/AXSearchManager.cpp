@@ -228,7 +228,7 @@ static void appendChildrenToArray(Ref<AXCoreObject> object, bool isForward, RefP
     // The rows from the table should be queried, since those are direct descendants of the table, and they contain content.
     // FIXME: Unlike AXCoreObject::children(), AXCoreObject::rows() returns a copy, not a const-reference. This can be wasteful
     // for tables with lots of rows and probably should be changed.
-    const auto& searchChildren = object->isExposableTable() ? object->rows() : object->unignoredChildren();
+    const auto& searchChildren = object->isExposableTable() ? object->rows() : object->crossFrameUnignoredChildren();
 
     size_t childrenSize = searchChildren.size();
 
@@ -236,14 +236,14 @@ static void appendChildrenToArray(Ref<AXCoreObject> object, bool isForward, RefP
     size_t endIndex = isForward ? 0 : childrenSize;
 
     // If the startObject is ignored, we should use an accessible sibling as a start element instead.
-    if (startObject && startObject->isIgnored() && startObject->isDescendantOfObject(object.get())) {
-        RefPtr<AXCoreObject> parentObject = startObject->parentObject();
+    if (startObject && startObject->isIgnored() && startObject->crossFrameIsDescendantOfObject(object.get())) {
+        RefPtr<AXCoreObject> parentObject = startObject->parentObjectIncludingCrossFrame();
         // Go up the parent chain to find the highest ancestor that's also being ignored.
         while (parentObject && parentObject->isIgnored()) {
             if (parentObject == object.ptr())
                 break;
             startObject = parentObject;
-            parentObject = parentObject->parentObject();
+            parentObject = parentObject->parentObjectIncludingCrossFrame();
         }
 
         // We should only ever hit this case with a live object (not an isolated object), as it would require startObject to be ignored,
@@ -290,7 +290,7 @@ DidTimeout AXSearchManager::revealHiddenMatchWithTimeout(AXCoreObject& matchedOb
         if (!object)
             return;
         object->revealAncestors();
-        for (RefPtr ancestor = object; ancestor; ancestor = ancestor->parentObject()) {
+        for (RefPtr ancestor = object; ancestor; ancestor = downcast<AccessibilityObject>(ancestor->parentObjectIncludingCrossFrame())) {
             if (RefPtr document = ancestor->document(); document && needsLayoutOrStyleRecalc(*document)) {
                 document->updateLayoutIgnorePendingStylesheets();
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -342,7 +342,7 @@ AXCoreObject::AccessibilityChildrenVector AXSearchManager::findMatchingObjectsIn
                     auto liveRegions = criteria.anchorObject->allSortedLiveRegions();
                     return liveRegions.subvector(0, std::min(liveRegions.size(), static_cast<size_t>(criteria.resultsLimit)));
                 }
-                return criteria.anchorObject->sortedDescendants(criteria.resultsLimit, PreSortedObjectType::LiveRegion);
+                return criteria.anchorObject->crossFrameSortedDescendants(criteria.resultsLimit, PreSortedObjectType::LiveRegion);
             }
 
             if (criteria.searchKeys[0] == AccessibilitySearchKey::Frame) {
@@ -350,7 +350,7 @@ AXCoreObject::AccessibilityChildrenVector AXSearchManager::findMatchingObjectsIn
                     auto webAreas = criteria.anchorObject->allSortedNonRootWebAreas();
                     return webAreas.subvector(0, std::min(webAreas.size(), static_cast<size_t>(criteria.resultsLimit)));
                 }
-                return criteria.anchorObject->sortedDescendants(criteria.resultsLimit, PreSortedObjectType::WebArea);
+                return criteria.anchorObject->crossFrameSortedDescendants(criteria.resultsLimit, PreSortedObjectType::WebArea);
             }
         }
     }
@@ -364,7 +364,7 @@ AXCoreObject::AccessibilityChildrenVector AXSearchManager::findMatchingObjectsIn
 
         for (const auto& revealableContainer : object.revealableContainers()) {
             RefPtr descendant = revealableContainer.get();
-            while ((descendant = descendant ? descendant->nextInPreOrder(/* updateChildren */ true, /* stayWithin */ revealableContainer.ptr()) : nullptr)) {
+            while ((descendant = descendant ? descendant->nextInPreOrder(/* updateChildren */ true, /* stayWithin */ revealableContainer.ptr(), /* crossFrame */ true) : nullptr)) {
                 if (match(*descendant, criteria) && containsPlainText(descendant->revealableText(), criteria.searchText, FindOption::CaseInsensitive)) {
 
                     if (revealHiddenMatchWithTimeout(*descendant, 100_ms) == DidTimeout::No) {
@@ -393,14 +393,15 @@ AXCoreObject::AccessibilityChildrenVector AXSearchManager::findMatchingObjectsIn
     RefPtr<AXCoreObject> previousObject;
     if (!isForward && startObject != criteria.anchorObject) {
         previousObject = startObject;
-        startObject = startObject->parentObjectUnignored();
+        startObject = startObject->crossFrameParentObjectUnignored();
     }
 
     if (startObject && matchWithinRevealableContainer(*startObject) && results.size() >= criteria.resultsLimit)
         return results;
 
     // The outer loop steps up the parent chain each time (unignored is important here because otherwise elements would be searched twice)
-    for (RefPtr stopSearchElement = criteria.anchorObject->parentObjectUnignored(); startObject && startObject != stopSearchElement; startObject = startObject->parentObjectUnignored()) {
+    for (RefPtr stopSearchElement = criteria.anchorObject->crossFrameParentObjectUnignored(); startObject && startObject != stopSearchElement; startObject = startObject->crossFrameParentObjectUnignored()) {
+
         // Only append the children after/before the previous element, so that the search does not check elements that are
         // already behind/ahead of start element.
         AXCoreObject::AccessibilityChildrenVector searchStack;

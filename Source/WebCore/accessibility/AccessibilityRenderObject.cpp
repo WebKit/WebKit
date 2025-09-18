@@ -36,8 +36,8 @@
 #include "AXNotifications.h"
 #include "AXObjectCacheInlines.h"
 #include "AXUtilities.h"
-#include "AccessibilityObjectInlines.h"
 #include "AccessibilityMediaHelpers.h"
+#include "AccessibilityObjectInlines.h"
 #include "AccessibilitySVGObject.h"
 #include "AccessibilitySpinButton.h"
 #include "CachedImage.h"
@@ -581,6 +581,20 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
 
     return nullptr;
 }
+
+#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+
+AccessibilityObject* AccessibilityRenderObject::crossFrameParentObject() const
+{
+    return nullptr;
+}
+
+AccessibilityObject* AccessibilityRenderObject::crossFrameChildObject() const
+{
+    return nullptr;
+}
+
+#endif // ENABLE_ACCESSIBILITY_LOCAL_FRAME
 
 bool AccessibilityRenderObject::isAttachment() const
 {

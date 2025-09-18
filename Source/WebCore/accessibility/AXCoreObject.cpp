@@ -29,6 +29,7 @@
 #include "config.h"
 #include "AXCoreObject.h"
 
+#include "AXUtilities.h"
 #include "DocumentInlines.h"
 #include "HTMLAreaElement.h"
 #include "LocalFrameView.h"
@@ -355,7 +356,86 @@ AXCoreObject* AXCoreObject::firstUnignoredChild()
     }
     return nullptr;
 }
+
 #endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+
+AXCoreObject::AccessibilityChildrenVector AXCoreObject::crossFrameUnignoredChildren()
+{
+    AXCoreObject::AccessibilityChildrenVector result = unignoredChildren(/* updateChildrenIfNeeded */ true);
+
+#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+    if (result.isEmpty()) {
+        if (RefPtr crossFrameChild = crossFrameChildObject())
+            result.append(*crossFrameChild);
+    } else {
+        for (size_t i = 0; i < result.size(); i++) {
+            AXCoreObject* crossFrameChild = result[i]->crossFrameChildObject();
+            if (crossFrameChild)
+                result[i] = *crossFrameChild;
+        }
+    }
+#endif
+
+    return result;
+}
+
+AXCoreObject* AXCoreObject::crossFrameParentObjectUnignored() const
+{
+    AXCoreObject* result = parentObjectUnignored();
+
+#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+    if (!result) {
+        AXCoreObject* crossFrameParent = crossFrameParentObject();
+        if (crossFrameParent)
+            result = crossFrameParent;
+    }
+#endif
+
+    return result;
+}
+
+AXCoreObject::AccessibilityChildrenVector AXCoreObject::crossFrameChildrenIncludingIgnored(bool updateChildrenIfNeeded)
+{
+    AXCoreObject::AccessibilityChildrenVector result = childrenIncludingIgnored(updateChildrenIfNeeded);
+
+#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+    if (result.isEmpty()) {
+        AXCoreObject* crossFrameChild = crossFrameChildObject();
+        if (crossFrameChild)
+            result.append(*crossFrameChild);
+    }
+#endif
+
+    return result;
+}
+
+bool AXCoreObject::crossFrameIsAncestorOfObject(const AXCoreObject& axObject) const
+{
+    return this == &axObject || axObject.crossFrameIsDescendantOfObject(*this);
+}
+
+bool AXCoreObject::crossFrameIsDescendantOfObject(const AXCoreObject& axObject) const
+{
+    return Accessibility::crossFrameFindAncestor<AXCoreObject>(*this, false, [&axObject] (const AXCoreObject& object) {
+        return &object == &axObject;
+    }) != nullptr;
+}
+
+AXCoreObject* AXCoreObject::parentObjectIncludingCrossFrame() const
+{
+    AXCoreObject* result = parentObject();
+
+#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+    if (!result) {
+        AXCoreObject* crossFrameParent = crossFrameParentObject();
+        if (crossFrameParent)
+            result = crossFrameParent;
+    }
+#endif
+
+    return result;
+}
+
 
 #ifndef NDEBUG
 void AXCoreObject::verifyChildrenIndexInParent(const AccessibilityChildrenVector& children) const
@@ -375,7 +455,13 @@ void AXCoreObject::verifyChildrenIndexInParent(const AccessibilityChildrenVector
 
 AXCoreObject* AXCoreObject::nextInPreOrder(bool updateChildrenIfNeeded, AXCoreObject* stayWithin)
 {
-    const auto& children = childrenIncludingIgnored(updateChildrenIfNeeded);
+    return nextInPreOrder(updateChildrenIfNeeded, stayWithin, false);
+}
+
+AXCoreObject* AXCoreObject::nextInPreOrder(bool updateChildrenIfNeeded , AXCoreObject* stayWithin, bool includeCrossFrame)
+{
+    const auto& children = includeCrossFrame ? crossFrameChildrenIncludingIgnored(updateChildrenIfNeeded) : childrenIncludingIgnored(updateChildrenIfNeeded);
+
     if (!children.isEmpty()) {
         auto role = this->role();
         if (role != AccessibilityRole::Column && role != AccessibilityRole::TableHeaderContainer) {
@@ -389,9 +475,10 @@ AXCoreObject* AXCoreObject::nextInPreOrder(bool updateChildrenIfNeeded, AXCoreOb
         return nullptr;
 
     RefPtr current = this;
-    RefPtr next = nextSiblingIncludingIgnored(updateChildrenIfNeeded);
-    for (; !next; next = current->nextSiblingIncludingIgnored(updateChildrenIfNeeded)) {
-        current = current->parentObject();
+    RefPtr next = nextSiblingIncludingIgnored(updateChildrenIfNeeded, includeCrossFrame);
+    for (; !next; next = current->nextSiblingIncludingIgnored(updateChildrenIfNeeded, includeCrossFrame)) {
+        current = includeCrossFrame ? current->parentObjectIncludingCrossFrame() : current->parentObject();
+
         if (!current || stayWithin == current)
             return nullptr;
     }
@@ -444,11 +531,16 @@ size_t AXCoreObject::indexInSiblings(const AccessibilityChildrenVector& siblings
 
 AXCoreObject* AXCoreObject::nextSiblingIncludingIgnored(bool updateChildrenIfNeeded) const
 {
+    return nextSiblingIncludingIgnored(updateChildrenIfNeeded, /* crossFrame = */ false);
+}
+
+AXCoreObject* AXCoreObject::nextSiblingIncludingIgnored(bool updateChildrenIfNeeded, bool includeCrossFrame) const
+{
     RefPtr parent = parentObject();
     if (!parent)
         return nullptr;
 
-    const auto& siblings = parent->childrenIncludingIgnored(updateChildrenIfNeeded);
+    const auto& siblings = includeCrossFrame ? parent->crossFrameChildrenIncludingIgnored(updateChildrenIfNeeded) : parent->childrenIncludingIgnored(updateChildrenIfNeeded);
     size_t indexOfThis = indexInSiblings(siblings);
     if (indexOfThis == notFound)
         return nullptr;

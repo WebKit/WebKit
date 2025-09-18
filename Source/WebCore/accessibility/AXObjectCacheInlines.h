@@ -97,14 +97,14 @@ inline void AXObjectCache::willUpdateObjectRegions()
 
 inline void AXObjectCache::objectBecameIgnored(const AccessibilityObject& object)
 {
-    if (RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID))
+    if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID))
         tree->objectBecameIgnored(object);
 }
 
 inline void AXObjectCache::objectBecameUnignored(const AccessibilityObject& object)
 {
 #if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
-    if (RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID))
+    if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID))
         tree->objectBecameUnignored(object);
 #else
     UNUSED_PARAM(object);

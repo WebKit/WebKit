@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+
 #include "AXLoggerBase.h"
 
 static bool accessibilityLogChannelEnabled = false;

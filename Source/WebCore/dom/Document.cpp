@@ -3777,23 +3777,25 @@ void Document::stopActiveDOMObjects()
 
 void Document::clearAXObjectCache()
 {
-    ASSERT(isTopDocument());
     // Clear the cache member variable before calling delete because attempts
     // are made to access it during destruction.
-    if (RefPtr page = this->page())
-        page->clearAXObjectCache();
-    m_topAXObjectCache = nullptr;
+    m_axObjectCache = nullptr;
 }
 
 AXObjectCache* Document::existingAXObjectCacheSlow() const
 {
-    ASSERT(hasEverCreatedAnAXObjectCache);
-    if (m_topAXObjectCache)
-        return m_topAXObjectCache.get();
+#if !ENABLE_ACCESSIBILITY_LOCAL_FRAME
+    if (!isTopDocument()) {
+        RefPtr page = this->page();
+        if (!page)
+            return nullptr;
 
-    if (RefPtr page = this->page())
-        m_topAXObjectCache = page->existingAXObjectCache();
-    return m_topAXObjectCache.get();
+        return page->existingAXObjectCache();
+    }
+#endif // !ENABLE_ACCESSIBILITY_LOCAL_FRAME
+
+    ASSERT(hasEverCreatedAnAXObjectCache);
+    return m_axObjectCache.get();
 }
 
 AXObjectCache* Document::axObjectCache() const
@@ -3801,14 +3803,25 @@ AXObjectCache* Document::axObjectCache() const
     if (!AXObjectCache::accessibilityEnabled())
         return nullptr;
 
-    if (m_topAXObjectCache)
-        return m_topAXObjectCache.get();
+    if (m_axObjectCache)
+        return m_axObjectCache.get();
 
-    RefPtr page = this->page();
-    if (!page)
+    if (!m_frame)
         return nullptr;
-    m_topAXObjectCache = page->axObjectCache();
-    return m_topAXObjectCache.get();
+
+#if !ENABLE_ACCESSIBILITY_LOCAL_FRAME
+    if (!isTopDocument()) {
+        RefPtr page = this->page();
+        if (!page)
+            return nullptr;
+
+        return page->axObjectCache();
+    }
+#endif // !ENABLE_ACCESSIBILITY_LOCAL_FRAME
+
+    m_axObjectCache = makeUnique<AXObjectCache>(*m_frame, const_cast<Document*>(this));
+    Document::hasEverCreatedAnAXObjectCache = true;
+    return m_axObjectCache.get();
 }
 
 void Document::setVisuallyOrdered()

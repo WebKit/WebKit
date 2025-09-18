@@ -432,6 +432,7 @@ public:
     virtual bool isAccessibilityNodeObject() const = 0;
     virtual bool isAccessibilityRenderObject() const = 0;
     virtual bool isAXIsolatedObjectInstance() const = 0;
+    virtual bool isAXLocalFrame() const = 0;
     virtual bool isAXRemoteFrame() const = 0;
 
     bool isHeading() const { return role() == AccessibilityRole::Heading; }
@@ -564,6 +565,7 @@ public:
     bool isTreeItem() const { return role() == AccessibilityRole::TreeItem; }
     bool isScrollbar() const { return role() == AccessibilityRole::ScrollBar; }
     bool isRemoteFrame() const { return role() == AccessibilityRole::RemoteFrame; }
+    bool isLocalFrame() const { return role() == AccessibilityRole::LocalFrame; }
 #if PLATFORM(COCOA)
     virtual RetainPtr<id> remoteFramePlatformElement() const = 0;
 #endif
@@ -743,6 +745,7 @@ public:
     virtual AXCoreObject* accessibilityHitTest(const IntPoint&) const = 0;
 
     virtual AXCoreObject* focusedUIElement() const = 0;
+    virtual AXCoreObject* focusedUIElementInAnyLocalFrame() const = 0;
 
 #if PLATFORM(COCOA)
     virtual RetainPtr<RemoteAXObjectRef> remoteParent() const = 0;
@@ -759,6 +762,23 @@ public:
         return parentObjectUnignored();
 #endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     }
+
+#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+    // When ENABLE_ACCESSIBILITY_LOCAL_FRAME is enabled, these return a parent or child
+    // that crosses a frame boundary. On other platforms, all local frames are in the same AXObjectCache.
+    virtual AXCoreObject* crossFrameParentObject() const = 0;
+    virtual AXCoreObject* crossFrameChildObject() const = 0;
+#endif
+
+    // Helpers that run on any platform and return children and parents, calling the cross frame functions if needed
+    // to walk between LocalFrames.
+    AccessibilityChildrenVector crossFrameUnignoredChildren();
+    AXCoreObject* crossFrameParentObjectUnignored() const;
+    AccessibilityChildrenVector crossFrameChildrenIncludingIgnored(bool updateChildrenIfNeeded = true);
+    bool crossFrameIsAncestorOfObject(const AXCoreObject&) const;
+    bool crossFrameIsDescendantOfObject(const AXCoreObject&) const;
+    // TODO: this name is not consistent with the others
+    AXCoreObject* parentObjectIncludingCrossFrame() const;
 
     virtual AccessibilityChildrenVector findMatchingObjects(AccessibilitySearchCriteria&&) = 0;
     virtual bool isDescendantOfRole(AccessibilityRole) const = 0;
@@ -969,6 +989,7 @@ public:
     {
         return children(updateChildrenIfNeeded);
     };
+
 #if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     bool onlyAddsUnignoredChildren() const { return isTableColumn() || role() == AccessibilityRole::TableHeaderContainer; }
     AccessibilityChildrenVector unignoredChildren(bool updateChildrenIfNeeded = true);
@@ -988,7 +1009,9 @@ public:
     // callers will expect at the time this comment was written.
     Vector<AXID> childrenIDs(bool updateChildrenIfNeeded = true);
     AXCoreObject* nextInPreOrder(bool updateChildrenIfNeeded = true, AXCoreObject* stayWithin = nullptr);
+    AXCoreObject* nextInPreOrder(bool updateChildrenIfNeeded, AXCoreObject* stayWithin, bool includeCrossFrame);
     AXCoreObject* nextSiblingIncludingIgnored(bool updateChildrenIfNeeded) const;
+    AXCoreObject* nextSiblingIncludingIgnored(bool updateChildrenIfNeeded, bool includeCrossFrame) const;
     AXCoreObject* nextUnignoredSibling(bool updateChildrenIfNeeded, AXCoreObject* unignoredParent = nullptr) const;
     AXCoreObject* nextSiblingIncludingIgnoredOrParent() const;
     std::optional<AXID> idOfNextSiblingIncludingIgnoredOrParent() const
@@ -1102,7 +1125,7 @@ public:
 #if PLATFORM(MAC)
     virtual AccessibilityChildrenVector allSortedLiveRegions() const = 0;
     virtual AccessibilityChildrenVector allSortedNonRootWebAreas() const = 0;
-    AccessibilityChildrenVector sortedDescendants(size_t limit, PreSortedObjectType) const;
+    AccessibilityChildrenVector crossFrameSortedDescendants(size_t limit, PreSortedObjectType) const;
 #endif // PLATFORM(MAC)
     virtual AXCoreObject* liveRegionAncestor(bool excludeIfOff = true) const = 0;
     virtual const String explicitLiveRegionStatus() const = 0;
@@ -1398,6 +1421,25 @@ inline bool AXCoreObject::emitsNewline() const
 namespace Accessibility {
 
 template<typename T, typename MatchFunctionT, typename StopFunctionT>
+T* crossFrameFindAncestor(const T& object, bool includeSelf, const MatchFunctionT& matches, const StopFunctionT& shouldStop)
+{
+    RefPtr<T> current;
+    if (includeSelf)
+        current = const_cast<T*>(&object);
+    else
+        current = object.parentObjectIncludingCrossFrame();
+
+    for (; current; current = current->parentObjectIncludingCrossFrame()) {
+        if (shouldStop(*current))
+            return nullptr;
+
+        if (matches(*current))
+            return current.get();
+    }
+    return nullptr;
+}
+
+template<typename T, typename MatchFunctionT, typename StopFunctionT>
 T* findAncestor(const T& object, bool includeSelf, const MatchFunctionT& matches, const StopFunctionT& shouldStop)
 {
     RefPtr<T> current;
@@ -1420,6 +1462,14 @@ template<typename T, typename MatchFunctionT>
 T* findAncestor(const T& object, bool includeSelf, const MatchFunctionT& matches)
 {
     return findAncestor(object, includeSelf, matches, [] (const auto&) {
+        return false;
+    });
+}
+
+template<typename T, typename MatchFunctionT>
+T* crossFrameFindAncestor(const T& object, bool includeSelf, const MatchFunctionT& matches)
+{
+    return crossFrameFindAncestor(object, includeSelf, matches, [] (const auto&) {
         return false;
     });
 }

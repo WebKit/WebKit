@@ -265,6 +265,8 @@ String roleToString(AccessibilityRole role)
         return "Footnote"_s;
     case AccessibilityRole::Form:
         return "Form"_s;
+    case AccessibilityRole::FrameHost:
+        return "FrameHost"_s;
     case AccessibilityRole::Generic:
         return "Generic"_s;
     case AccessibilityRole::GraphicsDocument:
@@ -327,6 +329,8 @@ String roleToString(AccessibilityRole role)
         return "ListItem"_s;
     case AccessibilityRole::ListMarker:
         return "ListMarker"_s;
+    case AccessibilityRole::LocalFrame:
+        return "LocalFrame"_s;
     case AccessibilityRole::Mark:
         return "Mark"_s;
     case AccessibilityRole::MathElement:

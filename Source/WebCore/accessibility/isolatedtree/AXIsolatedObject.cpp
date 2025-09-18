@@ -402,6 +402,11 @@ AXIsolatedObject* AXIsolatedObject::focusedUIElement() const
     return tree()->focusedNode().get();
 }
 
+AXIsolatedObject* AXIsolatedObject::focusedUIElementInAnyLocalFrame() const
+{
+    return tree()->focusedNode().get();
+}
+
 AXIsolatedObject* AXIsolatedObject::scrollBar(AccessibilityOrientation orientation)
 {
     return objectAttributeValue(orientation == AccessibilityOrientation::Vertical ? AXProperty::VerticalScrollBar : AXProperty::HorizontalScrollBar);
@@ -1615,6 +1620,54 @@ String AXIsolatedObject::linkRelValue() const
         return { };
     });
 }
+
+#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+
+AXIsolatedObject* AXIsolatedObject::crossFrameParentObject() const
+{
+    if (role() != AccessibilityRole::ScrollArea)
+        return nullptr;
+
+    auto parentFrameID = optionalAttributeValue<FrameIdentifier>(AXProperty::CrossFrameParentFrameID);
+    auto optionalParentObjectID = optionalAttributeValue<Markable<AXID>>(AXProperty::CrossFrameParentAXID);
+
+    // TODO: add helpers to retrieve an AXID directly to clean this up.
+    if (!optionalParentObjectID)
+        return nullptr;
+
+    auto markableParentObjectID = *optionalParentObjectID;
+    if (!markableParentObjectID)
+        return nullptr;
+
+    auto parentObjectID = *markableParentObjectID;
+
+    RefPtr parentTree = AXIsolatedTree::treeForFrameID(parentFrameID);
+    if (!parentTree)
+        return nullptr;
+
+    return parentTree->objectForID(parentObjectID);
+}
+
+AXIsolatedObject* AXIsolatedObject::crossFrameChildObject() const
+{
+    if (role() != AccessibilityRole::LocalFrame)
+        return nullptr;
+
+    auto frameID = optionalAttributeValue<FrameIdentifier>(AXProperty::CrossFrameChildFrameID);
+    if (!frameID)
+        return nullptr;
+
+    RefPtr<AXIsolatedTree> childTree;
+    childTree = AXIsolatedTree::treeForFrameID(*frameID);
+    if (!childTree)
+        return nullptr;
+
+    childTree->applyPendingChanges();
+
+    return childTree->rootNode();
+}
+
+#endif // ENABLE_ACCESSIBILITY_LOCAL_FRAME
 
 Element* AXIsolatedObject::element() const
 {

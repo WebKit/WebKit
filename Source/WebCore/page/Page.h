@@ -716,7 +716,7 @@ public:
     WEBCORE_EXPORT void appearanceDidChange();
 
     void clearAXObjectCache();
-    AXObjectCache* existingAXObjectCache() { return m_axObjectCache.get(); }
+    AXObjectCache* existingAXObjectCache();
     WEBCORE_EXPORT AXObjectCache* axObjectCache();
 
     // Page and FrameView both store a Pagination value. Page::pagination() is set only by API,
@@ -1573,7 +1573,6 @@ private:
 #if ENABLE(ACCESSIBILITY_NON_BLINKING_CURSOR)
     bool m_prefersNonBlinkingCursor { false };
 #endif
-    std::unique_ptr<AXObjectCache> m_axObjectCache;
 
     TimerThrottlingState m_timerThrottlingState { TimerThrottlingState::Disabled };
     MonotonicTime m_timerThrottlingStateLastChangedTime;

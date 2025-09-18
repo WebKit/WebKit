@@ -34,7 +34,7 @@
 #include <WebCore/AXTextRun.h>
 #include <WebCore/AXTreeStore.h>
 #include <WebCore/ColorHash.h>
-#include <WebCore/PageIdentifier.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/RenderStyleConstants.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -54,7 +54,6 @@ class AXIsolatedObject;
 class AXGeometryManager;
 class AXObjectCache;
 class AccessibilityObject;
-class Page;
 enum class AXStreamOptions : uint16_t;
 
 static constexpr uint16_t lastPropertyFlagIndex = 26;
@@ -154,6 +153,9 @@ enum class AXProperty : uint16_t {
     Columns,
     ColumnIndex,
     ColumnIndexRange,
+    CrossFrameChildFrameID,
+    CrossFrameParentFrameID,
+    CrossFrameParentAXID,
     CurrentState,
     DateTimeComponentsType,
     DateTimeValue,
@@ -329,6 +331,7 @@ using AXPropertyValueVariant = Variant<std::nullptr_t, Markable<AXID>, String, b
     , FontOrientation
     , std::shared_ptr<AXTextRuns>
     , AXTextRunLineID
+    , FrameIdentifier
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 >;
 using AXPropertyVector = Vector<std::pair<AXProperty, AXPropertyValueVariant>>;
@@ -417,10 +420,12 @@ public:
     constexpr bool isEmptyContentTree() const { return m_isEmptyContentTree; }
     virtual ~AXIsolatedTree();
 
-    static void removeTreeForPageID(PageIdentifier);
+    static void removeTreeForFrameID(FrameIdentifier);
 
-    static RefPtr<AXIsolatedTree> treeForPageID(std::optional<PageIdentifier>);
-    static RefPtr<AXIsolatedTree> treeForPageID(PageIdentifier);
+    // Retrieve the tree for the frame ID of any LocalFrame
+    static RefPtr<AXIsolatedTree> treeForFrameID(std::optional<FrameIdentifier>);
+    static RefPtr<AXIsolatedTree> treeForFrameID(FrameIdentifier);
+    static RefPtr<AXIsolatedTree> treeForFrameIDAlreadyLocked(FrameIdentifier);
     AXObjectCache* axObjectCache() const;
     constexpr AXGeometryManager* geometryManager() const { return m_geometryManager.get(); }
 
@@ -570,7 +575,8 @@ private:
 
     void applyPendingChangesLocked() WTF_REQUIRES_LOCK(m_changeLogLock);
 
-    static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache() WTF_REQUIRES_LOCK(s_storeLock);
+    // TODO: figure out a way to enforce WTF_REQUIRES_LOCK when we might need to access it while already holding the lock
+    static HashMap<FrameIdentifier, Ref<AXIsolatedTree>>& treeFrameCache(); // WTF_REQUIRES_LOCK(s_storeLock);
 
     void createEmptyContent(AccessibilityObject&);
     constexpr bool isUpdatingSubtree() const { return m_rootOfSubtreeBeingUpdated; }
@@ -708,9 +714,9 @@ inline AXObjectCache* AXIsolatedTree::axObjectCache() const
     return m_axObjectCache.get();
 }
 
-inline RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(std::optional<PageIdentifier> pageID)
+inline RefPtr<AXIsolatedTree> AXIsolatedTree::treeForFrameID(std::optional<FrameIdentifier> frameID)
 {
-    return pageID ? treeForPageID(*pageID) : nullptr;
+    return frameID ? treeForFrameID(*frameID) : nullptr;
 }
 
 template<typename U>

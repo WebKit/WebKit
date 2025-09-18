@@ -115,6 +115,7 @@ public:
     bool isAccessibilityNodeObject() const override { return false; }
     bool isAccessibilityRenderObject() const override { return false; }
     virtual bool isAccessibilityScrollbar() const { return false; }
+    bool isAXLocalFrame() const override { return false; }
     bool isAXRemoteFrame() const override { return false; }
     virtual bool isAccessibilityScrollViewInstance() const { return false; }
     virtual bool isAccessibilitySVGRoot() const { return false; }
@@ -236,7 +237,7 @@ public:
     bool isVisited() const final;
     bool isRequired() const override { return false; }
     bool isExpanded() const final;
-    bool isVisible() const override;
+    inline bool isVisible() const override;
     virtual bool isCollapsed() const { return false; }
     void setIsExpanded(bool) override { }
     FloatRect unobscuredContentRect() const;
@@ -346,6 +347,7 @@ public:
     virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const;
 
     AccessibilityObject* focusedUIElement() const final;
+    AccessibilityObject* focusedUIElementInAnyLocalFrame() const final;
 
     virtual AccessibilityObject* firstChild() const { return nullptr; }
     virtual AccessibilityObject* lastChild() const { return nullptr; }
@@ -359,6 +361,11 @@ public:
     static AccessibilityObject* firstAccessibleObjectFromNode(const Node*);
     AccessibilityChildrenVector findMatchingObjects(AccessibilitySearchCriteria&&) final;
     virtual bool isDescendantOfBarrenParent() const { return false; }
+
+#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+    AccessibilityObject* crossFrameParentObject() const override { return nullptr; }
+    AccessibilityObject* crossFrameChildObject() const override { return nullptr; }
+#endif
 
     bool isDescendantOfRole(AccessibilityRole) const final;
 
@@ -747,7 +754,7 @@ public:
 
     // Visibility.
     bool isAXHidden() const;
-    inline bool isRenderHidden() const;
+    bool isRenderHidden() const;
     inline bool isHidden() const;
     bool isOnScreen() const final;
 

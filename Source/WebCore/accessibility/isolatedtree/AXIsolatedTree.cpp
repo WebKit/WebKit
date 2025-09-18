@@ -31,6 +31,7 @@
 #include "AXAttributeCacheScope.h"
 #include "AXGeometryManager.h"
 #include "AXIsolatedObject.h"
+#include "AXLocalFrame.h"
 #include "AXLogger.h"
 #include "AXNotifications.h"
 #include "AXObjectCacheInlines.h"
@@ -59,9 +60,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(AXIsolatedTree);
 
 static const Seconds CreationFeedbackInterval { 3_s };
 
-HashMap<PageIdentifier, Ref<AXIsolatedTree>>& AXIsolatedTree::treePageCache()
+HashMap<FrameIdentifier, Ref<AXIsolatedTree>>& AXIsolatedTree::treeFrameCache()
 {
-    static NeverDestroyed<HashMap<PageIdentifier, Ref<AXIsolatedTree>>> map;
+    static NeverDestroyed<HashMap<FrameIdentifier, Ref<AXIsolatedTree>>> map;
     return map;
 }
 
@@ -93,7 +94,7 @@ Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache& axObjectCache)
 {
     AXTRACE("AXIsolatedTree::createEmpty"_s);
     ASSERT(isMainThread());
-    ASSERT(axObjectCache.pageID());
+    ASSERT(axObjectCache.frameID());
 
     auto tree = adoptRef(*new AXIsolatedTree(axObjectCache));
 
@@ -151,7 +152,7 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
 {
     AXTRACE("AXIsolatedTree::create"_s);
     ASSERT(isMainThread());
-    ASSERT(axObjectCache.pageID());
+    ASSERT(axObjectCache.frameID());
 
     auto tree = adoptRef(*new AXIsolatedTree(axObjectCache));
     if (RefPtr existingTree = isolatedTreeForID(tree->treeID()))
@@ -173,7 +174,11 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
     if (axRoot)
         tree->generateSubtree(*axRoot);
 
+#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+    RefPtr axFocus = axObjectCache.focusedObjectForLocalFrame();
+#else
     RefPtr axFocus = axObjectCache.focusedObjectForPage(document->page());
+#endif
     if (axFocus)
         tree->setFocusedNodeID(axFocus->objectID());
     tree->setSelectedTextMarkerRange(document->selection().selection());
@@ -234,7 +239,7 @@ void AXIsolatedTree::storeTree(AXObjectCache& cache, const Ref<AXIsolatedTree>& 
     AXTreeStore::set(tree->treeID(), tree.ptr());
     tree->m_replacingTree = nullptr;
     Locker locker { s_storeLock };
-    treePageCache().set(*cache.pageID(), tree.copyRef());
+    treeFrameCache().set(*cache.frameID(), tree.copyRef());
 }
 
 double AXIsolatedTree::loadingProgress()
@@ -266,22 +271,29 @@ void AXIsolatedTree::reportLoadingProgress(double processingProgress)
     }
 }
 
-void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
+void AXIsolatedTree::removeTreeForFrameID(FrameIdentifier frameID)
 {
-    AXTRACE("AXIsolatedTree::removeTreeForPageID"_s);
+    AXTRACE("AXIsolatedTree::removeTreeForFrameID"_s);
     ASSERT(isMainThread());
 
     Locker locker { s_storeLock };
-    if (RefPtr tree = treePageCache().take(pageID)) {
+    if (RefPtr tree = treeFrameCache().take(frameID)) {
         tree->m_geometryManager = nullptr;
         tree->queueForDestruction();
     }
 }
 
-RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
+RefPtr<AXIsolatedTree> AXIsolatedTree::treeForFrameID(FrameIdentifier frameID)
 {
     Locker locker { s_storeLock };
-    if (RefPtr tree = treePageCache().get(pageID))
+    if (RefPtr tree = treeFrameCache().get(frameID))
+        return tree;
+    return nullptr;
+}
+
+RefPtr<AXIsolatedTree> AXIsolatedTree::treeForFrameIDAlreadyLocked(FrameIdentifier frameID)
+{
+    if (RefPtr tree = treeFrameCache().get(frameID))
         return tree;
     return nullptr;
 }
@@ -1634,7 +1646,7 @@ void AXIsolatedTree::processQueuedNodeUpdates()
         // Resolving `mostRecentlyPaintedText()` can result in this sequence:
         //   1. AXObjectCache::getOrCreate, which calls AccessibilityObject::recomputeIsIgnored
         //   2. If the ignored state changes, AXObjectCache::objectBecameUnignored may be called
-        //   3. AXIsolatedTree::treeForPageID() will be called to try to inform the isolated tree
+        //   3. AXIsolatedTree::treeForFrameID() will be called to try to inform the isolated tree
         //      of this change, which requires taking AXTreeStore::s_storeLock.
         //
         // If we (the main-thread) held the m_changeLogLock when the above sequence happened, we would deadlock
@@ -1882,6 +1894,16 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
         setProperty(AXProperty::IsEnabled, object.isEnabled());
         setProperty(AXProperty::IsHiddenUntilFoundContainer, object.isHiddenUntilFoundContainer());
         appendBasePlatformProperties(properties, propertyFlags, axObject);
+
+#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+        if (object.isLocalFrame()) {
+            if (auto* localFrame = dynamicDowncast<AXLocalFrame>(&object)) {
+                auto frameID = localFrame->frameID();
+                if (frameID)
+                    setProperty(AXProperty::CrossFrameChildFrameID, *frameID);
+            }
+        }
+#endif
     };
 
     bool needsAllProperties = true;
@@ -1981,6 +2003,17 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
             setProperty(AXProperty::ScreenRelativePosition, axObject->screenRelativePosition());
             // FIXME: We never update this property, e.g. when the iframe is moved in the hosting web content process.
             setProperty(AXProperty::RemoteFrameOffset, object.remoteFrameOffset());
+
+#if ENABLE_ACCESSIBILITY_LOCAL_FRAME
+            RefPtr crossFrameParent = axObject->crossFrameParentObject();
+            if (crossFrameParent) {
+                WeakPtr parentCache = downcast<AccessibilityObject>(crossFrameParent)->axObjectCache();
+                if (parentCache && parentCache->frameID()) {
+                    setProperty(AXProperty::CrossFrameParentFrameID, *parentCache->frameID());
+                    setProperty(AXProperty::CrossFrameParentAXID, Markable { crossFrameParent->objectID() });
+                }
+            }
+#endif // ENABLE_ACCESSIBILITY_LOCAL_FRAME
         }
 
         RefPtr geometryManager = tree->geometryManager();

@@ -1054,6 +1054,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::LineBreak:
     case AccessibilityRole::Presentational:
     case AccessibilityRole::RemoteFrame:
+    case AccessibilityRole::LocalFrame:
     case AccessibilityRole::Unknown:
         return false;
     }
@@ -1864,7 +1865,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    auto* focus = self.axBackingObject->focusedUIElement();
+    auto* focus = self.axBackingObject->focusedUIElementInAnyLocalFrame();
     return focus ? focus->wrapper() : nil;
 }
 

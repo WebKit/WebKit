@@ -811,8 +811,9 @@ std::optional<AXTreeData> Page::accessibilityTreeData(IncludeDOMInfo includeDOMI
 void Page::clearAccessibilityIsolatedTree()
 {
     if (CheckedPtr cache = axObjectCache()) {
-        if (std::optional identifier = this->identifier())
-            AXIsolatedTree::removeTreeForPageID(*identifier);
+        forEachLocalFrame([] (LocalFrame& frame) {
+            AXIsolatedTree::removeTreeForFrameID(frame.frameID());
+        });
     }
 }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -2402,14 +2403,14 @@ void Page::doAfterUpdateRendering()
     if (shouldUpdateAccessibilityRegions()) {
         m_lastAccessibilityObjectRegionsUpdate = m_lastRenderingUpdateTimestamp;
 
-        if (CheckedPtr axObjectCache = m_axObjectCache.get())
+        if (CheckedPtr axObjectCache = existingAXObjectCache())
             axObjectCache->onAccessibilityPaintStarted();
 
         forEachRenderableDocument([] (Document& document) {
             document.updateAccessibilityObjectRegions();
         });
 
-        if (CheckedPtr axObjectCache = m_axObjectCache.get())
+        if (CheckedPtr axObjectCache = existingAXObjectCache())
             axObjectCache->onAccessibilityPaintFinished();
     }
 #endif
@@ -4246,20 +4247,28 @@ void Page::appearanceDidChange()
 
 void Page::clearAXObjectCache()
 {
-    m_axObjectCache = nullptr;
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    RefPtr mainFrameDocument = localMainFrame ? localMainFrame->document() : nullptr;
+    if (mainFrameDocument)
+        mainFrameDocument->clearAXObjectCache();
+}
+
+AXObjectCache* Page::existingAXObjectCache()
+{
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    RefPtr mainFrameDocument = localMainFrame ? localMainFrame->document() : nullptr;
+    return mainFrameDocument ? mainFrameDocument->existingAXObjectCache() : nullptr;
 }
 
 AXObjectCache* Page::axObjectCache()
 {
-    if (!m_axObjectCache) {
-        RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
-        RefPtr mainFrameDocument = localMainFrame ? localMainFrame->document() : nullptr;
-        if (mainFrameDocument && !mainFrameDocument->hasLivingRenderTree())
-            return nullptr;
-        m_axObjectCache = makeUnique<AXObjectCache>(*this, mainFrameDocument.get());
-        Document::hasEverCreatedAnAXObjectCache = true;
-    }
-    return m_axObjectCache.get();
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    RefPtr mainFrameDocument = localMainFrame ? localMainFrame->document() : nullptr;
+    if (!mainFrameDocument)
+        return nullptr;
+
+    // Always try to get or create the cache from the main frame document
+    return mainFrameDocument->axObjectCache();
 }
 
 void Page::setUnobscuredSafeAreaInsets(const FloatBoxExtent& insets)

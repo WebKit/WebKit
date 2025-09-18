@@ -172,7 +172,7 @@ class AXObjectCache final : public CanMakeWeakPtr<AXObjectCache>, public CanMake
     friend class AXTextMarker;
     friend WTF::TextStream& operator<<(WTF::TextStream&, AXObjectCache&);
 public:
-    explicit AXObjectCache(Page&, Document*);
+    explicit AXObjectCache(LocalFrame&, Document*);
     ~AXObjectCache();
 
     String debugDescription() const;
@@ -400,6 +400,7 @@ public:
 #endif
 
     WEBCORE_EXPORT AccessibilityObject* focusedObjectForPage(const Page*);
+    WEBCORE_EXPORT AccessibilityObject* focusedObjectForLocalFrame();
 
     // Enhanced user interface accessibility can be toggled by the assistive technology.
     WEBCORE_EXPORT static void setEnhancedUserInterfaceAccessibility(bool flag);
@@ -523,7 +524,7 @@ public:
 
     Document* document() const { return m_document.get(); }
     RefPtr<Document> protectedDocument() const;
-    constexpr const std::optional<PageIdentifier>& pageID() const { return m_pageID; }
+    constexpr const std::optional<FrameIdentifier>& frameID() const { return m_frameID; }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     inline void objectBecameIgnored(const AccessibilityObject&);
@@ -748,7 +749,7 @@ private:
     Ref<AccessibilityNodeObject> createFromNode(Node&);
 
     const WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
-    const std::optional<PageIdentifier> m_pageID; // constant for object's lifetime.
+    const std::optional<FrameIdentifier> m_frameID; // constant for object's lifetime.
     OptionSet<ActivityState> m_pageActivityState;
     HashMap<AXID, Ref<AccessibilityObject>> m_objects;
 
