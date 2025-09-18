@@ -58,6 +58,8 @@ WebBackForwardListProxy::WebBackForwardListProxy(WebPage& page)
 {
 }
 
+static const unsigned DefaultCapacity = 100; // afryer: TODO: this should use the same const (which will improve readability).
+
 void WebBackForwardListProxy::addItem(Ref<HistoryItem>&& item)
 {
     RefPtr page = m_page.get();
@@ -65,8 +67,19 @@ void WebBackForwardListProxy::addItem(Ref<HistoryItem>&& item)
         return;
 
     LOG(BackForward, "(Back/Forward) WebProcess pid %i setting item %p for id %s with url %s", getCurrentProcessID(), item.ptr(), item->itemID().toString().utf8().data(), item->urlString().utf8().data());
-    m_cachedBackForwardListCounts = std::nullopt;
-    page->send(Messages::WebPageProxy::BackForwardAddItem(toFrameState(item.get())));
+    if (m_cachedBackForwardListCounts) {
+        if (!page->mainFrame() || page->mainFrame()->frameType() == Frame::FrameType::Local) {
+            m_cachedBackForwardListCounts = {
+                .backCount = std::min(m_cachedBackForwardListCounts->backCount + 1, DefaultCapacity),
+                .forwardCount = 0,
+            };
+        } else {
+            // UI process might drop history items
+            m_cachedBackForwardListCounts = std::nullopt;
+        }
+    }
+    auto frameState = toFrameState(item.get());
+    page->send(Messages::WebPageProxy::BackForwardAddItem(frameState));
 }
 
 void WebBackForwardListProxy::setChildItem(BackForwardFrameItemIdentifier frameItemID, Ref<HistoryItem>&& item)
