@@ -357,11 +357,13 @@ OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(con
         findListeners(eventNames().pointeroutEvent, EventListenerRegionType::PointerOut, EventListenerRegionType::NonPassivePointerOut);
         findListeners(eventNames().pointeroverEvent, EventListenerRegionType::PointerOver, EventListenerRegionType::NonPassivePointerOver);
         findListeners(eventNames().pointerupEvent, EventListenerRegionType::PointerUp, EventListenerRegionType::NonPassivePointerUp);
+#if ENABLE(TOUCH_EVENTS)
         if (document.quirks().shouldDispatchSimulatedMouseEvents(&eventTarget)) {
             findListeners(eventNames().mousedownEvent, EventListenerRegionType::MouseDown, EventListenerRegionType::NonPassiveMouseDown);
             findListeners(eventNames().mouseupEvent, EventListenerRegionType::MouseUp, EventListenerRegionType::NonPassiveMouseUp);
             findListeners(eventNames().mousemoveEvent, EventListenerRegionType::MouseMove, EventListenerRegionType::NonPassiveMouseMove);
         }
+#endif
     }
 #endif
 
