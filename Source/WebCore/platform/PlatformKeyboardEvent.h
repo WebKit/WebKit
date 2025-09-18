@@ -128,10 +128,6 @@ namespace WebCore {
 #endif
 #endif
 
-#if PLATFORM(WIN)
-        WEBCORE_EXPORT PlatformKeyboardEvent(HWND, WPARAM, LPARAM, Type, bool);
-#endif
-
 #if PLATFORM(GTK)
         // Used by WebKit2
         static String keyValueForGdkKeyCode(unsigned);

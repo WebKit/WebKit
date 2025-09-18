@@ -229,20 +229,6 @@ static WindowsKeyNames& windowsKeyNames()
     return keyNames;
 }
 
-PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM code, LPARAM keyData, Type type, bool systemKey)
-    : PlatformEvent(type, GetKeyState(VK_SHIFT) & HIGH_BIT_MASK_SHORT, GetKeyState(VK_CONTROL) & HIGH_BIT_MASK_SHORT, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT, false, MonotonicTime::now())
-    , m_autoRepeat(HIWORD(keyData) & KF_REPEAT)
-    , m_isKeypad(isKeypadEvent(code, keyData, type))
-    , m_isSystemKey(systemKey)
-    , m_text((type == PlatformEvent::Type::Char) ? singleCharacterString(code) : String())
-    , m_unmodifiedText((type == PlatformEvent::Type::Char) ? singleCharacterString(code) : String())
-    , m_key(type == PlatformEvent::Type::Char ? windowsKeyNames().domKeyFromChar(code) : windowsKeyNames().domKeyFromParams(code, keyData))
-    , m_code(windowsKeyNames().domCodeFromLParam(keyData))
-    , m_keyIdentifier((type == PlatformEvent::Type::Char) ? String() : keyIdentifierForWindowsKeyCode(code))
-    , m_windowsVirtualKeyCode((type == Type::RawKeyDown || type == Type::KeyUp) ? windowsKeycodeWithLocation(code, keyData) : 0)
-{
-}
-
 void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type, bool)
 {
     // No KeyDown events on Windows to disambiguate.
