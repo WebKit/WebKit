@@ -260,17 +260,22 @@ RefPtr<ImageBuffer> RemoteImageBufferProxy::sinkIntoBufferForDifferentThread()
 
 RefPtr<NativeImage> RemoteImageBufferProxy::filteredNativeImage(Filter& filter)
 {
-    if (!m_renderingBackend) [[unlikely]]
+    RefPtr renderingBackend = m_renderingBackend.get();
+    if (!renderingBackend) [[unlikely]]
         return nullptr;
-    auto sendResult = sendSync(Messages::RemoteImageBuffer::FilteredNativeImage(filter));
-    if (!sendResult.succeeded())
+    // FIXME: The fallback is incorrect.
+    auto filterData = renderingBackend->remoteResourceCacheProxy().recordFilterUse(filter, DestinationColorSpace::SRGB());
+    if (!filterData) [[unlikely]]
+        return nullptr;
+    auto sendResult = sendSync(Messages::RemoteImageBuffer::FilteredNativeImage(*filterData));
+    if (!sendResult.succeeded()) [[unlikely]]
         return nullptr;
     auto [handle] = sendResult.takeReply();
-    if (!handle)
+    if (!handle) [[unlikely]]
         return nullptr;
     handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
     auto bitmap = ShareableBitmap::create(WTFMove(*handle));
-    if (!bitmap)
+    if (!bitmap) [[unlikely]]
         return nullptr;
     return NativeImage::create(bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::No));
 }

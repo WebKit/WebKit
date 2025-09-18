@@ -596,6 +596,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	GPUProcess/GPUProcessCreationParameters.serialization.in \
 	GPUProcess/GPUProcessPreferences.serialization.in \
 	GPUProcess/GPUProcessSessionParameters.serialization.in \
+	GPUProcess/graphics/FilterData.serialization.in \
 	GPUProcess/graphics/PathSegment.serialization.in \
 	GPUProcess/graphics/RemoteGraphicsContextGLInitializationState.serialization.in \
 	GPUProcess/graphics/WebGPU/RemoteGPURequestAdapterResponse.serialization.in \

@@ -29,6 +29,7 @@
 
 #include "BufferIdentifierSet.h"
 #include "Connection.h"
+#include "FilterData.h"
 #include "IPCEvent.h"
 #include "ImageBufferBackendHandle.h"
 #include "MarkSurfacesAsVolatileRequestIdentifier.h"
@@ -161,7 +162,7 @@ private:
     void releaseNativeImage(WebCore::RenderingResourceIdentifier);
     void cacheGradient(Ref<WebCore::Gradient>&&, RemoteGradientIdentifier);
     void releaseGradient(RemoteGradientIdentifier);
-    void cacheFilter(Ref<WebCore::Filter>&&);
+    void cacheFilter(FilterData&&);
     void releaseFilter(WebCore::RenderingResourceIdentifier);
     void cacheFont(const WebCore::Font::Attributes&, WebCore::FontPlatformDataAttributes, std::optional<WebCore::RenderingResourceIdentifier>);
     void releaseFont(WebCore::RenderingResourceIdentifier);

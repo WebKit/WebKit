@@ -38,7 +38,7 @@ public:
     using ImageVariant = Variant<
         Ref<NativeImage>,
         Ref<ImageBuffer>,
-        RenderingResourceIdentifier
+        RenderingResourceIdentifier // <-- The purpose of the commit is to eventually be able to remove this.
     >;
 
     SourceImage(ImageVariant&&);
@@ -57,7 +57,7 @@ public:
     ImageBuffer* imageBufferIfExists() const;
     ImageBuffer* imageBuffer() const;
 
-    RenderingResourceIdentifier imageIdentifier() const;
+    RenderingResourceIdentifier imageIdentifier() const; // <-- The encoder uses this detail to be able to encode quite convenient way: The identifier "happens" to be available, because it is pre-cached manually in non-buggy cases. In buggy cases it's forgotten.
     IntSize size() const;
 
 private:

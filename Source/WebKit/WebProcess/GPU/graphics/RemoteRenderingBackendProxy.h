@@ -116,7 +116,7 @@ public:
     void releaseFontCustomPlatformData(WebCore::RenderingResourceIdentifier);
     void cacheGradient(Ref<WebCore::Gradient>&&, RemoteGradientIdentifier);
     void releaseGradient(RemoteGradientIdentifier);
-    void cacheFilter(Ref<WebCore::Filter>&&);
+    void cacheFilter(const FilterData&);
     void releaseFilter(WebCore::RenderingResourceIdentifier);
     void cacheDisplayList(RemoteDisplayListIdentifier, const WebCore::DisplayList::DisplayList&);
     void releaseDisplayList(RemoteDisplayListIdentifier);

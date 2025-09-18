@@ -450,9 +450,9 @@ void RemoteRenderingBackendProxy::releaseGradient(RemoteGradientIdentifier ident
     send(Messages::RemoteRenderingBackend::ReleaseGradient(identifier));
 }
 
-void RemoteRenderingBackendProxy::cacheFilter(Ref<Filter>&& filter)
+void RemoteRenderingBackendProxy::cacheFilter(const FilterData& filter)
 {
-    send(Messages::RemoteRenderingBackend::CacheFilter(WTFMove(filter)));
+    send(Messages::RemoteRenderingBackend::CacheFilter(filter));
 }
 
 void RemoteRenderingBackendProxy::releaseFilter(RenderingResourceIdentifier identifier)

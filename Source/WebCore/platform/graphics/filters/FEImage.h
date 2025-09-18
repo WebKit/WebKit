@@ -43,7 +43,7 @@ public:
     bool operator==(const FEImage&) const;
 
     const SourceImage& sourceImage() const { return m_sourceImage; }
-    void setImageSource(SourceImage&& sourceImage) { m_sourceImage = WTFMove(sourceImage); }
+    void setImageSource(SourceImage&& sourceImage) { m_sourceImage = WTFMove(sourceImage); } // <<- This exists only for GPUP to backfill the FEImage
 
     FloatRect sourceImageRect() const { return m_sourceImageRect; }
     const SVGPreserveAspectRatioValue& preserveAspectRatio() const { return m_preserveAspectRatio; }

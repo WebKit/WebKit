@@ -6756,6 +6756,8 @@
 		7B73123725CC8524003B2796 /* StreamServerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamServerConnection.cpp; sourceTree = "<group>"; };
 		7B73123825CC8524003B2796 /* StreamServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamServerConnection.h; sourceTree = "<group>"; };
 		7B73123925CC8525003B2796 /* StreamConnectionEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamConnectionEncoder.h; sourceTree = "<group>"; };
+		7B73C1B52E78633E00675366 /* FilterData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterData.h; sourceTree = "<group>"; };
+		7B73C1B62E78633E00675366 /* FilterData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FilterData.cpp; sourceTree = "<group>"; };
 		7B8679072C2D3D9D00268208 /* GPUProcessConnectionIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcessConnectionIdentifier.h; sourceTree = "<group>"; };
 		7B904165254AFDEA006EEB8C /* RemoteGraphicsContextGLProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLProxy.cpp; sourceTree = "<group>"; };
 		7B904166254AFDEB006EEB8C /* RemoteGraphicsContextGLProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLProxy.h; sourceTree = "<group>"; };
@@ -13497,6 +13499,8 @@
 			isa = PBXGroup;
 			children = (
 				1C98C01C27446926002CCB78 /* WebGPU */,
+				7B73C1B62E78633E00675366 /* FilterData.cpp */,
+				7B73C1B52E78633E00675366 /* FilterData.h */,
 				724DCF22284862FC0026ACF4 /* ImageBufferShareableAllocator.cpp */,
 				724DCF21284862FC0026ACF4 /* ImageBufferShareableAllocator.h */,
 				723C90A22A377AB400038126 /* PathSegment.serialization.in */,
