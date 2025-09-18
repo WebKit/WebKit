@@ -87,12 +87,17 @@ public:
         m_impl = adoptRef(*new WeakPtrImpl(const_cast<T*>(&object)));
     }
 
-    template<typename U> WeakPtr<U, WeakPtrImpl> createWeakPtr(U& object, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes) const
+    template<typename U> WeakRef<U, WeakPtrImpl> createWeakRef(U& object, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes) const
     {
         initializeIfNeeded(object);
 
         ASSERT(&object == m_impl->template get<T>());
-        return WeakPtr<U, WeakPtrImpl>(*m_impl, enableWeakPtrThreadingAssertions);
+        return WeakRef<U, WeakPtrImpl>(*m_impl, enableWeakPtrThreadingAssertions);
+    }
+
+    template<typename U> WeakPtr<U, WeakPtrImpl> createWeakPtr(U& object, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes) const
+    {
+        return createWeakRef(object, enableWeakPtrThreadingAssertions);
     }
 
     void revokeAll()
