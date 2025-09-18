@@ -35,7 +35,7 @@ const AffineTransform& SourceBrush::gradientSpaceTransform() const
     return identity;
 }
 
-Gradient* SourceBrush::gradient() const
+const Gradient* SourceBrush::gradient() const
 {
     if (auto* logicalGradient = std::get_if<SourceBrushLogicalGradient>(&m_patternGradient))
         return logicalGradient->gradient.ptr();
@@ -49,7 +49,7 @@ Pattern* SourceBrush::pattern() const
     return nullptr;
 }
 
-void SourceBrush::setGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform)
+void SourceBrush::setGradient(Ref<const Gradient>&& gradient, const AffineTransform& spaceTransform)
 {
     m_patternGradient = SourceBrushLogicalGradient { WTFMove(gradient), spaceTransform };
 }

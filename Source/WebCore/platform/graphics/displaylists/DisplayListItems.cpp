@@ -503,13 +503,13 @@ void FillRectWithColor::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("color"_s, color());
 }
 
-FillRectWithGradient::FillRectWithGradient(const FloatRect& rect, Gradient& gradient)
+FillRectWithGradient::FillRectWithGradient(const FloatRect& rect, const Gradient&gradient)
     : m_rect(rect)
     , m_gradient(gradient)
 {
 }
 
-FillRectWithGradient::FillRectWithGradient(FloatRect&& rect, Ref<Gradient>&& gradient)
+FillRectWithGradient::FillRectWithGradient(FloatRect&& rect, Ref<const Gradient>&& gradient)
     : m_rect(WTFMove(rect))
     , m_gradient(WTFMove(gradient))
 {
@@ -526,7 +526,7 @@ void FillRectWithGradient::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("gradient"_s, m_gradient);
 }
 
-FillRectWithGradientAndSpaceTransform::FillRectWithGradientAndSpaceTransform(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, GraphicsContext::RequiresClipToRect requiresClipToRect)
+FillRectWithGradientAndSpaceTransform::FillRectWithGradientAndSpaceTransform(const FloatRect& rect, const Gradient&gradient, const AffineTransform& gradientSpaceTransform, GraphicsContext::RequiresClipToRect requiresClipToRect)
     : m_rect(rect)
     , m_gradient(gradient)
     , m_gradientSpaceTransform(gradientSpaceTransform)
@@ -534,7 +534,7 @@ FillRectWithGradientAndSpaceTransform::FillRectWithGradientAndSpaceTransform(con
 {
 }
 
-FillRectWithGradientAndSpaceTransform::FillRectWithGradientAndSpaceTransform(FloatRect&& rect, Ref<Gradient>&& gradient, AffineTransform&& gradientSpaceTransform, GraphicsContext::RequiresClipToRect requiresClipToRect)
+FillRectWithGradientAndSpaceTransform::FillRectWithGradientAndSpaceTransform(FloatRect&& rect, Ref<const Gradient>&& gradient, AffineTransform&& gradientSpaceTransform, GraphicsContext::RequiresClipToRect requiresClipToRect)
     : m_rect(WTFMove(rect))
     , m_gradient(WTFMove(gradient))
     , m_gradientSpaceTransform(WTFMove(gradientSpaceTransform))

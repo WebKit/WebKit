@@ -59,7 +59,7 @@ public:
 
     void recordNativeImageUse(WebCore::NativeImage&, const WebCore::DestinationColorSpace&);
     void recordFontUse(WebCore::Font&);
-    RemoteGradientIdentifier recordGradientUse(WebCore::Gradient&);
+    RemoteGradientIdentifier recordGradientUse(const WebCore::Gradient&);
     void recordFilterUse(WebCore::Filter&);
     void recordFontCustomPlatformDataUse(const WebCore::FontCustomPlatformData&);
     RemoteDisplayListIdentifier recordDisplayListUse(const WebCore::DisplayList::DisplayList&);

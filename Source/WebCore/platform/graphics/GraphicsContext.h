@@ -99,12 +99,12 @@ public:
 
     const SourceBrush& fillBrush() const { return m_state.fillBrush(); }
     const Color& fillColor() const { return fillBrush().color(); }
-    Gradient* fillGradient() const { return fillBrush().gradient(); }
+    const Gradient* fillGradient() const { return fillBrush().gradient(); }
     const AffineTransform& fillGradientSpaceTransform() const { return fillBrush().gradientSpaceTransform(); }
     Pattern* fillPattern() const { return fillBrush().pattern(); }
     void setFillBrush(const SourceBrush& brush) { m_state.setFillBrush(brush); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::FillBrush)); }
     void setFillColor(const Color& color) { m_state.setFillColor(color); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::FillBrush)); }
-    void setFillGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform = { }) { m_state.setFillGradient(WTFMove(gradient), spaceTransform); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::FillBrush)); }
+    void setFillGradient(Ref<const Gradient>&& gradient, const AffineTransform& spaceTransform = { }) { m_state.setFillGradient(WTFMove(gradient), spaceTransform); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::FillBrush)); }
     void setFillPattern(Ref<Pattern>&& pattern) { m_state.setFillPattern(WTFMove(pattern)); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::FillBrush)); }
 
     WindRule fillRule() const { return m_state.fillRule(); }
@@ -112,12 +112,12 @@ public:
 
     const SourceBrush& strokeBrush() const { return m_state.strokeBrush(); }
     const Color& strokeColor() const { return strokeBrush().color(); }
-    Gradient* strokeGradient() const { return strokeBrush().gradient(); }
+    const Gradient* strokeGradient() const { return strokeBrush().gradient(); }
     const AffineTransform& strokeGradientSpaceTransform() const { return strokeBrush().gradientSpaceTransform(); }
     Pattern* strokePattern() const { return strokeBrush().pattern(); }
     void setStrokeBrush(const SourceBrush& brush) { m_state.setStrokeBrush(brush); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::StrokeBrush)); }
     void setStrokeColor(const Color& color) { m_state.setStrokeColor(color); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::StrokeBrush)); }
-    void setStrokeGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform = { }) { m_state.setStrokeGradient(WTFMove(gradient), spaceTransform); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::StrokeBrush)); }
+    void setStrokeGradient(Ref<const Gradient>&& gradient, const AffineTransform& spaceTransform = { }) { m_state.setStrokeGradient(WTFMove(gradient), spaceTransform); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::StrokeBrush)); }
     void setStrokePattern(Ref<Pattern>&& pattern) { m_state.setStrokePattern(WTFMove(pattern)); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::StrokeBrush)); }
 
     float strokeThickness() const { return m_state.strokeThickness(); }
@@ -219,8 +219,8 @@ public:
     using RequiresClipToRect = WebCore::RequiresClipToRect;
     virtual void fillRect(const FloatRect&, RequiresClipToRect = RequiresClipToRect::Yes) = 0;
     virtual void fillRect(const FloatRect&, const Color&) = 0;
-    virtual void fillRect(const FloatRect&, Gradient&, const AffineTransform&, RequiresClipToRect = RequiresClipToRect::Yes) = 0;
-    WEBCORE_EXPORT virtual void fillRect(const FloatRect&, Gradient&);
+    virtual void fillRect(const FloatRect&, const Gradient&, const AffineTransform&, RequiresClipToRect = RequiresClipToRect::Yes) = 0;
+    WEBCORE_EXPORT virtual void fillRect(const FloatRect&, const Gradient&);
     WEBCORE_EXPORT virtual void fillRect(const FloatRect&, const Color&, CompositeOperator, BlendMode = BlendMode::Normal);
     virtual void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) = 0;
     WEBCORE_EXPORT virtual void fillRoundedRect(const FloatRoundedRect&, const Color&, BlendMode = BlendMode::Normal);

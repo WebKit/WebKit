@@ -52,7 +52,7 @@ void RenderSVGResourceRadialGradient::collectGradientAttributesIfNeeded()
         m_attributes = WTFMove(attributes);
 }
 
-RefPtr<Gradient> RenderSVGResourceRadialGradient::createGradient(const RenderStyle& style)
+RefPtr<const Gradient> RenderSVGResourceRadialGradient::createGradient(const RenderStyle& style)
 {
     if (!m_attributes)
         return nullptr;
@@ -68,7 +68,8 @@ RefPtr<Gradient> RenderSVGResourceRadialGradient::createGradient(const RenderSty
         Gradient::RadialData { focalPoint, centerPoint, focalRadius, radius, 1 },
         { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied },
         platformSpreadMethodFromSVGType(m_attributes->spreadMethod()),
-        stopsByApplyingColorFilter(m_attributes->stops(), style));
+        stopsByApplyingColorFilter(m_attributes->stops(), style),
+        false);
 }
 
 }

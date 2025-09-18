@@ -51,13 +51,14 @@ FloatPoint LegacyRenderSVGResourceLinearGradient::endPoint(const LinearGradientA
     return SVGLengthContext::resolvePoint(protectedLinearGradientElement().ptr(), attributes.gradientUnits(), attributes.x2(), attributes.y2());
 }
 
-Ref<Gradient> LegacyRenderSVGResourceLinearGradient::buildGradient(const RenderStyle& style) const
+Ref<const Gradient> LegacyRenderSVGResourceLinearGradient::buildGradient(const RenderStyle& style) const
 {
     return Gradient::create(
         Gradient::LinearData { startPoint(m_attributes), endPoint(m_attributes) },
         { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied },
         platformSpreadMethodFromSVGType(m_attributes.spreadMethod()),
-        stopsByApplyingColorFilter(m_attributes.stops(), style));
+        stopsByApplyingColorFilter(m_attributes.stops(), style),
+        false);
 }
 
 }

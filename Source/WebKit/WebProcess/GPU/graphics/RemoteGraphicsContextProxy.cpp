@@ -465,13 +465,13 @@ void RemoteGraphicsContextProxy::fillRect(const FloatRect& rect, const Color& co
     send(Messages::RemoteGraphicsContext::FillRectWithColor(rect, color));
 }
 
-void RemoteGraphicsContextProxy::fillRect(const FloatRect& rect, Gradient& gradient)
+void RemoteGraphicsContextProxy::fillRect(const FloatRect& rect, const Gradient& gradient)
 {
     appendStateChangeItemIfNecessary();
     send(Messages::RemoteGraphicsContext::FillRectWithGradient(rect, gradient));
 }
 
-void RemoteGraphicsContextProxy::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)
+void RemoteGraphicsContextProxy::fillRect(const FloatRect& rect, const Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)
 {
     appendStateChangeItemIfNecessary();
     send(Messages::RemoteGraphicsContext::FillRectWithGradientAndSpaceTransform(rect, gradient, gradientSpaceTransform, requiresClipToRect));
@@ -691,7 +691,7 @@ bool RemoteGraphicsContextProxy::recordResourceUse(Font& font)
     return true;
 }
 
-std::optional<RemoteGradientIdentifier> RemoteGraphicsContextProxy::recordResourceUse(Gradient& gradient)
+std::optional<RemoteGradientIdentifier> RemoteGraphicsContextProxy::recordResourceUse(const Gradient& gradient)
 {
     if (gradient.isTransient())
         return std::nullopt;

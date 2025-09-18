@@ -77,7 +77,7 @@ enum class OrientationSizing {
 struct FillSource {
     FillSource() = default;
     explicit FillSource(const GraphicsContextState&);
-    FillSource(const GraphicsContextState&, Gradient&, const AffineTransform&);
+    FillSource(const GraphicsContextState&, const Gradient&, const AffineTransform&);
 
     float globalAlpha { 0 };
     struct {

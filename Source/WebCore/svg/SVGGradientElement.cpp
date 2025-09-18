@@ -117,7 +117,7 @@ GradientColorStops SVGGradientElement::buildStops()
     for (auto& stop : childrenOfType<SVGStopElement>(*this)) {
         auto monotonicallyIncreasingOffset = std::clamp(stop.offset(), previousOffset, 1.0f);
         previousOffset = monotonicallyIncreasingOffset;
-        stops.addColorStop({ monotonicallyIncreasingOffset, stop.stopColorIncludingOpacity() });
+        stops.constructAndAppend(monotonicallyIncreasingOffset, stop.stopColorIncludingOpacity());
     }
     return stops;
 }

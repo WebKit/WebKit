@@ -27,10 +27,10 @@
 #pragma once
 
 #include "FloatPoint.h"
+#include "Gradient.h"
 
 namespace WebCore {
 
-class Gradient;
 class ScriptExecutionContext;
 template<typename> class ExceptionOr;
 
@@ -41,8 +41,7 @@ public:
     static Ref<CanvasGradient> create(const FloatPoint& centerPoint, float angleInRadians);
     ~CanvasGradient();
 
-    Gradient& gradient() { return m_gradient; }
-    const Gradient& gradient() const { return m_gradient; }
+    const Gradient& gradient() const;
 
     ExceptionOr<void> addColorStop(ScriptExecutionContext&, double value, const String& color);
 
@@ -51,7 +50,20 @@ private:
     CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1);
     CanvasGradient(const FloatPoint& centerPoint, float angleInRadians);
 
-    const Ref<Gradient> m_gradient;
+    struct Data {
+        Gradient::Data data;
+        GradientColorStops stops;
+    };
+    mutable Variant<Data, Ref<const Gradient>> m_storage;
 };
+
+inline const Gradient& CanvasGradient::gradient() const
+{
+    if (std::holds_alternative<Ref<const Gradient>>(m_storage))
+        return std::get<Ref<const Gradient>>(m_storage);
+    auto& data = std::get<Data>(m_storage);
+    m_storage = Gradient::create(WTFMove(data.data), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad, WTFMove(data.stops));
+    return std::get<Ref<const Gradient>>(m_storage);
+}
 
 } // namespace WebCore

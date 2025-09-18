@@ -50,12 +50,12 @@ public:
     // Packed color accessor takes into account the discrimination between color, gradient, pattern.
     std::optional<PackedColor::RGBA> packedColor() const;
 
-    WEBCORE_EXPORT Gradient* gradient() const;
+    WEBCORE_EXPORT const Gradient* gradient() const;
     WEBCORE_EXPORT Pattern* pattern() const;
     WEBCORE_EXPORT const AffineTransform& gradientSpaceTransform() const;
     WEBCORE_EXPORT std::optional<RenderingResourceIdentifier> gradientIdentifier() const;
 
-    WEBCORE_EXPORT void setGradient(Ref<Gradient>&&, const AffineTransform& spaceTransform = { });
+    WEBCORE_EXPORT void setGradient(Ref<const Gradient>&&, const AffineTransform& spaceTransform = { });
     WEBCORE_EXPORT void setPattern(Ref<Pattern>&&);
 
     bool isVisible() const { return hasPatternOrGradient() || m_color.isVisible(); }

@@ -296,7 +296,7 @@ template<typename T> struct ArgumentCoder<Ref<T>> {
         // std::optional<Ref<U>>.
         // We cannot use `decoder.template decode<U>()`
         // Currently expect "modern decoder" -like decode function.
-        return ArgumentCoder<U>::decode(decoder);
+        return ArgumentCoder<std::remove_cvref_t<U>>::decode(decoder);
     }
 };
 

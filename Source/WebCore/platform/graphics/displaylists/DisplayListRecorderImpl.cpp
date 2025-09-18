@@ -322,13 +322,13 @@ void RecorderImpl::fillRect(const FloatRect& rect, const Color& color)
     m_items.append(FillRectWithColor(rect, color));
 }
 
-void RecorderImpl::fillRect(const FloatRect& rect, Gradient& gradient)
+void RecorderImpl::fillRect(const FloatRect& rect, const Gradient&gradient)
 {
     appendStateChangeItemIfNecessary();
     m_items.append(FillRectWithGradient(rect, gradient));
 }
 
-void RecorderImpl::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)
+void RecorderImpl::fillRect(const FloatRect& rect, const Gradient&gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)
 {
     appendStateChangeItemIfNecessary();
     m_items.append(FillRectWithGradientAndSpaceTransform(rect, gradient, gradientSpaceTransform, requiresClipToRect));

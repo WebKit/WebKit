@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-Ref<Gradient> Gradient::create(Data&& data, ColorInterpolationMethod colorInterpolationMethod, GradientSpreadMethod spreadMethod, GradientColorStops&& stops, bool isTransient)
+Ref<const Gradient> Gradient::create(Data&& data, ColorInterpolationMethod colorInterpolationMethod, GradientSpreadMethod spreadMethod, SortedGradientColorStops&& stops, bool isTransient)
 {
     return adoptRef(*new Gradient(WTFMove(data), colorInterpolationMethod, spreadMethod, WTFMove(stops), isTransient));
 }
@@ -55,7 +55,7 @@ Gradient::~Gradient()
         observer.willDestroyGradient(*this);
 }
 
-void Gradient::adjustParametersForTiledDrawing(FloatSize& size, FloatRect& srcRect, const FloatSize& spacing)
+void Gradient::adjustParametersForTiledDrawing(FloatSize& size, FloatRect& srcRect, const FloatSize& spacing) const
 {
     if (srcRect.isEmpty())
         return;
@@ -100,13 +100,6 @@ bool Gradient::isZeroSize() const
     );
 }
 
-void Gradient::addColorStop(GradientColorStop&& stop)
-{
-    m_stops.addColorStop(WTFMove(stop));
-    m_cachedHash = 0;
-    stopsChanged();
-}
-
 static void add(Hasher& hasher, const Gradient::LinearData& data)
 {
     add(hasher, data.point0, data.point1);
@@ -125,7 +118,7 @@ static void add(Hasher& hasher, const Gradient::ConicData& data)
 unsigned Gradient::hash() const
 {
     if (!m_cachedHash)
-        m_cachedHash = computeHash(m_data, m_colorInterpolationMethod, m_spreadMethod, m_stops.sorted());
+        m_cachedHash = computeHash(m_data, m_colorInterpolationMethod, m_spreadMethod, m_stops);
     return m_cachedHash;
 }
 

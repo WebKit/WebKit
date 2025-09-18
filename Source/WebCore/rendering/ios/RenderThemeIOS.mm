@@ -1456,17 +1456,17 @@ Color RenderThemeIOS::checkboxRadioBackgroundColor(const RenderStyle& style, Opt
     return enabledBackgroundColor;
 }
 
-RefPtr<Gradient> RenderThemeIOS::checkboxRadioBackgroundGradient(const FloatRect& rect, OptionSet<ControlStyle::State> states)
+RefPtr<const Gradient> RenderThemeIOS::checkboxRadioBackgroundGradient(const FloatRect& rect, OptionSet<ControlStyle::State> states)
 {
     bool isPressed = states.contains(ControlStyle::State::Pressed);
     if (isPressed)
         return nullptr;
 
     bool isEmpty = !states.containsAny({ ControlStyle::State::Checked, ControlStyle::State::Indeterminate });
-    auto gradient = Gradient::create(Gradient::LinearData { rect.minXMinYCorner(), rect.maxXMaxYCorner() }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-    gradient->addColorStop({ 0.0f, DisplayP3<float> { 0, 0, 0, isEmpty ? 0.05f : 0.125f }});
-    gradient->addColorStop({ 1.0f, DisplayP3<float> { 0, 0, 0, 0 }});
-    return gradient;
+    GradientColorStops stops;
+    stops.constructAndAppend(0.0f, DisplayP3<float> { 0, 0, 0, isEmpty ? 0.05f : 0.125f });
+    stops.constructAndAppend(1.0f, DisplayP3<float> { 0, 0, 0, 0 });
+    return Gradient::create(Gradient::LinearData { rect.minXMinYCorner(), rect.maxXMaxYCorner() }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad, WTFMove(stops));
 }
 
 Color RenderThemeIOS::checkboxRadioIndicatorColor(OptionSet<ControlStyle::State> states, OptionSet<StyleColorOptions> styleColorOptions)
@@ -1863,9 +1863,11 @@ void RenderThemeIOS::paintColorWellDecorations(const RenderObject& renderer, con
     };
     constexpr int numColorStops = std::size(colorStops);
 
-    auto gradient = Gradient::create(Gradient::ConicData { rect.center(), 0 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
+    GradientColorStops stops;
+    stops.reserveCapacity(numColorStops);
     for (int i = 0; i < numColorStops; ++i)
-        gradient->addColorStop({ i * 1.0f / (numColorStops - 1), colorStops[i] });
+        stops.constructAndAppend(i * 1.0f / (numColorStops - 1), colorStops[i]);
+    auto gradient = Gradient::create(Gradient::ConicData { rect.center(), 0 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad, WTFMove(stops));
 
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);

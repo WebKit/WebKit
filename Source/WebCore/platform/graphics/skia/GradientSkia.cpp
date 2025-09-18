@@ -40,10 +40,6 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-void Gradient::stopsChanged()
-{
-}
-
 inline SkScalar webCoreDoubleToSkScalar(double d)
 {
     return SkDoubleToScalar(std::isfinite(d) ? d : 0);
@@ -106,7 +102,7 @@ sk_sp<SkShader> Gradient::shader(float globalAlpha, const AffineTransform& gradi
     colors.reserveInitialCapacity(stops().size());
     Vector<SkScalar, 8> positions;
     positions.reserveInitialCapacity(stops().size());
-    auto fillStops = [&](const GradientColorStops::StopVector& stops) {
+    auto fillStops = [&](const GradientColorStops& stops) {
         if (stops.isEmpty()) {
             positions.append(webCoreDoubleToSkScalar(0));
             colors.append(SkColors::kTransparent);
@@ -125,7 +121,7 @@ sk_sp<SkShader> Gradient::shader(float globalAlpha, const AffineTransform& gradi
             colors.append(colors.last());
         }
     };
-    fillStops(stops().sorted().stops());
+    fillStops(stops());
 
     SkTileMode tileMode = SkTileMode::kClamp;
     switch (m_spreadMethod) {

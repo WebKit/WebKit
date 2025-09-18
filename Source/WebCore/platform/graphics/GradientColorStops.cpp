@@ -30,10 +30,4 @@
 
 namespace WebCore {
 
-TextStream& operator<<(TextStream& ts, const GradientColorStops& stops)
-{
-    ts << stops.stops();
-    return ts;
-}
-
 } // namespace WebCore

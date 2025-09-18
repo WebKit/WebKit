@@ -60,6 +60,7 @@
 #include <WebCore/AppKitControlSystemImage.h>
 #endif
 #include <WebCore/FloatBoxExtent.h>
+#include <WebCore/Gradient.h>
 #include <WebCore/InheritanceGrandchild.h>
 #include <WebCore/InheritsFrom.h>
 #include <WebCore/MoveOnlyBaseClass.h>
@@ -1240,7 +1241,7 @@ void ArgumentCoder<CFFooRef>::encode(Encoder& encoder, CFFooRef instance)
     encoder << WebKit::FooWrapper { instance };
 }
 
-std::optional<RetainPtr<CFFooRef>> ArgumentCoder<RetainPtr<CFFooRef>>::decode(Decoder& decoder)
+std::optional<RetainPtr<CFFooRef>> ArgumentCoder<CFFooRef>::decode(Decoder& decoder)
 {
     auto result = decoder.decode<WebKit::FooWrapper>();
     if (!decoder.isValid()) [[unlikely]]
@@ -1259,7 +1260,7 @@ void ArgumentCoder<CFBarRef>::encode(StreamConnectionEncoder& encoder, CFBarRef 
     encoder << WebKit::BarWrapper::createFromCF(instance);
 }
 
-std::optional<RetainPtr<CFBarRef>> ArgumentCoder<RetainPtr<CFBarRef>>::decode(Decoder& decoder)
+std::optional<RetainPtr<CFBarRef>> ArgumentCoder<CFBarRef>::decode(Decoder& decoder)
 {
     auto result = decoder.decode<WebKit::BarWrapper>();
     if (!decoder.isValid()) [[unlikely]]
@@ -1534,6 +1535,25 @@ std::optional<WebCore::RectEdges<bool>> ArgumentCoder<WebCore::RectEdges<bool>>:
             WTFMove(*bottom),
             WTFMove(*left)
         }
+    };
+}
+
+void ArgumentCoder<WebCore::Gradient>::encode(Encoder& encoder, const WebCore::Gradient& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.zz())>, int>);
+
+    encoder << instance.zz();
+}
+
+std::optional<Ref<const WebCore::Gradient>> ArgumentCoder<WebCore::Gradient>::decode(Decoder& decoder)
+{
+    auto zz = decoder.decode<int>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        WebCore::Gradient::create(
+            WTFMove(*zz)
+        )
     };
 }
 

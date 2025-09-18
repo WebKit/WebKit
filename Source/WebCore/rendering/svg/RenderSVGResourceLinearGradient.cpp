@@ -51,7 +51,7 @@ void RenderSVGResourceLinearGradient::collectGradientAttributesIfNeeded()
         m_attributes = WTFMove(attributes);
 }
 
-RefPtr<Gradient> RenderSVGResourceLinearGradient::createGradient(const RenderStyle& style)
+RefPtr<const Gradient> RenderSVGResourceLinearGradient::createGradient(const RenderStyle& style)
 {
     if (!m_attributes)
         return nullptr;
@@ -64,7 +64,8 @@ RefPtr<Gradient> RenderSVGResourceLinearGradient::createGradient(const RenderSty
         Gradient::LinearData { startPoint, endPoint },
         { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied },
         platformSpreadMethodFromSVGType(m_attributes->spreadMethod()),
-        stopsByApplyingColorFilter(m_attributes->stops(), style));
+        stopsByApplyingColorFilter(m_attributes->stops(), style),
+        false);
 }
 
 }

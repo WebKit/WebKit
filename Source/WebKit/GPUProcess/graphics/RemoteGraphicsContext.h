@@ -60,13 +60,13 @@ public:
     void setFillPackedColor(WebCore::PackedColor::RGBA);
     void setFillColor(const WebCore::Color&);
     void setFillCachedGradient(RemoteGradientIdentifier, const WebCore::AffineTransform&);
-    void setFillGradient(Ref<WebCore::Gradient>&&, const WebCore::AffineTransform&);
+    void setFillGradient(Ref<const WebCore::Gradient>&&, const WebCore::AffineTransform&);
     void setFillPattern(WebCore::RenderingResourceIdentifier tileImageIdentifier, const WebCore::PatternParameters&);
     void setFillRule(WebCore::WindRule);
     void setStrokePackedColor(WebCore::PackedColor::RGBA);
     void setStrokeColor(const WebCore::Color&);
     void setStrokeCachedGradient(RemoteGradientIdentifier, const WebCore::AffineTransform&);
-    void setStrokeGradient(Ref<WebCore::Gradient>&&, const WebCore::AffineTransform&);
+    void setStrokeGradient(Ref<const WebCore::Gradient>&&, const WebCore::AffineTransform&);
     void setStrokePattern(WebCore::RenderingResourceIdentifier tileImageIdentifier, const WebCore::PatternParameters&);
     void setStrokePackedColorAndThickness(WebCore::PackedColor::RGBA, float);
     void setStrokeThickness(float);
@@ -118,8 +118,8 @@ public:
     void drawFocusRingRects(const Vector<WebCore::FloatRect>&, float outlineOffset, float outlineWidth, const WebCore::Color&);
     void fillRect(const WebCore::FloatRect&, WebCore::RequiresClipToRect);
     void fillRectWithColor(const WebCore::FloatRect&, const WebCore::Color&);
-    void fillRectWithGradient(const WebCore::FloatRect&, Ref<WebCore::Gradient>&&);
-    void fillRectWithGradientAndSpaceTransform(const WebCore::FloatRect&, Ref<WebCore::Gradient>&&, const WebCore::AffineTransform&, WebCore::RequiresClipToRect);
+    void fillRectWithGradient(const WebCore::FloatRect&, Ref<const WebCore::Gradient>&&);
+    void fillRectWithGradientAndSpaceTransform(const WebCore::FloatRect&, Ref<const WebCore::Gradient>&&, const WebCore::AffineTransform&, WebCore::RequiresClipToRect);
     void fillCompositedRect(const WebCore::FloatRect&, const WebCore::Color&, WebCore::CompositeOperator, WebCore::BlendMode);
     void fillRoundedRect(const WebCore::FloatRoundedRect&, const WebCore::Color&, WebCore::BlendMode);
     void fillRectWithRoundedHole(const WebCore::FloatRect&, const WebCore::FloatRoundedRect&, const WebCore::Color&);

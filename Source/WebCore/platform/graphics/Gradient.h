@@ -33,6 +33,7 @@
 #include <WebCore/GradientColorStops.h>
 #include <WebCore/GraphicsTypes.h>
 #include <WebCore/RenderingResource.h>
+#include <atomic>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
@@ -42,6 +43,7 @@
 
 #if USE(CG)
 #include <WebCore/GradientRendererCG.h>
+#include <wtf/Lock.h>
 #endif
 
 #if USE(CG)
@@ -88,33 +90,34 @@ public:
     // isTransient may affect backend rendering implementation caching decisions.
     // Transient instances may be assumed to be drawn only few times or seldomly and as such the backend
     // may not persist caches related to the instance.
-    WEBCORE_EXPORT static Ref<Gradient> create(Data&&, ColorInterpolationMethod, GradientSpreadMethod = GradientSpreadMethod::Pad, GradientColorStops&& = { }, bool isTransient = true);
+    static Ref<const Gradient> create(Data&&, ColorInterpolationMethod, GradientSpreadMethod = GradientSpreadMethod::Pad, GradientColorStops&& = { }, bool isTransient = true);
+    WEBCORE_EXPORT static Ref<const Gradient> create(Data&&, ColorInterpolationMethod, GradientSpreadMethod, SortedGradientColorStops&&, bool isTransient = true);
+
     WEBCORE_EXPORT ~Gradient();
 
     const Data& data() const { return m_data; }
     ColorInterpolationMethod colorInterpolationMethod() const { return m_colorInterpolationMethod; }
     GradientSpreadMethod spreadMethod() const { return m_spreadMethod; }
+    // Returns stops as sorted.
     const GradientColorStops& stops() const { return m_stops; }
     bool isTransient() const { return m_isTransient; }
 
-    WEBCORE_EXPORT void addColorStop(GradientColorStop&&);
-
     bool isZeroSize() const;
 
-    void fill(GraphicsContext&, const FloatRect&);
-    void adjustParametersForTiledDrawing(FloatSize&, FloatRect&, const FloatSize& spacing);
+    void fill(GraphicsContext&, const FloatRect&) const;
+    void adjustParametersForTiledDrawing(FloatSize&, FloatRect&, const FloatSize& spacing) const;
 
     unsigned hash() const;
 
 #if USE(CAIRO)
-    RefPtr<cairo_pattern_t> createPattern(float globalAlpha, const AffineTransform&);
+    RefPtr<cairo_pattern_t> createPattern(float globalAlpha, const AffineTransform&) const;
 #endif
 
 #if USE(CG)
-    void paint(GraphicsContext&);
+    void paint(GraphicsContext&) const;
     // If the DestinationColorSpace is present, the gradient may cache a platform renderer using colors converted into this colorspace,
     // which can be more efficient to render since it avoids colorspace conversions when lower level frameworks render the gradient.
-    void paint(CGContextRef, std::optional<DestinationColorSpace> = { });
+    void paint(CGContextRef, std::optional<DestinationColorSpace> = { }) const;
 #endif
 
 #if USE(SKIA)
@@ -129,16 +132,15 @@ public:
 private:
     Gradient(Data&&, ColorInterpolationMethod, GradientSpreadMethod, GradientColorStops&&, bool isTransient);
 
-    void stopsChanged();
-
     Data m_data;
     ColorInterpolationMethod m_colorInterpolationMethod;
     GradientSpreadMethod m_spreadMethod;
     GradientColorStops m_stops;
-    mutable unsigned m_cachedHash { 0 };
+    mutable std::atomic<unsigned> m_cachedHash { 0 };
 
 #if USE(CG)
-    std::optional<GradientRendererCG> m_platformRenderer;
+    mutable Lock m_lock;
+    mutable std::optional<GradientRendererCG> m_platformRenderer WTF_GUARDED_BY_LOCK(m_lock);
 #endif
 
     mutable WeakHashSet<RenderingResourceObserver> m_observers;
@@ -146,5 +148,11 @@ private:
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Gradient&);
+
+inline Ref<const Gradient> Gradient::create(Data&& data, ColorInterpolationMethod colorInterpolationMethod, GradientSpreadMethod spreadMethod, GradientColorStops&& stops, bool isTransient)
+{
+    std::ranges::stable_sort(stops, { }, &GradientColorStop::offset);
+    return create(WTFMove(data), colorInterpolationMethod, spreadMethod, SortedGradientColorStops { WTFMove(stops) }, isTransient);
+}
 
 } // namespace WebCore

@@ -34,90 +34,28 @@
 
 namespace WebCore {
 
-class GradientColorStops {
+using GradientColorStops = Vector<GradientColorStop, 2>;
+
+class SortedGradientColorStops {
 public:
-    using StopVector = Vector<GradientColorStop, 2>;
-
-    struct Sorted {
-        StopVector stops;
-    };
-
-    GradientColorStops()
-        : m_isSorted { true }
+    explicit SortedGradientColorStops(GradientColorStops&& stops)
+        : m_stops(stops)
     {
+        ASSERT(std::ranges::is_sorted(m_stops, { }, &GradientColorStop::offset));
     }
-
-    GradientColorStops(StopVector stops)
-        : m_stops { WTFMove(stops) }
-        , m_isSorted { false }
-    {
-    }
-
-    GradientColorStops(Sorted sortedStops)
-        : m_stops { WTFMove(sortedStops.stops) }
-        , m_isSorted { true }
-    {
-        ASSERT(validateIsSorted());
-    }
-
-    void addColorStop(GradientColorStop stop)
-    {
-        if (!m_stops.isEmpty() && m_stops.last().offset > stop.offset)
-            m_isSorted = false;
-        m_stops.append(WTFMove(stop));
-    }
-
-    void sort()
-    {
-        if (m_isSorted)
-            return;
-
-        std::ranges::stable_sort(m_stops, { }, &GradientColorStop::offset);
-        m_isSorted = true;
-    }
-
-    const GradientColorStops& sorted() const
-    {
-        const_cast<GradientColorStops*>(this)->sort();
-        return *this;
-    }
-
-    size_t size() const { return m_stops.size(); }
-    bool isEmpty() const { return m_stops.isEmpty(); }
-
-    StopVector::const_iterator begin() const LIFETIME_BOUND { return m_stops.begin(); }
-    StopVector::const_iterator end() const LIFETIME_BOUND { return m_stops.end(); }
-
-    template<typename MapFunction> GradientColorStops mapColors(MapFunction&& mapFunction) const
-    {
-        return {
-            m_stops.map<StopVector>([&] (const GradientColorStop& stop) -> GradientColorStop {
-                return { stop.offset, mapFunction(stop.color) };
-            }),
-            m_isSorted
-        };
-    }
-
-    const StopVector& stops() const { return m_stops; }
-
+    SortedGradientColorStops(SortedGradientColorStops&&) = default;
+    SortedGradientColorStops& operator=(SortedGradientColorStops&&) = default;
+    operator GradientColorStops() && { return WTFMove(m_stops); }
 private:
-    GradientColorStops(StopVector stops, bool isSorted)
-        : m_stops { WTFMove(stops) }
-        , m_isSorted { isSorted }
-    {
-    }
-
-#if ASSERT_ENABLED
-    bool validateIsSorted() const
-    {
-        return std::ranges::is_sorted(m_stops, { }, &GradientColorStop::offset);
-    }
-#endif
-
-    StopVector m_stops;
-    bool m_isSorted;
+    GradientColorStops m_stops;
 };
 
-TextStream& operator<<(TextStream&, const GradientColorStops&);
+template<typename MapFunction>
+GradientColorStops mapGradientColors(const GradientColorStops& stops, NOESCAPE MapFunction&& mapFunction)
+{
+    return stops.map<GradientColorStops>([&] (const GradientColorStop& stop) -> GradientColorStop {
+        return { stop.offset, mapFunction(stop.color) };
+    });
+}
 
 } // namespace WebCore

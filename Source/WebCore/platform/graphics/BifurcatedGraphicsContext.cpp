@@ -208,7 +208,7 @@ void BifurcatedGraphicsContext::fillRect(const FloatRect& rect, const Color& col
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-void BifurcatedGraphicsContext::fillRect(const FloatRect& rect, Gradient& gradient)
+void BifurcatedGraphicsContext::fillRect(const FloatRect& rect, const Gradient&gradient)
 {
     m_primaryContext.fillRect(rect, gradient);
     m_secondaryContext.fillRect(rect, gradient);
@@ -216,7 +216,7 @@ void BifurcatedGraphicsContext::fillRect(const FloatRect& rect, Gradient& gradie
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-void BifurcatedGraphicsContext::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)
+void BifurcatedGraphicsContext::fillRect(const FloatRect& rect, const Gradient&gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)
 {
     m_primaryContext.fillRect(rect, gradient, gradientSpaceTransform, requiresClipToRect);
     m_secondaryContext.fillRect(rect, gradient, gradientSpaceTransform, requiresClipToRect);

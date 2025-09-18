@@ -82,7 +82,7 @@ private:
     void fillPath(const Path&) final { }
     void strokePath(const Path&) final { }
     void fillRect(const FloatRect&, RequiresClipToRect) final { }
-    void fillRect(const FloatRect&, Gradient&, const AffineTransform&, RequiresClipToRect) final { }
+    void fillRect(const FloatRect&, const Gradient&, const AffineTransform&, RequiresClipToRect) final { }
     void fillRect(const FloatRect&, const Color&) final { }
     void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) final { }
     void strokeRect(const FloatRect&, float) final { }
@@ -132,7 +132,7 @@ private:
     void clipOutRoundedRect(const FloatRoundedRect&) final { }
     void clipToImageBuffer(ImageBuffer&, const FloatRect&) final { }
 
-    void fillRect(const FloatRect&, Gradient&) final { }
+    void fillRect(const FloatRect&, const Gradient&) final { }
     void fillRect(const FloatRect&, const Color&, CompositeOperator, BlendMode = BlendMode::Normal) final { }
 
     void fillRoundedRect(const FloatRoundedRect&, const Color&, BlendMode = BlendMode::Normal) final { }

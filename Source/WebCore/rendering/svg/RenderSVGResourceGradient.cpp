@@ -42,7 +42,7 @@ GradientColorStops RenderSVGResourceGradient::stopsByApplyingColorFilter(const G
     if (!style.hasAppleColorFilter())
         return stops;
 
-    return stops.mapColors([&] (auto& color) {
+    return mapGradientColors(stops, [&] (auto& color) {
         return style.colorByApplyingColorFilter(color);
     });
 }

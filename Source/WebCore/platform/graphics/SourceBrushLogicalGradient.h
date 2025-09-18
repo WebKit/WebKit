@@ -30,7 +30,7 @@
 namespace WebCore {
 
 struct SourceBrushLogicalGradient {
-    Ref<Gradient> gradient;
+    Ref<const Gradient> gradient;
     AffineTransform spaceTransform;
 
     friend bool operator==(const SourceBrushLogicalGradient&, const SourceBrushLogicalGradient&);

@@ -367,7 +367,7 @@ GradientRendererCG::Strategy GradientRendererCG::makeShading(ColorInterpolationM
 void GradientRendererCG::drawLinearGradient(CGContextRef platformContext, CGPoint startPoint, CGPoint endPoint, CGGradientDrawingOptions options)
 {
     WTF::switchOn(m_strategy,
-        [&] (Gradient& gradient) {
+        [&] (const Gradient& gradient) {
             CGContextDrawLinearGradient(platformContext, gradient.gradient.get(), startPoint, endPoint, options);
         },
         [&] (Shading& shading) {
@@ -382,7 +382,7 @@ void GradientRendererCG::drawLinearGradient(CGContextRef platformContext, CGPoin
 void GradientRendererCG::drawRadialGradient(CGContextRef platformContext, CGPoint startCenter, CGFloat startRadius, CGPoint endCenter, CGFloat endRadius, CGGradientDrawingOptions options)
 {
     WTF::switchOn(m_strategy,
-        [&] (Gradient& gradient) {
+        [&] (const Gradient& gradient) {
             CGContextDrawRadialGradient(platformContext, gradient.gradient.get(), startCenter, startRadius, endCenter, endRadius, options);
         },
         [&] (Shading& shading) {
@@ -397,7 +397,7 @@ void GradientRendererCG::drawRadialGradient(CGContextRef platformContext, CGPoin
 void GradientRendererCG::drawConicGradient(CGContextRef platformContext, CGPoint center, CGFloat angle)
 {
     WTF::switchOn(m_strategy,
-        [&] (Gradient& gradient) {
+        [&] (const Gradient& gradient) {
             CGContextDrawConicGradient(platformContext, gradient.gradient.get(), center, angle);
         },
         [&] (Shading& shading) {

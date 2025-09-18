@@ -3055,7 +3055,7 @@ class WebCore::TransformOperations {
     float angleRadians;
 };
 
-[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::Gradient {
+[ConstRefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::Gradient {
     Variant<WebCore::Gradient::LinearData, WebCore::Gradient::RadialData, WebCore::Gradient::ConicData> data();
     WebCore::ColorInterpolationMethod colorInterpolationMethod();
     WebCore::GradientSpreadMethod spreadMethod();
@@ -5045,9 +5045,7 @@ enum class WebCore::VideoFrameRotation : uint16_t {
     WebCore::Color color;
 };
 
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::GradientColorStops {
-    Vector<WebCore::GradientColorStop, 2> stops();
-};
+using WebCore::GradientColorStops = Vector<WebCore::GradientColorStop, 2>;
 
 header: <WebCore/ImageBuffer.h>
 [CustomHeader] struct WebCore::ImageBufferParameters {

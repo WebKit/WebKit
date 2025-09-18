@@ -274,7 +274,7 @@ void OperationRecorder::fillRect(const FloatRect& rect, const Color& color)
     append(createCommand<FillRect>(rect, color, Cairo::ShadowState(state())));
 }
 
-void OperationRecorder::fillRect(const FloatRect& rect, Gradient& gradient)
+void OperationRecorder::fillRect(const FloatRect& rect, const Gradient&gradient)
 {
     struct FillRect final : PaintingOperation, OperationData<FloatRect, RefPtr<cairo_pattern_t>> {
         virtual ~FillRect() = default;
@@ -297,7 +297,7 @@ void OperationRecorder::fillRect(const FloatRect& rect, Gradient& gradient)
     append(createCommand<FillRect>(rect, gradient.createPattern(1.0, state.fillBrush().gradientSpaceTransform())));
 }
 
-void OperationRecorder::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect)
+void OperationRecorder::fillRect(const FloatRect& rect, const Gradient&gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect)
 {
     struct FillRect final : PaintingOperation, OperationData<FloatRect, Cairo::FillSource, Cairo::ShadowState> {
         virtual ~FillRect() = default;

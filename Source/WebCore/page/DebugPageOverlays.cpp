@@ -531,19 +531,18 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
         };
 
         auto makeGradient = [&] (Gradient::RadialData gradientData) {
-            auto gradient = Gradient::create(WTFMove(gradientData), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
+            GradientColorStops stops;
             if (region && valueForSetting("wash"_s) && valueForSetting("clip"_s)) {
-                gradient->addColorStop({ 0.1, Color(Color::white).colorWithAlpha(0.5) });
-                gradient->addColorStop({ 1, Color(Color::white).colorWithAlpha(0.1) });
+                stops.constructAndAppend(0.1, Color(Color::white).colorWithAlpha(0.5));
+                stops.constructAndAppend(1, Color(Color::white).colorWithAlpha(0.1));
             } else if (!valueForSetting("clip"_s) || !valueForSetting("constrain"_s)) {
-                gradient->addColorStop({ 0.1, Color(Color::white).colorWithAlpha(0.2) });
-                gradient->addColorStop({ 1, Color(Color::white).colorWithAlpha(0) });
+                stops.constructAndAppend(0.1, Color(Color::white).colorWithAlpha(0.2));
+                stops.constructAndAppend(1, Color(Color::white).colorWithAlpha(0));
             } else {
-                gradient->addColorStop({ 0.1, Color(Color::white).colorWithAlpha(0.5) });
-                gradient->addColorStop({ 1, Color(Color::white).colorWithAlpha(0) });
+                stops.constructAndAppend(0.1, Color(Color::white).colorWithAlpha(0.5));
+                stops.constructAndAppend(1, Color(Color::white).colorWithAlpha(0));
             }
-
-            return gradient;
+            return Gradient::create(WTFMove(gradientData), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad, SortedGradientColorStops { WTFMove(stops) });
         };
         
         constexpr float defaultRadius = 50;
@@ -583,19 +582,19 @@ void InteractionRegionOverlay::drawRect(PageOverlay&, GraphicsContext& context, 
             if (shouldClip) {
                 for (const auto& path : clipPaths) {
                     float radius = valueForSetting("contextualSize"_s) ? 1.5 * path.boundingRect().size().minDimension() : defaultRadius;
-                    auto backdropGradient = Gradient::create(gradientData(radius * 1.5), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-                    backdropGradient->addColorStop({ 0.1, Color(Color::black).colorWithAlpha(0.2) });
-                    backdropGradient->addColorStop({ 1, Color(Color::black).colorWithAlpha(0) });
-
-                    context.setFillGradient(WTFMove(backdropGradient));
+                    GradientColorStops stops;
+                    stops.reserveCapacity(2);
+                    stops.constructAndAppend(0.1, Color(Color::black).colorWithAlpha(0.2));
+                    stops.constructAndAppend(1, Color(Color::black).colorWithAlpha(0));
+                    context.setFillGradient(Gradient::create(gradientData(radius * 1.5), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad, WTFMove(stops)));
                     context.fillPath(path);
                 }
             } else {
-                auto backdropGradient = Gradient::create(gradientData(defaultRadius * 2), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-                backdropGradient->addColorStop({ 0.1, Color(Color::black).colorWithAlpha(0.2) });
-                backdropGradient->addColorStop({ 1, Color(Color::black).colorWithAlpha(0) });
-
-                context.setFillGradient(WTFMove(backdropGradient));
+                GradientColorStops stops;
+                stops.reserveCapacity(2);
+                stops.constructAndAppend(0.1, Color(Color::black).colorWithAlpha(0.2));
+                stops.constructAndAppend(1, Color(Color::black).colorWithAlpha(0));
+                context.setFillGradient(Gradient::create(gradientData(defaultRadius * 2), { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied },  GradientSpreadMethod::Pad, WTFMove(stops)));
                 context.fillRect(dirtyRect);    
             }
         }

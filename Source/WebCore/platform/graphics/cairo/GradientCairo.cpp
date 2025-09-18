@@ -40,10 +40,6 @@
 
 namespace WebCore {
 
-void Gradient::stopsChanged()
-{
-}
-
 static void addColorStopRGBA(cairo_pattern_t *gradient, GradientColorStop stop, float globalAlpha)
 {
     auto [r, g, b, a] = stop.color.toColorTypeLossy<SRGBA<float>>().resolved();
@@ -150,7 +146,7 @@ static void addConicSector(cairo_pattern_t *gradient, float cx, float cy, float 
 }
 
 static RefPtr<cairo_pattern_t> createConic(float xo, float yo, float r, float angleRadians,
-    GradientColorStops::StopVector stops, float globalAlpha)
+    const GradientColorStops& stops, float globalAlpha)
 {
     // Locate last stop with offset 0.
     size_t i = stops.size() - 1;
@@ -160,7 +156,7 @@ static RefPtr<cairo_pattern_t> createConic(float xo, float yo, float r, float an
     }
     // Remove stops with offset zero before last one.
     if (i > 0) {
-        GradientColorStops::StopVector newStops;
+        GradientColorStops newStops;
         for (; i < stops.size(); i++)
             newStops.append(stops[i]);
         stops = newStops;
@@ -208,7 +204,7 @@ static RefPtr<cairo_pattern_t> createConic(float xo, float yo, float r, float an
     return gradient;
 }
 
-RefPtr<cairo_pattern_t> Gradient::createPattern(float globalAlpha, const AffineTransform& gradientSpaceTransform)
+RefPtr<cairo_pattern_t> Gradient::createPattern(float globalAlpha, const AffineTransform& gradientSpaceTransform) const
 {
     cairo_matrix_t matrix = toCairoMatrix(gradientSpaceTransform);
     cairo_matrix_invert(&matrix);
@@ -260,7 +256,7 @@ RefPtr<cairo_pattern_t> Gradient::createPattern(float globalAlpha, const AffineT
     return gradient;
 }
 
-void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
+void Gradient::fill(GraphicsContext& context, const FloatRect& rect) const
 {
     auto pattern = createPattern(1.0, context.fillGradientSpaceTransform());
     if (!pattern)

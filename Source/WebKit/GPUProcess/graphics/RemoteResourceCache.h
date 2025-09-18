@@ -56,9 +56,9 @@ public:
     bool releaseNativeImage(WebCore::RenderingResourceIdentifier);
     RefPtr<WebCore::NativeImage> cachedNativeImage(WebCore::RenderingResourceIdentifier) const;
 
-    bool cacheGradient(RemoteGradientIdentifier, Ref<WebCore::Gradient>&&);
+    bool cacheGradient(RemoteGradientIdentifier, Ref<const WebCore::Gradient>&&);
     bool releaseGradient(RemoteGradientIdentifier);
-    RefPtr<WebCore::Gradient> cachedGradient(RemoteGradientIdentifier) const;
+    RefPtr<const WebCore::Gradient> cachedGradient(RemoteGradientIdentifier) const;
 
     void cacheFilter(Ref<WebCore::Filter>&&);
     bool releaseFilter(WebCore::RenderingResourceIdentifier);
@@ -83,7 +83,7 @@ public:
 private:
     HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::ImageBuffer>> m_imageBuffers;
     HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::NativeImage>> m_nativeImages;
-    HashMap<RemoteGradientIdentifier, Ref<WebCore::Gradient>> m_gradients;
+    HashMap<RemoteGradientIdentifier, Ref<const WebCore::Gradient>> m_gradients;
     HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Filter>> m_filters;
     HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Font>> m_fonts;
     HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::FontCustomPlatformData>> m_fontCustomPlatformDatas;
