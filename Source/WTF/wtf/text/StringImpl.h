@@ -1342,7 +1342,7 @@ template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImp
 
     StringBuffer<CharacterType> data(m_length);
     auto to = data.span();
-    unsigned outc = from.begin() - characters.begin();
+    unsigned outc = from.data() - characters.data();
 
     copyCharacters(to, characters.first(outc));
 
