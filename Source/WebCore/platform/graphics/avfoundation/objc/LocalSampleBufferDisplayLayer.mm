@@ -361,12 +361,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 static void setSampleBufferAsDisplayImmediately(CMSampleBufferRef sampleBuffer)
 {
-    CFArrayRef attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, true);
+    RetainPtr<CFArrayRef> attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, true);
     if (!attachmentsArray)
         return;
-    for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
-        CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
-        CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue);
+    for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray.get()); ++i) {
+        RetainPtr attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray.get(), i));
+        CFDictionarySetValue(attachments.get(), PAL::kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue);
     }
 }
 
@@ -515,7 +515,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                     return;
                 }
                 auto videoFrame = protectedThis->m_pendingVideoFrameQueue.takeFirst();
-                protectedThis->enqueueBufferInternal(videoFrame->pixelBuffer(), videoFrame->presentationTime());
+                protectedThis->enqueueBufferInternal(videoFrame->protectedPixelBuffer().get(), videoFrame->presentationTime());
             }
         });
     }];
