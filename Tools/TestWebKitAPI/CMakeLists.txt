@@ -221,6 +221,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/MixedContentChecker.cpp
         Tests/WebCore/MonospaceFontTests.cpp
         Tests/WebCore/NowPlayingInfoTests.cpp
+        Tests/WebCore/ParkableString.cpp
         Tests/WebCore/ParsedContentRange.cpp
         Tests/WebCore/PathTests.cpp
         Tests/WebCore/PixelBufferConversionTests.cpp

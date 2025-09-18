@@ -1284,6 +1284,8 @@
 		AD7C434D1DD2A54E0026888B /* Expected.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD7C434C1DD2A5470026888B /* Expected.cpp */; };
 		B55AD1D5179F3B3000AC1494 /* PreventImageLoadWithAutoResizing_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B55AD1D3179F3ABF00AC1494 /* PreventImageLoadWithAutoResizing_Bundle.cpp */; };
 		B68735A32AA78E620006FB3A /* WKWebExtensionAPILocalization.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6D1708E2A9F9C9F004C72E6 /* WKWebExtensionAPILocalization.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		B79EF4272E039424004C241C /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B9FC5B628A52236007570E7 /* WebCore.framework */; };
+		B79EF4302E03982D004C241C /* ParkableString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B79EF40A2E03712E004C241C /* ParkableString.cpp */; };
 		BC22D31914DC68B900FFB1DD /* UserMessage_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC22D31714DC68B800FFB1DD /* UserMessage_Bundle.cpp */; };
 		BC246D9C132F1FF000B56D7C /* CanHandleRequest_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC246D97132F1FE100B56D7C /* CanHandleRequest_Bundle.cpp */; };
 		BC575A97126E74F1006F0F12 /* InjectedBundleMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575946126E7351006F0F12 /* InjectedBundleMain.cpp */; };
@@ -3780,6 +3782,7 @@
 		B6D1708E2A9F9C9F004C72E6 /* WKWebExtensionAPILocalization.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPILocalization.mm; sourceTree = "<group>"; };
 		B6E1E1E02942B0DD00F314D2 /* WKWebExtensionAPIEvent.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIEvent.mm; sourceTree = "<group>"; };
 		B6FF203A2B7ACDB40037728F /* WKWebExtensionDataRecord.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionDataRecord.mm; sourceTree = "<group>"; };
+		B79EF40A2E03712E004C241C /* ParkableString.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ParkableString.cpp; sourceTree = "<group>"; };
 		BC029B161486AD6400817DA9 /* RetainPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RetainPtr.cpp; sourceTree = "<group>"; };
 		BC029B1B1486B25900817DA9 /* RetainPtr.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RetainPtr.mm; path = ns/RetainPtr.mm; sourceTree = "<group>"; };
 		BC131883117114A800B69727 /* PlatformUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformUtilities.h; sourceTree = "<group>"; };
@@ -4420,6 +4423,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD4671652A685F6800E49DBD /* WebCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4435,7 +4439,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1798B7F22431D2B000764BD /* libWebCoreTestSupport.dylib in Frameworks */,
-				DD4671652A685F6800E49DBD /* WebCore.framework in Frameworks */,
+				B79EF4272E039424004C241C /* WebCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5220,6 +5224,7 @@
 				EB6836D32CC967E00073A8E5 /* MixedContentChecker.cpp */,
 				E38EDC2F2B1D673A00963F9B /* MonospaceFontTests.cpp */,
 				5159F266260D43E300B2DA3C /* NowPlayingInfoTests.cpp */,
+				B79EF40A2E03712E004C241C /* ParkableString.cpp */,
 				CD225C071C45A69200140761 /* ParsedContentRange.cpp */,
 				AA96CAB421C7DB4200FD2F97 /* ParsedContentType.cpp */,
 				0F5EC8BB2C7F76B900B8051B /* PathTests.cpp */,
@@ -7870,6 +7875,7 @@
 				272A691022F012DA000FDABB /* PageLoadState.cpp in Sources */,
 				7CCE7EC71A411A7E00447C4C /* PageVisibilityStateWithWindowChanges.mm in Sources */,
 				7CCE7F091A411AE600447C4C /* ParentFrame.cpp in Sources */,
+				B79EF4302E03982D004C241C /* ParkableString.cpp in Sources */,
 				7C83E0511D0A641800FEBCF3 /* ParsedContentRange.cpp in Sources */,
 				AA96CAB621C7DB5000FD2F97 /* ParsedContentType.cpp in Sources */,
 				7CCE7F0A1A411AE600447C4C /* PasteboardNotifications.mm in Sources */,

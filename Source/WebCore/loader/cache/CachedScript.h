@@ -27,6 +27,9 @@
 
 #include "CachedResource.h"
 #include <JavaScriptCore/CodeBlockHash.h>
+#if ENABLE(PARKABLE_STRINGS)
+#include "ParkableString.h"
+#endif
 
 namespace WebCore {
 
@@ -59,7 +62,11 @@ private:
 
     void setBodyDataFrom(const CachedResource&) final;
 
+#if ENABLE(PARKABLE_STRINGS)
+    ParkableString m_script;
+#else
     String m_script;
+#endif
     unsigned m_scriptHash { 0 };
     bool m_wasForceDecodedAsUTF8 { false };
     bool m_requiresPrivacyProtections { false };
