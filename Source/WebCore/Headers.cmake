@@ -1783,6 +1783,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/formattingContexts/flex/FlexRect.h
     layout/formattingContexts/flex/LogicalFlexItem.h
 
+    layout/formattingContexts/grid/GridFormattingContext.h
+
     layout/formattingContexts/inline/AbstractLineBuilder.h
     layout/formattingContexts/inline/AvailableLineWidthOverride.h
     layout/formattingContexts/inline/InlineContentAligner.h

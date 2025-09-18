@@ -27,6 +27,7 @@
 #include "LayoutIntegrationGridLayout.h"
 
 #include "FormattingContextBoxIterator.h"
+#include "GridFormattingContext.h"
 #include "LayoutIntegrationBoxTreeUpdater.h"
 #include "RenderGrid.h"
 #include "RenderView.h"
@@ -44,9 +45,26 @@ GridLayout::GridLayout(RenderGrid& renderGrid)
 {
 }
 
+static inline Layout::GridFormattingContext::GridLayoutConstraints constraintsForGridContent(const Layout::ElementBox& gridContainer)
+{
+    CheckedRef gridContainerRenderer = downcast<RenderGrid>(*gridContainer.rendererForIntegration());
+
+    auto availableInlineSpace = [&]() -> LayoutUnit {
+        if (auto overridingWidth = gridContainerRenderer->overridingBorderBoxLogicalWidth())
+            return gridContainerRenderer->contentBoxLogicalWidth(*overridingWidth);
+        return gridContainerRenderer->contentBoxLogicalWidth();
+    }();
+    auto availableBlockSpace = gridContainerRenderer->availableLogicalHeightForContentBox();
+
+    return {
+        .inlineAxisAvailableSpace = availableInlineSpace,
+        .blockAxisAvailableSpace = availableBlockSpace
+    };
+}
+
 void GridLayout::layout()
 {
-    // FIXME: implement this.
+    Layout::GridFormattingContext { gridBox(), layoutState() }.layout(constraintsForGridContent(gridBox()));
 }
 
 TextStream& operator<<(TextStream& stream, const GridLayout& layout)

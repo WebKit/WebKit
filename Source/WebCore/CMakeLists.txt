@@ -139,6 +139,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/layout/formattingContexts/block"
     "${WEBCORE_DIR}/layout/formattingContexts/block/tablewrapper"
     "${WEBCORE_DIR}/layout/formattingContexts/flex"
+    "${WEBCORE_DIR}/layout/formattingContexts/grid"
     "${WEBCORE_DIR}/layout/floats"
     "${WEBCORE_DIR}/layout/formattingContexts/inline"
     "${WEBCORE_DIR}/layout/formattingContexts/inline/display"

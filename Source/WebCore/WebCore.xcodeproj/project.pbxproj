@@ -2889,6 +2889,7 @@
 		721B3ECF29680811004F5FF6 /* ColorWellPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 721B3ECE29680811004F5FF6 /* ColorWellPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		721B3EF52968F47D004F5FF6 /* MenuListButtonPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 721B3EF42968F47D004F5FF6 /* MenuListButtonPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7220742F2D07C7F6009FA90F /* ImageBufferCGPDFDocumentBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 72D1DC382D03583800B52E57 /* ImageBufferCGPDFDocumentBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		72251B5B2E8121D700CC964B /* LayoutIntegrationGridLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 72BEE7CC2E79E32200026436 /* LayoutIntegrationGridLayout.h */; };
 		722AF2DE27E1C2060078D997 /* GraphicsContextStateSaver.h in Headers */ = {isa = PBXBuildFile; fileRef = 722AF2DB27E1C2040078D997 /* GraphicsContextStateSaver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		722AF2DF27E1C2060078D997 /* GraphicsContextState.h in Headers */ = {isa = PBXBuildFile; fileRef = 722AF2DC27E1C2050078D997 /* GraphicsContextState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		722AF2E227E1C4050078D997 /* PlatformGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 722AF2E127E1C4030078D997 /* PlatformGraphicsContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2944,7 +2945,6 @@
 		72BB9E8A2952582000842DBB /* ToggleButtonMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 72BB9E882952581E00842DBB /* ToggleButtonMac.h */; };
 		72BB9E8F2952591000842DBB /* ButtonControlMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 72BB9E8D2952590F00842DBB /* ButtonControlMac.h */; };
 		72BDF25F2A2B670D00260319 /* PathSegmentData.h in Headers */ = {isa = PBXBuildFile; fileRef = 72BDF25E2A2B647200260319 /* PathSegmentData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		72BEE7CE2E79E41E00026436 /* LayoutIntegrationGridLayout.h in Sources */ = {isa = PBXBuildFile; fileRef = 72BEE7CC2E79E32200026436 /* LayoutIntegrationGridLayout.h */; };
 		72C11DAD2849425800E826DD /* ByteArrayPixelBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 72C11DAC28492A9200E826DD /* ByteArrayPixelBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72C11DAD2849425900E826DD /* Float16ArrayPixelBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 72C11DAC28492A9300E826DD /* Float16ArrayPixelBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72C172132983717600136E02 /* CachedSubimage.h in Headers */ = {isa = PBXBuildFile; fileRef = 72C172112983717500136E02 /* CachedSubimage.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -44237,6 +44237,7 @@
 				E403B7A2251B11930019E800 /* LayoutIntegrationCoverage.h in Headers */,
 				6FAC251F281326580045683F /* LayoutIntegrationFlexLayout.h in Headers */,
 				E43E64F72C6365EE0060F493 /* LayoutIntegrationFormattingContextLayout.h in Headers */,
+				72251B5B2E8121D700CC964B /* LayoutIntegrationGridLayout.h in Headers */,
 				E451C6342394058F00993190 /* LayoutIntegrationInlineContent.h in Headers */,
 				6F3FBA982556E313003530FD /* LayoutIntegrationInlineContentBuilder.h in Headers */,
 				6FCE698028B7DD3900956401 /* LayoutIntegrationInlineContentPainter.h in Headers */,
@@ -47824,7 +47825,6 @@
 				46CA943127B8695800F4F5FF /* InbandTextTrackPrivateAVFObjC.mm in Sources */,
 				CD063F821E23FA8900812BE3 /* InitDataRegistry.cpp in Sources */,
 				935C477009AC4D7300A6AAB4 /* KeyEventMac.mm in Sources */,
-				72BEE7CE2E79E41E00026436 /* LayoutIntegrationGridLayout.h in Sources */,
 				CDA98E0B1603CD6000FEA3B1 /* LegacyCDM.cpp in Sources */,
 				CDE8B5EC1A69777300B4B66A /* LegacyCDMPrivateClearKey.cpp in Sources */,
 				CDCA98EB18B2C8EB00C12FF9 /* LegacyCDMPrivateMediaPlayer.cpp in Sources */,
