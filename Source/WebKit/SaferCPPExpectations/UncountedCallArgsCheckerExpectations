@@ -67,8 +67,6 @@ WebProcess/Extensions/API/Cocoa/WebExtensionAPIWindowsEventCocoa.mm
 WebProcess/FullScreen/WebFullScreenManager.cpp
 WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp
 WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp
-WebProcess/GPU/media/RemoteLegacyCDMFactory.cpp
-WebProcess/GPU/media/RemoteLegacyCDMSession.cpp
 WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInCSSStyleDeclarationHandle.mm
 WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm
 WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInHitTestResult.mm
