@@ -157,12 +157,16 @@ void RemoteImageBuffer::getShareableBitmap(WebCore::PreserveResolution preserveR
     completionHandler(WTFMove(handle));
 }
 
-void RemoteImageBuffer::filteredNativeImage(Ref<WebCore::Filter> filter, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
+void RemoteImageBuffer::filteredNativeImage(FilterData&& filterData, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
+    RefPtr<Filter> filter = createFilterFromFilterData(WTFMove(filterData), m_renderingBackend);
+    if (RefPtr svgFilter = dynamicDowncast<SVGFilter>(filter); svgFilter && svgFilter->hasValidRenderingResourceIdentifier())
+        filter = m_renderingBackend->remoteResourceCache().cachedFilter(filter->renderingResourceIdentifier());
+    MESSAGE_CHECK(filter, "Invalid filter.");
     std::optional<WebCore::ShareableBitmap::Handle> handle = [&]() -> std::optional<WebCore::ShareableBitmap::Handle> {
         Ref imageBuffer = m_imageBuffer;
-        auto image = imageBuffer->filteredNativeImage(filter);
+        auto image = imageBuffer->filteredNativeImage(*filter);
         if (!image)
             return std::nullopt;
         auto imageSize = image->size();

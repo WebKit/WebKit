@@ -137,7 +137,7 @@ IntSize SourceImage::size() const
             return imageBuffer->backendSize();
         },
         [&] (RenderingResourceIdentifier) -> IntSize {
-            ASSERT_NOT_REACHED();
+            ASSERT_NOT_REACHED(); // <-- WebCore code calls size(). This here is a making WebCore worse by imposing GPUP related things in WebCore code, needlessly.
             return { };
         }
     );

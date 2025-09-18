@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class Filter;
+class SVGFilter;
 class Font;
 class Gradient;
 class ImageBuffer;
@@ -60,9 +60,9 @@ public:
     bool releaseGradient(RemoteGradientIdentifier);
     RefPtr<WebCore::Gradient> cachedGradient(RemoteGradientIdentifier) const;
 
-    void cacheFilter(Ref<WebCore::Filter>&&);
+    bool cacheFilter(Ref<WebCore::SVGFilter>&&);
     bool releaseFilter(WebCore::RenderingResourceIdentifier);
-    RefPtr<WebCore::Filter> cachedFilter(WebCore::RenderingResourceIdentifier) const;
+    RefPtr<WebCore::SVGFilter> cachedFilter(WebCore::RenderingResourceIdentifier) const;
 
     void cacheFont(Ref<WebCore::Font>&&);
     bool releaseFont(WebCore::RenderingResourceIdentifier);
@@ -84,7 +84,7 @@ private:
     HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::ImageBuffer>> m_imageBuffers;
     HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::NativeImage>> m_nativeImages;
     HashMap<RemoteGradientIdentifier, Ref<WebCore::Gradient>> m_gradients;
-    HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Filter>> m_filters;
+    HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::SVGFilter>> m_filters;
     HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::Font>> m_fonts;
     HashMap<WebCore::RenderingResourceIdentifier, Ref<WebCore::FontCustomPlatformData>> m_fontCustomPlatformDatas;
     HashMap<RemoteDisplayListIdentifier, Ref<const WebCore::DisplayList::DisplayList>> m_displayLists;

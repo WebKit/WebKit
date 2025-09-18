@@ -1,0 +1,207 @@
+
+# Copyright (C) 2025 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#if ENABLE(GPU_PROCESS)
+
+header: "FilterData.h"
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::DistantLightSourceData {
+    float azimuth;
+    float elevation;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::PointLightSourceData {
+    WebCore::FloatPoint3D position;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::SpotLightSourceData {
+    WebCore::FloatPoint3D position;
+    WebCore::FloatPoint3D direction;
+    float specularExponent;
+    float limitingConeAngle;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] using WebKit::LightSourceData = Variant<WebKit::DistantLightSourceData, WebKit::PointLightSourceData, WebKit::SpotLightSourceData>;
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::FEBlendData {
+    WebCore::BlendMode blendMode;
+    WebCore::DestinationColorSpace operatingColorSpace;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::FEColorMatrixData {
+    WebCore::ColorMatrixType type;
+    Vector<float> values;
+    WebCore::DestinationColorSpace operatingColorSpace;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::FEComponentTransferData {
+    WebCore::ComponentTransferFunction redFunction;
+    WebCore::ComponentTransferFunction greenFunction;
+    WebCore::ComponentTransferFunction blueFunction;
+    WebCore::ComponentTransferFunction alphaFunction;
+    WebCore::DestinationColorSpace operatingColorSpace;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::FECompositeData {
+    WebCore::CompositeOperationType operation;
+    float k1;
+    float k2;
+    float k3;
+    float k4;
+    WebCore::DestinationColorSpace operatingColorSpace;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::FEConvolveMatrixData {
+    [Validator='!kernelSize->isEmpty()'] WebCore::IntSize kernelSize;
+    [Validator='*divisor != 0'] float divisor;
+    float bias;
+    [Validator='WebCore::IntRect({ }, *kernelSize).contains(*targetOffset)'] WebCore::IntPoint targetOffset;
+    WebCore::EdgeModeType edgeMode;
+    [Validator='kernelUnitLength->x() > 0 && kernelUnitLength->y() > 0'] WebCore::FloatPoint kernelUnitLength;
+    bool preserveAlpha;
+    [Validator='kernelSize->area() == kernel->size()'] Vector<float> kernel;
+    WebCore::DestinationColorSpace operatingColorSpace;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::FEDiffuseLightingData {
+    WebCore::Color lightingColor;
+    float surfaceScale;
+    float diffuseConstant;
+    float kernelUnitLengthX;
+    float kernelUnitLengthY;
+    WebKit::LightSourceData lightSource;
+    WebCore::DestinationColorSpace operatingColorSpace;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::FEDisplacementMapData {
+    WebCore::ChannelSelectorType xChannelSelector;
+    WebCore::ChannelSelectorType yChannelSelector;
+    float scale;
+    WebCore::DestinationColorSpace operatingColorSpace;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::FEDropShadowData {
+    float stdDeviationX;
+    float stdDeviationY;
+    float dx;
+    float dy;
+    WebCore::Color shadowColor;
+    float shadowOpacity;
+    WebCore::DestinationColorSpace operatingColorSpace;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::FEFloodData {
+    WebCore::Color floodColor;
+    float floodOpacity;
+    WebCore::DestinationColorSpace operatingColorSpace;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::FEGaussianBlurData {
+    float stdDeviationX;
+    float stdDeviationY;
+    WebCore::EdgeModeType edgeMode;
+    WebCore::DestinationColorSpace operatingColorSpace;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::FEImageData {
+    WebCore::RenderingResourceIdentifier sourceImageIdentifier;
+    WebCore::FloatRect sourceImageRect;
+    WebCore::SVGPreserveAspectRatioValue preserveAspectRatio;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::FEMergeData {
+    unsigned numberOfEffectInputs;
+    WebCore::DestinationColorSpace operatingColorSpace;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::FEMorphologyData {
+    WebCore::MorphologyOperatorType morphologyOperator;
+    float radiusX;
+    float radiusY;
+    WebCore::DestinationColorSpace operatingColorSpace;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::FEOffsetData {
+    float dx;
+    float dy;
+    WebCore::DestinationColorSpace operatingColorSpace;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::FETileData {
+    WebCore::DestinationColorSpace operatingColorSpace;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::FESpecularLightingData {
+    WebCore::Color lightingColor;
+    float surfaceScale;
+    float specularConstant;
+    float specularExponent;
+    float kernelUnitLengthX;
+    float kernelUnitLengthY;
+    WebKit::LightSourceData lightSource;
+    WebCore::DestinationColorSpace operatingColorSpace;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::FETurbulenceData {
+    WebCore::TurbulenceType type;
+    float baseFrequencyX;
+    float baseFrequencyY;
+    int numOctaves;
+    float seed;
+    bool stitchTiles;
+    WebCore::DestinationColorSpace operatingColorSpace;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::SourceAlphaData {
+    WebCore::DestinationColorSpace operatingColorSpace;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::SourceGraphicData {
+    WebCore::DestinationColorSpace operatingColorSpace;
+};
+
+using WebKit::FilterEffectData = Variant<WebKit::FEBlendData, WebKit::FEColorMatrixData, WebKit::FEComponentTransferData, WebKit::FECompositeData, WebKit::FEConvolveMatrixData, WebKit::FEDiffuseLightingData, WebKit::FEDisplacementMapData, WebKit::FEDropShadowData, WebKit::FEFloodData, WebKit::FEGaussianBlurData, WebKit::FEImageData, WebKit::FEMergeData, WebKit::FEMorphologyData, WebKit::FEOffsetData, WebKit::FETileData, WebKit::FESpecularLightingData, WebKit::FETurbulenceData, WebKit::SourceAlphaData, WebKit::SourceGraphicData>;
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder, CreateWith=create] struct WebKit::SVGFilterData {
+    OptionSet<WebCore::FilterRenderingMode> filterRenderingModes;
+    WebCore::FloatSize filterScale;
+    WebCore::FloatRect filterRegion;
+    WebCore::FloatRect targetBoundingBox;
+    WebCore::SVGUnitTypes::SVGUnitType primitiveUnits;
+    WebCore::SVGFilterExpression expression;
+    [Validator='WebKit::isValidSVGFilterExpression(*expression, *effects)'] Vector<WebKit::FilterEffectData> effects;
+    std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifier;
+};
+
+using WebKit::FilterFunctionData = Variant<WebKit::SVGFilterData, WebKit::FEBlendData, WebKit::FEColorMatrixData, WebKit::FEComponentTransferData, WebKit::FECompositeData, WebKit::FEConvolveMatrixData, WebKit::FEDiffuseLightingData, WebKit::FEDisplacementMapData, WebKit::FEDropShadowData, WebKit::FEFloodData, WebKit::FEGaussianBlurData, WebKit::FEImageData, WebKit::FEMergeData, WebKit::FEMorphologyData, WebKit::FEOffsetData, WebKit::FESpecularLightingData, WebKit::FETileData, WebKit::FETurbulenceData, WebKit::SourceAlphaData, WebKit::SourceGraphicData>;
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::CSSFilterData {
+    OptionSet<WebCore::FilterRenderingMode> filterRenderingModes;
+    WebCore::FloatSize filterScale;
+    WebCore::FloatRect filterRegion;
+    Vector<WebKit::FilterFunctionData> functions;
+};
+
+using WebKit::FilterData = Variant<WebKit::CSSFilterData, WebKit::SVGFilterData>;
+
+#endif

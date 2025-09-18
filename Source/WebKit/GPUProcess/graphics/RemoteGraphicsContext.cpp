@@ -93,6 +93,25 @@ std::optional<SourceImage> RemoteGraphicsContext::sourceImage(RenderingResourceI
     return std::nullopt;
 }
 
+RefPtr<Filter> RemoteGraphicsContext::filter(FilterData&& filterData)
+{
+    RefPtr<Filter> filter = createFilterFromFilterData(WTFMove(filterData), m_renderingBackend);
+    if (!filter)
+        return nullptr;
+    RefPtr svgFilter = dynamicDowncast<SVGFilter>(filter);
+    if (!svgFilter || !svgFilter->hasValidRenderingResourceIdentifier())
+        return filter;
+
+    // FIXME: Filters are not immutable, each draw updates the filter instance even though
+    // they might be used for unrelated draws.
+    RefPtr cachedFilter = resourceCache().cachedFilter(filter->renderingResourceIdentifier());
+    if (!cachedFilter)
+        return nullptr;
+
+    cachedFilter->mergeEffects(svgFilter->effects());
+    return cachedFilter;
+}
+
 void RemoteGraphicsContext::save()
 {
     context().save();
@@ -332,48 +351,30 @@ void RemoteGraphicsContext::resetClip()
     context().resetClip();
 }
 
-void RemoteGraphicsContext::drawFilteredImageBufferInternal(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Filter& filter, FilterResults& results)
+void RemoteGraphicsContext::drawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, FilterData&& filterData)
 {
     RefPtr<ImageBuffer> sourceImageBuffer;
-
     if (sourceImageIdentifier) {
         sourceImageBuffer = imageBuffer(*sourceImageIdentifier);
         MESSAGE_CHECK(sourceImageBuffer);
     }
 
-    for (auto& effect : filter.effectsOfType(FilterEffect::Type::FEImage)) {
-        Ref feImage = downcast<FEImage>(effect.get());
+    RefPtr filter = this->filter(WTFMove(filterData));
+    MESSAGE_CHECK(filter);
 
-        auto effectImage = sourceImage(feImage->sourceImage().imageIdentifier());
-        MESSAGE_CHECK(effectImage);
-        feImage->setImageSource(WTFMove(*effectImage));
-    }
-
-    context().drawFilteredImageBuffer(sourceImageBuffer.get(), sourceImageRect, filter, results);
-}
-
-void RemoteGraphicsContext::drawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Ref<Filter>&& filter)
-{
     RefPtr svgFilter = dynamicDowncast<SVGFilter>(filter);
-
     if (!svgFilter || !svgFilter->hasValidRenderingResourceIdentifier()) {
         FilterResults results(makeUnique<ImageBufferShareableAllocator>(m_sharedResourceCache->resourceOwner()));
-        drawFilteredImageBufferInternal(sourceImageIdentifier, sourceImageRect, filter, results);
+        context().drawFilteredImageBuffer(sourceImageBuffer.get(), sourceImageRect, *filter, results);
         return;
     }
 
-    RefPtr cachedFilter = resourceCache().cachedFilter(filter->renderingResourceIdentifier());
-    RefPtr cachedSVGFilter = dynamicDowncast<SVGFilter>(WTFMove(cachedFilter));
-    MESSAGE_CHECK(cachedSVGFilter);
-
-    cachedSVGFilter->mergeEffects(svgFilter->effects());
-
-    auto& results = cachedSVGFilter->ensureResults([&]() {
+    auto& results = svgFilter->ensureResults([&]() {
         auto allocator = makeUnique<ImageBufferShareableAllocator>(m_sharedResourceCache->resourceOwner());
         return makeUnique<FilterResults>(WTFMove(allocator));
     });
 
-    drawFilteredImageBufferInternal(sourceImageIdentifier, sourceImageRect, *cachedSVGFilter, results);
+    context().drawFilteredImageBuffer(sourceImageBuffer.get(), sourceImageRect, *svgFilter, results);
 }
 
 void RemoteGraphicsContext::drawGlyphs(RenderingResourceIdentifier fontIdentifier, IPC::ArrayReferenceTuple<GlyphBufferGlyph, FloatSize> glyphsAdvances, FloatPoint localAnchor, FontSmoothingMode fontSmoothingMode)

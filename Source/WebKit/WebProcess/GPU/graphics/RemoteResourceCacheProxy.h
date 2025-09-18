@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "FilterData.h"
 #include "RemoteDisplayListIdentifier.h"
 #include "RemoteGradientIdentifier.h"
 #include "RenderingUpdateID.h"
@@ -57,10 +58,10 @@ public:
     RemoteResourceCacheProxy(RemoteRenderingBackendProxy&);
     ~RemoteResourceCacheProxy();
 
-    void recordNativeImageUse(WebCore::NativeImage&, const WebCore::DestinationColorSpace&);
+    void recordNativeImageUse(WebCore::NativeImage&, const WebCore::DestinationColorSpace& fallbackColorSpace);
     void recordFontUse(WebCore::Font&);
     RemoteGradientIdentifier recordGradientUse(WebCore::Gradient&);
-    void recordFilterUse(WebCore::Filter&);
+    std::optional<FilterData> recordFilterUse(WebCore::Filter&, const WebCore::DestinationColorSpace& fallbackColorSpace);
     void recordFontCustomPlatformDataUse(const WebCore::FontCustomPlatformData&);
     RemoteDisplayListIdentifier recordDisplayListUse(const WebCore::DisplayList::DisplayList&);
     void didPaintLayers();

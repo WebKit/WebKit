@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "BufferIdentifierSet.h"
+#include "FilterData.h"
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
 #include "GPUProcessProxyMessages.h"
@@ -413,13 +414,14 @@ void RemoteRenderingBackend::releaseGradient(RemoteGradientIdentifier identifier
 }
 
 
-void RemoteRenderingBackend::cacheFilter(Ref<Filter>&& filter)
+void RemoteRenderingBackend::cacheFilter(FilterData&& filterData)
 {
-    ASSERT(!RunLoop::isMain());
-    if (filter->hasValidRenderingResourceIdentifier())
-        m_remoteResourceCache.cacheFilter(WTFMove(filter));
-    else
-        LOG_WITH_STREAM(DisplayLists, stream << "Received a Filter without a valid resource identifier");
+    assertIsCurrent(workQueue());
+    RefPtr<Filter> filter = createFilterFromFilterData(WTFMove(filterData), *this);
+    RefPtr<SVGFilter> svgFilter = dynamicDowncast<SVGFilter>(filter);
+    MESSAGE_CHECK(svgFilter && svgFilter->hasValidRenderingResourceIdentifier(), "Invalid filter.");
+    bool success = m_remoteResourceCache.cacheFilter(svgFilter.releaseNonNull());
+    MESSAGE_CHECK(success, "Filter already cached.");
 }
 
 void RemoteRenderingBackend::releaseFilter(RenderingResourceIdentifier identifier)

@@ -598,6 +598,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::EditorStateIdentifier',
         'WebKit::FileSystemStorageError',
         'WebKit::FileSystemSyncAccessHandleInfo',
+        'WebKit::FilterData',
         'WebKit::FocusedElementInformation',
         'WebKit::GPUProcessConnectionInfo',
         'WebKit::LayerHostingContextID',

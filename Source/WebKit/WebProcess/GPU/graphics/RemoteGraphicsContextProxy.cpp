@@ -238,17 +238,11 @@ void RemoteGraphicsContextProxy::drawFilteredImageBuffer(ImageBuffer* sourceImag
 {
     appendStateChangeItemIfNecessary();
 
-    for (auto& effect : filter.effectsOfType(FilterEffect::Type::FEImage)) {
-        Ref feImage = downcast<FEImage>(effect.get());
-        if (!recordResourceUse(feImage->sourceImage())) {
-            GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
-            return;
-        }
+    auto filterData = recordResourceUse(filter);
+    if (!filterData) {
+        GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
+        return;
     }
-
-    RefPtr svgFilter = dynamicDowncast<SVGFilter>(filter);
-    if (svgFilter && svgFilter->hasValidRenderingResourceIdentifier())
-        recordResourceUse(filter);
 
     std::optional<RenderingResourceIdentifier> identifier;
     if (sourceImage) {
@@ -259,7 +253,7 @@ void RemoteGraphicsContextProxy::drawFilteredImageBuffer(ImageBuffer* sourceImag
         identifier = sourceImage->renderingResourceIdentifier();
     }
 
-    send(Messages::RemoteGraphicsContext::DrawFilteredImageBuffer(WTFMove(identifier), sourceImageRect, filter));
+    send(Messages::RemoteGraphicsContext::DrawFilteredImageBuffer(WTFMove(identifier), sourceImageRect, *filterData));
 }
 
 void RemoteGraphicsContextProxy::drawGlyphs(const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
@@ -704,16 +698,15 @@ std::optional<RemoteGradientIdentifier> RemoteGraphicsContextProxy::recordResour
     return renderingBackend->remoteResourceCacheProxy().recordGradientUse(gradient);
 }
 
-bool RemoteGraphicsContextProxy::recordResourceUse(Filter& filter)
+std::optional<FilterData> RemoteGraphicsContextProxy::recordResourceUse(Filter& filter)
 {
     RefPtr renderingBackend = m_renderingBackend.get();
     if (!renderingBackend) [[unlikely]] {
         ASSERT_NOT_REACHED();
-        return false;
+        return std::nullopt;
     }
-
-    renderingBackend->remoteResourceCacheProxy().recordFilterUse(filter);
-    return true;
+    // FIXME: The fallback is incorrect.
+    return renderingBackend->remoteResourceCacheProxy().recordFilterUse(filter, DestinationColorSpace::SRGB());
 }
 
 std::optional<RemoteDisplayListIdentifier> RemoteGraphicsContextProxy::recordResourceUse(const DisplayList::DisplayList& displayList)

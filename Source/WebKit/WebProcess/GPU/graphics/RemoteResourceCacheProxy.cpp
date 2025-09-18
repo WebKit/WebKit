@@ -61,12 +61,21 @@ RemoteGradientIdentifier RemoteResourceCacheProxy::recordGradientUse(Gradient& g
     return identifier;
 }
 
-void RemoteResourceCacheProxy::recordFilterUse(Filter& filter)
+std::optional<FilterData> RemoteResourceCacheProxy::recordFilterUse(Filter& filter, const DestinationColorSpace& fallbackColorSpace)
 {
-    if (m_filters.add(filter.renderingResourceIdentifier()).isNewEntry) {
-        filter.addObserver(m_resourceObserverWeakFactory.createWeakPtr(static_cast<RenderingResourceObserver&>(*this)).releaseNonNull());
-        m_remoteRenderingBackendProxy->cacheFilter(filter);
+    auto filterData = serializeFilterToFilterData(filter, m_remoteRenderingBackendProxy, fallbackColorSpace);
+    if (!filterData)
+        return std::nullopt;
+
+    RefPtr svgFilter = dynamicDowncast<SVGFilter>(filter);
+    if (svgFilter && svgFilter->hasValidRenderingResourceIdentifier())
+        return filterData;
+
+    if (m_filters.add(svgFilter->renderingResourceIdentifier()).isNewEntry) {
+        svgFilter->addObserver(m_resourceObserverWeakFactory.createWeakPtr(static_cast<RenderingResourceObserver&>(*this)).releaseNonNull());
+        m_remoteRenderingBackendProxy->cacheFilter(*filterData);
     }
+    return filterData;
 }
 
 void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image, const DestinationColorSpace& colorSpace)
