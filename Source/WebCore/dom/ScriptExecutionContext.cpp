@@ -484,9 +484,7 @@ bool ScriptExecutionContext::canIncludeErrorDetails(CachedScript* script, const 
 void ScriptExecutionContext::reportException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception* exception, RefPtr<ScriptCallStack>&& callStack, CachedScript* cachedScript, bool fromModule)
 {
     if (m_inDispatchErrorEvent) {
-        if (!m_pendingExceptions)
-            m_pendingExceptions = makeUnique<Vector<std::unique_ptr<PendingException>>>();
-        m_pendingExceptions->append(makeUnique<PendingException>(errorMessage, lineNumber, columnNumber, sourceURL, WTFMove(callStack)));
+        m_pendingExceptions.append(makeUnique<PendingException>(errorMessage, lineNumber, columnNumber, sourceURL, WTFMove(callStack)));
         return;
     }
 
@@ -494,11 +492,11 @@ void ScriptExecutionContext::reportException(const String& errorMessage, int lin
     if (!dispatchErrorEvent(errorMessage, lineNumber, columnNumber, sourceURL, exception, cachedScript, fromModule))
         logExceptionToConsole(errorMessage, sourceURL, lineNumber, columnNumber, callStack.copyRef());
 
-    if (!m_pendingExceptions)
+    if (!m_pendingExceptions.size())
         return;
 
     auto pendingExceptions = WTFMove(m_pendingExceptions);
-    for (auto& exception : *pendingExceptions)
+    for (auto& exception : pendingExceptions)
         logExceptionToConsole(exception->m_errorMessage, exception->m_sourceURL, exception->m_lineNumber, exception->m_columnNumber, WTFMove(exception->m_callStack));
 }
 
