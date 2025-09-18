@@ -60,26 +60,27 @@ static inline const char* resolveDefaultLocale(const char* locale)
 
 #else
 
-static inline CString copyShortASCIIString(CFStringRef string)
+static CString copyDefaultLocale()
 {
-    if (!string)
+    auto CurrentLocale = adoptCF(CFLocaleCopyCurrent());
+    auto LocaleValue = static_cast<CFStringRef>(CFLocaleGetValue(CurrentLocale.get(), kCFLocaleCollatorIdentifier));
+    if (!LocaleValue)
         return CString(""_s);
 
     std::span<char> buffer;
-    auto result = CString::newUninitialized(CFStringGetLength(string) + 1, buffer);
+    if (auto ptr = CFStringGetCStringPtr(LocaleValue, kCFStringEncodingASCII))
+    {
+        result = CString::newUninitialized(strlen(ptr) + 1, buffer);
+        // Length is alredy ensured by strlen.
+        strcpy(ptr, buffer.data());
+        return result;
+    }
+
+    result = CString::newUninitialized(CFStringGetLength(LocaleValue) + 1, buffer);
     if (!CFStringGetCString(string, buffer.data(), buffer.size(), kCFStringEncodingASCII))
         return CString(""_s);
-    return result;
-}
 
-static CString copyDefaultLocale()
-{
-#if !PLATFORM(IOS_FAMILY)
-    return copyShortASCIIString(static_cast<CFStringRef>(CFLocaleGetValue(adoptCF(CFLocaleCopyCurrent()).get(), kCFLocaleCollatorIdentifier)));
-#else
-    // FIXME: Documentation claims the code above would work on iOS 4.0 and later. After test that works, we should remove this and use that instead.
-    return copyShortASCIIString(adoptCF(static_cast<CFStringRef>(CFPreferencesCopyValue(CFSTR("AppleCollationOrder"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost))).get());
-#endif
+    return result;
 }
 
 static inline const char* resolveDefaultLocale(const char* locale)
