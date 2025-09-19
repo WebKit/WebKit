@@ -11,16 +11,35 @@
         width: 100%;
         height: 100%;
     }
-    #background {
-        background-image: repeating-radial-gradient(red, red 10px, black 10px, black 20px);
-        filter: invert(1);
+    #cyan-rect {
+        background-color: cyan;
+    }
+    #white-circle {
+        border-radius: 200px;
+        background-color: white;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+    #cyan-circle {
+        border-radius: 200px;
+        top: 25%;
+        left: 25%;
+        background-color: cyan;
+        position: absolute;
+        width: 50%;
+        height: 50%;
     }
     #foreground {
         color: purple;
     }
 </style>
 <div id="container">
-    <div id="background"></div>
+    <div id="cyan-rect">
+        <div id="white-circle">
+            <div id="cyan-circle"></div>
+        </div>
+    </div>
     <div id="foreground">This text should be purple on a background with a striped blue gradient.</div>
 </div>
 </html>

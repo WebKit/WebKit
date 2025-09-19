@@ -6,21 +6,28 @@
         width: 400px;
         height: 400px;
     }
-    #container > div {
+    .cyan-rect {
+        position: absolute;
+        width: 50%;
+        height: 50%;
+        background-color: cyan;
+    }
+    .top-right {
+        left: 50%;
+    }
+    .bottom-left {
+        top: 50%;
+    }
+    #foreground {
         position: absolute;
         width: 100%;
         height: 100%;
-    }
-    #background {
-        background-image: repeating-conic-gradient(red, red 5%, black 5%, black 10%);
-        filter: invert(1);
-    }
-    #foreground {
         color: purple;
     }
 </style>
 <div id="container">
-    <div id="background"></div>
+    <div class="top-right cyan-rect"></div>
+    <div class="bottom-left cyan-rect"></div>
     <div id="foreground">This text should be purple on a background with a striped blue gradient.</div>
 </div>
 </html>
