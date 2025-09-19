@@ -107,7 +107,10 @@ WebXROpaqueFramebuffer::WebXROpaqueFramebuffer(PlatformXR::LayerHandle handle, R
     , m_drawFramebuffer(WTFMove(framebuffer))
     , m_context(context)
     , m_attributes(WTFMove(attributes))
-    , m_framebufferSize(framebufferSize)
+    , m_leftViewport(0, 0, framebufferSize.width(), framebufferSize.height())
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
+    , m_rightViewport(framebufferSize.width(), 0, framebufferSize.width(), framebufferSize.height())
+#endif
 {
 }
 
