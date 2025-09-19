@@ -434,6 +434,8 @@ public:
 
     String textFragmentDirectiveForRange(const Range&);
 
+    ExceptionOr<String> nsAttributedStringDescription(Node& startContainer, long startOffset, Node& endContainer, long endOffset) const;
+
     ExceptionOr<void> setDelegatesScrolling(bool enabled);
 
     ExceptionOr<uint64_t> lastSpellCheckRequestSequence();

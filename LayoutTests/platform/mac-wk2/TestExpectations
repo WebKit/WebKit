@@ -332,7 +332,9 @@ fast/forms/file/file-input-empty-validation.html [ Failure ]
 editing/mac/input/insert-dictated-text.html
 editing/mac/input/crash-for-empty-text-alternative.html
 editing/mac/input/edit-dictated-text-with-alternative.html
-editing/mac/attributed-string/
+editing/mac/attributed-string/attrib-string-range-with-color-filter.html
+editing/mac/attributed-string/attributed-string-for-typing-with-color-filter.html
+editing/mac/attributed-string/attributed-string-for-typing.html
 
 # This test times out on Mac WK2 every time.
 webkit.org/b/89199 editing/spelling/grammar-edit-word.html [ Skip ]

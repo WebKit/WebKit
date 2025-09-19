@@ -7010,14 +7010,6 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
 
 #if PLATFORM(MAC)
 
-- (NSAttributedString *)_legacyAttributedStringFrom:(DOMNode *)startContainer offset:(int)startOffset to:(DOMNode *)endContainer offset:(int)endOffset
-{
-    if (!startContainer || !endContainer)
-        return adoptNS([[NSAttributedString alloc] init]).autorelease();
-    return attributedString(WebCore::SimpleRange { { *core(startContainer), static_cast<unsigned>(startOffset) },
-        { *core(endContainer), static_cast<unsigned>(endOffset) } }, WebCore::IgnoreUserSelectNone::Yes).nsAttributedString().autorelease();
-}
-
 - (NSAttributedString *)attributedString
 {
     auto document = core([[self _frame] DOMDocument]);

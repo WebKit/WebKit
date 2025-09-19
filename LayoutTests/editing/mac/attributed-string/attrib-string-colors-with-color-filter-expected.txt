@@ -5,49 +5,33 @@ Input:
 </div>
 
 Output:
-NSParagraphStyle:
-Alignment 4
-    LineSpacing: 0
-    ParagraphSpacing: 0
-    ParagraphSpacingBefore: 0
-    HeadIndent: 0
-    TailIndent: 0
-    FirstLineHeadIndent: 0
-    LineHeight: 0/0
-    LineHeightMultiple: 0
-    LineBreakMode: 0
-    Tabs: ()
-    DefaultTabInterval: 36
-    Blocks: (
-)
-    Lists: (
-)
-    BaseWritingDirection: 0
-    HyphenationFactor: 0
-    TighteningForTruncation: YES
-    HeaderLevel: 0
-[This text is blue]
-    NSBackgroundColor: #eeeeee (sRGB)
-    NSColor: #0000ff (sRGB)
-    NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: #0000ff (sRGB)
-    NSStrokeWidth: 0
-[ ]
-    NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: #000000 (sRGB)
-    NSStrokeWidth: 0
-[This text is yellow]
-    NSBackgroundColor: #800000 (sRGB)
-    NSColor: #ffff00 (sRGB)
-    NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: #ffff00 (sRGB)
-    NSStrokeWidth: 0
-[\n]
-    NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: #000000 (sRGB)
-    NSStrokeWidth: 0
-
+This text is blue{
+    NSBackgroundColor = "sRGB IEC61966-2.1 colorspace 0.933333 0.933333 0.933333 1";
+    NSColor = "sRGB IEC61966-2.1 colorspace 0 0 1 1";
+    NSFont = "\"Times-Roman 16.00 pt. P [] (<0xaddress>) fobj=<0xaddress>, spc=4.00\"";
+    NSKern = 0;
+    NSParagraphStyle = "Alignment Natural, LineSpacing 0, ParagraphSpacing 0, ParagraphSpacingBefore 0, HeadIndent 0, TailIndent 0, FirstLineHeadIndent 0, LineHeight 0/0, LineHeightMultiple 0, LineBreakMode WordWrapping, Tabs (\n), DefaultTabInterval 36, Blocks (\n), Lists (\n), BaseWritingDirection LeftToRight, HyphenationFactor 0, TighteningForTruncation YES, HeaderLevel 0 LineBreakStrategy 0 PresentationIntents (\n) ListIntentOrdinal 0 CodeBlockIntentLanguageHint ''";
+    NSStrokeColor = "sRGB IEC61966-2.1 colorspace 0 0 1 1";
+    NSStrokeWidth = 0;
+} {
+    NSFont = "\"Times-Roman 16.00 pt. P [] (<0xaddress>) fobj=<0xaddress>, spc=4.00\"";
+    NSKern = 0;
+    NSParagraphStyle = "Alignment Natural, LineSpacing 0, ParagraphSpacing 0, ParagraphSpacingBefore 0, HeadIndent 0, TailIndent 0, FirstLineHeadIndent 0, LineHeight 0/0, LineHeightMultiple 0, LineBreakMode WordWrapping, Tabs (\n), DefaultTabInterval 36, Blocks (\n), Lists (\n), BaseWritingDirection LeftToRight, HyphenationFactor 0, TighteningForTruncation YES, HeaderLevel 0 LineBreakStrategy 0 PresentationIntents (\n) ListIntentOrdinal 0 CodeBlockIntentLanguageHint ''";
+    NSStrokeColor = "sRGB IEC61966-2.1 colorspace 0 0 0 1";
+    NSStrokeWidth = 0;
+}This text is yellow{
+    NSBackgroundColor = "sRGB IEC61966-2.1 colorspace 0.501961 0 0 1";
+    NSColor = "sRGB IEC61966-2.1 colorspace 1 1 0 1";
+    NSFont = "\"Times-Roman 16.00 pt. P [] (<0xaddress>) fobj=<0xaddress>, spc=4.00\"";
+    NSKern = 0;
+    NSParagraphStyle = "Alignment Natural, LineSpacing 0, ParagraphSpacing 0, ParagraphSpacingBefore 0, HeadIndent 0, TailIndent 0, FirstLineHeadIndent 0, LineHeight 0/0, LineHeightMultiple 0, LineBreakMode WordWrapping, Tabs (\n), DefaultTabInterval 36, Blocks (\n), Lists (\n), BaseWritingDirection LeftToRight, HyphenationFactor 0, TighteningForTruncation YES, HeaderLevel 0 LineBreakStrategy 0 PresentationIntents (\n) ListIntentOrdinal 0 CodeBlockIntentLanguageHint ''";
+    NSStrokeColor = "sRGB IEC61966-2.1 colorspace 1 1 0 1";
+    NSStrokeWidth = 0;
+}
+{
+    NSFont = "\"Times-Roman 16.00 pt. P [] (<0xaddress>) fobj=<0xaddress>, spc=4.00\"";
+    NSKern = 0;
+    NSParagraphStyle = "Alignment Natural, LineSpacing 0, ParagraphSpacing 0, ParagraphSpacingBefore 0, HeadIndent 0, TailIndent 0, FirstLineHeadIndent 0, LineHeight 0/0, LineHeightMultiple 0, LineBreakMode WordWrapping, Tabs (\n), DefaultTabInterval 36, Blocks (\n), Lists (\n), BaseWritingDirection LeftToRight, HyphenationFactor 0, TighteningForTruncation YES, HeaderLevel 0 LineBreakStrategy 0 PresentationIntents (\n) ListIntentOrdinal 0 CodeBlockIntentLanguageHint ''";
+    NSStrokeColor = "sRGB IEC61966-2.1 colorspace 0 0 0 1";
+    NSStrokeWidth = 0;
+}

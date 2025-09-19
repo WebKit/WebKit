@@ -1,23 +1,26 @@
 Input:
-<#start><span id="host"><#shadow-start>hello <slot></slot><span style="display:none;"></span><#shadow-end>world</span> WebKit<#end>
+<#start><div style="font-style: italic" id="host1"><#shadow-start><slot style="color: blue;"></slot> world<#shadow-end><b>hello</b></div><div id="host2"><#shadow-start><u>WebKit <#end><slot></slot></u><#shadow-end>rocks</div>
 
 Output:
-hello {
+hello{
+    NSColor = "sRGB IEC61966-2.1 colorspace 0 0 1 1";
+    NSFont = "\"Times-BoldItalic 16.00 pt. P [] (<0xaddress>) fobj=<0xaddress>, spc=4.00\"";
+    NSKern = 0;
+    NSParagraphStyle = "Alignment Natural, LineSpacing 0, ParagraphSpacing 0, ParagraphSpacingBefore 0, HeadIndent 0, TailIndent 0, FirstLineHeadIndent 0, LineHeight 0/0, LineHeightMultiple 0, LineBreakMode WordWrapping, Tabs (\n), DefaultTabInterval 36, Blocks (\n), Lists (\n), BaseWritingDirection LeftToRight, HyphenationFactor 0, TighteningForTruncation YES, HeaderLevel 0 LineBreakStrategy 0 PresentationIntents (\n) ListIntentOrdinal 0 CodeBlockIntentLanguageHint ''";
+    NSStrokeColor = "sRGB IEC61966-2.1 colorspace 0 0 1 1";
+    NSStrokeWidth = 0;
+} world
+{
+    NSFont = "\"Times-Italic 16.00 pt. P [] (<0xaddress>) fobj=<0xaddress>, spc=4.00\"";
+    NSKern = 0;
+    NSParagraphStyle = "Alignment Natural, LineSpacing 0, ParagraphSpacing 0, ParagraphSpacingBefore 0, HeadIndent 0, TailIndent 0, FirstLineHeadIndent 0, LineHeight 0/0, LineHeightMultiple 0, LineBreakMode WordWrapping, Tabs (\n), DefaultTabInterval 36, Blocks (\n), Lists (\n), BaseWritingDirection LeftToRight, HyphenationFactor 0, TighteningForTruncation YES, HeaderLevel 0 LineBreakStrategy 0 PresentationIntents (\n) ListIntentOrdinal 0 CodeBlockIntentLanguageHint ''";
+    NSStrokeColor = "sRGB IEC61966-2.1 colorspace 0 0 0 1";
+    NSStrokeWidth = 0;
+}WebKit {
     NSFont = "\"Times-Roman 16.00 pt. P [] (<0xaddress>) fobj=<0xaddress>, spc=4.00\"";
     NSKern = 0;
     NSParagraphStyle = "Alignment Natural, LineSpacing 0, ParagraphSpacing 0, ParagraphSpacingBefore 0, HeadIndent 0, TailIndent 0, FirstLineHeadIndent 0, LineHeight 0/0, LineHeightMultiple 0, LineBreakMode WordWrapping, Tabs (\n), DefaultTabInterval 36, Blocks (\n), Lists (\n), BaseWritingDirection LeftToRight, HyphenationFactor 0, TighteningForTruncation YES, HeaderLevel 0 LineBreakStrategy 0 PresentationIntents (\n) ListIntentOrdinal 0 CodeBlockIntentLanguageHint ''";
     NSStrokeColor = "sRGB IEC61966-2.1 colorspace 0 0 0 1";
     NSStrokeWidth = 0;
-}world{
-    NSFont = "\"Times-Roman 16.00 pt. P [] (<0xaddress>) fobj=<0xaddress>, spc=4.00\"";
-    NSKern = 0;
-    NSParagraphStyle = "Alignment Natural, LineSpacing 0, ParagraphSpacing 0, ParagraphSpacingBefore 0, HeadIndent 0, TailIndent 0, FirstLineHeadIndent 0, LineHeight 0/0, LineHeightMultiple 0, LineBreakMode WordWrapping, Tabs (\n), DefaultTabInterval 36, Blocks (\n), Lists (\n), BaseWritingDirection LeftToRight, HyphenationFactor 0, TighteningForTruncation YES, HeaderLevel 0 LineBreakStrategy 0 PresentationIntents (\n) ListIntentOrdinal 0 CodeBlockIntentLanguageHint ''";
-    NSStrokeColor = "sRGB IEC61966-2.1 colorspace 0 0 0 1";
-    NSStrokeWidth = 0;
-} WebKit{
-    NSFont = "\"Times-Roman 16.00 pt. P [] (<0xaddress>) fobj=<0xaddress>, spc=4.00\"";
-    NSKern = 0;
-    NSParagraphStyle = "Alignment Natural, LineSpacing 0, ParagraphSpacing 0, ParagraphSpacingBefore 0, HeadIndent 0, TailIndent 0, FirstLineHeadIndent 0, LineHeight 0/0, LineHeightMultiple 0, LineBreakMode WordWrapping, Tabs (\n), DefaultTabInterval 36, Blocks (\n), Lists (\n), BaseWritingDirection LeftToRight, HyphenationFactor 0, TighteningForTruncation YES, HeaderLevel 0 LineBreakStrategy 0 PresentationIntents (\n) ListIntentOrdinal 0 CodeBlockIntentLanguageHint ''";
-    NSStrokeColor = "sRGB IEC61966-2.1 colorspace 0 0 0 1";
-    NSStrokeWidth = 0;
+    NSUnderline = 1;
 }

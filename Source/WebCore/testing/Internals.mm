@@ -38,6 +38,7 @@
 #import "LocalFrameView.h"
 #import "Logging.h"
 #import "MediaPlayerPrivate.h"
+#import "NodeHTMLConverter.h"
 #import "Range.h"
 #import "SharedBuffer.h"
 #import "SimpleRange.h"
@@ -101,6 +102,18 @@
 #endif
 
 namespace WebCore {
+
+ExceptionOr<String> Internals::nsAttributedStringDescription(Node& startContainer, long startOffset, Node& endContainer, long endOffset) const
+{
+    RetainPtr description = [attributedString(SimpleRange(BoundaryPoint(startContainer, startOffset), BoundaryPoint(endContainer, endOffset)), IgnoreUserSelectNone(false)).nsAttributedString() description];
+    // Only present on some platforms, not important to keep.
+    description = [description stringByReplacingOccurrencesOfString:@" hdrm(1)" withString:@""];
+    // Hide addresses that can change between runs; other information on the line is enough for testing.
+    description = [description stringByReplacingOccurrencesOfString:@"0x[0-9a-f]+" withString:@"<0xaddress>" options:NSRegularExpressionSearch range:NSMakeRange(0, [description length])];
+    // Fix NSParagraphStyle, this comma is absent on some OS versions.
+    description = [description stringByReplacingOccurrencesOfString:@"([0-9.]) LineBreakMode " withString:@"$1, LineBreakMode " options:NSRegularExpressionSearch range:NSMakeRange(0, [description length])];
+    return String { description.get() };
+}
 
 String Internals::userVisibleString(const DOMURL& url)
 {

@@ -55,7 +55,6 @@
 @interface WebHTMLView (WebKitSecretsTextInputControllerIsAwareOf)
 - (WebFrame *)_frame;
 - (NSAttributedString *)_attributedStringFromDOMRange:(DOMRange *)range;
-- (NSAttributedString *)_legacyAttributedStringFrom:(DOMNode*)startContainer offset:(int)startOffset to:(DOMNode*)endContainer offset:(int)endOffset;
 @end
 
 @implementation WebHTMLView (DumpRenderTreeInputMethodHandler)
@@ -222,7 +221,6 @@
         || aSelector == @selector(conversationIdentifier)
         || aSelector == @selector(substringFrom:length:)
         || aSelector == @selector(attributedSubstringFrom:length:)
-        || aSelector == @selector(legacyAttributedString:offset:to:offset:)
         || aSelector == @selector(markedRange)
         || aSelector == @selector(selectedRange)
         || aSelector == @selector(firstRectForCharactersFrom:length:)
@@ -249,8 +247,6 @@
         return @"substringFromRange";
     if (aSelector == @selector(attributedSubstringFrom:length:))
         return @"attributedSubstringFromRange";
-    if (aSelector == @selector(legacyAttributedString:offset:to:offset:))
-        return @"legacyAttributedString";
     if (aSelector == @selector(firstRectForCharactersFrom:length:))
         return @"firstRectForCharacterRange";
     if (aSelector == @selector(characterIndexForPointX:Y:))
@@ -367,15 +363,6 @@
         [ret setAttributedString:[textInput attributedSubstringFromRange:NSMakeRange(from, length)]];
     
     return ret;
-}
-
-- (NSAttributedString *)legacyAttributedString:(DOMNode*)startContainer offset:(int)startOffset to:(DOMNode*)endContainer offset:(int)endOffset
-{
-    id documentView = [[[webView mainFrame] frameView] documentView];
-    if (![documentView isKindOfClass:[WebHTMLView class]])
-        return nil;
-
-    return [(WebHTMLView *)documentView _legacyAttributedStringFrom:startContainer offset:startOffset to:endContainer offset:endOffset];
 }
 
 - (NSArray *)markedRange

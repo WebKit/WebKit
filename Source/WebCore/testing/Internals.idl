@@ -669,6 +669,8 @@ enum ContentsFormat {
 
     DOMString textFragmentDirectiveForRange(Range range);
 
+    DOMString nsAttributedStringDescription(Node startContainer, long startOffset, Node endContainer, long endOffset);
+
     undefined setDelegatesScrolling(boolean enabled);
 
     unsigned long long lastSpellCheckRequestSequence();

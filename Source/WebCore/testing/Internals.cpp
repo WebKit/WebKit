@@ -2642,6 +2642,13 @@ String Internals::textFragmentDirectiveForRange(const Range& range)
     return FragmentDirectiveGenerator(simpleRange).urlWithFragment().string();
 }
 
+#if !PLATFORM(COCOA)
+ExceptionOr<String> Internals::nsAttributedStringDescription(Node&, long, Node&, long) const
+{
+    return Exception { ExceptionCode::NotSupportedError };
+}
+#endif // !PLATFORM(COCOA)
+
 #if !PLATFORM(MAC)
 ExceptionOr<RefPtr<Range>> Internals::rangeForDictionaryLookupAtLocation(int, int)
 {
