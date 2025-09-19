@@ -42,11 +42,10 @@ public:
     void deref() { m_performance->deref(); }
 
     void initializeMapLike(DOMMapAdapter&);
-    void add(EventType);
+    // Trait that causes the wrapper's backing map to be initialized again before every access:
+    using shouldAlwaysInitializeMapLikeMarker = void;
 
-    // FIXME: get() and size() should be provided by the maplike interface
-    unsigned get(const String& type) const;
-    unsigned size() const { return m_counts.size(); };
+    void add(EventType);
 
 private:
     WeakRef<Performance, Performance::WeakPtrImplType> m_performance;
