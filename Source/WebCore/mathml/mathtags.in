@@ -6,7 +6,7 @@ fallbackJSInterfaceName="MathMLElement"
 
 annotation interfaceName=MathMLAnnotationElement, JSInterfaceName=MathMLElement
 annotation-xml interfaceName=MathMLAnnotationElement, JSInterfaceName=MathMLElement
-maction interfaceName=MathMLSelectElement, JSInterfaceName=MathMLElement
+maction interfaceName=MathMLRowElement, JSInterfaceName=MathMLElement
 math
 mfrac interfaceName=MathMLFractionElement, JSInterfaceName=MathMLElement
 mfenced interfaceName=MathMLRowElement, JSInterfaceName=MathMLElement
@@ -36,7 +36,7 @@ mmultiscripts interfaceName=MathMLScriptsElement, JSInterfaceName=MathMLElement
 mprescripts interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
 menclose interfaceName=MathMLMencloseElement, JSInterfaceName=MathMLElement
 none interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
-semantics interfaceName=MathMLSelectElement, JSInterfaceName=MathMLElement
+semantics interfaceName=MathMLRowElement, JSInterfaceName=MathMLElement
 
 maligngroup interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
 malignmark interfaceName=MathMLPresentationElement, JSInterfaceName=MathMLElement
