@@ -91,7 +91,7 @@ static inline Layout::ConstraintsForFlexContent constraintsForFlexContent(const 
                 return flexContainerRenderer.computePercentageLogicalHeight(*percentageHeight, RenderBox::UpdatePercentageHeightDescendants::No);
 
             if (auto fixedContainingBlockHeight = flexContainerRenderer.containingBlock()->style().height().tryFixed()) {
-                auto value = Style::evaluate(*percentageHeight, fixedContainingBlockHeight->value);
+                auto value = Style::evaluate(*percentageHeight, fixedContainingBlockHeight->value, 1.0f);
                 return LayoutUnit { boxSizingIsContentBox ? value : value - verticalMarginBorderAndPadding };
             }
         }

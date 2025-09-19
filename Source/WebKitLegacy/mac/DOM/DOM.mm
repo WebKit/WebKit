@@ -448,9 +448,9 @@ id <DOMEventTarget> kit(EventTarget* target)
     auto& style = renderer->style();
     IntRect boundingBox = renderer->absoluteBoundingBoxRect(true /* use transforms*/);
 
-    boundingBox.move(WebCore::Style::evaluate(style.borderLeftWidth()), WebCore::Style::evaluate(style.borderTopWidth()));
-    boundingBox.setWidth(boundingBox.width() - WebCore::Style::evaluate(style.borderLeftWidth()) - WebCore::Style::evaluate(style.borderRightWidth()));
-    boundingBox.setHeight(boundingBox.height() - WebCore::Style::evaluate(style.borderBottomWidth()) - WebCore::Style::evaluate(style.borderTopWidth()));
+    boundingBox.move(WebCore::Style::evaluate(style.borderLeftWidth(), 1.0f /* FIXME FIND ZOOM */), WebCore::Style::evaluate(style.borderTopWidth(), 1.0f /* FIXME FIND ZOOM */));
+    boundingBox.setWidth(boundingBox.width() - WebCore::Style::evaluate(style.borderLeftWidth(), 1.0f /* FIXME FIND ZOOM */) - WebCore::Style::evaluate(style.borderRightWidth(), 1.0f /* FIXME FIND ZOOM */));
+    boundingBox.setHeight(boundingBox.height() - WebCore::Style::evaluate(style.borderBottomWidth(), 1.0f /* FIXME FIND ZOOM */) - WebCore::Style::evaluate(style.borderTopWidth(), 1.0f /* FIXME FIND ZOOM */));
 
     // FIXME: This function advertises returning a quad, but it actually returns a bounding box (so there is no rotation, for instance).
     return wkQuadFromFloatQuad(FloatQuad(boundingBox));

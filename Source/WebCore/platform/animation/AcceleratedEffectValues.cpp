@@ -101,8 +101,8 @@ static LengthPoint resolveCalculateValuesFor(const LengthPoint& lengthPoint, Int
     if (!lengthPoint.x.isCalculated() && !lengthPoint.y.isCalculated())
         return lengthPoint;
     return {
-        { floatValueForLength(lengthPoint.x, borderBoxSize.width()), LengthType::Fixed },
-        { floatValueForLength(lengthPoint.y, borderBoxSize.height()), LengthType::Fixed }
+        { floatValueForLength(lengthPoint.x, borderBoxSize.width(), 1.0f /* FIXME FIND ZOOM */), LengthType::Fixed },
+        { floatValueForLength(lengthPoint.y, borderBoxSize.height(), 1.0f /* FIXME FIND ZOOM */), LengthType::Fixed }
     };
 }
 
@@ -134,9 +134,9 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
     offsetRotate = style.offsetRotate();
     offsetDistance = Style::toPlatform(style.offsetDistance());
     if (offsetDistance.isCalculated() && offsetPath) {
-        auto anchor = borderBoxRect.location() + floatPointForLengthPoint(transformOrigin, borderBoxSize);
+        auto anchor = borderBoxRect.location() + floatPointForLengthPoint(transformOrigin, borderBoxSize, 1.0f /* FIXME FIND ZOOM */);
         if (!offsetAnchor.x.isAuto())
-            anchor = floatPointForLengthPoint(offsetAnchor, borderBoxRect.size()) + borderBoxRect.location();
+            anchor = floatPointForLengthPoint(offsetAnchor, borderBoxRect.size(), 1.0f /* FIXME FIND ZOOM */) + borderBoxRect.location();
 
         auto path = offsetPath->getPath(TransformOperationData(FloatRect(borderBoxRect)));
         offsetDistance = { path ? path->length() : 0.0f, LengthType:: Fixed };
@@ -170,7 +170,7 @@ TransformationMatrix AcceleratedEffectValues::computedTransformationMatrix(const
 
     // 6. Translate and rotate by the transform specified by offset.
     if (transformOperationData && offsetPath) {
-        auto computedTransformOrigin = boundingBox.location() + floatPointForLengthPoint(transformOrigin, boundingBox.size());
+        auto computedTransformOrigin = boundingBox.location() + floatPointForLengthPoint(transformOrigin, boundingBox.size(), 1.0f /* FIXME FIND ZOOM */);
         MotionPath::applyMotionPathTransform(matrix, *transformOperationData, computedTransformOrigin, Style::OffsetPath { *offsetPath }, Style::OffsetAnchor { offsetAnchor }, Style::OffsetDistance { offsetDistance }, offsetRotate, transformBox);
     }
 

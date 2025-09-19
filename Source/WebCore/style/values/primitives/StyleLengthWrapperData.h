@@ -85,9 +85,9 @@ struct LengthWrapperData {
     bool isNegative() const;
 
     template<typename ReturnType, typename MaximumType>
-    ReturnType minimumValueForLengthWrapperDataWithLazyMaximum(LengthWrapperDataEvaluationKind, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor) const;
+    ReturnType minimumValueForLengthWrapperDataWithLazyMaximum(LengthWrapperDataEvaluationKind, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor, float zoom) const;
     template<typename ReturnType, typename MaximumType>
-    ReturnType valueForLengthWrapperDataWithLazyMaximum(LengthWrapperDataEvaluationKind, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor) const;
+    ReturnType valueForLengthWrapperDataWithLazyMaximum(LengthWrapperDataEvaluationKind, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor, float zoom) const;
 
 private:
     WEBCORE_EXPORT float nonNanCalculatedValue(float maxValue) const;
@@ -246,12 +246,12 @@ inline bool LengthWrapperData::isZero() const
 }
 
 template<typename ReturnType, typename MaximumType>
-ReturnType LengthWrapperData::minimumValueForLengthWrapperDataWithLazyMaximum(LengthWrapperDataEvaluationKind evaluationKind, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor) const
+ReturnType LengthWrapperData::minimumValueForLengthWrapperDataWithLazyMaximum(LengthWrapperDataEvaluationKind evaluationKind, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor, float zoom) const
 {
     switch (evaluationKind) {
     case LengthWrapperDataEvaluationKind::Fixed:
         ASSERT(m_kind == LengthWrapperDataKind::Default);
-        return ReturnType(m_floatValue);
+        return ReturnType(m_floatValue * zoom);
     case LengthWrapperDataEvaluationKind::Percentage:
         ASSERT(m_kind == LengthWrapperDataKind::Default);
         return ReturnType(static_cast<float>(lazyMaximumValueFunctor() * m_floatValue / 100.0f));
@@ -267,12 +267,12 @@ ReturnType LengthWrapperData::minimumValueForLengthWrapperDataWithLazyMaximum(Le
 }
 
 template<typename ReturnType, typename MaximumType>
-ReturnType LengthWrapperData::valueForLengthWrapperDataWithLazyMaximum(LengthWrapperDataEvaluationKind evaluationKind, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor) const
+ReturnType LengthWrapperData::valueForLengthWrapperDataWithLazyMaximum(LengthWrapperDataEvaluationKind evaluationKind, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor, float zoom) const
 {
     switch (evaluationKind) {
     case LengthWrapperDataEvaluationKind::Fixed:
         ASSERT(m_kind == LengthWrapperDataKind::Default);
-        return ReturnType(m_floatValue);
+        return ReturnType(m_floatValue * zoom);
     case LengthWrapperDataEvaluationKind::Percentage:
         ASSERT(m_kind == LengthWrapperDataKind::Default);
         return ReturnType(static_cast<float>(lazyMaximumValueFunctor() * m_floatValue / 100.0f));

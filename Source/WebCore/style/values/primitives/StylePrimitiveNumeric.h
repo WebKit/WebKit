@@ -68,6 +68,11 @@ template<CSS::Numeric CSSType> struct PrimitiveNumeric {
     {
     }
 
+    constexpr auto evaluate(float zoom) const
+    {
+        return value * zoom;
+    }
+
     constexpr bool isZero() const { return !value; }
     constexpr bool isPositive() const { return value > 0; }
     constexpr bool isNegative() const { return value < 0; }

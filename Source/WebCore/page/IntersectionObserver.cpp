@@ -333,7 +333,7 @@ static void expandRootBoundsWithRootMargin(FloatRect& rootBounds, const Intersec
 {
     auto zoomAdjustedLength = [](const IntersectionObserverMarginEdge& edge, float maximumValue, float zoomFactor) {
         if (auto percentage = edge.tryPercentage())
-            return Style::evaluate(*percentage, maximumValue);
+            return Style::evaluate(*percentage, maximumValue, 1.0f /* FIXME FIND ZOOM */);
         return edge.tryFixed()->value * zoomFactor;
     };
 
@@ -372,11 +372,12 @@ static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const Lay
         return absoluteClippedRect;
 
     auto frameRect = renderer->view().frameView().layoutViewportRect();
+    float zoom = 1.0f; /* FIXME FIND ZOOM */
     auto scrollMarginEdges = LayoutBoxExtent {
-        LayoutUnit(static_cast<int>(Style::evaluate(scrollMargin.top(), frameRect.height()))),
-        LayoutUnit(static_cast<int>(Style::evaluate(scrollMargin.right(), frameRect.width()))),
-        LayoutUnit(static_cast<int>(Style::evaluate(scrollMargin.bottom(), frameRect.height()))),
-        LayoutUnit(static_cast<int>(Style::evaluate(scrollMargin.left(), frameRect.width())))
+        LayoutUnit(static_cast<int>(Style::evaluate(scrollMargin.top(), frameRect.height(), zoom))),
+        LayoutUnit(static_cast<int>(Style::evaluate(scrollMargin.right(), frameRect.width(), zoom))),
+        LayoutUnit(static_cast<int>(Style::evaluate(scrollMargin.bottom(), frameRect.height(), zoom))),
+        LayoutUnit(static_cast<int>(Style::evaluate(scrollMargin.left(), frameRect.width(), zoom)))
     };
     frameRect.expand(scrollMarginEdges);
 

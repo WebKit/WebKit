@@ -376,14 +376,14 @@ void ViewTimeline::cacheCurrentTime()
         float insetEnd = 0;
 
         if (m_insets.start().isAuto())
-            insetStart = Style::evaluate(scrollPadding(PaddingEdge::Start), scrollContainerSize);
+            insetStart = Style::evaluate(scrollPadding(PaddingEdge::Start), scrollContainerSize, 1.0f /* FIXME FIND ZOOM */);
         else
-            insetStart = Style::evaluate(m_insets.start(), scrollContainerSize);
+            insetStart = Style::evaluate(m_insets.start(), scrollContainerSize, 1.0f /* FIXME FIND ZOOM */);
 
         if (m_insets.end().isAuto())
-            insetEnd = Style::evaluate(scrollPadding(PaddingEdge::End), scrollContainerSize);
+            insetEnd = Style::evaluate(scrollPadding(PaddingEdge::End), scrollContainerSize, 1.0f /* FIXME FIND ZOOM */);
         else
-            insetEnd = Style::evaluate(m_insets.end(), scrollContainerSize);
+            insetEnd = Style::evaluate(m_insets.end(), scrollContainerSize, 1.0f /* FIXME FIND ZOOM */);
 
         StickinessAdjustmentData stickyData;
         if (auto stickyContainer = dynamicDowncast<RenderBoxModelObject>(this->stickyContainer())) {
@@ -583,7 +583,7 @@ std::pair<double, double> ViewTimeline::offsetIntervalForAttachmentRange(const S
     auto offsetForSingleTimelineRange = [&](const auto& rangeToConvert) {
         auto [conversionRangeStart, conversionRangeEnd] = intervalForTimelineRangeName(data, rangeToConvert.name());
         auto conversionRange = conversionRangeEnd - conversionRangeStart;
-        auto convertedValue = Style::evaluate(rangeToConvert.offset(), conversionRange);
+        auto convertedValue = Style::evaluate(rangeToConvert.offset(), conversionRange, 1.0f /* FIXME FIND ZOOM */);
         auto position = conversionRangeStart + convertedValue;
         return (position - data.rangeStart) / timelineRange;
     };
@@ -604,7 +604,7 @@ std::pair<WebAnimationTime, WebAnimationTime> ViewTimeline::intervalForAttachmen
 
     auto computeTime = [&](const auto& rangeToConvert) {
         auto mappedOffset = mapOffsetToTimelineRange(data, rangeToConvert.name(), [&](const float& subjectRange) {
-            return Style::evaluate(rangeToConvert.offset(), subjectRange);
+            return Style::evaluate(rangeToConvert.offset(), subjectRange, 1.0f /* FIXME FIND ZOOM */);
         });
         return WebAnimationTime::fromPercentage(mappedOffset * 100);
     };

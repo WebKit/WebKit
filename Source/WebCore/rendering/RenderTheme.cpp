@@ -837,7 +837,7 @@ ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderObject& ren
         style->usedZoom(),
         style->usedAccentColor(renderObject.styleColorOptions()),
         style->visitedDependentColorWithColorFilter(CSSPropertyColor),
-        Style::evaluate(style->borderWidth())
+        Style::evaluate(style->borderWidth(), 1.0f /* FIXME FIND ZOOM */)
     };
 }
 
@@ -1394,26 +1394,27 @@ void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle
     if (!style.writingMode().isHorizontal() && supportsVerticalWritingMode(appearance))
         borderBox = Style::LineWidthBox { borderBox.left(), borderBox.top(), borderBox.right(), borderBox.bottom() };
 
-    if (Style::evaluate(borderBox.top()) != static_cast<int>(Style::evaluate(style.borderTopWidth()))) {
+    /* FIXME: FIND ZOOM */
+    if (Style::evaluate(borderBox.top(), 1.0f) != static_cast<int>(Style::evaluate(style.borderTopWidth(), 1.0f))) {
         if (!borderBox.top().isZero())
             style.setBorderTopWidth(borderBox.top());
         else
             style.resetBorderTop();
     }
-    if (Style::evaluate(borderBox.right()) != static_cast<int>(Style::evaluate(style.borderRightWidth()))) {
+    if (Style::evaluate(borderBox.right(), 1.0f) != static_cast<int>(Style::evaluate(style.borderRightWidth(), 1.0f))) {
         if (!borderBox.right().isZero())
             style.setBorderRightWidth(borderBox.right());
         else
             style.resetBorderRight();
     }
-    if (Style::evaluate(borderBox.bottom()) != static_cast<int>(Style::evaluate(style.borderBottomWidth()))) {
+    if (Style::evaluate(borderBox.bottom(), 1.0f) != static_cast<int>(Style::evaluate(style.borderBottomWidth(), 1.0f))) {
         style.setBorderBottomWidth(borderBox.bottom());
         if (!borderBox.bottom().isZero())
             style.setBorderBottomWidth(borderBox.bottom());
         else
             style.resetBorderBottom();
     }
-    if (Style::evaluate(borderBox.left()) != static_cast<int>(Style::evaluate(style.borderLeftWidth()))) {
+    if (Style::evaluate(borderBox.left(), 1.0f) != static_cast<int>(Style::evaluate(style.borderLeftWidth(), 1.0f))) {
         style.setBorderLeftWidth(borderBox.left());
         if (!borderBox.left().isZero())
             style.setBorderLeftWidth(borderBox.left());

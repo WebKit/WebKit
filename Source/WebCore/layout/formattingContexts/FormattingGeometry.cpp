@@ -113,7 +113,7 @@ template<FormattingGeometry::HeightType heightType> std::optional<LayoutUnit> Fo
     if (!containingBlockHeight)
         return { };
 
-    return Style::evaluate(height, *containingBlockHeight);
+    return Style::evaluate(height, *containingBlockHeight, 1.0f /* FIXME FIND ZOOM */);
 }
 
 std::optional<LayoutUnit> FormattingGeometry::computedHeight(const Box& layoutBox, std::optional<LayoutUnit> containingBlockHeight) const
@@ -1084,8 +1084,8 @@ BoxGeometry::Edges FormattingGeometry::computedBorder(const Box& layoutBox) cons
     auto& style = layoutBox.style();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Border] -> layoutBox: " << &layoutBox);
     return {
-        { LayoutUnit(Style::evaluate(style.borderLeftWidth())), LayoutUnit(Style::evaluate(style.borderRightWidth())) },
-        { LayoutUnit(Style::evaluate(style.borderTopWidth())), LayoutUnit(Style::evaluate(style.borderBottomWidth())) },
+        { LayoutUnit(Style::evaluate(style.borderLeftWidth(), 1.0f /* FIXME FIND ZOOM */)), LayoutUnit(Style::evaluate(style.borderRightWidth(), 1.0f /* FIXME FIND ZOOM */)) },
+        { LayoutUnit(Style::evaluate(style.borderTopWidth(), 1.0f /* FIXME FIND ZOOM */)), LayoutUnit(Style::evaluate(style.borderBottomWidth(), 1.0f /* FIXME FIND ZOOM */)) },
     };
 }
 
@@ -1097,8 +1097,8 @@ BoxGeometry::Edges FormattingGeometry::computedPadding(const Box& layoutBox, con
     auto& style = layoutBox.style();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Padding] -> layoutBox: " << &layoutBox);
     return {
-        { Style::evaluate(style.paddingStart(), containingBlockWidth), Style::evaluate(style.paddingEnd(), containingBlockWidth) },
-        { Style::evaluate(style.paddingBefore(), containingBlockWidth), Style::evaluate(style.paddingAfter(), containingBlockWidth) }
+        { Style::evaluate(style.paddingStart(), containingBlockWidth, 1.0f /* FIXME FIND ZOOM */), Style::evaluate(style.paddingEnd(), containingBlockWidth, 1.0f /* FIXME FIND ZOOM */) },
+        { Style::evaluate(style.paddingBefore(), containingBlockWidth, 1.0f /* FIXME FIND ZOOM */), Style::evaluate(style.paddingAfter(), containingBlockWidth, 1.0f /* FIXME FIND ZOOM */) }
     };
 }
 

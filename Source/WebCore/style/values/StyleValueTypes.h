@@ -741,15 +741,34 @@ template<typename StyleType> struct Serialize<MinimallySerializingSpaceSeparated
 
 template<typename> struct Evaluation;
 
+template<typename StyleType, typename Reference> concept HasTwoParameterEvaluate = requires {
+    Evaluation<StyleType> { }(std::declval<const StyleType&>(), std::declval<Reference>());
+};
+
+template<typename StyleType, typename Reference, typename Zoom> concept HasThreeParameterEvaluate = requires {
+    Evaluation<StyleType> { }(std::declval<const StyleType&>(), std::declval<Reference>(), std::declval<Zoom>());
+};
+
 // `Evaluation` Invokers
 template<typename StyleType> decltype(auto) evaluate(const StyleType& value)
 {
-    return Evaluation<StyleType>{}(value);
+    return Evaluation<StyleType> { }(value);
 }
 
 template<typename StyleType, typename Reference> decltype(auto) evaluate(const StyleType& value, Reference&& reference)
 {
-    return Evaluation<StyleType>{}(value, std::forward<Reference>(reference));
+    if constexpr (HasTwoParameterEvaluate<StyleType, Reference>)
+        return Evaluation<StyleType> { }(value, std::forward<Reference>(reference));
+    else
+        return evaluate(value);
+}
+
+template<typename StyleType, typename Reference, typename Zoom> decltype(auto) evaluate(const StyleType& value, Reference&& reference, Zoom&& zoom)
+{
+    if constexpr (HasThreeParameterEvaluate<StyleType, Reference, Zoom>)
+        return Evaluation<StyleType> { }(value, std::forward<Reference>(reference), std::forward<Zoom>(zoom));
+    else
+        return evaluate(value, std::forward<Reference>(reference));
 }
 
 // Constrained for `TreatAsVariantLike`.

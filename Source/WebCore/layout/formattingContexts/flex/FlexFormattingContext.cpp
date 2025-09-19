@@ -93,7 +93,7 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
                 if (auto fixedPropertyValue = propertyValue.tryFixed())
                     return LayoutUnit { fixedPropertyValue->value };
                 if (propertyValue.isSpecified() && availableSize)
-                    return Style::evaluate(propertyValue, *availableSize);
+                    return Style::evaluate(propertyValue, *availableSize, 1.0f /* FIXME FIND ZOOM */);
                 return { };
             };
 

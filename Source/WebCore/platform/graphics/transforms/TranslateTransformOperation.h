@@ -49,9 +49,9 @@ public:
 
     Ref<TransformOperation> selfOrCopyWithResolvedCalculatedValues(const FloatSize&) const override;
 
-    float xAsFloat(const FloatSize& borderBoxSize) const { return floatValueForLength(m_x, borderBoxSize.width()); }
-    float yAsFloat(const FloatSize& borderBoxSize) const { return floatValueForLength(m_y, borderBoxSize.height()); }
-    float zAsFloat() const { return floatValueForLength(m_z, 1); }
+    float xAsFloat(const FloatSize& borderBoxSize) const { return floatValueForLength(m_x, borderBoxSize.width(), 1.0f /* FIXME FIND ZOOM */); }
+    float yAsFloat(const FloatSize& borderBoxSize) const { return floatValueForLength(m_y, borderBoxSize.height(), 1.0f /* FIXME FIND ZOOM */); }
+    float zAsFloat() const { return floatValueForLength(m_z, 1, 1.0f /* FIXME FIND ZOOM */); }
 
     Length x() const { return m_x; }
     Length y() const { return m_y; }
@@ -69,7 +69,7 @@ public:
         return m_x.isPercent() || m_y.isPercent();
     }
 
-    bool isIdentity() const final { return !floatValueForLength(m_x, 1) && !floatValueForLength(m_y, 1) && !floatValueForLength(m_z, 1); }
+    bool isIdentity() const final { return !floatValueForLength(m_x, 1, 1.0f /* FIXME FIND ZOOM */) && !floatValueForLength(m_y, 1, 1.0f /* FIXME FIND ZOOM */) && !floatValueForLength(m_z, 1, 1.0f /* FIXME FIND ZOOM */); }
 
     bool operator==(const TranslateTransformOperation& other) const { return operator==(static_cast<const TransformOperation&>(other)); }
     bool operator==(const TransformOperation&) const final;

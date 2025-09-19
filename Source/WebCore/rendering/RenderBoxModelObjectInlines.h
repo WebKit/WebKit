@@ -25,7 +25,7 @@
 
 namespace WebCore {
 
-inline LayoutUnit RenderBoxModelObject::borderAfter() const { return LayoutUnit(Style::evaluate(style().borderAfterWidth())); }
+inline LayoutUnit RenderBoxModelObject::borderAfter() const { return LayoutUnit(Style::evaluate(style().borderAfterWidth(), 1.0f /* FIXME FIND ZOOM */)); }
 inline LayoutUnit RenderBoxModelObject::borderAndPaddingAfter() const { return borderAfter() + paddingAfter(); }
 inline LayoutUnit RenderBoxModelObject::borderAndPaddingBefore() const { return borderBefore() + paddingBefore(); }
 inline LayoutUnit RenderBoxModelObject::borderAndPaddingLogicalHeight() const { return borderAndPaddingBefore() + borderAndPaddingAfter(); }
@@ -34,17 +34,17 @@ inline LayoutUnit RenderBoxModelObject::borderAndPaddingLogicalLeft() const { re
 inline LayoutUnit RenderBoxModelObject::borderAndPaddingLogicalRight() const { return writingMode().isHorizontal() ? borderRight() + paddingRight() : borderBottom() + paddingBottom(); }
 inline LayoutUnit RenderBoxModelObject::borderAndPaddingStart() const { return borderStart() + paddingStart(); }
 inline LayoutUnit RenderBoxModelObject::borderAndPaddingEnd() const { return borderEnd() + paddingEnd(); }
-inline LayoutUnit RenderBoxModelObject::borderBefore() const { return LayoutUnit(Style::evaluate(style().borderBeforeWidth())); }
-inline LayoutUnit RenderBoxModelObject::borderBottom() const { return LayoutUnit(Style::evaluate(style().borderBottomWidth())); }
-inline LayoutUnit RenderBoxModelObject::borderEnd() const { return LayoutUnit(Style::evaluate(style().borderEndWidth())); }
-inline LayoutUnit RenderBoxModelObject::borderLeft() const { return LayoutUnit(Style::evaluate(style().borderLeftWidth())); }
+inline LayoutUnit RenderBoxModelObject::borderBefore() const { return LayoutUnit(Style::evaluate(style().borderBeforeWidth(), 1.0f /* FIXME FIND ZOOM */)); }
+inline LayoutUnit RenderBoxModelObject::borderBottom() const { return LayoutUnit(Style::evaluate(style().borderBottomWidth(), 1.0f /* FIXME FIND ZOOM */)); }
+inline LayoutUnit RenderBoxModelObject::borderEnd() const { return LayoutUnit(Style::evaluate(style().borderEndWidth(), 1.0f /* FIXME FIND ZOOM */)); }
+inline LayoutUnit RenderBoxModelObject::borderLeft() const { return LayoutUnit(Style::evaluate(style().borderLeftWidth(), 1.0f /* FIXME FIND ZOOM */)); }
 inline LayoutUnit RenderBoxModelObject::borderLogicalHeight() const { return borderBefore() + borderAfter(); }
 inline LayoutUnit RenderBoxModelObject::borderLogicalLeft() const { return writingMode().isHorizontal() ? borderLeft() : borderTop(); }
 inline LayoutUnit RenderBoxModelObject::borderLogicalRight() const { return writingMode().isHorizontal() ? borderRight() : borderBottom(); }
 inline LayoutUnit RenderBoxModelObject::borderLogicalWidth() const { return borderStart() + borderEnd(); }
-inline LayoutUnit RenderBoxModelObject::borderRight() const { return LayoutUnit(Style::evaluate(style().borderRightWidth())); }
-inline LayoutUnit RenderBoxModelObject::borderStart() const { return LayoutUnit(Style::evaluate(style().borderStartWidth())); }
-inline LayoutUnit RenderBoxModelObject::borderTop() const { return LayoutUnit(Style::evaluate(style().borderTopWidth())); }
+inline LayoutUnit RenderBoxModelObject::borderRight() const { return LayoutUnit(Style::evaluate(style().borderRightWidth(), 1.0f /* FIXME FIND ZOOM */)); }
+inline LayoutUnit RenderBoxModelObject::borderStart() const { return LayoutUnit(Style::evaluate(style().borderStartWidth(), 1.0f /* FIXME FIND ZOOM */)); }
+inline LayoutUnit RenderBoxModelObject::borderTop() const { return LayoutUnit(Style::evaluate(style().borderTopWidth(), 1.0f /* FIXME FIND ZOOM */)); }
 inline LayoutUnit RenderBoxModelObject::computedCSSPaddingAfter() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().paddingAfter()); }
 inline LayoutUnit RenderBoxModelObject::computedCSSPaddingBefore() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().paddingBefore()); }
 inline LayoutUnit RenderBoxModelObject::computedCSSPaddingBottom() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().paddingBottom()); }
@@ -80,8 +80,8 @@ inline LayoutUnit RenderBoxModelObject::verticalBorderExtent() const { return bo
 
 inline RectEdges<LayoutUnit> RenderBoxModelObject::borderWidths() const
 {
-    return RectEdges<LayoutUnit>::map(style().borderWidth(), [](auto width) {
-        return LayoutUnit { Style::evaluate(width) };
+    return RectEdges<LayoutUnit>::map(style().borderWidth(), [&](auto width) {
+        return LayoutUnit { Style::evaluate(width, 1.0f /* FIXME FIND ZOOM */) };
     });
 }
 
@@ -100,7 +100,7 @@ inline LayoutUnit RenderBoxModelObject::resolveLengthPercentageUsingContainerLog
     LayoutUnit containerWidth;
     if (value.isPercentOrCalculated())
         containerWidth = containingBlockLogicalWidthForContent();
-    return Style::evaluateMinimum(value, containerWidth);
+    return Style::evaluateMinimum(value, containerWidth, 1.0f /* FIXME ZOOM EFFECTED? */);
 }
 
 } // namespace WebCore

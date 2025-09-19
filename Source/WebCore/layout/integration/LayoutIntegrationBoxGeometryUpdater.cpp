@@ -79,7 +79,7 @@ static LayoutUnit usedValueOrZero(const Style::MarginEdge& marginEdge, std::opti
     if (marginEdge.isAuto() || !availableWidth)
         return { };
 
-    return Style::evaluateMinimum(marginEdge, *availableWidth);
+    return Style::evaluateMinimum(marginEdge, *availableWidth, 1.0f /* FIXME FIND ZOOM */);
 }
 
 static LayoutUnit usedValueOrZero(const Style::PaddingEdge& paddingEdge, std::optional<LayoutUnit> availableWidth)
@@ -90,7 +90,7 @@ static LayoutUnit usedValueOrZero(const Style::PaddingEdge& paddingEdge, std::op
     if (!availableWidth)
         return { };
 
-    return Style::evaluateMinimum(paddingEdge, *availableWidth);
+    return Style::evaluateMinimum(paddingEdge, *availableWidth, 1.0f /* FIXME FIND ZOOM */);
 }
 
 static inline void adjustBorderForTableAndFieldset(const RenderBoxModelObject& renderer, RectEdges<LayoutUnit>& borderWidths)
@@ -241,7 +241,7 @@ Layout::BoxGeometry::Edges BoxGeometryUpdater::logicalBorder(const RenderBoxMode
     auto& style = renderer.style();
 
     auto borderWidths = RectEdges<LayoutUnit>::map(style.borderWidth(), [](auto width) {
-        return LayoutUnit { Style::evaluate(width) };
+        return LayoutUnit { Style::evaluate(width, 1.0f /* FIXME ZOOM EFFECTED? */) };
     });
 
     if (!isIntrinsicWidthMode)

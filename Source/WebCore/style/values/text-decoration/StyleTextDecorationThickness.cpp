@@ -49,7 +49,7 @@ float TextDecorationThickness::resolve(const RenderStyle& style) const
             return style.metricsOfPrimaryFont().underlineThickness().value_or(0);
         },
         [&](const TextDecorationThicknessLength& length) {
-            return Style::evaluate(length, style.computedFontSize());
+            return Style::evaluate(length, style.computedFontSize(), 1.0f /* FIXME FIND ZOOM */);
         }
     );
 }
@@ -64,7 +64,7 @@ float TextDecorationThickness::resolve(float fontSize, const FontMetrics& metric
             return metrics.underlineThickness().value_or(0);
         },
         [&](const TextDecorationThicknessLength& length) {
-            return Style::evaluate(length, fontSize);
+            return Style::evaluate(length, fontSize, 1.0f /* FIXME FIND ZOOM */);
         }
     );
 }

@@ -75,8 +75,8 @@ template<> struct CSSValueConversion<ScrollMarginEdge> { auto operator()(Builder
 // MARK: - Evaluation
 
 template<> struct Evaluation<ScrollMarginEdge> {
-    auto operator()(const ScrollMarginEdge&, LayoutUnit referenceLength) -> LayoutUnit;
-    auto operator()(const ScrollMarginEdge&, float referenceLength) -> float;
+    auto operator()(const ScrollMarginEdge&, LayoutUnit referenceLength, float zoom) -> LayoutUnit;
+    auto operator()(const ScrollMarginEdge&, float referenceLength, float zoom) -> float;
 };
 
 // MARK: - Extent

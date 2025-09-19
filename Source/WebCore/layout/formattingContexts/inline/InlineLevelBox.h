@@ -191,7 +191,7 @@ inline InlineLayoutUnit InlineLevelBox::preferredLineHeight() const
         return primarymetricsOfPrimaryFont().lineSpacing();
 
     if (m_style.lineHeight.isPercentOrCalculated())
-        return minimumValueForLength(m_style.lineHeight, fontSize());
+        return minimumValueForLength(m_style.lineHeight, fontSize(), 1.0f /* FIXME FIND ZOOM */);
     return m_style.lineHeight.value();
 }
 

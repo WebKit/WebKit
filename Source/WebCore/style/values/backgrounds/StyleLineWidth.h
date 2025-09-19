@@ -65,8 +65,16 @@ template<> struct CSSValueConversion<LineWidth> { auto operator()(BuilderState&,
 
 // MARK: - Evaluate
 
-template<> struct Evaluation<LineWidth> { constexpr auto operator()(const LineWidth& value) -> float { return value.value.value; } };
-template<> struct Evaluation<LineWidthBox> { FloatBoxExtent operator()(const LineWidthBox&); };
+template<> struct Evaluation<LineWidth> {
+    constexpr auto operator()(const LineWidth& value, float zoom) -> float
+    {
+        return value.value.value * zoom;
+    }
+};
+
+template<> struct Evaluation<LineWidthBox> {
+    FloatBoxExtent operator()(const LineWidthBox&, float zoom);
+};
 
 } // namespace Style
 } // namespace WebCore

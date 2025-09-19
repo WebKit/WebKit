@@ -46,13 +46,13 @@ using ScrollPaddingBox = MinimallySerializingSpaceSeparatedRectEdges<ScrollPaddi
 // MARK: - Evaluation
 
 template<> struct Evaluation<ScrollPaddingEdge> {
-    auto operator()(const ScrollPaddingEdge&, LayoutUnit referenceLength) -> LayoutUnit;
-    auto operator()(const ScrollPaddingEdge&, float referenceLength) -> float;
+    auto operator()(const ScrollPaddingEdge&, LayoutUnit referenceLength, float zoom) -> LayoutUnit;
+    auto operator()(const ScrollPaddingEdge&, float referenceLength, float zoom) -> float;
 };
 
 // MARK: - Extent
 
-LayoutBoxExtent extentForRect(const ScrollPaddingBox&, const LayoutRect&);
+LayoutBoxExtent extentForRect(const ScrollPaddingBox&, const LayoutRect&, float zoom);
 
 } // namespace Style
 } // namespace WebCore

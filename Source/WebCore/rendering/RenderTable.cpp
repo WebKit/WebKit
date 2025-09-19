@@ -157,8 +157,8 @@ void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     bool oldFixedTableLayout = oldStyle ? oldStyle->isFixedTableLayout() : false;
 
     // In the collapsed border model, there is no cell spacing.
-    m_hSpacing = collapseBorders() ? 0 : Style::evaluate(style().borderHorizontalSpacing());
-    m_vSpacing = collapseBorders() ? 0 : Style::evaluate(style().borderVerticalSpacing());
+    m_hSpacing = collapseBorders() ? 0 : Style::evaluate(style().borderHorizontalSpacing(), 1.0f /* FIXME FIND ZOOM */);
+    m_vSpacing = collapseBorders() ? 0 : Style::evaluate(style().borderVerticalSpacing(), 1.0f /* FIXME FIND ZOOM */);
     ASSERT(m_hSpacing >= 0);
     ASSERT(m_vSpacing >= 0);
 
@@ -307,8 +307,8 @@ void RenderTable::updateLogicalWidth()
         setLogicalWidth(convertStyleLogicalWidthToComputedWidth(styleLogicalWidth, containerWidthInInlineDirection));
     else {
         // Subtract out any fixed margins from our available width for auto width tables.
-        LayoutUnit marginStart = Style::evaluateMinimum(style().marginStart(), availableLogicalWidth);
-        LayoutUnit marginEnd = Style::evaluateMinimum(style().marginEnd(), availableLogicalWidth);
+        LayoutUnit marginStart = Style::evaluateMinimum(style().marginStart(), availableLogicalWidth, 1.0f /* FIXME FIND ZOOM */);
+        LayoutUnit marginEnd = Style::evaluateMinimum(style().marginEnd(), availableLogicalWidth, 1.0f /* FIXME FIND ZOOM */);
         LayoutUnit marginTotal = marginStart + marginEnd;
 
         // Subtract out our margins to get the available content width.
@@ -360,8 +360,8 @@ void RenderTable::updateLogicalWidth()
         setMarginStart(marginValues.m_start);
         setMarginEnd(marginValues.m_end);
     } else {
-        setMarginStart(Style::evaluateMinimum(style().marginStart(), availableLogicalWidth));
-        setMarginEnd(Style::evaluateMinimum(style().marginEnd(), availableLogicalWidth));
+        setMarginStart(Style::evaluateMinimum(style().marginStart(), availableLogicalWidth, 1.0f /* FIXME FIND ZOOM */));
+        setMarginEnd(Style::evaluateMinimum(style().marginEnd(), availableLogicalWidth, 1.0f /* FIXME FIND ZOOM */));
     }
 }
 
@@ -378,7 +378,7 @@ template<typename SizeType> LayoutUnit RenderTable::convertStyleLogicalWidthToCo
     if (isCSSTable && styleLogicalWidth.isSpecified() && styleLogicalWidth.isPositive() && style().boxSizing() == BoxSizing::ContentBox)
         borders = borderStart() + borderEnd() + (collapseBorders() ? 0_lu : paddingStart() + paddingEnd());
 
-    return Style::evaluateMinimum(styleLogicalWidth, availableWidth) + borders;
+    return Style::evaluateMinimum(styleLogicalWidth, availableWidth, 1.0f /* FIXME FIND ZOOM */) + borders;
 }
 
 template<typename SizeType> LayoutUnit RenderTable::convertStyleLogicalHeightToComputedHeight(const SizeType& styleLogicalHeight)
@@ -1287,7 +1287,7 @@ LayoutUnit RenderTable::calcBorderStart() const
                 borderWidth = std::max(borderWidth, firstRowAdjoiningBorder.width());
         }
     }
-    return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::evaluate(borderWidth), document().deviceScaleFactor(), writingMode().isInlineFlipped());
+    return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::evaluate(borderWidth, 1.0f /* FIXME FIND ZOOM */), document().deviceScaleFactor(), writingMode().isInlineFlipped());
 }
 
 LayoutUnit RenderTable::calcBorderEnd() const
@@ -1342,7 +1342,7 @@ LayoutUnit RenderTable::calcBorderEnd() const
                 borderWidth = std::max(borderWidth, firstRowAdjoiningBorder.width());
         }
     }
-    return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::evaluate(borderWidth), document().deviceScaleFactor(), !writingMode().isInlineFlipped());
+    return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::evaluate(borderWidth, 1.0f /* FIXME FIND ZOOM */), document().deviceScaleFactor(), !writingMode().isInlineFlipped());
 }
 
 void RenderTable::recalcBordersInRowDirection()
@@ -1384,7 +1384,7 @@ LayoutUnit RenderTable::outerBorderBefore() const
     if (tb.style() == BorderStyle::Hidden)
         return 0;
     if (tb.style() > BorderStyle::Hidden) {
-        LayoutUnit collapsedBorderWidth = std::max(borderWidth, LayoutUnit(Style::evaluate(tb.width()) / 2));
+        LayoutUnit collapsedBorderWidth = std::max(borderWidth, LayoutUnit(Style::evaluate(tb.width(), 1.0f /* FIXME FIND ZOOM */) / 2));
         borderWidth = floorToDevicePixel(collapsedBorderWidth, document().deviceScaleFactor());
     }
     return borderWidth;
@@ -1406,7 +1406,7 @@ LayoutUnit RenderTable::outerBorderAfter() const
         return 0;
     if (tb.style() > BorderStyle::Hidden) {
         float deviceScaleFactor = document().deviceScaleFactor();
-        LayoutUnit collapsedBorderWidth = std::max(borderWidth, LayoutUnit((Style::evaluate(tb.width()) + (1 / deviceScaleFactor)) / 2));
+        LayoutUnit collapsedBorderWidth = std::max(borderWidth, LayoutUnit((Style::evaluate(tb.width(), 1.0f /* FIXME FIND ZOOM */) + (1 / deviceScaleFactor)) / 2));
         borderWidth = floorToDevicePixel(collapsedBorderWidth, deviceScaleFactor);
     }
     return borderWidth;
@@ -1423,7 +1423,7 @@ LayoutUnit RenderTable::outerBorderStart() const
     if (tb.style() == BorderStyle::Hidden)
         return 0;
     if (tb.style() > BorderStyle::Hidden)
-        return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::evaluate(tb.width()), document().deviceScaleFactor(), writingMode().isInlineFlipped());
+        return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::evaluate(tb.width(), 1.0f /* FIXME FIND ZOOM */), document().deviceScaleFactor(), writingMode().isInlineFlipped());
 
     bool allHidden = true;
     for (RenderTableSection* section = topSection(); section; section = sectionBelow(section)) {
@@ -1450,7 +1450,7 @@ LayoutUnit RenderTable::outerBorderEnd() const
     if (tb.style() == BorderStyle::Hidden)
         return 0;
     if (tb.style() > BorderStyle::Hidden)
-        return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::evaluate(tb.width()), document().deviceScaleFactor(), !writingMode().isInlineFlipped());
+        return CollapsedBorderValue::adjustedCollapsedBorderWidth(Style::evaluate(tb.width(), 1.0f /* FIXME FIND ZOOM */), document().deviceScaleFactor(), !writingMode().isInlineFlipped());
 
     bool allHidden = true;
     for (RenderTableSection* section = topSection(); section; section = sectionBelow(section)) {

@@ -793,7 +793,7 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
         addAttributeIfNeeded("invisible"_s, style.visibility() == Visibility::Hidden ? "true"_s : "false"_s);
         addAttributeIfNeeded("editable"_s, m_coreObject->canSetValueAttribute() ? "true"_s : "false"_s);
         addAttributeIfNeeded("direction"_s, style.writingMode().isBidiLTR() ? "ltr"_s : "rtl"_s);
-        addAttributeIfNeeded("indent"_s, makeString(Style::evaluate(style.textIndent().length, m_coreObject->size().width())));
+        addAttributeIfNeeded("indent"_s, makeString(Style::evaluate(style.textIndent().length, m_coreObject->size().width(), 1.0f /* FIXME FIND ZOOM */)));
 
         switch (style.textAlign()) {
         case TextAlignMode::Start:

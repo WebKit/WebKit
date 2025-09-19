@@ -282,41 +282,41 @@ template<typename T> concept LengthWrapperBaseDerived = WTF::IsBaseOfTemplate<Le
 // MARK: - Evaluation
 
 template<LengthWrapperBaseDerived T> struct Evaluation<T> {
-    auto operator()(const T& value, NOESCAPE const Invocable<LayoutUnit()> auto& lazyMaximumValueFunctor) -> LayoutUnit
+    auto operator()(const T& value, NOESCAPE const Invocable<LayoutUnit()> auto& lazyMaximumValueFunctor, float zoom) -> LayoutUnit
     {
-        return value.m_value.template valueForLengthWrapperDataWithLazyMaximum<LayoutUnit, LayoutUnit>(value.evaluationKind(), lazyMaximumValueFunctor);
+        return value.m_value.template valueForLengthWrapperDataWithLazyMaximum<LayoutUnit, LayoutUnit>(value.evaluationKind(), lazyMaximumValueFunctor, zoom);
     }
-    auto operator()(const T& value, NOESCAPE const Invocable<float()> auto& lazyMaximumValueFunctor) -> float
+    auto operator()(const T& value, NOESCAPE const Invocable<float()> auto& lazyMaximumValueFunctor, float zoom) -> float
     {
-        return value.m_value.template valueForLengthWrapperDataWithLazyMaximum<float, float>(value.evaluationKind(), lazyMaximumValueFunctor);
+        return value.m_value.template valueForLengthWrapperDataWithLazyMaximum<float, float>(value.evaluationKind(), lazyMaximumValueFunctor, zoom);
     }
-    auto operator()(const T& value, LayoutUnit maximumValue) -> LayoutUnit
+    auto operator()(const T& value, LayoutUnit maximumValue, float zoom) -> LayoutUnit
     {
-        return value.m_value.template valueForLengthWrapperDataWithLazyMaximum<LayoutUnit, LayoutUnit>(value.evaluationKind(), [&] ALWAYS_INLINE_LAMBDA { return maximumValue; });
+        return value.m_value.template valueForLengthWrapperDataWithLazyMaximum<LayoutUnit, LayoutUnit>(value.evaluationKind(), [&] ALWAYS_INLINE_LAMBDA { return maximumValue; }, zoom);
     }
-    auto operator()(const T& value, float maximumValue) -> float
+    auto operator()(const T& value, float maximumValue, float zoom) -> float
     {
-        return value.m_value.template valueForLengthWrapperDataWithLazyMaximum<float, float>(value.evaluationKind(), [&] ALWAYS_INLINE_LAMBDA { return maximumValue; });
+        return value.m_value.template valueForLengthWrapperDataWithLazyMaximum<float, float>(value.evaluationKind(), [&] ALWAYS_INLINE_LAMBDA { return maximumValue; }, zoom);
     }
 };
 
-template<typename StyleType, typename Reference> decltype(auto) evaluateMinimum(const StyleType& value, NOESCAPE Reference&& reference)
+template<typename StyleType, typename Reference> decltype(auto) evaluateMinimum(const StyleType& value, NOESCAPE Reference&& reference, float zoom)
 {
-    return MinimumEvaluation<StyleType>{}(value, std::forward<Reference>(reference));
+    return MinimumEvaluation<StyleType> { }(value, std::forward<Reference>(reference), zoom);
 }
 
 template<LengthWrapperBaseDerived T> struct MinimumEvaluation<T> {
-    auto operator()(const T& value, NOESCAPE const Invocable<LayoutUnit()> auto& lazyMaximumValueFunctor) -> LayoutUnit
+    auto operator()(const T& value, NOESCAPE const Invocable<LayoutUnit()> auto& lazyMaximumValueFunctor, float zoom) -> LayoutUnit
     {
-        return value.m_value.template minimumValueForLengthWrapperDataWithLazyMaximum<LayoutUnit, LayoutUnit>(value.evaluationKind(), lazyMaximumValueFunctor);
+        return value.m_value.template minimumValueForLengthWrapperDataWithLazyMaximum<LayoutUnit, LayoutUnit>(value.evaluationKind(), lazyMaximumValueFunctor, zoom);
     }
-    auto operator()(const T& value, LayoutUnit maximumValue) -> LayoutUnit
+    auto operator()(const T& value, LayoutUnit maximumValue, float zoom) -> LayoutUnit
     {
-        return value.m_value.template minimumValueForLengthWrapperDataWithLazyMaximum<LayoutUnit, LayoutUnit>(value.evaluationKind(), [&] ALWAYS_INLINE_LAMBDA { return maximumValue; });
+        return value.m_value.template minimumValueForLengthWrapperDataWithLazyMaximum<LayoutUnit, LayoutUnit>(value.evaluationKind(), [&] ALWAYS_INLINE_LAMBDA { return maximumValue; }, zoom);
     }
-    auto operator()(const T& value, float maximumValue) -> float
+    auto operator()(const T& value, float maximumValue, float zoom) -> float
     {
-        return value.m_value.template minimumValueForLengthWrapperDataWithLazyMaximum<LayoutUnit, LayoutUnit>(value.evaluationKind(), [&] ALWAYS_INLINE_LAMBDA { return LayoutUnit(maximumValue); });
+        return value.m_value.template minimumValueForLengthWrapperDataWithLazyMaximum<LayoutUnit, LayoutUnit>(value.evaluationKind(), [&] ALWAYS_INLINE_LAMBDA { return LayoutUnit(maximumValue); }, zoom);
     }
 };
 

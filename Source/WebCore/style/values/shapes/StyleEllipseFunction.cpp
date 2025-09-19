@@ -65,7 +65,7 @@ static const WebCore::Path& cachedEllipsePath(const FloatRect& rect)
 
 FloatPoint resolvePosition(const Ellipse& value, FloatSize boundingBox)
 {
-    return value.position ? evaluate(*value.position, boundingBox) : FloatPoint { boundingBox.width() / 2, boundingBox.height() / 2 };
+    return value.position ? evaluate(*value.position, boundingBox, 1.0f /* FIXME ZOOM EFFECTED? */) : FloatPoint { boundingBox.width() / 2, boundingBox.height() / 2 };
 }
 
 FloatSize resolveRadii(const Ellipse& value, FloatSize boxSize, FloatPoint center)
@@ -73,7 +73,7 @@ FloatSize resolveRadii(const Ellipse& value, FloatSize boxSize, FloatPoint cente
     auto sizeForAxis = [&](const Ellipse::RadialSize& radius, float centerValue, float dimensionSize) {
         return WTF::switchOn(radius,
             [&](const Ellipse::Length& length) -> float {
-                return evaluate(length, std::abs(dimensionSize));
+                return evaluate(length, std::abs(dimensionSize), 1.0f /* FIXME FIND ZOOM */);
             },
             [&](const Ellipse::Extent& extent) -> float {
                 return WTF::switchOn(extent,

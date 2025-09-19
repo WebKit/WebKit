@@ -75,10 +75,10 @@ public:
     Style::MarginEdge marginAfter() const { return m_marginAfter; }
     Style::InsetEdge insetBefore() const { return m_insetBefore; }
     Style::InsetEdge insetAfter() const { return m_insetAfter; }
-    LayoutUnit marginBeforeValue() const { return Style::evaluateMinimum(m_marginBefore, m_containingInlineSize); }
-    LayoutUnit marginAfterValue() const { return Style::evaluateMinimum(m_marginAfter, m_containingInlineSize); }
-    LayoutUnit insetBeforeValue() const { return Style::evaluateMinimum(m_insetBefore, containingSize()); }
-    LayoutUnit insetAfterValue() const { return Style::evaluateMinimum(m_insetAfter, containingSize()); }
+    LayoutUnit marginBeforeValue() const { return Style::evaluateMinimum(m_marginBefore, m_containingInlineSize, 1.0f /* FIXME ZOOM EFFECTED? */); }
+    LayoutUnit marginAfterValue() const { return Style::evaluateMinimum(m_marginAfter, m_containingInlineSize, 1.0f /* FIXME ZOOM EFFECTED? */); }
+    LayoutUnit insetBeforeValue() const { return Style::evaluateMinimum(m_insetBefore, containingSize(), 1.0f /* FIXME ZOOM EFFECTED? */); }
+    LayoutUnit insetAfterValue() const { return Style::evaluateMinimum(m_insetAfter, containingSize(), 1.0f /* FIXME ZOOM EFFECTED? */); }
 
     LayoutUnit insetModifiedContainingSize() const { return m_insetModifiedContainingRange.size(); }
     LayoutRange insetModifiedContainingRange() const { return m_insetModifiedContainingRange; }

@@ -148,7 +148,12 @@ public:
     CalculationValue& calculationValue() const;
     Ref<CalculationValue> protectedCalculationValue() const;
 
-    struct Fixed { float value; };
+    struct Fixed {
+        constexpr Fixed(float value) : value(value) { }
+        constexpr auto evaluate(float zoom) const { return value * zoom; }
+        private:
+            float value;
+    };
     std::optional<Fixed> tryFixed() const { return isFixed() ? std::make_optional(Fixed { value() }) : std::nullopt; }
 
     struct Percentage { float value; };

@@ -179,7 +179,7 @@ InlineLayoutUnit InlineFormattingUtils::computedTextIndent(IsIntrinsicWidthMode 
         // https://drafts.csswg.org/css-text/#text-indent-property
         return { };
     }
-    return Style::evaluate(textIndentLength, availableWidth);
+    return Style::evaluate(textIndentLength, availableWidth, 1.0f /* FIXME ZOOM EFFECTED? */);
 }
 
 InlineLayoutUnit InlineFormattingUtils::initialLineHeight(bool isFirstLine) const

@@ -2060,9 +2060,9 @@ IntRect WebPage::absoluteInteractionBounds(const Node& node)
     auto& style = renderer->style();
     FloatRect boundingBox = renderer->absoluteBoundingBoxRect(true /* use transforms*/);
     // This is wrong. It's subtracting borders after converting to absolute coords on something that probably doesn't represent a rectangular element.
-    boundingBox.move(WebCore::Style::evaluate(style.borderLeftWidth()), WebCore::Style::evaluate(style.borderTopWidth()));
-    boundingBox.setWidth(boundingBox.width() - WebCore::Style::evaluate(style.borderLeftWidth()) - WebCore::Style::evaluate(style.borderRightWidth()));
-    boundingBox.setHeight(boundingBox.height() - WebCore::Style::evaluate(style.borderBottomWidth()) - WebCore::Style::evaluate(style.borderTopWidth()));
+    boundingBox.move(WebCore::Style::evaluate(style.borderLeftWidth(), 1.0f /* FIXME FIND ZOOM */), WebCore::Style::evaluate(style.borderTopWidth(), 1.0f /* FIXME FIND ZOOM */));
+    boundingBox.setWidth(boundingBox.width() - WebCore::Style::evaluate(style.borderLeftWidth(), 1.0f /* FIXME FIND ZOOM */) - WebCore::Style::evaluate(style.borderRightWidth(), 1.0f /* FIXME FIND ZOOM */));
+    boundingBox.setHeight(boundingBox.height() - WebCore::Style::evaluate(style.borderBottomWidth(), 1.0f /* FIXME FIND ZOOM */) - WebCore::Style::evaluate(style.borderTopWidth(), 1.0f /* FIXME FIND ZOOM */));
     return enclosingIntRect(boundingBox);
 }
 

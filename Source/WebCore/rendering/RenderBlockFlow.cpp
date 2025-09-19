@@ -291,7 +291,7 @@ void RenderBlockFlow::adjustIntrinsicLogicalWidthsForColumns(LayoutUnit& minLogi
         LayoutUnit colGap = columnGap();
         LayoutUnit gapExtra = (columnCount - 1) * colGap;
         if (auto columnWidthLength = style().columnWidth().tryLength()) {
-            columnWidth = Style::evaluate(*columnWidthLength);
+            columnWidth = Style::evaluate(*columnWidthLength, 1.0f /* FIXME ZOOM EFFECTED? */);
             minLogicalWidth = std::min(minLogicalWidth, columnWidth);
         } else
             minLogicalWidth = minLogicalWidth * columnCount + gapExtra;
@@ -355,7 +355,7 @@ LayoutUnit RenderBlockFlow::columnGap() const
 {
     if (style().columnGap().isNormal())
         return LayoutUnit(style().fontDescription().computedSize()); // "1em" is recommended as the normal gap setting. Matches <p> margins.
-    return Style::evaluate(style().columnGap(), contentBoxLogicalWidth());
+    return Style::evaluate(style().columnGap(), contentBoxLogicalWidth(), 1.0f /* FIXME ZOOM EFFECTED? */);
 }
 
 void RenderBlockFlow::computeColumnCountAndWidth()
@@ -373,7 +373,7 @@ void RenderBlockFlow::computeColumnCountAndWidth()
 
     LayoutUnit availWidth = desiredColumnWidth;
     LayoutUnit colGap = columnGap();
-    LayoutUnit colWidth = std::max(1_lu, LayoutUnit(Style::evaluate(style().columnWidth().tryLength().value_or(0_css_px))));
+    LayoutUnit colWidth = std::max(1_lu, LayoutUnit(Style::evaluate(style().columnWidth().tryLength().value_or(0_css_px), 1.0f /* FIXME ZOOM EFFECTED? */)));
     unsigned colCount = std::max<unsigned>(1, style().columnCount().tryValue().value_or(1).value);
 
     if (style().columnWidth().isAuto() && !style().columnCount().isAuto()) {
@@ -4574,7 +4574,7 @@ static inline std::optional<LayoutUnit> textIndentForBlockContainer(const Render
         if (auto containingBlockFixedLogicalWidth = containingBlock->style().logicalWidth().tryFixed()) {
             // At this point of the shrink-to-fit computation, we don't have a used value for the containing block width
             // (that's exactly to what we try to contribute here) unless the computed value is fixed.
-            indentValue = Style::evaluate(style.textIndent().length, containingBlockFixedLogicalWidth->value);
+            indentValue = Style::evaluate(style.textIndent().length, containingBlockFixedLogicalWidth->value, 1.0f /* FIXME ZOOM EFFECTED? */);
         }
     }
     return indentValue ? std::make_optional(indentValue) : std::nullopt;

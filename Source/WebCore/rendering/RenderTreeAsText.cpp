@@ -275,7 +275,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                 ts << " [textStrokeColor="_s << serializationForRenderTreeAsText(textStrokeColor) << ']';
 
             if (renderElement->parent()->style().textStrokeWidth() != renderElement->style().textStrokeWidth() && renderElement->style().textStrokeWidth().isPositive())
-                ts << " [textStrokeWidth="_s << Style::evaluate(renderElement->style().textStrokeWidth()) << ']';
+                ts << " [textStrokeWidth="_s << Style::evaluate(renderElement->style().textStrokeWidth(), 1.0f /* FIXME FIND ZOOM */) << ']';
         }
 
         auto* box = dynamicDowncast<RenderBoxModelObject>(o);

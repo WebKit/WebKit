@@ -349,7 +349,9 @@ LayoutPoint RenderInline::firstInlineBoxTopLeft() const
 
 static LayoutUnit computeMargin(const RenderInline* renderer, const Style::MarginEdge& margin)
 {
-    return Style::evaluateMinimum(margin, [&] ALWAYS_INLINE_LAMBDA { return std::max<LayoutUnit>(0, renderer->containingBlock()->contentBoxLogicalWidth()); });
+    return Style::evaluateMinimum(margin, [&] ALWAYS_INLINE_LAMBDA {
+        return std::max<LayoutUnit>(0, renderer->containingBlock()->contentBoxLogicalWidth());
+    }, 1.0f /* FIXME FIND ZOOM */);
 }
 
 LayoutUnit RenderInline::marginLeft() const

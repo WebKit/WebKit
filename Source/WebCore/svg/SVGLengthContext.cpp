@@ -124,7 +124,7 @@ template<typename SizeType> float SVGLengthContext::valueForSizeType(const SizeT
         },
         [&](const typename SizeType::Calc& calc) -> float {
             auto viewportSize = this->viewportSize().value_or(FloatSize { });
-            return Style::evaluate(calc, dimensionForLengthMode(lengthMode, viewportSize));
+            return Style::evaluate(calc, dimensionForLengthMode(lengthMode, viewportSize), 1.0f /* FIXME FIND ZOOM */);
         },
         [&](const auto&) -> float {
             return 0;

@@ -37,22 +37,22 @@ struct Length;
 struct LengthSize;
 struct LengthPoint;
 
-int intValueForLength(const Length&, LayoutUnit maximumValue);
-WEBCORE_EXPORT float floatValueForLength(const Length&, float maximumValue);
-WEBCORE_EXPORT LayoutUnit valueForLength(const Length&, LayoutUnit maximumValue);
+int intValueForLength(const Length&, LayoutUnit maximumValue, float zoom);
+WEBCORE_EXPORT float floatValueForLength(const Length&, float maximumValue, float zoom);
+WEBCORE_EXPORT LayoutUnit valueForLength(const Length&, LayoutUnit maximumValue, float zoom);
 
-LayoutSize sizeForLengthSize(const LengthSize&, const LayoutSize& maximumValue);
-FloatSize floatSizeForLengthSize(const LengthSize&, const FloatSize& maximumValue);
+LayoutSize sizeForLengthSize(const LengthSize&, const LayoutSize& maximumValue, float zoom);
+FloatSize floatSizeForLengthSize(const LengthSize&, const FloatSize& maximumValue, float zoom);
 
-LayoutPoint pointForLengthPoint(const LengthPoint&, const LayoutSize& maximumValue);
-FloatPoint floatPointForLengthPoint(const LengthPoint&, const FloatSize& maximumValue);
+LayoutPoint pointForLengthPoint(const LengthPoint&, const LayoutSize& maximumValue, float zoom);
+FloatPoint floatPointForLengthPoint(const LengthPoint&, const FloatSize& maximumValue, float zoom);
 
 template<typename ReturnType, typename MaximumType>
-ReturnType minimumValueForLengthWithLazyMaximum(const Length& length, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor)
+ReturnType minimumValueForLengthWithLazyMaximum(const Length& length, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor, float zoom)
 {
     switch (length.type()) {
     case LengthType::Fixed:
-        return ReturnType(length.value());
+        return ReturnType(length.value() * zoom);
     case LengthType::Percent:
         return ReturnType(static_cast<float>(lazyMaximumValueFunctor() * length.percent() / 100.0f));
     case LengthType::Calculated:
@@ -76,11 +76,11 @@ ReturnType minimumValueForLengthWithLazyMaximum(const Length& length, NOESCAPE c
 }
 
 template<typename ReturnType, typename MaximumType>
-ReturnType valueForLengthWithLazyMaximum(const Length& length, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor)
+ReturnType valueForLengthWithLazyMaximum(const Length& length, NOESCAPE const Invocable<MaximumType()> auto& lazyMaximumValueFunctor, float zoom)
 {
     switch (length.type()) {
     case LengthType::Fixed:
-        return ReturnType(length.value());
+        return ReturnType(length.value() * zoom);
     case LengthType::Percent:
         return ReturnType(static_cast<float>(lazyMaximumValueFunctor() * length.percent() / 100.0f));
     case LengthType::Calculated:
@@ -103,34 +103,38 @@ ReturnType valueForLengthWithLazyMaximum(const Length& length, NOESCAPE const In
     return ReturnType(0);
 }
 
-inline float floatValueForLengthWithLazyLayoutUnitMaximum(const Length& length, NOESCAPE const Invocable<LayoutUnit()> auto& lazyMaximumValueFunctor)
+inline float floatValueForLengthWithLazyLayoutUnitMaximum(const Length& length, NOESCAPE const Invocable<LayoutUnit()> auto& lazyMaximumValueFunctor, float zoom)
 {
-    return valueForLengthWithLazyMaximum<float, LayoutUnit>(length, lazyMaximumValueFunctor);
+    return valueForLengthWithLazyMaximum<float, LayoutUnit>(length, lazyMaximumValueFunctor, zoom);
 }
 
-inline float floatValueForLengthWithLazyFloatMaximum(const Length& length, NOESCAPE const Invocable<float()> auto& lazyMaximumValueFunctor)
+inline float floatValueForLengthWithLazyFloatMaximum(const Length& length, NOESCAPE const Invocable<float()> auto& lazyMaximumValueFunctor, float zoom)
 {
-    return valueForLengthWithLazyMaximum<float, float>(length, lazyMaximumValueFunctor);
+    return valueForLengthWithLazyMaximum<float, float>(length, lazyMaximumValueFunctor, zoom);
 }
 
-inline LayoutUnit minimumValueForLength(const Length& length, LayoutUnit maximumValue)
+inline LayoutUnit minimumValueForLength(const Length& length, LayoutUnit maximumValue, float zoom)
 {
-    return minimumValueForLengthWithLazyMaximum<LayoutUnit, LayoutUnit>(length, [&] ALWAYS_INLINE_LAMBDA { return maximumValue; });
+    return minimumValueForLengthWithLazyMaximum<LayoutUnit, LayoutUnit>(length, [&] ALWAYS_INLINE_LAMBDA {
+        return maximumValue;
+    }, zoom);
 }
 
-inline int minimumIntValueForLength(const Length& length, LayoutUnit maximumValue)
+inline int minimumIntValueForLength(const Length& length, LayoutUnit maximumValue, float zoom)
 {
-    return minimumValueForLengthWithLazyMaximum<int, LayoutUnit>(length, [&] ALWAYS_INLINE_LAMBDA { return maximumValue; });
+    return minimumValueForLengthWithLazyMaximum<int, LayoutUnit>(length, [&] ALWAYS_INLINE_LAMBDA {
+        return maximumValue;
+    }, zoom);
 }
 
-inline LayoutUnit valueForLength(const Length& length, auto maximumValue)
+inline LayoutUnit valueForLength(const Length& length, auto maximumValue, float zoom)
 {
-    return valueForLength(length, LayoutUnit(maximumValue));
+    return valueForLength(length, LayoutUnit(maximumValue), zoom);
 }
 
-inline LayoutUnit minimumValueForLength(const Length& length, auto maximumValue)
+inline LayoutUnit minimumValueForLength(const Length& length, auto maximumValue, float zoom)
 {
-    return minimumValueForLength(length, LayoutUnit(maximumValue));
+    return minimumValueForLength(length, LayoutUnit(maximumValue), zoom);
 }
 
 } // namespace WebCore

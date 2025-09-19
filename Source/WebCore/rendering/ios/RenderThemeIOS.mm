@@ -383,7 +383,7 @@ Style::PaddingBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& sty
     auto padding = emSize->resolveAsLength<float>({ style, nullptr, nullptr, nullptr });
 
     if (style.usedAppearance() == StyleAppearance::MenulistButton) {
-        auto value = toTruncatedPaddingEdge(padding + Style::evaluate(style.borderTopWidth()));
+        auto value = toTruncatedPaddingEdge(padding + Style::evaluate(style.borderTopWidth(), 1.0f /* FIXME FIND ZOOM */));
         if (style.writingMode().isBidiRTL())
             return { 0_css_px, 0_css_px, 0_css_px, value };
         return { 0_css_px, value, 0_css_px, 0_css_px };
@@ -610,9 +610,9 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
     FloatPoint glyphOrigin;
     glyphOrigin.setY(logicalRect.center().y() - glyphSize.height() / 2.0f);
     if (!style.writingMode().isInlineFlipped())
-        glyphOrigin.setX(logicalRect.maxX() - glyphSize.width() - Style::evaluate(box.style().borderEndWidth()) - Style::evaluate(box.style().paddingEnd(), logicalRect.width()));
+        glyphOrigin.setX(logicalRect.maxX() - glyphSize.width() - Style::evaluate(box.style().borderEndWidth(), 1.0f /* FIXME FIND ZOOM */) - Style::evaluate(box.style().paddingEnd(), logicalRect.width(), 1.0f/* FIXME FIND ZOOM */));
     else
-        glyphOrigin.setX(logicalRect.x() + Style::evaluate(box.style().borderEndWidth()) + Style::evaluate(box.style().paddingEnd(), logicalRect.width()));
+        glyphOrigin.setX(logicalRect.x() + Style::evaluate(box.style().borderEndWidth(), 1.0f /* FIXME FIND ZOOM */) + Style::evaluate(box.style().paddingEnd(), logicalRect.width(), 1.0f /* FIXME FIND ZOOM */));
 
     if (!isHorizontalWritingMode)
         glyphOrigin = glyphOrigin.transposedPoint();
@@ -1744,10 +1744,10 @@ bool RenderThemeIOS::paintListButton(const RenderObject& box, const PaintInfo& p
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
-    float paddingTop = Style::evaluate(style.paddingTop(), rect.height());
-    float paddingRight = Style::evaluate(style.paddingRight(), rect.width());
-    float paddingBottom = Style::evaluate(style.paddingBottom(), rect.height());
-    float paddingLeft = Style::evaluate(style.paddingLeft(), rect.width());
+    float paddingTop = Style::evaluate(style.paddingTop(), rect.height(), 1.0f /* FIXME FIND ZOOM */);
+    float paddingRight = Style::evaluate(style.paddingRight(), rect.width(), 1.0f /* FIXME FIND ZOOM */);
+    float paddingBottom = Style::evaluate(style.paddingBottom(), rect.height(), 1.0f /* FIXME FIND ZOOM */);
+    float paddingLeft = Style::evaluate(style.paddingLeft(), rect.width(), 1.0f /* FIXME FIND ZOOM */);
 
     FloatRect indicatorRect = rect;
     indicatorRect.move(paddingLeft, paddingTop);

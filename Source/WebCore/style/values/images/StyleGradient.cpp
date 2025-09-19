@@ -644,7 +644,7 @@ template<typename GradientAdapter, typename StyleGradient> GradientColorStops co
 
 static inline float positionFromValue(LengthWrapperBaseDerived auto const& coordinate, float widthOrHeight)
 {
-    return evaluate(coordinate, widthOrHeight);
+    return evaluate(coordinate, widthOrHeight, 1.0f /* FIXME ZOOM EFFECTED? */);
 }
 
 static inline float positionFromValue(const NumberOrPercentage<>& coordinate, float widthOrHeight)
@@ -722,7 +722,7 @@ static std::pair<FloatPoint, FloatPoint> endPointsFromAngleForPrefixedVariants(f
 
 static float resolveRadius(const LengthPercentage<CSS::Nonnegative>& radius, float widthOrHeight)
 {
-    return evaluate(radius, widthOrHeight);
+    return evaluate(radius, widthOrHeight, 1.0f /* FIXME ZOOM EFFECTED? */);
 }
 
 struct DistanceToCorner {

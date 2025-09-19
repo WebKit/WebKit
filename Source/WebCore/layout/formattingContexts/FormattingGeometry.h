@@ -129,7 +129,7 @@ std::optional<LayoutUnit> FormattingGeometry::computedValue(const auto& geometry
 {
     // In general, the computed value resolves the specified value as far as possible without laying out the content.
     if (geometryProperty.isSpecified())
-        return Style::evaluate(geometryProperty, containingBlockWidth);
+        return Style::evaluate(geometryProperty, containingBlockWidth, 1.0f /* FIXME FIND ZOOM */);
     return { };
 }
 

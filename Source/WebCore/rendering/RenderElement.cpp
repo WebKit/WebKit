@@ -1510,12 +1510,12 @@ bool RenderElement::repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderL
                 auto borderBoxWidth = renderBox->width();
                 return std::max({
                     renderBox->borderRight(),
-                    Style::evaluate(style.borderTopRightRadius().width(), borderBoxWidth),
-                    Style::evaluate(style.borderBottomRightRadius().width(), borderBoxWidth),
+                    Style::evaluate(style.borderTopRightRadius().width(), borderBoxWidth, 1.0f /* FIXME ZOOM EFFECTED? */),
+                    Style::evaluate(style.borderBottomRightRadius().width(), borderBoxWidth, 1.0f /* FIXME ZOOM EFFECTED? */),
                 });
             };
             auto outlineRightInsetExtent = [&]() -> LayoutUnit {
-                auto offset = LayoutUnit { Style::evaluate(outlineStyle.outlineOffset()) };
+                auto offset = LayoutUnit { Style::evaluate(outlineStyle.outlineOffset(), 1.0f /* FIXME ZOOM EFFECTED? */) };
                 return offset < 0 ? -offset : 0_lu;
             };
             auto boxShadowRightInsetExtent = [&] {
@@ -1554,12 +1554,12 @@ bool RenderElement::repaintAfterLayoutIfNeeded(SingleThreadWeakPtr<const RenderL
                 auto borderBoxHeight = renderBox->height();
                 return std::max({
                     renderBox->borderBottom(),
-                    Style::evaluate(style.borderBottomLeftRadius().height(), borderBoxHeight),
-                    Style::evaluate(style.borderBottomRightRadius().height(), borderBoxHeight),
+                    Style::evaluate(style.borderBottomLeftRadius().height(), borderBoxHeight, 1.0f /* FIXME ZOOM EFFECTED? */),
+                    Style::evaluate(style.borderBottomRightRadius().height(), borderBoxHeight, 1.0f /* FIXME ZOOM EFFECTED? */),
                 });
             };
             auto outlineBottomInsetExtent = [&]() -> LayoutUnit {
-                auto offset = LayoutUnit { Style::evaluate(outlineStyle.outlineOffset()) };
+                auto offset = LayoutUnit { Style::evaluate(outlineStyle.outlineOffset(), 1.0f /* FIXME FIND ZOOM */) };
                 return offset < 0 ? -offset : 0_lu;
             };
             auto boxShadowBottomInsetExtent = [&]() -> LayoutUnit {
@@ -2120,22 +2120,22 @@ static bool useShrinkWrappedFocusRingForOutlineStyleAuto()
 
 static void drawFocusRing(GraphicsContext& context, const Path& path, const RenderStyle& style, const Color& color)
 {
-    context.drawFocusRing(path, Style::evaluate(style.outlineWidth()), color);
+    context.drawFocusRing(path, Style::evaluate(style.outlineWidth(), 1.0f /* FIXME FIND ZOOM */), color);
 }
 
 static void drawFocusRing(GraphicsContext& context, Vector<FloatRect> rects, const RenderStyle& style, const Color& color)
 {
 #if PLATFORM(MAC)
-    context.drawFocusRing(rects, 0, Style::evaluate(style.outlineWidth()), color);
+    context.drawFocusRing(rects, 0, Style::evaluate(style.outlineWidth(), 1.0f /* FIXME FIND ZOOM */), color);
 #else
-    context.drawFocusRing(rects, Style::evaluate(style.outlineOffset()), Style::evaluate(style.outlineWidth()), color);
+    context.drawFocusRing(rects, Style::evaluate(style.outlineOffset(), 1.0f /* FIXME FIND ZOOM */), Style::evaluate(style.outlineWidth(), 1.0f /* FIXME FIND ZOOM */), color);
 #endif
 }
 
 void RenderElement::paintFocusRing(const PaintInfo& paintInfo, const RenderStyle& style, const Vector<LayoutRect>& focusRingRects) const
 {
     ASSERT(style.outlineStyle() == OutlineStyle::Auto);
-    float outlineOffset = Style::evaluate(style.outlineOffset());
+    float outlineOffset = Style::evaluate(style.outlineOffset(), 1.0f /* FIXME FIND ZOOM */);
     Vector<FloatRect> pixelSnappedFocusRingRects;
     float deviceScaleFactor = document().deviceScaleFactor();
     for (auto rect : focusRingRects) {

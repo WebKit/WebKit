@@ -51,7 +51,7 @@ BorderEdges borderEdges(const RenderStyle& style, float deviceScaleFactor, RectE
 {
     auto constructBorderEdge = [&](Style::LineWidth width, float inflation, CSSPropertyID borderColorProperty, BorderStyle borderStyle, bool isTransparent, bool isPresent) {
         auto color = setColorsToBlack ? Color::black : style.visitedDependentColorWithColorFilter(borderColorProperty);
-        auto evaluatedWidth = Style::evaluate(width);
+        auto evaluatedWidth = Style::evaluate(width, 1.0f /* FIXME FIND ZOOM */);
         auto inflatedWidth = evaluatedWidth ? evaluatedWidth + inflation : evaluatedWidth;
         return BorderEdge(inflatedWidth, color, borderStyle, !setColorsToBlack && isTransparent, isPresent, deviceScaleFactor);
     };
@@ -68,7 +68,7 @@ BorderEdges borderEdgesForOutline(const RenderStyle& style, BorderStyle borderSt
 {
     auto color = style.visitedDependentColorWithColorFilter(CSSPropertyOutlineColor);
     auto isTransparent = color.isValid() && !color.isVisible();
-    auto size = Style::evaluate(style.outlineWidth());
+    auto size = Style::evaluate(style.outlineWidth(), 1.0f /* FIXME FIND ZOOM */);
     return {
         BorderEdge { size, color, borderStyle, isTransparent, true, deviceScaleFactor },
         BorderEdge { size, color, borderStyle, isTransparent, true, deviceScaleFactor },

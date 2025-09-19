@@ -506,7 +506,7 @@ Path PathUtilities::pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>
     float outlineOffset, WritingMode writingMode, float deviceScaleFactor)
 {
     auto roundedRect = [radii, outlineOffset, deviceScaleFactor](const FloatRect& rect) {
-        auto adjustedRadii = adjustedRadiiForHuggingCurve(Style::evaluate(radii, rect.size()), outlineOffset);
+        auto adjustedRadii = adjustedRadiiForHuggingCurve(Style::evaluate(radii, rect.size(), 1.0f /* FIXME FIND ZOOM */), outlineOffset);
         adjustedRadii.scale(calcBorderRadiiConstraintScaleFor(rect, adjustedRadii));
 
         LayoutRoundedRect roundedRect(
@@ -543,8 +543,8 @@ Path PathUtilities::pathWithShrinkWrappedRectsForOutline(const Vector<FloatRect>
     auto firstLineRect = isLeftToRight ? rects.at(0) : rects.at(rects.size() - 1);
     auto lastLineRect = isLeftToRight ? rects.at(rects.size() - 1) : rects.at(0);
     // Adjust radius so that it matches the box border.
-    auto firstLineRadii = Style::evaluate(radii, firstLineRect.size());
-    auto lastLineRadii = Style::evaluate(radii, lastLineRect.size());
+    auto firstLineRadii = Style::evaluate(radii, firstLineRect.size(), 1.0f /* FIXME FIND ZOOM */);
+    auto lastLineRadii = Style::evaluate(radii, lastLineRect.size(), 1.0f /* FIXME FIND ZOOM */);
     firstLineRadii.scale(calcBorderRadiiConstraintScaleFor(firstLineRect, firstLineRadii));
     lastLineRadii.scale(calcBorderRadiiConstraintScaleFor(lastLineRect, lastLineRadii));
 
