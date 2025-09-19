@@ -688,7 +688,11 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
 
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
-    NSRect exitPlaceholderScreenRect = _initialFrame;
+
+    NSRect webViewFrameInWindow = [_webView convertRect:[_webView bounds] toView:nil];
+    NSRect currentWebViewScreenRect = convertRectToScreen([_webView window], webViewFrameInWindow);
+
+    NSRect exitPlaceholderScreenRect = currentWebViewScreenRect;
     exitPlaceholderScreenRect.origin.y = NSMaxY(WebCore::safeScreenFrame([[NSScreen screens] objectAtIndex:0])) - NSMaxY(exitPlaceholderScreenRect);
 
     RetainPtr<CGImageRef> webViewContents = takeWindowSnapshot([[_webView window] windowNumber], true);
@@ -1051,10 +1055,13 @@ static RetainPtr<CAAnimation> fadeAnimation(CFTimeInterval duration, AnimationDi
         _fullScreenState = ExitingFullScreen;
     }
 
-    [[_clipView layer] addAnimation:zoomAnimation(_initialFrame, _finalFrame, self.window.screen.frame, duration, 1, AnimateOut).get() forKey:@"fullscreen"];
+    NSRect currentWebViewFrame = convertRectToScreen([_webView window], [_webView convertRect:[_webView frame] toView:nil]);
+    currentWebViewFrame.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(currentWebViewFrame);
+
+    [[_clipView layer] addAnimation:zoomAnimation(currentWebViewFrame, _finalFrame, self.window.screen.frame, duration, 1, AnimateOut).get() forKey:@"fullscreen"];
     RetainPtr contentView = [[self window] contentView];
     RetainPtr maskLayer = createMask(contentView.get().bounds);
-    [maskLayer addAnimation:maskAnimation(_initialFrame, _finalFrame, self.window.screen.frame, duration, 1, AnimateOut).get() forKey:@"fullscreen"];
+    [maskLayer addAnimation:maskAnimation(currentWebViewFrame, _finalFrame, self.window.screen.frame, duration, 1, AnimateOut).get() forKey:@"fullscreen"];
     [_clipView layer].mask = maskLayer.get();
 
     contentView.get().hidden = NO;
