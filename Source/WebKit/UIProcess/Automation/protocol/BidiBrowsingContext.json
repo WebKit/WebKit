@@ -67,6 +67,63 @@
             "enum": [ "alert", "beforeunload", "confirm", "prompt" ]
         },
         {
+            "id": "ScreenshotOrigin",
+            "description": "Represents the origin coordinate system for screenshots.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextscreenshotorigin",
+            "type": "string",
+            "enum": ["viewport", "document"]
+        },
+        {
+            "id": "ImageFormatType",
+            "description": "Represents the supported image format types for screenshots.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextimageformattype",
+            "type": "string",
+            "enum": ["png", "jpeg", "webp"]
+        },
+        {
+            "id": "ImageFormat",
+            "description": "Represents the image format for screenshots.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextimageformat",
+            "type": "object",
+            "properties": [
+                { "name": "type", "$ref": "BidiBrowsingContext.ImageFormatType", "description": "The image format type." },
+                { "name": "quality", "type": "number", "optional": true, "description": "The image quality from 0.0 to 1.0 (only applicable for lossy formats)." }
+            ]
+        },
+        {
+            "id": "ClipRectangle",
+            "description": "Represents a clipping rectangle for screenshots.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextcliprectangle",
+            "type": "object",
+            "oneOf": [
+                { "$ref": "BidiBrowsingContext.BoxClipRectangle" },
+                { "$ref": "BidiBrowsingContext.ElementClipRectangle" }
+            ]
+        },
+        {
+            "id": "BoxClipRectangle",
+            "description": "Represents a box-based clipping rectangle.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextboxcliprectangle",
+            "type": "object",
+            "properties": [
+                { "name": "type", "type": "string", "enum": ["box"] },
+                { "name": "x", "type": "number", "description": "The x coordinate of the rectangle." },
+                { "name": "y", "type": "number", "description": "The y coordinate of the rectangle." },
+                { "name": "width", "type": "number", "description": "The width of the rectangle." },
+                { "name": "height", "type": "number", "description": "The height of the rectangle." }
+            ]
+        },
+        {
+            "id": "ElementClipRectangle",
+            "description": "Represents an element-based clipping rectangle.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#cddl-type-browsingcontextelementcliprectangle",
+            "type": "object",
+            "properties": [
+                { "name": "type", "type": "string", "enum": ["element"] },
+                { "name": "element", "$ref": "BidiScript.SharedReference", "description": "The element to clip to." }
+            ]
+        },
+        {
             "id": "Viewport",
             "description": "Represents viewport dimensions.",
             "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-setViewport",
@@ -97,6 +154,22 @@
             "parameters": [
                 { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context to close.  It is an error to pass a non-top level traversable." },
                 { "name": "promptUnload", "type": "boolean", "optional": true, "description": "Whether to permit prompting the user from beforeunload event." }
+            ]
+        },
+        {
+            "name": "captureScreenshot",
+            "description": "Captures an image of the given navigable, and returns it as a Base64-encoded string.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#command-browsingContext-captureScreenshot",
+            "wpt": "https://github.com/web-platform-tests/wpt/tree/master/webdriver/tests/bidi/browsing_context/capture_screenshot",
+            "async": true,
+            "parameters": [
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "description": "The identifier of the browsing context to capture." },
+                { "name": "origin", "$ref": "BidiBrowsingContext.ScreenshotOrigin", "optional": true, "description": "The origin of the screenshot (default is 'viewport')." },
+                { "name": "format", "$ref": "BidiBrowsingContext.ImageFormat", "optional": true, "description": "The image format specification." },
+                { "name": "clip", "$ref": "BidiBrowsingContext.ClipRectangle", "optional": true, "description": "The clipping rectangle." }
+            ],
+            "returns": [
+                { "name": "data", "type": "string", "description": "The Base64-encoded screenshot data." }
             ]
         },
         {

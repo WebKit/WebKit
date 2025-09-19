@@ -153,6 +153,16 @@
             ]
         },
         {
+            "id": "SharedReference",
+            "description": "Represents a shared reference to a remote value that can be serialized.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-SharedReference",
+            "type": "object",
+            "properties": [
+                { "name": "handle", "$ref": "BidiScript.Handle", "optional": true, "description": "Represents a handle to a remote object." },
+                { "name": "internalId", "$ref": "BidiScript.InternalId", "optional": true, "description": "Represents an internal identifier for a remote value." }
+            ]
+        },
+        {
             "id": "StackFrame",
             "description": "Represents a single call frame within a <code>BidiScript.StackTrace</code>.",
             "spec": "https://w3c.github.io/webdriver-bidi/#type-script-StackFrame",

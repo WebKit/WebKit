@@ -386,6 +386,7 @@ private:
     // Get base64-encoded PNG data from a bitmap.
     static std::optional<String> platformGetBase64EncodedPNGData(WebCore::ShareableBitmap::Handle&&);
     static std::optional<String> platformGetBase64EncodedPNGData(const ViewSnapshot&);
+    static std::optional<String> platformGetBase64EncodedPNGData(const ViewSnapshot&, const WebCore::IntRect& cropRect);
 
     // Save base64-encoded file contents to a local file path and return the path.
     // This reuses the basename of the remote file path so that the filename exposed to DOM API remains the same.
