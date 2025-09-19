@@ -1,0 +1,4 @@
+
+PASS SVG <a> fires navigate and populates downloadRequest with ''
+PASS SVG <a> fires navigate and populates downloadRequest with 'filename'
+

@@ -1029,6 +1029,7 @@ http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party.
 loader/navigation-policy [ Skip ]
 
 # <a download> is not supported in WK1 yet.
+webkit.org/b/156069 imported/w3c/web-platform-tests/svg/linking/scripted/a-download-click.svg [ Failure ]
 webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Failure ]
 webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download.html [ Failure ]
 webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download-synthetic-click.html [ Skip ]

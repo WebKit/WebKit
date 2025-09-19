@@ -34,6 +34,7 @@
 #include "LegacyRenderSVGTransformableContainer.h"
 #include "LocalFrame.h"
 #include "MouseEvent.h"
+#include "OriginAccessPatterns.h"
 #include "PlatformMouseEvent.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGInline.h"
@@ -45,6 +46,7 @@
 #include "SVGNames.h"
 #include "SVGSMILElement.h"
 #include "XLinkNames.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -143,8 +145,24 @@ void SVGAElement::defaultEventHandler(Event& event)
                 target = blankTargetFrameName();
             event.setDefaultHandled();
 
-            if (RefPtr frame = document().frame())
-                frame->loader().changeLocation(protectedDocument()->completeURL(url), target, &event, ReferrerPolicy::EmptyString, document().shouldOpenExternalURLsPolicyToPropagate());
+            Ref document = this->document();
+            RefPtr frame { document->frame() };
+            if (!frame)
+                return;
+
+            URL completedURL = document->completeURL(url);
+
+            AtomString downloadAttribute;
+            if (document->settings().downloadAttributeEnabled()) {
+                // Ignore the download attribute completely if the href URL is cross origin.
+                bool isSameOrigin = completedURL.protocolIsData() || document->protectedSecurityOrigin()->canRequest(completedURL, OriginAccessPatternsForWebProcess::singleton());
+                if (isSameOrigin)
+                    downloadAttribute = AtomString { ResourceResponse::sanitizeSuggestedFilename(attributeWithoutSynchronization(SVGNames::downloadAttr)) };
+                else if (hasAttributeWithoutSynchronization(SVGNames::downloadAttr))
+                    document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "The download attribute on anchor was ignored because its href URL has a different security origin."_s);
+            }
+
+            frame->loader().changeLocation(completedURL, target, &event, ReferrerPolicy::EmptyString, document->shouldOpenExternalURLsPolicyToPropagate(), std::nullopt, downloadAttribute, std::nullopt, NavigationHistoryBehavior::Push, this);
             return;
         }
     }
