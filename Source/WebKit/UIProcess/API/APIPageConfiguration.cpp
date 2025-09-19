@@ -154,6 +154,11 @@ void PageConfiguration::setInitialSandboxFlags(WebCore::SandboxFlags sandboxFlag
     m_data.initialSandboxFlags = sandboxFlags;
 }
 
+void PageConfiguration::setInitialReferrerPolicy(WebCore::ReferrerPolicy referrerPolicy)
+{
+    m_data.initialReferrerPolicy = referrerPolicy;
+}
+
 WebProcessPool& PageConfiguration::processPool() const
 {
     return m_data.processPool.get();

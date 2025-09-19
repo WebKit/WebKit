@@ -1464,7 +1464,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
             CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&, WebCore::FrameLoader&)> { [] (auto&, auto& frameLoader) {
                 return makeUniqueRefWithoutRefCountedCheck<WebFrameLoaderClient>(frameLoader);
             } },
-            WebCore::SandboxFlags { } // Set by updateSandboxFlags after instantiation.
+            WebCore::SandboxFlags { }, // Set by updateSandboxFlags after instantiation.
+            WebCore::ReferrerPolicy::EmptyString
         },
         WebCore::generateFrameIdentifier(),
         nullptr, // Opener may be set by setOpenerForWebKitLegacy after instantiation.
@@ -1723,7 +1724,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
             CompletionHandler<UniqueRef<WebCore::LocalFrameLoaderClient>(WebCore::LocalFrame&, WebCore::FrameLoader&)> { [] (auto&, auto& frameLoader) {
                 return makeUniqueRefWithoutRefCountedCheck<WebFrameLoaderClient>(frameLoader);
             } },
-            WebCore::SandboxFlags { } // Set by updateSandboxFlags after instantiation.
+            WebCore::SandboxFlags { }, // Set by updateSandboxFlags after instantiation.
+            WebCore::ReferrerPolicy::EmptyString
         },
         WebCore::generateFrameIdentifier(),
         nullptr, // Opener may be set by setOpenerForWebKitLegacy after instantiation.

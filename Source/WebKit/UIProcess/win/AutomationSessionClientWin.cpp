@@ -91,6 +91,7 @@ void AutomationSessionClient::requestNewPageWithOptions(WebKit::WebAutomationSes
                 WebCore::LockBackForwardList::No, /* lockBackForwardList */
                 { }, /* clientRedirectSourceForHistory */
                 { }, /* effectiveSandboxFlags */
+                WebCore::ReferrerPolicy::EmptyString, /* effectiveReferrerPolicy */
                 std::nullopt, /* ownerPermissionsPolicy */
                 std::nullopt, /* privateClickMeasurement */
                 { }, /* advancedPrivacyProtections */

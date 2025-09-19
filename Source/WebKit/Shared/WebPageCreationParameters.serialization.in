@@ -251,6 +251,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     String openedMainFrameName;
     std::optional<WebCore::FrameIdentifier> mainFrameOpenerIdentifier;
     WebCore::SandboxFlags initialSandboxFlags;
+    WebCore::ReferrerPolicy initialReferrerPolicy;
     std::optional<WebCore::WindowFeatures> windowFeatures;
     bool statusBarIsVisible;
     bool menuBarIsVisible;

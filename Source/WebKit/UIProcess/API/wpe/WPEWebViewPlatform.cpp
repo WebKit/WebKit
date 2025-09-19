@@ -137,7 +137,7 @@ ViewPlatform::ViewPlatform(WPEDisplay* display, const API::PageConfiguration& co
     m_backingStore = AcceleratedBackingStore::create(*m_pageProxy, m_wpeView.get());
 
     auto& pageConfiguration = m_pageProxy->configuration();
-    m_pageProxy->initializeWebPage(pageConfiguration.openedSite(), pageConfiguration.initialSandboxFlags());
+    m_pageProxy->initializeWebPage(pageConfiguration.openedSite(), pageConfiguration.initialSandboxFlags(), pageConfiguration.initialReferrerPolicy());
 
     WebCore::SystemSettings::singleton().addObserver([this](const auto& state) {
         if (state.darkMode)

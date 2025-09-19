@@ -27,6 +27,7 @@
 
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/NavigationIdentifier.h>
+#include <WebCore/ReferrerPolicy.h>
 #include <WebCore/SandboxFlags.h>
 
 namespace WebCore {

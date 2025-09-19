@@ -329,6 +329,8 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         if (!effectiveSandboxFlags.contains(WebCore::SandboxFlag::PropagatesToAuxiliaryBrowsingContexts))
             effectiveSandboxFlags = { };
         newPage->mainFrame().updateSandboxFlags(effectiveSandboxFlags, WebCore::Frame::NotifyUIProcess::No);
+        auto effectiveReferrerPolicy = frame.document()->referrerPolicy();
+        newPage->mainFrame().updateReferrerPolicy(effectiveReferrerPolicy);
         newPage->chrome().show();
         newPage->mainFrame().tree().setSpecifiedName(AtomString(openedMainFrameName));
     }

@@ -163,6 +163,7 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
         navigationAction.lockBackForwardList(),
         clientRedirectSourceForHistory,
         sandboxFlags,
+        ReferrerPolicy::EmptyString,
         WTFMove(ownerPermissionsPolicy),
         navigationAction.privateClickMeasurement(),
         requestingFrame ? requestingFrame->advancedPrivacyProtections() : OptionSet<AdvancedPrivacyProtections> { },
@@ -232,6 +233,12 @@ void WebFrameLoaderClient::updateSandboxFlags(SandboxFlags sandboxFlags)
 {
     if (RefPtr webPage = m_frame->page())
         webPage->send(Messages::WebPageProxy::UpdateSandboxFlags(m_frame->frameID(), sandboxFlags));
+}
+
+void WebFrameLoaderClient::updateReferrerPolicy(ReferrerPolicy referrerPolicy)
+{
+    if (RefPtr webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::UpdateReferrerPolicy(m_frame->frameID(), referrerPolicy));
 }
 
 void WebFrameLoaderClient::updateOpener(const WebCore::Frame& newOpener)

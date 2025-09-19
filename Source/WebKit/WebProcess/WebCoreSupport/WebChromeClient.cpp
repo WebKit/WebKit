@@ -384,6 +384,7 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
         WebCore::LockBackForwardList::No,
         { }, /* clientRedirectSourceForHistory */
         frame.effectiveSandboxFlags(),
+        frame.document()->referrerPolicy(),
         std::nullopt, /* ownerPermissionsPolicy */
         navigationAction.privateClickMeasurement(),
         { }, /* advancedPrivacyProtections */

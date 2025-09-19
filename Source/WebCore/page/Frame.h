@@ -29,6 +29,7 @@
 #include <WebCore/FrameTree.h>
 #include <WebCore/FrameTreeSyncData.h>
 #include <WebCore/PageIdentifier.h>
+#include <WebCore/ReferrerPolicy.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -129,6 +130,7 @@ public:
     virtual AutoplayPolicy autoplayPolicy() const = 0;
 
     virtual void updateSandboxFlags(SandboxFlags, NotifyUIProcess);
+    virtual void updateReferrerPolicy(ReferrerPolicy) { }
 
     WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.
 

@@ -28,6 +28,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
+#include <WebCore/ReferrerPolicy.h>
 
 namespace WebCore {
 enum class ScrollbarMode : uint8_t;
@@ -42,6 +43,7 @@ struct ProvisionalFrameCreationParameters {
     std::optional<WebCore::FrameIdentifier> frameIDBeforeProvisionalNavigation;
     std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier;
     WebCore::SandboxFlags effectiveSandboxFlags;
+    WebCore::ReferrerPolicy effectiveReferrerPolicy { WebCore::ReferrerPolicy::EmptyString };
     WebCore::ScrollbarMode scrollingMode;
     std::optional<WebCore::IntSize> initialSize;
 };

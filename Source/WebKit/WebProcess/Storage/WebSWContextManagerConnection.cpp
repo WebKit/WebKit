@@ -182,7 +182,8 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
                 if (serviceWorkerPageIdentifier)
                     client->setServiceWorkerPageIdentifier(*serviceWorkerPageIdentifier);
                 return client;
-            } }, SandboxFlags { }
+            } }, SandboxFlags { },
+            ReferrerPolicy::EmptyString
         };
 
         [[maybe_unused]] auto serviceWorkerIdentifier = contextData.serviceWorkerIdentifier;

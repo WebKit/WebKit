@@ -51,6 +51,7 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<FrameProc
         std::nullopt,
         frame.layerHostingContextIdentifier(),
         frame.effectiveSandboxFlags(),
+        frame.effectiveReferrerPolicy(),
         frame.scrollingMode(),
         frame.remoteFrameSize()
     }), frame.frameID());
