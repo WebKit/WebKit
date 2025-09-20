@@ -28,6 +28,7 @@
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 
 #include <WebCore/FilterOperations.h>
+#include <WebCore/IntRect.h>
 #include <WebCore/Length.h>
 #include <WebCore/LengthPoint.h>
 #include <WebCore/PathOperation.h>
@@ -41,7 +42,6 @@
 
 namespace WebCore {
 
-class IntRect;
 class Path;
 class RenderLayerModelObject;
 class RenderStyle;
@@ -62,10 +62,11 @@ struct AcceleratedEffectValues {
     Style::OffsetRotate offsetRotate { CSS::Keyword::Auto { } };
     FilterOperations filter { };
     FilterOperations backdropFilter { };
+    IntRect boundingBox { };
 
     AcceleratedEffectValues() = default;
     AcceleratedEffectValues(const RenderStyle&, const IntRect&, const RenderLayerModelObject* = nullptr);
-    AcceleratedEffectValues(float opacity, std::optional<TransformOperationData>&& transformOperationData, LengthPoint&& transformOrigin, TransformBox transformBox, TransformOperations&& transform, RefPtr<TransformOperation>&& translate, RefPtr<TransformOperation>&& scale, RefPtr<TransformOperation>&& rotate, RefPtr<PathOperation>&& offsetPath, Length&& offsetDistance, LengthPoint&& offsetPosition, LengthPoint&& offsetAnchor, Style::OffsetRotate&& offsetRotate, FilterOperations&& filter, FilterOperations&& backdropFilter)
+    AcceleratedEffectValues(float opacity, std::optional<TransformOperationData>&& transformOperationData, LengthPoint&& transformOrigin, TransformBox transformBox, TransformOperations&& transform, RefPtr<TransformOperation>&& translate, RefPtr<TransformOperation>&& scale, RefPtr<TransformOperation>&& rotate, RefPtr<PathOperation>&& offsetPath, Length&& offsetDistance, LengthPoint&& offsetPosition, LengthPoint&& offsetAnchor, Style::OffsetRotate&& offsetRotate, FilterOperations&& filter, FilterOperations&& backdropFilter, IntRect boundingBox)
         : opacity(opacity)
         , transformOperationData(WTFMove(transformOperationData))
         , transformOrigin(WTFMove(transformOrigin))
@@ -81,6 +82,7 @@ struct AcceleratedEffectValues {
         , offsetRotate(WTFMove(offsetRotate))
         , filter(WTFMove(filter))
         , backdropFilter(WTFMove(backdropFilter))
+        , boundingBox(boundingBox)
     {
     }
 

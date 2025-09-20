@@ -92,7 +92,8 @@ AcceleratedEffectValues AcceleratedEffectValues::clone() const
         WTFMove(clonedOffsetAnchor),
         WTFMove(clonedOffsetRotate),
         WTFMove(clonedFilter),
-        WTFMove(clonedBackdropFilter)
+        WTFMove(clonedBackdropFilter),
+        boundingBox
     };
 }
 
@@ -115,6 +116,10 @@ template<typename T> static RefPtr<TransformOperation> resolveCalculateValuesFor
 
 AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const IntRect& borderBoxRect, const RenderLayerModelObject* renderer)
 {
+#if ASSERT_ENABLED
+    this->boundingBox = borderBoxRect;
+#endif
+
     opacity = style.opacity().value.value;
 
     auto borderBoxSize = borderBoxRect.size();
@@ -148,6 +153,12 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
 
 TransformationMatrix AcceleratedEffectValues::computedTransformationMatrix(const FloatRect& boundingBox) const
 {
+    auto snappedBoundingBox = IntRect(boundingBox);
+    ASSERT(snappedBoundingBox == this->boundingBox);
+    if (snappedBoundingBox != this->boundingBox) {
+        ALWAYS_LOG_WITH_STREAM(stream << "Bounding box passed to AcceleratedEffectValues::computedTransformationMatrix() [" << snappedBoundingBox << "] does not match bounding box AcceleratedEffectValues was initialized with [" << this->boundingBox << "].");
+    }
+
     // https://www.w3.org/TR/css-transforms-2/#ctm
     // The transformation matrix is computed from the transform, transform-origin, translate, rotate, scale, and offset properties as follows:
     // 1. Start with the identity matrix.

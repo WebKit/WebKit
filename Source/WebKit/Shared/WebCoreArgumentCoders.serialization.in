@@ -6845,6 +6845,7 @@ struct WebCore::AcceleratedEffectValues {
     WebCore::Style::OffsetRotate offsetRotate;
     WebCore::FilterOperations filter;
     WebCore::FilterOperations backdropFilter;
+    WebCore::IntRect boundingBox;
 }
 
 class WebCore::WebAnimationTime {
