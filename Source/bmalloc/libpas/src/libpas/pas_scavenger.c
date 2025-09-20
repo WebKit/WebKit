@@ -70,7 +70,11 @@ double pas_scavenger_period_in_milliseconds = 125.;
 #else
 double pas_scavenger_period_in_milliseconds = 100.;
 #endif
+#if PAS_PLATFORM(MAC)
 uint64_t pas_scavenger_max_epoch_delta = 600ll * 1000ll * 1000ll;
+#else
+uint64_t pas_scavenger_max_epoch_delta = 300ll * 1000ll * 1000ll;
+#endif
 #endif
 
 static uint32_t pas_scavenger_tick_count = 0;
