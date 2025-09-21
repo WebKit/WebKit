@@ -124,19 +124,12 @@ public:
     static Ref<CSSPrimitiveValue> convert(ExtractorState&, int);
     static Ref<CSSPrimitiveValue> convert(ExtractorState&, unsigned short);
     static Ref<CSSPrimitiveValue> convert(ExtractorState&, short);
-    static Ref<CSSPrimitiveValue> convert(ExtractorState&, const ScopedName&);
 
     static Ref<CSSPrimitiveValue> convertLength(ExtractorState&, const WebCore::Length&);
-    static Ref<CSSPrimitiveValue> convertLength(const RenderStyle&, const WebCore::Length&);
-    static Ref<CSSPrimitiveValue> convertLengthAllowingNumber(ExtractorState&, const WebCore::Length&);
-    static Ref<CSSPrimitiveValue> convertLengthOrAuto(ExtractorState&, const WebCore::Length&);
-
-    template<typename T> static Ref<CSSPrimitiveValue> convertNumber(ExtractorState&, T);
+    static Ref<CSSPrimitiveValue> convertLength(CSSValuePool&, const RenderStyle&, const WebCore::Length&);
     template<typename T> static Ref<CSSPrimitiveValue> convertNumberAsPixels(ExtractorState&, T);
-    template<typename T> static Ref<CSSPrimitiveValue> convertComputedLength(ExtractorState&, T);
-    template<typename T> static Ref<CSSPrimitiveValue> convertLineWidth(ExtractorState&, T lineWidth);
 
-    template<CSSValueID> static Ref<CSSPrimitiveValue> convertCustomIdentAtomOrKeyword(ExtractorState&, const AtomString&);
+    static Ref<CSSValue> convertCustomIdentAtomOrAuto(ExtractorState&, const AtomString&);
 
     // MARK: SVG conversions
 
@@ -145,14 +138,13 @@ public:
     // MARK: Transform conversions
 
     static Ref<CSSValue> convertTransformationMatrix(ExtractorState&, const TransformationMatrix&);
-    static Ref<CSSValue> convertTransformationMatrix(const RenderStyle&, const TransformationMatrix&);
+    static Ref<CSSValue> convertTransformationMatrix(CSSValuePool&, const RenderStyle&, const TransformationMatrix&);
 
     // MARK: Shared conversions
 
     static Ref<CSSValue> convertGlyphOrientation(ExtractorState&, GlyphOrientation);
     static Ref<CSSValue> convertGlyphOrientationOrAuto(ExtractorState&, GlyphOrientation);
     static Ref<CSSValue> convertMarginTrim(ExtractorState&, OptionSet<MarginTrimType>);
-    static Ref<CSSValue> convertStrokeDashArray(ExtractorState&, const FixedVector<WebCore::Length>&);
     static Ref<CSSValue> convertWebkitTextCombine(ExtractorState&, TextCombine);
     static Ref<CSSValue> convertImageOrientation(ExtractorState&, ImageOrientation);
     static Ref<CSSValue> convertContain(ExtractorState&, OptionSet<Containment>);
@@ -167,7 +159,6 @@ public:
     static Ref<CSSValue> convertScrollSnapAlign(ExtractorState&, const ScrollSnapAlign&);
     static Ref<CSSValue> convertLineBoxContain(ExtractorState&, OptionSet<Style::LineBoxContain>);
     static Ref<CSSValue> convertWebkitRubyPosition(ExtractorState&, RubyPosition);
-    static Ref<CSSValue> convertPosition(ExtractorState&, const LengthPoint&);
     static Ref<CSSValue> convertTouchAction(ExtractorState&, OptionSet<TouchAction>);
     static Ref<CSSValue> convertTextTransform(ExtractorState&, OptionSet<TextTransform>);
     static Ref<CSSValue> convertTextUnderlinePosition(ExtractorState&, OptionSet<TextUnderlinePosition>);
@@ -236,58 +227,34 @@ inline Ref<CSSPrimitiveValue> ExtractorConverter::convert(ExtractorState&, float
 
 inline Ref<CSSPrimitiveValue> ExtractorConverter::convert(ExtractorState&, unsigned value)
 {
-    return CSSPrimitiveValue::createInteger(value);
+    return CSSPrimitiveValue::create(value);
 }
 
 inline Ref<CSSPrimitiveValue> ExtractorConverter::convert(ExtractorState&, int value)
 {
-    return CSSPrimitiveValue::createInteger(value);
+    return CSSPrimitiveValue::create(value);
 }
 
 inline Ref<CSSPrimitiveValue> ExtractorConverter::convert(ExtractorState&, unsigned short value)
 {
-    return CSSPrimitiveValue::createInteger(value);
+    return CSSPrimitiveValue::create(value);
 }
 
 inline Ref<CSSPrimitiveValue> ExtractorConverter::convert(ExtractorState&, short value)
 {
-    return CSSPrimitiveValue::createInteger(value);
-}
-
-inline Ref<CSSPrimitiveValue> ExtractorConverter::convert(ExtractorState&, const ScopedName& scopedName)
-{
-    if (scopedName.isIdentifier)
-        return CSSPrimitiveValue::createCustomIdent(scopedName.name);
-    return CSSPrimitiveValue::create(scopedName.name);
+    return CSSPrimitiveValue::create(value);
 }
 
 inline Ref<CSSPrimitiveValue> ExtractorConverter::convertLength(ExtractorState& state, const WebCore::Length& length)
 {
-    return convertLength(state.style, length);
+    return convertLength(state.pool, state.style, length);
 }
 
-inline Ref<CSSPrimitiveValue> ExtractorConverter::convertLength(const RenderStyle& style, const WebCore::Length& length)
+inline Ref<CSSPrimitiveValue> ExtractorConverter::convertLength(CSSValuePool&, const RenderStyle& style, const WebCore::Length& length)
 {
     if (length.isFixed())
         return CSSPrimitiveValue::create(adjustFloatForAbsoluteZoom(length.value(), style), CSSUnitType::CSS_PX);
     return CSSPrimitiveValue::create(length, style);
-}
-
-inline Ref<CSSPrimitiveValue> ExtractorConverter::convertLengthAllowingNumber(ExtractorState& state, const WebCore::Length& length)
-{
-    return convertLength(state, length);
-}
-
-inline Ref<CSSPrimitiveValue> ExtractorConverter::convertLengthOrAuto(ExtractorState& state, const WebCore::Length& length)
-{
-    if (length.isAuto())
-        return CSSPrimitiveValue::create(CSSValueAuto);
-    return convertLength(state, length);
-}
-
-template<typename T> Ref<CSSPrimitiveValue> ExtractorConverter::convertNumber(ExtractorState& state, T number)
-{
-    return convert(state, number);
 }
 
 template<typename T> Ref<CSSPrimitiveValue> ExtractorConverter::convertNumberAsPixels(ExtractorState& state, T number)
@@ -295,21 +262,11 @@ template<typename T> Ref<CSSPrimitiveValue> ExtractorConverter::convertNumberAsP
     return CSSPrimitiveValue::create(adjustFloatForAbsoluteZoom(number, state.style), CSSUnitType::CSS_PX);
 }
 
-template<typename T> Ref<CSSPrimitiveValue> ExtractorConverter::convertComputedLength(ExtractorState& state, T number)
-{
-    return convertNumberAsPixels(state, number);
-}
-
-template<typename T> Ref<CSSPrimitiveValue> ExtractorConverter::convertLineWidth(ExtractorState& state, T lineWidth)
-{
-    return convertNumberAsPixels(state, lineWidth);
-}
-
-template<CSSValueID keyword> Ref<CSSPrimitiveValue> ExtractorConverter::convertCustomIdentAtomOrKeyword(ExtractorState&, const AtomString& string)
+inline Ref<CSSValue> ExtractorConverter::convertCustomIdentAtomOrAuto(ExtractorState& state, const AtomString& string)
 {
     if (string.isNull())
-        return CSSPrimitiveValue::create(keyword);
-    return CSSPrimitiveValue::createCustomIdent(string);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Auto { });
+    return createCSSValue(state.pool, state.style, CustomIdentifier { string });
 }
 
 // MARK: - SVG conversions
@@ -317,7 +274,7 @@ template<CSSValueID keyword> Ref<CSSPrimitiveValue> ExtractorConverter::convertC
 inline Ref<CSSValue> ExtractorConverter::convertSVGURIReference(ExtractorState& state, const URL& marker)
 {
     if (marker.isNone())
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
     return CSSURLValue::create(toCSS(marker, state.style));
 }
 
@@ -325,17 +282,17 @@ inline Ref<CSSValue> ExtractorConverter::convertSVGURIReference(ExtractorState& 
 
 inline Ref<CSSValue> ExtractorConverter::convertTransformationMatrix(ExtractorState& state, const TransformationMatrix& transform)
 {
-    return convertTransformationMatrix(state.style, transform);
+    return convertTransformationMatrix(state.pool, state.style, transform);
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertTransformationMatrix(const RenderStyle& style, const TransformationMatrix& transform)
+inline Ref<CSSValue> ExtractorConverter::convertTransformationMatrix(CSSValuePool& pool, const RenderStyle& style, const TransformationMatrix& transform)
 {
     auto zoom = style.usedZoom();
     if (transform.isAffine()) {
         double values[] = { transform.a(), transform.b(), transform.c(), transform.d(), transform.e() / zoom, transform.f() / zoom };
         CSSValueListBuilder arguments;
         for (auto value : values)
-            arguments.append(CSSPrimitiveValue::create(value));
+            arguments.append(createCSSValue(pool, style, Number<> { value }));
         return CSSFunctionValue::create(CSSValueMatrix, WTFMove(arguments));
     }
 
@@ -347,150 +304,140 @@ inline Ref<CSSValue> ExtractorConverter::convertTransformationMatrix(const Rende
     };
     CSSValueListBuilder arguments;
     for (auto value : values)
-        arguments.append(CSSPrimitiveValue::create(value));
+        arguments.append(createCSSValue(pool, style, Number<> { value }));
     return CSSFunctionValue::create(CSSValueMatrix3d, WTFMove(arguments));
 }
 
 // MARK: - Shared conversions
 
-inline Ref<CSSValue> ExtractorConverter::convertGlyphOrientation(ExtractorState&, GlyphOrientation orientation)
+inline Ref<CSSValue> ExtractorConverter::convertGlyphOrientation(ExtractorState& state, GlyphOrientation orientation)
 {
     switch (orientation) {
     case GlyphOrientation::Degrees0:
-        return CSSPrimitiveValue::create(0.0f, CSSUnitType::CSS_DEG);
+        return createCSSValue(state.pool, state.style, Angle<> { 0.0 });
     case GlyphOrientation::Degrees90:
-        return CSSPrimitiveValue::create(90.0f, CSSUnitType::CSS_DEG);
+        return createCSSValue(state.pool, state.style, Angle<> { 90.0 });
     case GlyphOrientation::Degrees180:
-        return CSSPrimitiveValue::create(180.0f, CSSUnitType::CSS_DEG);
+        return createCSSValue(state.pool, state.style, Angle<> { 180.0 });
     case GlyphOrientation::Degrees270:
-        return CSSPrimitiveValue::create(270.0f, CSSUnitType::CSS_DEG);
+        return createCSSValue(state.pool, state.style, Angle<> { 270.0 });
     case GlyphOrientation::Auto:
         ASSERT_NOT_REACHED();
-        return CSSPrimitiveValue::create(0.0f, CSSUnitType::CSS_DEG);
+        return createCSSValue(state.pool, state.style, Angle<> { 0.0 });
     }
 
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertGlyphOrientationOrAuto(ExtractorState&, GlyphOrientation orientation)
+inline Ref<CSSValue> ExtractorConverter::convertGlyphOrientationOrAuto(ExtractorState& state, GlyphOrientation orientation)
 {
     switch (orientation) {
     case GlyphOrientation::Degrees0:
-        return CSSPrimitiveValue::create(0.0f, CSSUnitType::CSS_DEG);
+        return createCSSValue(state.pool, state.style, Angle<> { 0.0 });
     case GlyphOrientation::Degrees90:
-        return CSSPrimitiveValue::create(90.0f, CSSUnitType::CSS_DEG);
+        return createCSSValue(state.pool, state.style, Angle<> { 90.0 });
     case GlyphOrientation::Degrees180:
-        return CSSPrimitiveValue::create(180.0f, CSSUnitType::CSS_DEG);
+        return createCSSValue(state.pool, state.style, Angle<> { 180.0 });
     case GlyphOrientation::Degrees270:
-        return CSSPrimitiveValue::create(270.0f, CSSUnitType::CSS_DEG);
+        return createCSSValue(state.pool, state.style, Angle<> { 270.0 });
     case GlyphOrientation::Auto:
-        return CSSPrimitiveValue::create(CSSValueAuto);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Auto { });
     }
 
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertMarginTrim(ExtractorState&, OptionSet<MarginTrimType> marginTrim)
+inline Ref<CSSValue> ExtractorConverter::convertMarginTrim(ExtractorState& state, OptionSet<MarginTrimType> marginTrim)
 {
     if (marginTrim.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 
     // Try to serialize into one of the "block" or "inline" shorthands
     if (marginTrim.containsAll({ MarginTrimType::BlockStart, MarginTrimType::BlockEnd }) && !marginTrim.containsAny({ MarginTrimType::InlineStart, MarginTrimType::InlineEnd }))
-        return CSSPrimitiveValue::create(CSSValueBlock);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Block { });
     if (marginTrim.containsAll({ MarginTrimType::InlineStart, MarginTrimType::InlineEnd }) && !marginTrim.containsAny({ MarginTrimType::BlockStart, MarginTrimType::BlockEnd }))
-        return CSSPrimitiveValue::create(CSSValueInline);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Inline { });
     if (marginTrim.containsAll({ MarginTrimType::BlockStart, MarginTrimType::BlockEnd, MarginTrimType::InlineStart, MarginTrimType::InlineEnd }))
-        return CSSValueList::createSpaceSeparated(CSSPrimitiveValue::create(CSSValueBlock), CSSPrimitiveValue::create(CSSValueInline));
+        return CSSValueList::createSpaceSeparated(createCSSValue(state.pool, state.style, CSS::Keyword::Block { }), createCSSValue(state.pool, state.style, CSS::Keyword::Inline { }));
 
     CSSValueListBuilder list;
     if (marginTrim.contains(MarginTrimType::BlockStart))
-        list.append(CSSPrimitiveValue::create(CSSValueBlockStart));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::BlockStart { }));
     if (marginTrim.contains(MarginTrimType::InlineStart))
-        list.append(CSSPrimitiveValue::create(CSSValueInlineStart));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::InlineStart { }));
     if (marginTrim.contains(MarginTrimType::BlockEnd))
-        list.append(CSSPrimitiveValue::create(CSSValueBlockEnd));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::BlockEnd { }));
     if (marginTrim.contains(MarginTrimType::InlineEnd))
-        list.append(CSSPrimitiveValue::create(CSSValueInlineEnd));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::InlineEnd { }));
     return CSSValueList::createSpaceSeparated(WTFMove(list));
-}
-
-inline Ref<CSSValue> ExtractorConverter::convertStrokeDashArray(ExtractorState& state, const FixedVector<WebCore::Length>& dashes)
-{
-    if (dashes.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueNone);
-    CSSValueListBuilder list;
-    for (auto& dash : dashes)
-        list.append(convertLength(state, dash));
-    return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertWebkitTextCombine(ExtractorState& state, TextCombine textCombine)
 {
     if (textCombine == TextCombine::All)
-        return CSSPrimitiveValue::create(CSSValueHorizontal);
-    return convert(state, textCombine);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Horizontal { });
+    return createCSSValue(state.pool, state.style, textCombine);
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertImageOrientation(ExtractorState&, ImageOrientation imageOrientation)
+inline Ref<CSSValue> ExtractorConverter::convertImageOrientation(ExtractorState& state, ImageOrientation imageOrientation)
 {
     if (imageOrientation == ImageOrientation::Orientation::FromImage)
-        return CSSPrimitiveValue::create(CSSValueFromImage);
-    return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::FromImage { });
+    return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertContain(ExtractorState&, OptionSet<Containment> containment)
+inline Ref<CSSValue> ExtractorConverter::convertContain(ExtractorState& state, OptionSet<Containment> containment)
 {
     if (!containment)
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
     if (containment == RenderStyle::strictContainment())
-        return CSSPrimitiveValue::create(CSSValueStrict);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Strict { });
     if (containment == RenderStyle::contentContainment())
-        return CSSPrimitiveValue::create(CSSValueContent);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Content { });
     CSSValueListBuilder list;
     if (containment & Containment::Size)
-        list.append(CSSPrimitiveValue::create(CSSValueSize));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Size { }));
     if (containment & Containment::InlineSize)
-        list.append(CSSPrimitiveValue::create(CSSValueInlineSize));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::InlineSize { }));
     if (containment & Containment::Layout)
-        list.append(CSSPrimitiveValue::create(CSSValueLayout));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Layout { }));
     if (containment & Containment::Style)
-        list.append(CSSPrimitiveValue::create(CSSValueStyle));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Style { }));
     if (containment & Containment::Paint)
-        list.append(CSSPrimitiveValue::create(CSSValuePaint));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Paint { }));
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertTextSpacingTrim(ExtractorState&, TextSpacingTrim textSpacingTrim)
+inline Ref<CSSValue> ExtractorConverter::convertTextSpacingTrim(ExtractorState& state, TextSpacingTrim textSpacingTrim)
 {
     switch (textSpacingTrim.type()) {
     case TextSpacingTrim::TrimType::SpaceAll:
-        return CSSPrimitiveValue::create(CSSValueSpaceAll);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::SpaceAll { });
     case TextSpacingTrim::TrimType::Auto:
-        return CSSPrimitiveValue::create(CSSValueAuto);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Auto { });
     case TextSpacingTrim::TrimType::TrimAll:
-        return CSSPrimitiveValue::create(CSSValueTrimAll);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::TrimAll { });
     default:
         ASSERT_NOT_REACHED();
         break;
     }
-    return CSSPrimitiveValue::create(CSSValueSpaceAll);
+    return createCSSValue(state.pool, state.style, CSS::Keyword::SpaceAll { });
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertTextAutospace(ExtractorState&, TextAutospace textAutospace)
+inline Ref<CSSValue> ExtractorConverter::convertTextAutospace(ExtractorState& state, TextAutospace textAutospace)
 {
     if (textAutospace.isAuto())
-        return CSSPrimitiveValue::create(CSSValueAuto);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Auto { });
     if (textAutospace.isNoAutospace())
-        return CSSPrimitiveValue::create(CSSValueNoAutospace);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::NoAutospace { });
     if (textAutospace.isNormal())
-        return CSSPrimitiveValue::create(CSSValueNormal);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Normal { });
 
     CSSValueListBuilder list;
     if (textAutospace.hasIdeographAlpha())
-        list.append(CSSPrimitiveValue::create(CSSValueIdeographAlpha));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::IdeographAlpha { }));
     if (textAutospace.hasIdeographNumeric())
-        list.append(CSSPrimitiveValue::create(CSSValueIdeographNumeric));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::IdeographNumeric { }));
 
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
@@ -498,7 +445,7 @@ inline Ref<CSSValue> ExtractorConverter::convertTextAutospace(ExtractorState&, T
 inline Ref<CSSValue> ExtractorConverter::convertLineFitEdge(ExtractorState& state, const TextEdge& textEdge)
 {
     if (textEdge.over == TextEdgeType::Leading && textEdge.under == TextEdgeType::Leading)
-        return convert(state, textEdge.over);
+        return createCSSValue(state.pool, state.style, textEdge.over);
 
     // https://www.w3.org/TR/css-inline-3/#text-edges
     // "If only one value is specified, both edges are assigned that same keyword if possible; else text is assumed as the missing value."
@@ -509,15 +456,15 @@ inline Ref<CSSValue> ExtractorConverter::convertLineFitEdge(ExtractorState& stat
     }();
 
     if (!shouldSerializeUnderEdge)
-        return convert(state, textEdge.over);
+        return createCSSValue(state.pool, state.style, textEdge.over);
 
-    return CSSValuePair::create(convert(state, textEdge.over), convert(state, textEdge.under));
+    return CSSValuePair::create(createCSSValue(state.pool, state.style, textEdge.over), createCSSValue(state.pool, state.style, textEdge.under));
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertTextBoxEdge(ExtractorState& state, const TextEdge& textEdge)
 {
     if (textEdge.over == TextEdgeType::Auto && textEdge.under == TextEdgeType::Auto)
-        return convert(state, textEdge.over);
+        return createCSSValue(state.pool, state.style, textEdge.over);
 
     // https://www.w3.org/TR/css-inline-3/#text-edges
     // "If only one value is specified, both edges are assigned that same keyword if possible; else text is assumed as the missing value."
@@ -528,15 +475,15 @@ inline Ref<CSSValue> ExtractorConverter::convertTextBoxEdge(ExtractorState& stat
     }();
 
     if (!shouldSerializeUnderEdge)
-        return convert(state, textEdge.over);
+        return createCSSValue(state.pool, state.style, textEdge.over);
 
-    return CSSValuePair::create(convert(state, textEdge.over), convert(state, textEdge.under));
+    return CSSValuePair::create(createCSSValue(state.pool, state.style, textEdge.over), createCSSValue(state.pool, state.style, textEdge.under));
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertPositionTryFallbacks(ExtractorState& state, const FixedVector<PositionTryFallback>& fallbacks)
 {
     if (fallbacks.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 
     CSSValueListBuilder list;
     for (auto& fallback : fallbacks) {
@@ -549,29 +496,29 @@ inline Ref<CSSValue> ExtractorConverter::convertPositionTryFallbacks(ExtractorSt
 
         CSSValueListBuilder singleFallbackList;
         if (fallback.positionTryRuleName)
-            singleFallbackList.append(convert(state, *fallback.positionTryRuleName));
+            singleFallbackList.append(createCSSValue(state.pool, state.style, *fallback.positionTryRuleName));
         for (auto& tactic : fallback.tactics)
-            singleFallbackList.append(convert(state, tactic));
+            singleFallbackList.append(createCSSValue(state.pool, state.style, tactic));
         list.append(CSSValueList::createSpaceSeparated(singleFallbackList));
     }
 
     return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertWillChange(ExtractorState&, const WillChangeData* willChangeData)
+inline Ref<CSSValue> ExtractorConverter::convertWillChange(ExtractorState& state, const WillChangeData* willChangeData)
 {
     if (!willChangeData || !willChangeData->numFeatures())
-        return CSSPrimitiveValue::create(CSSValueAuto);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Auto { });
 
     CSSValueListBuilder list;
     for (size_t i = 0; i < willChangeData->numFeatures(); ++i) {
         auto feature = willChangeData->featureAt(i);
         switch (feature.first) {
         case WillChangeData::Feature::ScrollPosition:
-            list.append(CSSPrimitiveValue::create(CSSValueScrollPosition));
+            list.append(createCSSValue(state.pool, state.style, CSS::Keyword::ScrollPosition { }));
             break;
         case WillChangeData::Feature::Contents:
-            list.append(CSSPrimitiveValue::create(CSSValueContents));
+            list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Contents { }));
             break;
         case WillChangeData::Feature::Property:
             list.append(CSSPrimitiveValue::create(feature.second));
@@ -584,124 +531,118 @@ inline Ref<CSSValue> ExtractorConverter::convertWillChange(ExtractorState&, cons
     return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertTabSize(ExtractorState&, const TabSize& tabSize)
+inline Ref<CSSValue> ExtractorConverter::convertTabSize(ExtractorState& state, const TabSize& tabSize)
 {
-    return CSSPrimitiveValue::create(tabSize.widthInPixels(1.0), tabSize.isSpaces() ? CSSUnitType::CSS_NUMBER : CSSUnitType::CSS_PX);
+    auto value = tabSize.widthInPixels(1.0);
+    if (tabSize.isSpaces())
+        return createCSSValue(state.pool, state.style, Number<> { value });
+    else
+        return createCSSValue(state.pool, state.style, Length<> { value });
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertScrollSnapType(ExtractorState& state, const ScrollSnapType& type)
 {
     if (type.strictness == ScrollSnapStrictness::None)
-        return CSSValueList::createSpaceSeparated(CSSPrimitiveValue::create(CSSValueNone));
+        return CSSValueList::createSpaceSeparated(createCSSValue(state.pool, state.style, CSS::Keyword::None { }));
     if (type.strictness == ScrollSnapStrictness::Proximity)
-        return CSSValueList::createSpaceSeparated(convert(state, type.axis));
-    return CSSValueList::createSpaceSeparated(convert(state, type.axis), convert(state, type.strictness));
+        return CSSValueList::createSpaceSeparated(createCSSValue(state.pool, state.style, type.axis));
+    return CSSValueList::createSpaceSeparated(createCSSValue(state.pool, state.style, type.axis), createCSSValue(state.pool, state.style, type.strictness));
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertScrollSnapAlign(ExtractorState& state, const ScrollSnapAlign& alignment)
 {
     return CSSValuePair::create(
-        convert(state, alignment.blockAlign),
-        convert(state, alignment.inlineAlign)
+        createCSSValue(state.pool, state.style, alignment.blockAlign),
+        createCSSValue(state.pool, state.style, alignment.inlineAlign)
     );
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertLineBoxContain(ExtractorState&, OptionSet<Style::LineBoxContain> lineBoxContain)
+inline Ref<CSSValue> ExtractorConverter::convertLineBoxContain(ExtractorState& state, OptionSet<Style::LineBoxContain> lineBoxContain)
 {
     if (!lineBoxContain)
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 
     CSSValueListBuilder list;
     if (lineBoxContain.contains(LineBoxContain::Block))
-        list.append(CSSPrimitiveValue::create(CSSValueBlock));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Block { }));
     if (lineBoxContain.contains(LineBoxContain::Inline))
-        list.append(CSSPrimitiveValue::create(CSSValueInline));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Inline { }));
     if (lineBoxContain.contains(LineBoxContain::Font))
-        list.append(CSSPrimitiveValue::create(CSSValueFont));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Font { }));
     if (lineBoxContain.contains(LineBoxContain::Glyphs))
-        list.append(CSSPrimitiveValue::create(CSSValueGlyphs));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Glyphs { }));
     if (lineBoxContain.contains(LineBoxContain::Replaced))
-        list.append(CSSPrimitiveValue::create(CSSValueReplaced));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Replaced { }));
     if (lineBoxContain.contains(LineBoxContain::InlineBox))
-        list.append(CSSPrimitiveValue::create(CSSValueInlineBox));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::InlineBox { }));
     if (lineBoxContain.contains(LineBoxContain::InitialLetter))
-        list.append(CSSPrimitiveValue::create(CSSValueInitialLetter));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::InitialLetter { }));
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertWebkitRubyPosition(ExtractorState&, RubyPosition position)
+inline Ref<CSSValue> ExtractorConverter::convertWebkitRubyPosition(ExtractorState& state, RubyPosition position)
 {
-    return CSSPrimitiveValue::create([&] {
-        switch (position) {
-        case RubyPosition::Over:
-            return CSSValueBefore;
-        case RubyPosition::Under:
-            return CSSValueAfter;
-        case RubyPosition::InterCharacter:
-        case RubyPosition::LegacyInterCharacter:
-            return CSSValueInterCharacter;
-        }
-        return CSSValueBefore;
-    }());
+    switch (position) {
+    case RubyPosition::Over:
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Before { });
+    case RubyPosition::Under:
+        return createCSSValue(state.pool, state.style, CSS::Keyword::After { });
+    case RubyPosition::InterCharacter:
+    case RubyPosition::LegacyInterCharacter:
+        return createCSSValue(state.pool, state.style, CSS::Keyword::InterCharacter { });
+    }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertPosition(ExtractorState& state, const LengthPoint& position)
-{
-    return CSSValueList::createSpaceSeparated(
-        convertLength(state, position.x),
-        convertLength(state, position.y)
-    );
-}
-
-inline Ref<CSSValue> ExtractorConverter::convertTouchAction(ExtractorState&, OptionSet<TouchAction> touchActions)
+inline Ref<CSSValue> ExtractorConverter::convertTouchAction(ExtractorState& state, OptionSet<TouchAction> touchActions)
 {
     if (touchActions & TouchAction::Auto)
-        return CSSPrimitiveValue::create(CSSValueAuto);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Auto { });
     if (touchActions & TouchAction::None)
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
     if (touchActions & TouchAction::Manipulation)
-        return CSSPrimitiveValue::create(CSSValueManipulation);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Manipulation { });
 
     CSSValueListBuilder list;
     if (touchActions & TouchAction::PanX)
-        list.append(CSSPrimitiveValue::create(CSSValuePanX));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::PanX { }));
     if (touchActions & TouchAction::PanY)
-        list.append(CSSPrimitiveValue::create(CSSValuePanY));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::PanY { }));
     if (touchActions & TouchAction::PinchZoom)
-        list.append(CSSPrimitiveValue::create(CSSValuePinchZoom));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::PinchZoom { }));
     if (list.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueAuto);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Auto { });
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertTextTransform(ExtractorState&, OptionSet<TextTransform> textTransform)
+inline Ref<CSSValue> ExtractorConverter::convertTextTransform(ExtractorState& state, OptionSet<TextTransform> textTransform)
 {
     CSSValueListBuilder list;
     if (textTransform.contains(TextTransform::Capitalize))
-        list.append(CSSPrimitiveValue::create(CSSValueCapitalize));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Capitalize { }));
     else if (textTransform.contains(TextTransform::Uppercase))
-        list.append(CSSPrimitiveValue::create(CSSValueUppercase));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Uppercase { }));
     else if (textTransform.contains(TextTransform::Lowercase))
-        list.append(CSSPrimitiveValue::create(CSSValueLowercase));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Lowercase { }));
 
     if (textTransform.contains(TextTransform::FullWidth))
-        list.append(CSSPrimitiveValue::create(CSSValueFullWidth));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::FullWidth { }));
 
     if (textTransform.contains(TextTransform::FullSizeKana))
-        list.append(CSSPrimitiveValue::create(CSSValueFullSizeKana));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::FullSizeKana { }));
 
     if (list.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertTextUnderlinePosition(ExtractorState&, OptionSet<TextUnderlinePosition> textUnderlinePosition)
+inline Ref<CSSValue> ExtractorConverter::convertTextUnderlinePosition(ExtractorState& state, OptionSet<TextUnderlinePosition> textUnderlinePosition)
 {
     ASSERT(!((textUnderlinePosition & TextUnderlinePosition::FromFont) && (textUnderlinePosition & TextUnderlinePosition::Under)));
     ASSERT(!((textUnderlinePosition & TextUnderlinePosition::Left) && (textUnderlinePosition & TextUnderlinePosition::Right)));
 
     if (textUnderlinePosition.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueAuto);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Auto { });
     bool isFromFont = textUnderlinePosition.contains(TextUnderlinePosition::FromFont);
     bool isUnder = textUnderlinePosition.contains(TextUnderlinePosition::Under);
     bool isLeft = textUnderlinePosition.contains(TextUnderlinePosition::Left);
@@ -716,7 +657,7 @@ inline Ref<CSSValue> ExtractorConverter::convertTextUnderlinePosition(ExtractorS
     return CSSValuePair::create(CSSPrimitiveValue::create(metric), CSSPrimitiveValue::create(side));
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertTextEmphasisPosition(ExtractorState&, OptionSet<TextEmphasisPosition> textEmphasisPosition)
+inline Ref<CSSValue> ExtractorConverter::convertTextEmphasisPosition(ExtractorState& state, OptionSet<TextEmphasisPosition> textEmphasisPosition)
 {
     ASSERT(!((textEmphasisPosition & TextEmphasisPosition::Over) && (textEmphasisPosition & TextEmphasisPosition::Under)));
     ASSERT(!((textEmphasisPosition & TextEmphasisPosition::Left) && (textEmphasisPosition & TextEmphasisPosition::Right)));
@@ -724,96 +665,96 @@ inline Ref<CSSValue> ExtractorConverter::convertTextEmphasisPosition(ExtractorSt
 
     CSSValueListBuilder list;
     if (textEmphasisPosition & TextEmphasisPosition::Over)
-        list.append(CSSPrimitiveValue::create(CSSValueOver));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Over { }));
     if (textEmphasisPosition & TextEmphasisPosition::Under)
-        list.append(CSSPrimitiveValue::create(CSSValueUnder));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Under { }));
     if (textEmphasisPosition & TextEmphasisPosition::Left)
-        list.append(CSSPrimitiveValue::create(CSSValueLeft));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Left { }));
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertSpeakAs(ExtractorState&, OptionSet<SpeakAs> speakAs)
+inline Ref<CSSValue> ExtractorConverter::convertSpeakAs(ExtractorState& state, OptionSet<SpeakAs> speakAs)
 {
     CSSValueListBuilder list;
     if (speakAs & SpeakAs::SpellOut)
-        list.append(CSSPrimitiveValue::create(CSSValueSpellOut));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::SpellOut { }));
     if (speakAs & SpeakAs::Digits)
-        list.append(CSSPrimitiveValue::create(CSSValueDigits));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Digits { }));
     if (speakAs & SpeakAs::LiteralPunctuation)
-        list.append(CSSPrimitiveValue::create(CSSValueLiteralPunctuation));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::LiteralPunctuation { }));
     if (speakAs & SpeakAs::NoPunctuation)
-        list.append(CSSPrimitiveValue::create(CSSValueNoPunctuation));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::NoPunctuation { }));
     if (list.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueNormal);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Normal { });
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertHangingPunctuation(ExtractorState&, OptionSet<HangingPunctuation> hangingPunctuation)
+inline Ref<CSSValue> ExtractorConverter::convertHangingPunctuation(ExtractorState& state, OptionSet<HangingPunctuation> hangingPunctuation)
 {
     CSSValueListBuilder list;
     if (hangingPunctuation & HangingPunctuation::First)
-        list.append(CSSPrimitiveValue::create(CSSValueFirst));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::First { }));
     if (hangingPunctuation & HangingPunctuation::AllowEnd)
-        list.append(CSSPrimitiveValue::create(CSSValueAllowEnd));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::AllowEnd { }));
     if (hangingPunctuation & HangingPunctuation::ForceEnd)
-        list.append(CSSPrimitiveValue::create(CSSValueForceEnd));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::ForceEnd { }));
     if (hangingPunctuation & HangingPunctuation::Last)
-        list.append(CSSPrimitiveValue::create(CSSValueLast));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Last { }));
     if (list.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertPageBreak(ExtractorState&, BreakBetween value)
+inline Ref<CSSValue> ExtractorConverter::convertPageBreak(ExtractorState& state, BreakBetween value)
 {
     if (value == BreakBetween::Page || value == BreakBetween::LeftPage || value == BreakBetween::RightPage
         || value == BreakBetween::RectoPage || value == BreakBetween::VersoPage)
-        return CSSPrimitiveValue::create(CSSValueAlways); // CSS 2.1 allows us to map these to always.
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Always { }); // CSS 2.1 allows us to map these to always.
     if (value == BreakBetween::Avoid || value == BreakBetween::AvoidPage)
-        return CSSPrimitiveValue::create(CSSValueAvoid);
-    return CSSPrimitiveValue::create(CSSValueAuto);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Avoid { });
+    return createCSSValue(state.pool, state.style, CSS::Keyword::Auto { });
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertPageBreak(ExtractorState&, BreakInside value)
+inline Ref<CSSValue> ExtractorConverter::convertPageBreak(ExtractorState& state, BreakInside value)
 {
     if (value == BreakInside::Avoid || value == BreakInside::AvoidPage)
-        return CSSPrimitiveValue::create(CSSValueAvoid);
-    return CSSPrimitiveValue::create(CSSValueAuto);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Avoid { });
+    return createCSSValue(state.pool, state.style, CSS::Keyword::Auto { });
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertWebkitColumnBreak(ExtractorState&, BreakBetween value)
+inline Ref<CSSValue> ExtractorConverter::convertWebkitColumnBreak(ExtractorState& state, BreakBetween value)
 {
     if (value == BreakBetween::Column)
-        return CSSPrimitiveValue::create(CSSValueAlways);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Always { });
     if (value == BreakBetween::Avoid || value == BreakBetween::AvoidColumn)
-        return CSSPrimitiveValue::create(CSSValueAvoid);
-    return CSSPrimitiveValue::create(CSSValueAuto);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Avoid { });
+    return createCSSValue(state.pool, state.style, CSS::Keyword::Auto { });
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertWebkitColumnBreak(ExtractorState&, BreakInside value)
+inline Ref<CSSValue> ExtractorConverter::convertWebkitColumnBreak(ExtractorState& state, BreakInside value)
 {
     if (value == BreakInside::Avoid || value == BreakInside::AvoidColumn)
-        return CSSPrimitiveValue::create(CSSValueAvoid);
-    return CSSPrimitiveValue::create(CSSValueAuto);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Avoid { });
+    return createCSSValue(state.pool, state.style, CSS::Keyword::Auto { });
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertSelfOrDefaultAlignmentData(ExtractorState& state, const StyleSelfAlignmentData& data)
 {
     CSSValueListBuilder list;
     if (data.positionType() == ItemPositionType::Legacy)
-        list.append(CSSPrimitiveValue::create(CSSValueLegacy));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Legacy { }));
     if (data.position() == ItemPosition::Baseline)
-        list.append(CSSPrimitiveValue::create(CSSValueBaseline));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Baseline { }));
     else if (data.position() == ItemPosition::LastBaseline) {
-        list.append(CSSPrimitiveValue::create(CSSValueLast));
-        list.append(CSSPrimitiveValue::create(CSSValueBaseline));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Last { }));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Baseline { }));
     } else {
         if (data.position() >= ItemPosition::Center && data.overflow() != OverflowAlignment::Default)
-            list.append(convert(state, data.overflow()));
+            list.append(createCSSValue(state.pool, state.style, data.overflow()));
         if (data.position() == ItemPosition::Legacy)
-            list.append(CSSPrimitiveValue::create(CSSValueNormal));
+            list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Normal { }));
         else
-            list.append(convert(state, data.position()));
+            list.append(createCSSValue(state.pool, state.style, data.position()));
     }
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
@@ -824,24 +765,24 @@ inline Ref<CSSValue> ExtractorConverter::convertContentAlignmentData(ExtractorSt
 
     // Handle content-distribution values
     if (data.distribution() != ContentDistribution::Default)
-        list.append(convert(state, data.distribution()));
+        list.append(createCSSValue(state.pool, state.style, data.distribution()));
 
     // Handle content-position values (either as fallback or actual value)
     switch (data.position()) {
     case ContentPosition::Normal:
         // Handle 'normal' value, not valid as content-distribution fallback.
         if (data.distribution() == ContentDistribution::Default)
-            list.append(CSSPrimitiveValue::create(CSSValueNormal));
+            list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Normal { }));
         break;
     case ContentPosition::LastBaseline:
-        list.append(CSSPrimitiveValue::create(CSSValueLast));
-        list.append(CSSPrimitiveValue::create(CSSValueBaseline));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Last { }));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Baseline { }));
         break;
     default:
         // Handle overflow-alignment (only allowed for content-position values)
         if ((data.position() >= ContentPosition::Center || data.distribution() != ContentDistribution::Default) && data.overflow() != OverflowAlignment::Default)
-            list.append(convert(state, data.overflow()));
-        list.append(convert(state, data.position()));
+            list.append(createCSSValue(state.pool, state.style, data.overflow()));
+        list.append(createCSSValue(state.pool, state.style, data.position()));
     }
 
     ASSERT(list.size() > 0);
@@ -849,10 +790,10 @@ inline Ref<CSSValue> ExtractorConverter::convertContentAlignmentData(ExtractorSt
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertPaintOrder(ExtractorState&, PaintOrder paintOrder)
+inline Ref<CSSValue> ExtractorConverter::convertPaintOrder(ExtractorState& state, PaintOrder paintOrder)
 {
     if (paintOrder == PaintOrder::Normal)
-        return CSSPrimitiveValue::create(CSSValueNormal);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Normal { });
 
     CSSValueListBuilder paintOrderList;
     switch (paintOrder) {
@@ -860,25 +801,25 @@ inline Ref<CSSValue> ExtractorConverter::convertPaintOrder(ExtractorState&, Pain
         ASSERT_NOT_REACHED();
         break;
     case PaintOrder::Fill:
-        paintOrderList.append(CSSPrimitiveValue::create(CSSValueFill));
+        paintOrderList.append(createCSSValue(state.pool, state.style, CSS::Keyword::Fill { }));
         break;
     case PaintOrder::FillMarkers:
-        paintOrderList.append(CSSPrimitiveValue::create(CSSValueFill));
-        paintOrderList.append(CSSPrimitiveValue::create(CSSValueMarkers));
+        paintOrderList.append(createCSSValue(state.pool, state.style, CSS::Keyword::Fill { }));
+        paintOrderList.append(createCSSValue(state.pool, state.style, CSS::Keyword::Markers { }));
         break;
     case PaintOrder::Stroke:
-        paintOrderList.append(CSSPrimitiveValue::create(CSSValueStroke));
+        paintOrderList.append(createCSSValue(state.pool, state.style, CSS::Keyword::Stroke { }));
         break;
     case PaintOrder::StrokeMarkers:
-        paintOrderList.append(CSSPrimitiveValue::create(CSSValueStroke));
-        paintOrderList.append(CSSPrimitiveValue::create(CSSValueMarkers));
+        paintOrderList.append(createCSSValue(state.pool, state.style, CSS::Keyword::Stroke { }));
+        paintOrderList.append(createCSSValue(state.pool, state.style, CSS::Keyword::Markers { }));
         break;
     case PaintOrder::Markers:
-        paintOrderList.append(CSSPrimitiveValue::create(CSSValueMarkers));
+        paintOrderList.append(createCSSValue(state.pool, state.style, CSS::Keyword::Markers { }));
         break;
     case PaintOrder::MarkersStroke:
-        paintOrderList.append(CSSPrimitiveValue::create(CSSValueMarkers));
-        paintOrderList.append(CSSPrimitiveValue::create(CSSValueStroke));
+        paintOrderList.append(createCSSValue(state.pool, state.style, CSS::Keyword::Markers { }));
+        paintOrderList.append(createCSSValue(state.pool, state.style, CSS::Keyword::Stroke { }));
         break;
     }
     return CSSValueList::createSpaceSeparated(WTFMove(paintOrderList));
@@ -887,8 +828,8 @@ inline Ref<CSSValue> ExtractorConverter::convertPaintOrder(ExtractorState&, Pain
 inline Ref<CSSValue> ExtractorConverter::convertPositionAnchor(ExtractorState& state, const std::optional<ScopedName>& positionAnchor)
 {
     if (!positionAnchor)
-        return CSSPrimitiveValue::create(CSSValueAuto);
-    return convert(state, *positionAnchor);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Auto { });
+    return createCSSValue(state.pool, state.style, *positionAnchor);
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertPositionArea(ExtractorState&, const PositionArea& positionArea)
@@ -1029,48 +970,48 @@ inline Ref<CSSValue> ExtractorConverter::convertPositionArea(ExtractorState&, co
 inline Ref<CSSValue> ExtractorConverter::convertPositionArea(ExtractorState& state, const std::optional<PositionArea>& positionArea)
 {
     if (!positionArea)
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
     return convertPositionArea(state, *positionArea);
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertNameScope(ExtractorState&, const NameScope& scope)
+inline Ref<CSSValue> ExtractorConverter::convertNameScope(ExtractorState& state, const NameScope& scope)
 {
     switch (scope.type) {
     case NameScope::Type::None:
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 
     case NameScope::Type::All:
-        return CSSPrimitiveValue::create(CSSValueAll);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::All { });
 
     case NameScope::Type::Ident:
         if (scope.names.isEmpty())
-            return CSSPrimitiveValue::create(CSSValueNone);
+            return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 
         CSSValueListBuilder list;
         for (auto& name : scope.names) {
             ASSERT(!name.isNull());
-            list.append(CSSPrimitiveValue::createCustomIdent(name));
+            list.append(createCSSValue(state.pool, state.style, CustomIdentifier { name }));
         }
 
         return CSSValueList::createCommaSeparated(WTFMove(list));
     }
 
     ASSERT_NOT_REACHED();
-    return CSSPrimitiveValue::create(CSSValueNone);
+    return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertPositionVisibility(ExtractorState&, OptionSet<PositionVisibility> positionVisibility)
+inline Ref<CSSValue> ExtractorConverter::convertPositionVisibility(ExtractorState& state, OptionSet<PositionVisibility> positionVisibility)
 {
     CSSValueListBuilder list;
     if (positionVisibility & PositionVisibility::AnchorsValid)
-        list.append(CSSPrimitiveValue::create(CSSValueAnchorsValid));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::AnchorsValid { }));
     if (positionVisibility & PositionVisibility::AnchorsVisible)
-        list.append(CSSPrimitiveValue::create(CSSValueAnchorsVisible));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::AnchorsVisible { }));
     if (positionVisibility & PositionVisibility::NoOverflow)
-        list.append(CSSPrimitiveValue::create(CSSValueNoOverflow));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::NoOverflow { }));
 
     if (list.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueAlways);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Always { });
 
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
@@ -1087,109 +1028,104 @@ inline Ref<CSSValue> ExtractorConverter::convertFillLayerWebkitMaskComposite(Ext
     return CSSPrimitiveValue::create(toCSSValueID(composite, CSSPropertyWebkitMaskComposite));
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertFillLayerMaskMode(ExtractorState&, MaskMode maskMode)
+inline Ref<CSSValue> ExtractorConverter::convertFillLayerMaskMode(ExtractorState& state, MaskMode maskMode)
 {
     switch (maskMode) {
     case MaskMode::Alpha:
-        return CSSPrimitiveValue::create(CSSValueAlpha);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Alpha { });
     case MaskMode::Luminance:
-        return CSSPrimitiveValue::create(CSSValueLuminance);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Luminance { });
     case MaskMode::MatchSource:
-        return CSSPrimitiveValue::create(CSSValueMatchSource);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::MatchSource { });
     }
     ASSERT_NOT_REACHED();
-    return CSSPrimitiveValue::create(CSSValueMatchSource);
+    return createCSSValue(state.pool, state.style, CSS::Keyword::MatchSource { });
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertFillLayerWebkitMaskSourceType(ExtractorState&, MaskMode maskMode)
+inline Ref<CSSValue> ExtractorConverter::convertFillLayerWebkitMaskSourceType(ExtractorState& state, MaskMode maskMode)
 {
     switch (maskMode) {
     case MaskMode::Alpha:
-        return CSSPrimitiveValue::create(CSSValueAlpha);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Alpha { });
     case MaskMode::Luminance:
-        return CSSPrimitiveValue::create(CSSValueLuminance);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Luminance { });
     case MaskMode::MatchSource:
         // MatchSource is only available in the mask-mode property.
-        return CSSPrimitiveValue::create(CSSValueAlpha);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Alpha { });
     }
     ASSERT_NOT_REACHED();
-    return CSSPrimitiveValue::create(CSSValueAlpha);
+    return createCSSValue(state.pool, state.style, CSS::Keyword::Alpha { });
 }
 
 // MARK: - Font conversions
 
 inline Ref<CSSValue> ExtractorConverter::convertFontFamily(ExtractorState& state, const AtomString& family)
 {
-    auto identifierForFamily = [](const auto& family) {
-        if (family == cursiveFamily)
-            return CSSValueCursive;
-        if (family == fantasyFamily)
-            return CSSValueFantasy;
-        if (family == monospaceFamily)
-            return CSSValueMonospace;
-        if (family == mathFamily)
-            return CSSValueMath;
-        if (family == pictographFamily)
-            return CSSValueWebkitPictograph;
-        if (family == sansSerifFamily)
-            return CSSValueSansSerif;
-        if (family == serifFamily)
-            return CSSValueSerif;
-        if (family == systemUiFamily)
-            return CSSValueSystemUi;
-        return CSSValueInvalid;
-    };
+    if (family == cursiveFamily)
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Cursive { });
+    if (family == fantasyFamily)
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Fantasy { });
+    if (family == monospaceFamily)
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Monospace { });
+    if (family == mathFamily)
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Math { });
+    if (family == pictographFamily)
+        return createCSSValue(state.pool, state.style, CSS::Keyword::WebkitPictograph { });
+    if (family == sansSerifFamily)
+        return createCSSValue(state.pool, state.style, CSS::Keyword::SansSerif { });
+    if (family == serifFamily)
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Serif { });
+    if (family == systemUiFamily)
+        return createCSSValue(state.pool, state.style, CSS::Keyword::SystemUi { });
 
-    if (auto familyIdentifier = identifierForFamily(family))
-        return CSSPrimitiveValue::create(familyIdentifier);
     return state.pool.createFontFamilyValue(family);
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertFontSizeAdjust(ExtractorState& state, const FontSizeAdjust& fontSizeAdjust)
 {
     if (fontSizeAdjust.isNone())
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 
     auto metric = fontSizeAdjust.metric;
     auto value = fontSizeAdjust.shouldResolveFromFont() ? fontSizeAdjust.resolve(state.style.computedFontSize(), state.style.metricsOfPrimaryFont()) : fontSizeAdjust.value.asOptional();
     if (!value)
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 
     if (metric == FontSizeAdjust::Metric::ExHeight)
-        return CSSPrimitiveValue::create(*value);
+        return createCSSValue(state.pool, state.style, Number<> { *value });
 
-    return CSSValuePair::create(convert(state, metric), CSSPrimitiveValue::create(*value));
+    return CSSValuePair::create(createCSSValue(state.pool, state.style, metric), createCSSValue(state.pool, state.style, Number<> { *value }));
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertFontPalette(ExtractorState&, const FontPalette& fontPalette)
+inline Ref<CSSValue> ExtractorConverter::convertFontPalette(ExtractorState& state, const FontPalette& fontPalette)
 {
     switch (fontPalette.type) {
     case FontPalette::Type::Normal:
-        return CSSPrimitiveValue::create(CSSValueNormal);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Normal { });
     case FontPalette::Type::Light:
-        return CSSPrimitiveValue::create(CSSValueLight);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Light { });
     case FontPalette::Type::Dark:
-        return CSSPrimitiveValue::create(CSSValueDark);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Dark { });
     case FontPalette::Type::Custom:
-        return CSSPrimitiveValue::createCustomIdent(fontPalette.identifier);
+        return createCSSValue(state.pool, state.style, CustomIdentifier { fontPalette.identifier });
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertFontWeight(ExtractorState&, FontSelectionValue fontWeight)
+inline Ref<CSSValue> ExtractorConverter::convertFontWeight(ExtractorState& state, FontSelectionValue fontWeight)
 {
-    return CSSPrimitiveValue::create(static_cast<float>(fontWeight));
+    return createCSSValue(state.pool, state.style, Number<> { static_cast<float>(fontWeight) });
 }
 
-inline Ref<CSSValue> ExtractorConverter::convertFontWidth(ExtractorState&, FontSelectionValue fontWidth)
+inline Ref<CSSValue> ExtractorConverter::convertFontWidth(ExtractorState& state, FontSelectionValue fontWidth)
 {
-    return CSSPrimitiveValue::create(static_cast<float>(fontWidth), CSSUnitType::CSS_PERCENTAGE);
+    return createCSSValue(state.pool, state.style, Percentage<> { static_cast<float>(fontWidth) });
 }
 
 inline Ref<CSSValue> ExtractorConverter::convertFontFeatureSettings(ExtractorState& state, const FontFeatureSettings& fontFeatureSettings)
 {
     if (!fontFeatureSettings.size())
-        return CSSPrimitiveValue::create(CSSValueNormal);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Normal { });
     CSSValueListBuilder list;
     for (auto& feature : fontFeatureSettings)
         list.append(CSSFontFeatureValue::create(FontTag(feature.tag()), convert(state, feature.value())));
@@ -1199,7 +1135,7 @@ inline Ref<CSSValue> ExtractorConverter::convertFontFeatureSettings(ExtractorSta
 inline Ref<CSSValue> ExtractorConverter::convertFontVariationSettings(ExtractorState& state, const FontVariationSettings& fontVariationSettings)
 {
     if (fontVariationSettings.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueNormal);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Normal { });
     CSSValueListBuilder list;
     for (auto& feature : fontVariationSettings)
         list.append(CSSFontVariationValue::create(feature.tag(), convert(state, feature.value())));
@@ -1208,18 +1144,18 @@ inline Ref<CSSValue> ExtractorConverter::convertFontVariationSettings(ExtractorS
 
 // MARK: - Grid conversions
 
-inline Ref<CSSValue> ExtractorConverter::convertGridAutoFlow(ExtractorState&, GridAutoFlow gridAutoFlow)
+inline Ref<CSSValue> ExtractorConverter::convertGridAutoFlow(ExtractorState& state, GridAutoFlow gridAutoFlow)
 {
     ASSERT(gridAutoFlow & static_cast<GridAutoFlow>(InternalAutoFlowDirectionRow) || gridAutoFlow & static_cast<GridAutoFlow>(InternalAutoFlowDirectionColumn));
 
     CSSValueListBuilder list;
     if (gridAutoFlow & static_cast<GridAutoFlow>(InternalAutoFlowDirectionColumn))
-        list.append(CSSPrimitiveValue::create(CSSValueColumn));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Column { }));
     else if (!(gridAutoFlow & static_cast<GridAutoFlow>(InternalAutoFlowAlgorithmDense)))
-        list.append(CSSPrimitiveValue::create(CSSValueRow));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Row { }));
 
     if (gridAutoFlow & static_cast<GridAutoFlow>(InternalAutoFlowAlgorithmDense))
-        list.append(CSSPrimitiveValue::create(CSSValueDense));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Dense { }));
 
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }

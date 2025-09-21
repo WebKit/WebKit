@@ -120,90 +120,58 @@ class BuilderConverter {
 public:
     template<typename T, typename... Rest> static T convertStyleType(BuilderState&, const CSSValue&, Rest&&...);
 
-    static WebCore::Length convertLength(BuilderState&, const CSSValue&);
-    static WebCore::Length convertLengthOrAuto(BuilderState&, const CSSValue&);
-    static WebCore::Length convertLengthAllowingNumber(BuilderState&, const CSSValue&); // Assumes unit is 'px' if input is a number.
-    static WebCore::Length convertTextLengthOrNormal(BuilderState&, const CSSValue&); // Converts length by text zoom factor, normal to zero
-    static TabSize convertTabSize(BuilderState&, const CSSValue&);
-    template<typename T> static T convertComputedLength(BuilderState&, const CSSValue&);
-    template<typename T> static T convertLineWidth(BuilderState&, const CSSValue&);
-    static OptionSet<TextTransform> convertTextTransform(BuilderState&, const CSSValue&);
-    template<typename T> static T convertNumber(BuilderState&, const CSSValue&);
-    static ImageOrientation convertImageOrientation(BuilderState&, const CSSValue&);
-    template<CSSValueID> static AtomString convertCustomIdentAtomOrKeyword(BuilderState&, const CSSValue&);
+    static NameScope convertNameScope(BuilderState&, const CSSValue&);
+    static AtomString convertCustomIdentAtomOrAuto(BuilderState&, const CSSValue&);
 
+    static WebCore::Length convertLengthUsingDoubleNoClamping(BuilderState&, const CSSValue&);
+    static WebCore::Length convertTextLengthOrNormal(BuilderState&, const CSSValue&); // Converts length by text zoom factor, normal to zero
+    static WebCore::Length convertLineHeight(BuilderState&, const CSSValue&, float multiplier = 1.f);
+
+    static OptionSet<TextTransform> convertTextTransform(BuilderState&, const CSSValue&);
     static OptionSet<TextEmphasisPosition> convertTextEmphasisPosition(BuilderState&, const CSSValue&);
+    static OptionSet<TextUnderlinePosition> convertTextUnderlinePosition(BuilderState&, const CSSValue&);
+    static OptionSet<LineBoxContain> convertLineBoxContain(BuilderState&, const CSSValue&);
+    static OptionSet<TouchAction> convertTouchAction(BuilderState&, const CSSValue&);
+    static OptionSet<HangingPunctuation> convertHangingPunctuation(BuilderState&, const CSSValue&);
+    static OptionSet<SpeakAs> convertSpeakAs(BuilderState&, const CSSValue&);
+    static OptionSet<Containment> convertContain(BuilderState&, const CSSValue&);
+    static OptionSet<MarginTrimType> convertMarginTrim(BuilderState&, const CSSValue&);
+    static OptionSet<PositionVisibility> convertPositionVisibility(BuilderState&, const CSSValue&);
+
+    static ImageOrientation convertImageOrientation(BuilderState&, const CSSValue&);
     static TextAlignMode convertTextAlign(BuilderState&, const CSSValue&);
     static TextAlignLast convertTextAlignLast(BuilderState&, const CSSValue&);
     static Resize convertResize(BuilderState&, const CSSValue&);
-    static OptionSet<TextUnderlinePosition> convertTextUnderlinePosition(BuilderState&, const CSSValue&);
+    static ScrollbarWidth convertScrollbarWidth(BuilderState&, const CSSValue&); // scrollbar-width converter is only needed for quirking.
+    static GlyphOrientation convertGlyphOrientation(BuilderState&, const CSSValue&);
+    static GlyphOrientation convertGlyphOrientationOrAuto(BuilderState&, const CSSValue&);
+    static MaskMode convertFillLayerMaskMode(BuilderState&, const CSSValue&);
     static TextEdge convertTextEdge(BuilderState&, const CSSValue&);
-    static OptionSet<LineBoxContain> convertLineBoxContain(BuilderState&, const CSSValue&);
     static ScrollSnapType convertScrollSnapType(BuilderState&, const CSSValue&);
     static ScrollSnapAlign convertScrollSnapAlign(BuilderState&, const CSSValue&);
-    // scrollbar-width converter is only needed for quirking.
-    static ScrollbarWidth convertScrollbarWidth(BuilderState&, const CSSValue&);
     static GridAutoFlow convertGridAutoFlow(BuilderState&, const CSSValue&);
-#if PLATFORM(IOS_FAMILY)
-    static bool convertTouchCallout(BuilderState&, const CSSValue&);
-#endif
-#if ENABLE(TOUCH_EVENTS)
-    static Color convertTapHighlightColor(BuilderState&, const CSSValue&);
-#endif
-    static OptionSet<TouchAction> convertTouchAction(BuilderState&, const CSSValue&);
-#if ENABLE(WEBKIT_OVERFLOW_SCROLLING_CSS_PROPERTY)
-    static bool convertOverflowScrolling(BuilderState&, const CSSValue&);
-#endif
-
-    static FontSizeAdjust convertFontSizeAdjust(BuilderState&, const CSSValue&);
-    static std::optional<FontSelectionValue> convertFontStyleFromValue(BuilderState&, const CSSValue&);
-    static FontSelectionValue convertFontWeight(BuilderState&, const CSSValue&);
-    static FontSelectionValue convertFontWidth(BuilderState&, const CSSValue&);
-    static FontSelectionValue convertFontStyle(BuilderState&, const CSSValue&);
-    static FontFeatureSettings convertFontFeatureSettings(BuilderState&, const CSSValue&);
-    static FontVariationSettings convertFontVariationSettings(BuilderState&, const CSSValue&);
     static PaintOrder convertPaintOrder(BuilderState&, const CSSValue&);
     static URL convertSVGURIReference(BuilderState&, const CSSValue&);
     static StyleSelfAlignmentData convertSelfOrDefaultAlignmentData(BuilderState&, const CSSValue&);
     static StyleContentAlignmentData convertContentAlignmentData(BuilderState&, const CSSValue&);
-    static GlyphOrientation convertGlyphOrientation(BuilderState&, const CSSValue&);
-    static GlyphOrientation convertGlyphOrientationOrAuto(BuilderState&, const CSSValue&);
-    static WebCore::Length convertLineHeight(BuilderState&, const CSSValue&, float multiplier = 1.f);
-    static FontPalette convertFontPalette(BuilderState&, const CSSValue&);
-    
-    static BreakBetween convertPageBreakBetween(BuilderState&, const CSSValue&);
-    static BreakInside convertPageBreakInside(BuilderState&, const CSSValue&);
-    static BreakBetween convertColumnBreakBetween(BuilderState&, const CSSValue&);
-    static BreakInside convertColumnBreakInside(BuilderState&, const CSSValue&);
-
-    static OptionSet<HangingPunctuation> convertHangingPunctuation(BuilderState&, const CSSValue&);
-
-    static OptionSet<SpeakAs> convertSpeakAs(BuilderState&, const CSSValue&);
-
-    static OptionSet<Containment> convertContain(BuilderState&, const CSSValue&);
-
-    static OptionSet<MarginTrimType> convertMarginTrim(BuilderState&, const CSSValue&);
-
-    static TextSpacingTrim convertTextSpacingTrim(BuilderState&, const CSSValue&);
-    static TextAutospace convertTextAutospace(BuilderState&, const CSSValue&);
-
     static RefPtr<WillChangeData> convertWillChange(BuilderState&, const CSSValue&);
-
     static std::optional<ScopedName> convertPositionAnchor(BuilderState&, const CSSValue&);
     static std::optional<PositionArea> convertPositionArea(BuilderState&, const CSSValue&);
-    static OptionSet<PositionVisibility> convertPositionVisibility(BuilderState&, const CSSValue&);
-
-    static NameScope convertNameScope(BuilderState&, const CSSValue&);
-
     static FixedVector<PositionTryFallback> convertPositionTryFallbacks(BuilderState&, const CSSValue&);
 
-    static MaskMode convertFillLayerMaskMode(BuilderState&, const CSSValue&);
+    // Font Properties
+    static FontSizeAdjust convertFontSizeAdjust(BuilderState&, const CSSValue&);
+    static std::optional<FontSelectionValue> convertFontStyleFromValue(BuilderState&, const CSSValue&);
+    static FontSelectionValue convertFontWeight(BuilderState&, const CSSValue&);
+    static FontSelectionValue convertFontWidth(BuilderState&, const CSSValue&);
+    static FontFeatureSettings convertFontFeatureSettings(BuilderState&, const CSSValue&);
+    static FontVariationSettings convertFontVariationSettings(BuilderState&, const CSSValue&);
+    static FontPalette convertFontPalette(BuilderState&, const CSSValue&);
+    static TextSpacingTrim convertTextSpacingTrim(BuilderState&, const CSSValue&);
+    static TextAutospace convertTextAutospace(BuilderState&, const CSSValue&);
+    static TabSize convertTabSize(BuilderState&, const CSSValue&);
 
 private:
-    friend class BuilderCustom;
-
-    static WebCore::Length parseSnapCoordinate(BuilderState&, const CSSValue&);
-
     static CSSToLengthConversionData cssToLengthConversionDataWithTextZoomFactor(BuilderState&);
 };
 
@@ -212,9 +180,11 @@ template<typename T, typename... Rest> inline T BuilderConverter::convertStyleTy
     return toStyleFromCSSValue<T>(builderState, value, std::forward<Rest>(rest)...);
 }
 
-inline WebCore::Length BuilderConverter::convertLength(BuilderState& builderState, const CSSValue& value)
+inline WebCore::Length BuilderConverter::convertLengthUsingDoubleNoClamping(BuilderState& builderState, const CSSValue& value)
 {
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
+    // FIXME: Callers of this should be using toStyleFromCSSValue<LengthPercentage<>>()`, but doing so breaks transforms/hittest-translated-content-off-to-infinity-and-back.html, due to it clamping between minValueForCssLength and maxValueForCssLength.
+
+    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
     if (!primitiveValue)
         return { };
 
@@ -222,42 +192,15 @@ inline WebCore::Length BuilderConverter::convertLength(BuilderState& builderStat
         builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
         : builderState.cssToLengthConversionData();
 
-    if (primitiveValue->isLength()) {
-        auto length = primitiveValue->resolveAsLength<WebCore::Length>(conversionData);
-        length.setHasQuirk(primitiveValue->primitiveType() == CSSUnitType::CSS_QUIRKY_EM);
-        return length;
-    }
-
+    if (primitiveValue->isLength())
+        return WebCore::Length(primitiveValue->resolveAsLength<double>(conversionData), LengthType::Fixed);
     if (primitiveValue->isPercentage())
-        return WebCore::Length(primitiveValue->resolveAsPercentage(conversionData), LengthType::Percent);
-
+        return WebCore::Length(primitiveValue->resolveAsPercentage<double>(conversionData), LengthType::Percent);
     if (primitiveValue->isCalculatedPercentageWithLength())
         return WebCore::Length(primitiveValue->cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }));
 
     ASSERT_NOT_REACHED();
     return WebCore::Length(0, LengthType::Fixed);
-}
-
-inline WebCore::Length BuilderConverter::convertLengthAllowingNumber(BuilderState& builderState, const CSSValue& value)
-{
-    CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
-        builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
-        : builderState.cssToLengthConversionData();
-
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    if (primitiveValue->isNumberOrInteger())
-        return WebCore::Length(primitiveValue->resolveAsNumber(conversionData), LengthType::Fixed);
-    return convertLength(builderState, value);
-}
-
-inline WebCore::Length BuilderConverter::convertLengthOrAuto(BuilderState& builderState, const CSSValue& value)
-{
-    if (value.valueID() == CSSValueAuto)
-        return WebCore::Length(LengthType::Auto);
-    return convertLength(builderState, value);
 }
 
 inline TabSize BuilderConverter::convertTabSize(BuilderState& builderState, const CSSValue& value)
@@ -270,49 +213,6 @@ inline TabSize BuilderConverter::convertTabSize(BuilderState& builderState, cons
     return TabSize(primitiveValue->resolveAsLength<float>(builderState.cssToLengthConversionData()), LengthValueType);
 }
 
-template<typename T>
-inline T BuilderConverter::convertComputedLength(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-    return primitiveValue->resolveAsLength<T>(builderState.cssToLengthConversionData());
-}
-
-template<typename T>
-inline T BuilderConverter::convertLineWidth(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-    switch (primitiveValue->valueID()) {
-    case CSSValueThin:
-        return 1;
-    case CSSValueMedium:
-        return 3;
-    case CSSValueThick:
-        return 5;
-    case CSSValueInvalid: {
-        // Any original result that was >= 1 should not be allowed to fall below 1.
-        // This keeps border lines from vanishing.
-        T result = convertComputedLength<T>(builderState, value);
-        if (builderState.style().usedZoom() < 1.0f && result < 1.0) {
-            T originalLength = primitiveValue->resolveAsLength<T>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0));
-            if (originalLength >= 1.0)
-                return 1;
-        }
-        float minimumLineWidth = 1 / builderState.document().deviceScaleFactor();
-        if (result > 0 && result < minimumLineWidth)
-            return minimumLineWidth;
-        return floorToDevicePixel(result, builderState.document().deviceScaleFactor());
-    }
-    default:
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-}
-
-
 inline OptionSet<TextTransform> BuilderConverter::convertTextTransform(BuilderState&, const CSSValue& value)
 {
     auto result = RenderStyle::initialTextTransform();
@@ -321,15 +221,6 @@ inline OptionSet<TextTransform> BuilderConverter::convertTextTransform(BuilderSt
             result.add(fromCSSValue<TextTransform>(currentValue));
     }
     return result;
-}
-
-template<typename T>
-inline T BuilderConverter::convertNumber(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-    return primitiveValue->resolveAsNumber<T>(builderState.cssToLengthConversionData());
 }
 
 inline ImageOrientation BuilderConverter::convertImageOrientation(BuilderState& builderState, const CSSValue& value)
@@ -342,13 +233,13 @@ inline ImageOrientation BuilderConverter::convertImageOrientation(BuilderState& 
     return ImageOrientation::Orientation::None;
 }
 
-template<CSSValueID keyword> inline AtomString BuilderConverter::convertCustomIdentAtomOrKeyword(BuilderState& builderState, const CSSValue& value)
+inline AtomString BuilderConverter::convertCustomIdentAtomOrAuto(BuilderState& builderState, const CSSValue& value)
 {
     RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
     if (!primitiveValue)
         return nullAtom();
 
-    if (primitiveValue->valueID() == keyword)
+    if (primitiveValue->valueID() == CSSValueAuto)
         return nullAtom();
     return AtomString { primitiveValue->stringValue() };
 }
@@ -775,23 +666,6 @@ inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState& buil
     return fontSizeAdjustFromCSSValue(builderState, value);
 }
 
-#if PLATFORM(IOS_FAMILY)
-inline bool BuilderConverter::convertTouchCallout(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-    return !equalLettersIgnoringASCIICase(primitiveValue->stringValue(), "none"_s);
-}
-#endif
-
-#if ENABLE(TOUCH_EVENTS)
-inline Color BuilderConverter::convertTapHighlightColor(BuilderState& builderState, const CSSValue& value)
-{
-    return convertStyleType<Color>(builderState, value, ForVisitedLink::No);
-}
-#endif
-
 inline OptionSet<TouchAction> BuilderConverter::convertTouchAction(BuilderState&, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value))
@@ -810,13 +684,6 @@ inline OptionSet<TouchAction> BuilderConverter::convertTouchAction(BuilderState&
 
     return RenderStyle::initialTouchActions();
 }
-
-#if ENABLE(WEBKIT_OVERFLOW_SCROLLING_CSS_PROPERTY)
-inline bool BuilderConverter::convertOverflowScrolling(BuilderState&, const CSSValue& value)
-{
-    return value.valueID() == CSSValueTouch;
-}
-#endif
 
 inline PaintOrder BuilderConverter::convertPaintOrder(BuilderState& builderState, const CSSValue& value)
 {

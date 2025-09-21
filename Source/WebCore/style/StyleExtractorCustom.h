@@ -233,6 +233,33 @@ public:
 
 template<CSSPropertyID> struct PropertyExtractorAdaptor;
 
+template<> struct PropertyExtractorAdaptor<CSSPropertyDirection> {
+    template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
+    {
+        if (state.element.ptr() == state.element->document().documentElement() && !state.style.hasExplicitlySetDirection())
+            return functor(RenderStyle::initialDirection());
+        return functor(state.style.writingMode().computedTextDirection());
+    }
+};
+
+template<> struct PropertyExtractorAdaptor<CSSPropertyWritingMode> {
+    template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
+    {
+        if (state.element.ptr() == state.element->document().documentElement() && !state.style.hasExplicitlySetWritingMode())
+            return functor(RenderStyle::initialWritingMode());
+        return functor(state.style.writingMode().computedWritingMode());
+    }
+};
+
+template<> struct PropertyExtractorAdaptor<CSSPropertyFloat> {
+    template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
+    {
+        if (state.style.hasOutOfFlowPosition())
+            return functor(CSS::Keyword::None { });
+        return functor(state.style.floating());
+    }
+};
+
 template<> struct PropertyExtractorAdaptor<CSSPropertyContent> {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, F&& functor) const
     {
@@ -450,7 +477,7 @@ template<CSSPropertyID propertyID, typename InsetEdgeApplier, typename NumberAsP
 template<CSSPropertyID propertyID> Ref<CSSValue> extractZoomAdjustedInsetValue(ExtractorState& state)
 {
     return extractZoomAdjustedInset<propertyID>(state,
-        [&](const auto& edge)   -> Ref<CSSValue> { return ExtractorConverter::convertStyleType(state, edge); },
+        [&](const auto& edge)   -> Ref<CSSValue> { return createCSSValue(state.pool, state.style, edge); },
         [&](const auto& number) -> Ref<CSSValue> { return ExtractorConverter::convertNumberAsPixels(state, number); },
         [&](const auto& value)  -> Ref<CSSValue> { return CSSPrimitiveValue::create(value); }
     );
@@ -459,7 +486,7 @@ template<CSSPropertyID propertyID> Ref<CSSValue> extractZoomAdjustedInsetValue(E
 template<CSSPropertyID propertyID> void extractZoomAdjustedInsetSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     extractZoomAdjustedInset<propertyID>(state,
-        [&](const auto& edge)   { ExtractorSerializer::serializeStyleType(state, builder, context, edge); },
+        [&](const auto& edge)   { serializationForCSS(builder, context, state.style, edge); },
         [&](const auto& number) { ExtractorSerializer::serializeNumberAsPixels(state, builder, context, number); },
         [&](const auto& value)  { builder.append(nameLiteralForSerialization(value)); }
     );
@@ -520,7 +547,7 @@ template<auto styleGetter, auto computedCSSValueGetter> Ref<CSSValue> extractZoo
 {
     auto* renderBox = dynamicDowncast<RenderBox>(state.renderer);
     if (!renderBox)
-        return ExtractorConverter::convertStyleType(state, (state.style.*styleGetter)());
+        return createCSSValue(state.pool, state.style, (state.style.*styleGetter)());
     return ExtractorConverter::convertNumberAsPixels(state, (renderBox->*computedCSSValueGetter)());
 }
 
@@ -528,7 +555,7 @@ template<auto styleGetter, auto computedCSSValueGetter> void extractZoomAdjusted
 {
     auto* renderBox = dynamicDowncast<RenderBox>(state.renderer);
     if (!renderBox) {
-        ExtractorSerializer::serializeStyleType(state, builder, context, (state.style.*styleGetter)());
+        serializationForCSS(builder, context, state.style, (state.style.*styleGetter)());
         return;
     }
 
@@ -540,7 +567,7 @@ template<auto styleGetter, auto computedCSSValueGetter> Ref<CSSValue> extractZoo
     auto& paddingEdge  = (state.style.*styleGetter)();
     auto* renderBox = dynamicDowncast<RenderBox>(state.renderer);
     if (!renderBox || paddingEdge.isFixed())
-        return ExtractorConverter::convertStyleType(state, paddingEdge);
+        return createCSSValue(state.pool, state.style, paddingEdge);
     return ExtractorConverter::convertNumberAsPixels(state, (renderBox->*computedCSSValueGetter)());
 }
 
@@ -549,7 +576,7 @@ template<auto styleGetter, auto computedCSSValueGetter> void extractZoomAdjusted
     auto paddingEdge = (state.style.*styleGetter)();
     auto* renderBox = dynamicDowncast<RenderBox>(state.renderer);
     if (!renderBox || paddingEdge.isFixed()) {
-        ExtractorSerializer::serializeStyleType(state, builder, context, paddingEdge);
+        serializationForCSS(builder, context, state.style, paddingEdge);
         return;
     }
     ExtractorSerializer::serializeNumberAsPixels(state, builder, context, (renderBox->*computedCSSValueGetter)());
@@ -574,7 +601,7 @@ template<auto styleGetter, auto boxGetter> Ref<CSSValue> extractZoomAdjustedPref
         if (!isNonReplacedInline(*state.renderer))
             return ExtractorConverter::convertNumberAsPixels(state, (sizingBox(*state.renderer).*boxGetter)());
     }
-    return ExtractorConverter::convertStyleType(state, (state.style.*styleGetter)());
+    return createCSSValue(state.pool, state.style, (state.style.*styleGetter)());
 }
 
 template<auto styleGetter, auto boxGetter> void extractZoomAdjustedPreferredSizeSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
@@ -599,26 +626,26 @@ template<auto styleGetter, auto boxGetter> void extractZoomAdjustedPreferredSize
         }
     }
 
-    ExtractorSerializer::serializeStyleType(state, builder, context, (state.style.*styleGetter)());
+    serializationForCSS(builder, context, state.style, (state.style.*styleGetter)());
 }
 
 template<auto styleGetter> Ref<CSSValue> extractZoomAdjustedMaxSizeValue(ExtractorState& state)
 {
     auto unzoomedLength = (state.style.*styleGetter)();
     if (unzoomedLength.isNone())
-        return CSSPrimitiveValue::create(CSSValueNone);
-    return ExtractorConverter::convertStyleType(state, unzoomedLength);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
+    return createCSSValue(state.pool, state.style, unzoomedLength);
 }
 
 template<auto styleGetter> void extractZoomAdjustedMaxSizeSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     auto unzoomedLength = (state.style.*styleGetter)();
     if (unzoomedLength.isNone()) {
-        CSS::serializationForCSS(builder, context, CSS::Keyword::None { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
         return;
     }
 
-    ExtractorSerializer::serializeStyleType(state, builder, context, unzoomedLength);
+    serializationForCSS(builder, context, state.style, unzoomedLength);
 }
 
 template<auto styleGetter> Ref<CSSValue> extractZoomAdjustedMinSizeValue(ExtractorState& state)
@@ -631,10 +658,10 @@ template<auto styleGetter> Ref<CSSValue> extractZoomAdjustedMinSizeValue(Extract
     auto unzoomedLength = (state.style.*styleGetter)();
     if (unzoomedLength.isAuto()) {
         if (isFlexOrGridItem(state.renderer))
-            return CSSPrimitiveValue::create(CSSValueAuto);
+            return createCSSValue(state.pool, state.style, CSS::Keyword::Auto { });
         return ExtractorConverter::convertNumberAsPixels(state, 0);
     }
-    return ExtractorConverter::convertStyleType(state, unzoomedLength);
+    return createCSSValue(state.pool, state.style, unzoomedLength);
 }
 
 template<auto styleGetter> void extractZoomAdjustedMinSizeSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
@@ -647,7 +674,7 @@ template<auto styleGetter> void extractZoomAdjustedMinSizeSerialization(Extracto
     auto unzoomedLength = (state.style.*styleGetter)();
     if (unzoomedLength.isAuto()) {
         if (isFlexOrGridItem(state.renderer)) {
-            CSS::serializationForCSS(builder, context, CSS::Keyword::Auto { });
+            serializationForCSS(builder, context, state.style, CSS::Keyword::Auto { });
             return;
         }
 
@@ -655,14 +682,14 @@ template<auto styleGetter> void extractZoomAdjustedMinSizeSerialization(Extracto
         return;
     }
 
-    ExtractorSerializer::serializeStyleType(state, builder, context, unzoomedLength);
+    serializationForCSS(builder, context, state.style, unzoomedLength);
 }
 
 template<CSSPropertyID propertyID> Ref<CSSValue> extractCounterValue(ExtractorState& state)
 {
     auto& map = state.style.counterDirectives().map;
     if (map.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 
     CSSValueListBuilder list;
     for (auto& keyValue : map) {
@@ -681,14 +708,14 @@ template<CSSPropertyID propertyID> Ref<CSSValue> extractCounterValue(ExtractorSt
     }
     if (!list.isEmpty())
         return CSSValueList::createSpaceSeparated(WTFMove(list));
-    return CSSPrimitiveValue::create(CSSValueNone);
+    return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 }
 
 template<CSSPropertyID propertyID> void extractCounterSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     auto& map = state.style.counterDirectives().map;
     if (map.isEmpty()) {
-        CSS::serializationForCSS(builder, context, CSS::Keyword::None { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
         return;
     }
 
@@ -707,16 +734,16 @@ template<CSSPropertyID propertyID> void extractCounterSerialization(ExtractorSta
             if (!listEmpty)
                 builder.append(' ');
 
-            CSS::serializationForCSS(builder, context, CustomIdentifier { keyValue.key });
+            serializationForCSS(builder, context, state.style, CustomIdentifier { keyValue.key });
             builder.append(' ');
-            CSS::serializationForCSS(builder, context, CSS::IntegerRaw<> { *number });
+            serializationForCSS(builder, context, state.style, Integer<> { *number });
 
             listEmpty = false;
         }
     }
 
     if (listEmpty)
-        CSS::serializationForCSS(builder, context, CSS::Keyword::None { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
 }
 
 template<GridTrackSizingDirection direction> Ref<CSSValue> extractGridTemplateValue(ExtractorState& state)
@@ -734,7 +761,7 @@ template<GridTrackSizingDirection direction> Ref<CSSValue> extractGridTemplateVa
     auto& tracks = state.style.gridTemplateList(direction);
 
     if (tracks.masonry)
-        return CSSPrimitiveValue::create(CSSValueMasonry);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Masonry { });
 
     auto* renderGrid = dynamicDowncast<RenderGrid>(state.renderer);
 
@@ -753,7 +780,7 @@ template<GridTrackSizingDirection direction> Ref<CSSValue> extractGridTemplateVa
     bool isSubgrid = tracks.subgrid;
 
     if (trackListIsEmpty && !isSubgrid)
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 
     CSSValueListBuilder list;
 
@@ -763,7 +790,7 @@ template<GridTrackSizingDirection direction> Ref<CSSValue> extractGridTemplateVa
     // an appropriate grid parent), then we fall back to using the specified value.
     if (renderGrid && (!isSubgrid || renderGrid->isSubgrid(direction))) {
         if (isSubgrid) {
-            list.append(CSSPrimitiveValue::create(CSSValueSubgrid));
+            list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Subgrid { }));
 
             OrderedNamedLinesCollectorInSubgridLayout collector(state, tracks, renderGrid->numTracks(direction));
             for (int i = 0; i < collector.namedGridLineCount(); i++)
@@ -801,13 +828,13 @@ template<GridTrackSizingDirection direction> Ref<CSSValue> extractGridTemplateVa
                 return;
             list.append(CSSGridLineNamesValue::create(names));
         } else
-            list.append(ExtractorConverter::convertStyleType(state, std::get<GridTrackSize>(entry)));
+            list.append(createCSSValue(state.pool, state.style, std::get<GridTrackSize>(entry)));
     };
 
     for (auto& entry : computedTracks) {
         WTF::switchOn(entry,
             [&](const GridTrackSize& size) {
-                list.append(ExtractorConverter::convertStyleType(state, size));
+                list.append(createCSSValue(state.pool, state.style, size));
             },
             [&](const Vector<String>& names) {
                 // Subgrids don't have track sizes specified, so empty line names sets
@@ -829,10 +856,10 @@ template<GridTrackSizingDirection direction> Ref<CSSValue> extractGridTemplateVa
                 list.append(CSSGridAutoRepeatValue::create(repeat.type == AutoRepeatType::Fill ? CSSValueAutoFill : CSSValueAutoFit, WTFMove(repeatedValues)));
             },
             [&](const GridTrackEntrySubgrid&) {
-                list.append(CSSPrimitiveValue::create(CSSValueSubgrid));
+                list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Subgrid { }));
             },
             [&](const GridTrackEntryMasonry&) {
-                list.append(CSSPrimitiveValue::create(CSSValueMasonry));
+                list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Masonry { }));
             }
         );
     }
@@ -1062,8 +1089,8 @@ inline Ref<CSSValue> extractBorderRadiusShorthand(ExtractorState& state, CSSProp
     };
 
     auto extractBorderRadiusCornerValues = [&](auto& state, const auto& radius) {
-        auto x = ExtractorConverter::convertStyleType(state, radius.width());
-        auto y = radius.width() == radius.height() ? x.copyRef() : ExtractorConverter::convertStyleType(state, radius.height());
+        auto x = createCSSValue(state.pool, state.style, radius.width());
+        auto y = radius.width() == radius.height() ? x.copyRef() : createCSSValue(state.pool, state.style, radius.height());
         return std::pair<Ref<CSSValue>, Ref<CSSValue>> { WTFMove(x), WTFMove(y) };
     };
 
@@ -1153,7 +1180,7 @@ template<CSSPropertyID property> inline Ref<CSSValue> extractFillLayerPropertySh
     }();
     if (!layerCount) {
         ASSERT(property == CSSPropertyMask);
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
     }
 
     auto lastValue = lastLayerProperty != CSSPropertyInvalid ? ExtractorGenerated::extractValue(state, lastLayerProperty) : nullptr;
@@ -1193,55 +1220,34 @@ template<CSSPropertyID property> inline void extractFillLayerPropertyShorthandSe
 
 // MARK: - Custom Extractors
 
-inline CSSValueID extractDirectionValueID(ExtractorState& state)
-{
-    if (state.element.ptr() == state.element->document().documentElement() && !state.style.hasExplicitlySetDirection())
-        return toCSSValueID(RenderStyle::initialDirection());
-    return toCSSValueID(state.style.writingMode().computedTextDirection());
-}
-
 inline Ref<CSSValue> ExtractorCustom::extractDirection(ExtractorState& state)
 {
-    return CSSPrimitiveValue::create(extractDirectionValueID(state));
+    return extractCSSValue<CSSPropertyDirection>(state);
 }
 
-inline void ExtractorCustom::extractDirectionSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext&)
+inline void ExtractorCustom::extractDirectionSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
-    builder.append(nameLiteralForSerialization(extractDirectionValueID(state)));
-}
-
-inline CSSValueID extractWritingModeValueID(ExtractorState& state)
-{
-    if (state.element.ptr() == state.element->document().documentElement() && !state.style.hasExplicitlySetWritingMode())
-        return toCSSValueID(RenderStyle::initialWritingMode());
-    return toCSSValueID(state.style.writingMode().computedWritingMode());
+    extractSerialization<CSSPropertyDirection>(state, builder, context);
 }
 
 inline Ref<CSSValue> ExtractorCustom::extractWritingMode(ExtractorState& state)
 {
-    return CSSPrimitiveValue::create(extractWritingModeValueID(state));
+    return extractCSSValue<CSSPropertyWritingMode>(state);
 }
 
-inline void ExtractorCustom::extractWritingModeSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext&)
+inline void ExtractorCustom::extractWritingModeSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
-    builder.append(nameLiteralForSerialization(extractWritingModeValueID(state)));
+    extractSerialization<CSSPropertyWritingMode>(state, builder, context);
 }
 
 inline Ref<CSSValue> ExtractorCustom::extractFloat(ExtractorState& state)
 {
-    if (state.style.hasOutOfFlowPosition())
-        return CSSPrimitiveValue::create(CSSValueNone);
-    return ExtractorConverter::convert(state, state.style.floating());
+    return extractCSSValue<CSSPropertyFloat>(state);
 }
 
 inline void ExtractorCustom::extractFloatSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
-    if (state.style.hasOutOfFlowPosition()) {
-        CSS::serializationForCSS(builder, context, CSS::Keyword::None { });
-        return;
-    }
-
-    ExtractorSerializer::serialize(state, builder, context, state.style.floating());
+    extractSerialization<CSSPropertyFloat>(state, builder, context);
 }
 
 inline Ref<CSSValue> ExtractorCustom::extractContent(ExtractorState& state)
@@ -1258,7 +1264,7 @@ inline Ref<CSSValue> ExtractorCustom::extractLetterSpacing(ExtractorState& state
 {
     auto& spacing = state.style.computedLetterSpacing();
     if (spacing.isFixed() && spacing.isZero())
-        return CSSPrimitiveValue::create(CSSValueNormal);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Normal { });
     return ExtractorConverter::convertLength(state, spacing);
 }
 
@@ -1266,7 +1272,7 @@ inline void ExtractorCustom::extractLetterSpacingSerialization(ExtractorState& s
 {
     auto& spacing = state.style.computedLetterSpacing();
     if (spacing.isFixed() && spacing.isZero()) {
-        CSS::serializationForCSS(builder, context, CSS::Keyword::Normal { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::Normal { });
         return;
     }
     ExtractorSerializer::serializeLength(state, builder, context, spacing);
@@ -1286,7 +1292,7 @@ inline Ref<CSSValue> ExtractorCustom::extractLineHeight(ExtractorState& state)
 {
     auto& length = state.style.lineHeight();
     if (length.isNormal())
-        return CSSPrimitiveValue::create(CSSValueNormal);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Normal { });
     if (length.isPercent()) {
         // BuilderConverter::convertLineHeight() will convert a percentage value to a fixed value,
         // and a number value to a percentage value. To be able to roundtrip a number value, we thus
@@ -1307,7 +1313,7 @@ inline void ExtractorCustom::extractLineHeightSerialization(ExtractorState& stat
 {
     auto& length = state.style.lineHeight();
     if (length.isNormal()) {
-        CSS::serializationForCSS(builder, context, CSS::Keyword::Normal { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::Normal { });
         return;
     }
     if (length.isPercent()) {
@@ -1315,7 +1321,7 @@ inline void ExtractorCustom::extractLineHeightSerialization(ExtractorState& stat
         // and a number value to a percentage value. To be able to roundtrip a number value, we thus
         // look for a percent value and convert it back to a number.
         if (state.valueType == ExtractorState::PropertyValueType::Computed) {
-            ExtractorSerializer::serializeNumber(state, builder, context, length.value() / 100);
+            serializationForCSS(builder, context, state.style, Number<> { length.value() / 100 });
             return;
         }
 
@@ -1376,13 +1382,13 @@ inline void ExtractorCustom::extractFontStyleSerialization(ExtractorState& state
 
     float angle = *italic;
     if (!angle) {
-        CSS::serializationForCSS(builder, context, CSS::Keyword::Normal { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::Normal { });
         return;
     }
 
-    CSS::serializationForCSS(builder, context, CSS::Keyword::Oblique { });
+    serializationForCSS(builder, context, state.style, CSS::Keyword::Oblique { });
     builder.append(' ');
-    CSS::serializationForCSS(builder, context, CSS::AngleRaw<> { CSS::AngleUnit::Deg, angle });
+    serializationForCSS(builder, context, state.style, Angle<> { angle });
 }
 
 inline Ref<CSSValue> ExtractorCustom::extractFontVariantLigatures(ExtractorState& state)
@@ -1393,9 +1399,9 @@ inline Ref<CSSValue> ExtractorCustom::extractFontVariantLigatures(ExtractorState
     auto contextualAlternates = state.style.fontDescription().variantContextualAlternates();
 
     if (common == FontVariantLigatures::No && discretionary == FontVariantLigatures::No && historical == FontVariantLigatures::No && contextualAlternates == FontVariantLigatures::No)
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
     if (common == FontVariantLigatures::Normal && discretionary == FontVariantLigatures::Normal && historical == FontVariantLigatures::Normal && contextualAlternates == FontVariantLigatures::Normal)
-        return CSSPrimitiveValue::create(CSSValueNormal);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Normal { });
 
     auto appendLigaturesValue = [](auto& list, auto value, auto yesValue, auto noValue) {
         switch (value) {
@@ -1434,17 +1440,17 @@ inline Ref<CSSValue> ExtractorCustom::extractFontVariantNumeric(ExtractorState& 
     auto slashedZero = state.style.fontDescription().variantNumericSlashedZero();
 
     if (figure == FontVariantNumericFigure::Normal && spacing == FontVariantNumericSpacing::Normal && fraction == FontVariantNumericFraction::Normal && ordinal == FontVariantNumericOrdinal::Normal && slashedZero == FontVariantNumericSlashedZero::Normal)
-        return CSSPrimitiveValue::create(CSSValueNormal);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Normal { });
 
     CSSValueListBuilder valueList;
     switch (figure) {
     case FontVariantNumericFigure::Normal:
         break;
     case FontVariantNumericFigure::LiningNumbers:
-        valueList.append(CSSPrimitiveValue::create(CSSValueLiningNums));
+        valueList.append(createCSSValue(state.pool, state.style, CSS::Keyword::LiningNums { }));
         break;
     case FontVariantNumericFigure::OldStyleNumbers:
-        valueList.append(CSSPrimitiveValue::create(CSSValueOldstyleNums));
+        valueList.append(createCSSValue(state.pool, state.style, CSS::Keyword::OldstyleNums { }));
         break;
     }
 
@@ -1452,10 +1458,10 @@ inline Ref<CSSValue> ExtractorCustom::extractFontVariantNumeric(ExtractorState& 
     case FontVariantNumericSpacing::Normal:
         break;
     case FontVariantNumericSpacing::ProportionalNumbers:
-        valueList.append(CSSPrimitiveValue::create(CSSValueProportionalNums));
+        valueList.append(createCSSValue(state.pool, state.style, CSS::Keyword::ProportionalNums { }));
         break;
     case FontVariantNumericSpacing::TabularNumbers:
-        valueList.append(CSSPrimitiveValue::create(CSSValueTabularNums));
+        valueList.append(createCSSValue(state.pool, state.style, CSS::Keyword::TabularNums { }));
         break;
     }
 
@@ -1463,17 +1469,17 @@ inline Ref<CSSValue> ExtractorCustom::extractFontVariantNumeric(ExtractorState& 
     case FontVariantNumericFraction::Normal:
         break;
     case FontVariantNumericFraction::DiagonalFractions:
-        valueList.append(CSSPrimitiveValue::create(CSSValueDiagonalFractions));
+        valueList.append(createCSSValue(state.pool, state.style, CSS::Keyword::DiagonalFractions { }));
         break;
     case FontVariantNumericFraction::StackedFractions:
-        valueList.append(CSSPrimitiveValue::create(CSSValueStackedFractions));
+        valueList.append(createCSSValue(state.pool, state.style, CSS::Keyword::StackedFractions { }));
         break;
     }
 
     if (ordinal == FontVariantNumericOrdinal::Yes)
-        valueList.append(CSSPrimitiveValue::create(CSSValueOrdinal));
+        valueList.append(createCSSValue(state.pool, state.style, CSS::Keyword::Ordinal { }));
     if (slashedZero == FontVariantNumericSlashedZero::Yes)
-        valueList.append(CSSPrimitiveValue::create(CSSValueSlashedZero));
+        valueList.append(createCSSValue(state.pool, state.style, CSS::Keyword::SlashedZero { }));
 
     return CSSValueList::createSpaceSeparated(WTFMove(valueList));
 }
@@ -1488,7 +1494,7 @@ inline Ref<CSSValue> ExtractorCustom::extractFontVariantAlternates(ExtractorStat
 {
     auto alternates = state.style.fontDescription().variantAlternates();
     if (alternates.isNormal())
-        return CSSPrimitiveValue::create(CSSValueNormal);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Normal { });
 
     CSSValueListBuilder valueList;
 
@@ -1496,7 +1502,7 @@ inline Ref<CSSValue> ExtractorCustom::extractFontVariantAlternates(ExtractorStat
         valueList.append(CSSFunctionValue::create(CSSValueStylistic, CSSPrimitiveValue::createCustomIdent(alternates.values().stylistic)));
 
     if (alternates.values().historicalForms)
-        valueList.append(CSSPrimitiveValue::create(CSSValueHistoricalForms));
+        valueList.append(createCSSValue(state.pool, state.style, CSS::Keyword::HistoricalForms { }));
 
     if (!alternates.values().styleset.isEmpty()) {
         CSSValueListBuilder stylesetArguments;
@@ -1539,29 +1545,29 @@ inline Ref<CSSValue> ExtractorCustom::extractFontVariantEastAsian(ExtractorState
     auto width = state.style.fontDescription().variantEastAsianWidth();
     auto ruby = state.style.fontDescription().variantEastAsianRuby();
     if (variant == FontVariantEastAsianVariant::Normal && width == FontVariantEastAsianWidth::Normal && ruby == FontVariantEastAsianRuby::Normal)
-        return CSSPrimitiveValue::create(CSSValueNormal);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Normal { });
 
     CSSValueListBuilder valueList;
     switch (variant) {
     case FontVariantEastAsianVariant::Normal:
         break;
     case FontVariantEastAsianVariant::Jis78:
-        valueList.append(CSSPrimitiveValue::create(CSSValueJis78));
+        valueList.append(createCSSValue(state.pool, state.style, CSS::Keyword::Jis78 { }));
         break;
     case FontVariantEastAsianVariant::Jis83:
-        valueList.append(CSSPrimitiveValue::create(CSSValueJis83));
+        valueList.append(createCSSValue(state.pool, state.style, CSS::Keyword::Jis83 { }));
         break;
     case FontVariantEastAsianVariant::Jis90:
-        valueList.append(CSSPrimitiveValue::create(CSSValueJis90));
+        valueList.append(createCSSValue(state.pool, state.style, CSS::Keyword::Jis90 { }));
         break;
     case FontVariantEastAsianVariant::Jis04:
-        valueList.append(CSSPrimitiveValue::create(CSSValueJis04));
+        valueList.append(createCSSValue(state.pool, state.style, CSS::Keyword::Jis04 { }));
         break;
     case FontVariantEastAsianVariant::Simplified:
-        valueList.append(CSSPrimitiveValue::create(CSSValueSimplified));
+        valueList.append(createCSSValue(state.pool, state.style, CSS::Keyword::Simplified { }));
         break;
     case FontVariantEastAsianVariant::Traditional:
-        valueList.append(CSSPrimitiveValue::create(CSSValueTraditional));
+        valueList.append(createCSSValue(state.pool, state.style, CSS::Keyword::Traditional { }));
         break;
     }
 
@@ -1569,15 +1575,15 @@ inline Ref<CSSValue> ExtractorCustom::extractFontVariantEastAsian(ExtractorState
     case FontVariantEastAsianWidth::Normal:
         break;
     case FontVariantEastAsianWidth::Full:
-        valueList.append(CSSPrimitiveValue::create(CSSValueFullWidth));
+        valueList.append(createCSSValue(state.pool, state.style, CSS::Keyword::FullWidth { }));
         break;
     case FontVariantEastAsianWidth::Proportional:
-        valueList.append(CSSPrimitiveValue::create(CSSValueProportionalWidth));
+        valueList.append(createCSSValue(state.pool, state.style, CSS::Keyword::ProportionalWidth { }));
         break;
     }
 
     if (ruby == FontVariantEastAsianRuby::Yes)
-        valueList.append(CSSPrimitiveValue::create(CSSValueRuby));
+        valueList.append(createCSSValue(state.pool, state.style, CSS::Keyword::Ruby { }));
 
     return CSSValueList::createSpaceSeparated(WTFMove(valueList));
 }
@@ -1655,7 +1661,7 @@ inline Ref<CSSValue> ExtractorCustom::extractMarginRight(ExtractorState& state)
 
     auto& marginRight = state.style.marginRight();
     if (marginRight.isFixed() || !box)
-        return ExtractorConverter::convertStyleType(state, marginRight);
+        return createCSSValue(state.pool, state.style, marginRight);
 
     float value;
     if (marginRight.isPercentOrCalculated()) {
@@ -1678,7 +1684,7 @@ inline void ExtractorCustom::extractMarginRightSerialization(ExtractorState& sta
 
     auto& marginRight = state.style.marginRight();
     if (marginRight.isFixed() || !box) {
-        ExtractorSerializer::serializeStyleType(state, builder, context, marginRight);
+        serializationForCSS(builder, context, state.style, marginRight);
         return;
     }
 
@@ -1957,12 +1963,12 @@ inline Ref<CSSValue> ExtractorCustom::extractGridAutoFlow(ExtractorState& state)
     CSSValueListBuilder list;
     ASSERT(state.style.isGridAutoFlowDirectionRow() || state.style.isGridAutoFlowDirectionColumn());
     if (state.style.isGridAutoFlowDirectionColumn())
-        list.append(CSSPrimitiveValue::create(CSSValueColumn));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Column { }));
     else if (!state.style.isGridAutoFlowAlgorithmDense())
-        list.append(CSSPrimitiveValue::create(CSSValueRow));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Row { }));
 
     if (state.style.isGridAutoFlowAlgorithmDense())
-        list.append(CSSPrimitiveValue::create(CSSValueDense));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Dense { }));
 
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
@@ -1973,17 +1979,17 @@ inline void ExtractorCustom::extractGridAutoFlowSerialization(ExtractorState& st
 
     bool listEmpty = true;
     if (state.style.isGridAutoFlowDirectionColumn()) {
-        CSS::serializationForCSS(builder, context, CSS::Keyword::Column { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::Column { });
         listEmpty = false;
     } else if (!state.style.isGridAutoFlowAlgorithmDense()) {
-        CSS::serializationForCSS(builder, context, CSS::Keyword::Row { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::Row { });
         listEmpty = false;
     }
 
     if (state.style.isGridAutoFlowAlgorithmDense()) {
         if (!listEmpty)
             builder.append(' ');
-        CSS::serializationForCSS(builder, context, CSS::Keyword::Dense { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::Dense { });
     }
 }
 
@@ -2160,7 +2166,7 @@ inline Ref<CSSValue> convertSingleAnimation(ExtractorState& state, const Animati
     if (animation.compositeOperation() != Animation::initialCompositeOperation())
         list.append(createCSSValue(state.pool, state.style, animation.compositeOperation()));
     if (list.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
@@ -2295,7 +2301,7 @@ inline void ExtractorCustom::extractBackgroundShorthandSerialization(ExtractorSt
 inline RefPtr<CSSValue> ExtractorCustom::extractBackgroundPositionShorthand(ExtractorState& state)
 {
     auto mapper = [](auto& state, auto& layer) -> Ref<CSSValue> {
-        return ExtractorConverter::convertStyleType(state, layer.position());
+        return createCSSValue(state.pool, state.style, layer.position());
     };
     return extractFillLayerValue(state, state.style.backgroundLayers(), mapper);
 }
@@ -2305,7 +2311,7 @@ inline void ExtractorCustom::extractBackgroundPositionShorthandSerialization(Ext
     auto mapper = [](auto& state, auto& builder, const auto& context, bool includeComma, auto& layer) {
         if (includeComma)
             builder.append(", "_s);
-        ExtractorSerializer::serializeStyleType(state, builder, context, layer.position());
+        serializationForCSS(builder, context, state.style, layer.position());
     };
     extractFillLayerValueSerialization(state, builder, context, state.style.backgroundLayers(), mapper);
 }
@@ -2314,21 +2320,21 @@ inline RefPtr<CSSValue> ExtractorCustom::extractBlockStepShorthand(ExtractorStat
 {
     CSSValueListBuilder list;
     if (auto blockStepSize = state.style.blockStepSize(); blockStepSize != RenderStyle::initialBlockStepSize())
-        list.append(ExtractorConverter::convertStyleType(state, blockStepSize));
+        list.append(createCSSValue(state.pool, state.style, blockStepSize));
 
     if (auto blockStepInsert = state.style.blockStepInsert(); blockStepInsert != RenderStyle::initialBlockStepInsert())
-        list.append(ExtractorConverter::convert(state, blockStepInsert));
+        list.append(createCSSValue(state.pool, state.style, blockStepInsert));
 
     if (auto blockStepAlign = state.style.blockStepAlign(); blockStepAlign != RenderStyle::initialBlockStepAlign())
-        list.append(ExtractorConverter::convert(state, blockStepAlign));
+        list.append(createCSSValue(state.pool, state.style, blockStepAlign));
 
     if (auto blockStepRound = state.style.blockStepRound(); blockStepRound != RenderStyle::initialBlockStepRound())
-        list.append(ExtractorConverter::convert(state, blockStepRound));
+        list.append(createCSSValue(state.pool, state.style, blockStepRound));
 
     if (!list.isEmpty())
         return CSSValueList::createSpaceSeparated(list);
 
-    return CSSPrimitiveValue::create(CSSValueNone);
+    return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 }
 
 inline void ExtractorCustom::extractBlockStepShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
@@ -2338,33 +2344,33 @@ inline void ExtractorCustom::extractBlockStepShorthandSerialization(ExtractorSta
     if (auto blockStepSize = state.style.blockStepSize(); blockStepSize != RenderStyle::initialBlockStepSize()) {
         if (!listEmpty)
             builder.append(' ');
-        ExtractorSerializer::serializeStyleType(state, builder, context, blockStepSize);
+        serializationForCSS(builder, context, state.style, blockStepSize);
         listEmpty = false;
     }
 
     if (auto blockStepInsert = state.style.blockStepInsert(); blockStepInsert != RenderStyle::initialBlockStepInsert()) {
         if (!listEmpty)
             builder.append(' ');
-        ExtractorSerializer::serialize(state, builder, context, blockStepInsert);
+        serializationForCSS(builder, context, state.style, blockStepInsert);
         listEmpty = false;
     }
 
     if (auto blockStepAlign = state.style.blockStepAlign(); blockStepAlign != RenderStyle::initialBlockStepAlign()) {
         if (!listEmpty)
             builder.append(' ');
-        ExtractorSerializer::serialize(state, builder, context, blockStepAlign);
+        serializationForCSS(builder, context, state.style, blockStepAlign);
         listEmpty = false;
     }
 
     if (auto blockStepRound = state.style.blockStepRound(); blockStepRound != RenderStyle::initialBlockStepRound()) {
         if (!listEmpty)
             builder.append(' ');
-        ExtractorSerializer::serialize(state, builder, context, blockStepRound);
+        serializationForCSS(builder, context, state.style, blockStepRound);
         listEmpty = false;
     }
 
     if (listEmpty)
-        CSS::serializationForCSS(builder, context, CSS::Keyword::None { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
 }
 
 inline RefPtr<CSSValue> ExtractorCustom::extractBorderShorthand(ExtractorState& state)
@@ -2395,7 +2401,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractBorderImageShorthand(ExtractorSt
 {
     auto& borderImage = state.style.borderImage();
     if (borderImage.source().isNone())
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
     if (borderImage.overridesBorderWidths())
         return nullptr;
     return createCSSValue(state.pool, state.style, borderImage);
@@ -2405,7 +2411,7 @@ inline void ExtractorCustom::extractBorderImageShorthandSerialization(ExtractorS
 {
     auto& borderImage = state.style.borderImage();
     if (borderImage.source().isNone()) {
-        CSS::serializationForCSS(builder, context, CSS::Keyword::None { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
         return;
     }
     if (borderImage.overridesBorderWidths())
@@ -2462,7 +2468,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractContainerShorthand(ExtractorStat
 {
     auto name = [&]() -> Ref<CSSValue> {
         if (state.style.containerNames().isNone())
-            return CSSPrimitiveValue::create(CSSValueNone);
+            return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
         return ExtractorGenerated::extractValue(state, CSSPropertyContainerName).releaseNonNull();
     }();
 
@@ -2478,7 +2484,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractContainerShorthand(ExtractorStat
 inline void ExtractorCustom::extractContainerShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     if (state.style.containerNames().isNone())
-        CSS::serializationForCSS(builder, context, CSS::Keyword::None { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
     else
         ExtractorGenerated::extractValueSerialization(state, builder, context, CSSPropertyContainerName);
 
@@ -2492,20 +2498,20 @@ inline void ExtractorCustom::extractContainerShorthandSerialization(ExtractorSta
 inline RefPtr<CSSValue> ExtractorCustom::extractFlexFlowShorthand(ExtractorState& state)
 {
     if (state.style.flexWrap() == RenderStyle::initialFlexWrap())
-        return ExtractorConverter::convert(state, state.style.flexDirection());
+        return createCSSValue(state.pool, state.style, state.style.flexDirection());
     if (state.style.flexDirection() == RenderStyle::initialFlexDirection())
-        return ExtractorConverter::convert(state, state.style.flexWrap());
+        return createCSSValue(state.pool, state.style, state.style.flexWrap());
     return extractStandardSpaceSeparatedShorthand(state, flexFlowShorthand());
 }
 
 inline void ExtractorCustom::extractFlexFlowShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
     if (state.style.flexWrap() == RenderStyle::initialFlexWrap()) {
-        ExtractorSerializer::serialize(state, builder, context, state.style.flexDirection());
+        serializationForCSS(builder, context, state.style, state.style.flexDirection());
         return;
     }
     if (state.style.flexDirection() == RenderStyle::initialFlexDirection()) {
-        ExtractorSerializer::serialize(state, builder, context, state.style.flexWrap());
+        serializationForCSS(builder, context, state.style, state.style.flexWrap());
         return;
     }
     extractStandardSpaceSeparatedShorthandSerialization(state, builder, context, flexFlowShorthand());
@@ -2574,13 +2580,13 @@ inline RefPtr<CSSValue> ExtractorCustom::extractFontSynthesisShorthand(Extractor
 
     CSSValueListBuilder list;
     if (description.hasAutoFontSynthesisWeight())
-        list.append(CSSPrimitiveValue::create(CSSValueWeight));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Weight { }));
     if (description.hasAutoFontSynthesisStyle())
-        list.append(CSSPrimitiveValue::create(CSSValueStyle));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::Style { }));
     if (description.hasAutoFontSynthesisSmallCaps())
-        list.append(CSSPrimitiveValue::create(CSSValueSmallCaps));
+        list.append(createCSSValue(state.pool, state.style, CSS::Keyword::SmallCaps { }));
     if (list.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
@@ -2602,7 +2608,7 @@ inline void ExtractorCustom::extractFontSynthesisShorthandSerialization(Extracto
     appendOption(description.hasAutoFontSynthesisSmallCaps(), CSSValueSmallCaps);
 
     if (listEmpty)
-        CSS::serializationForCSS(builder, context, CSS::Keyword::None { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
 }
 
 inline RefPtr<CSSValue> ExtractorCustom::extractFontVariantShorthand(ExtractorState& state)
@@ -2616,7 +2622,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractFontVariantShorthand(ExtractorSt
         list.append(value.releaseNonNull());
     }
     if (list.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueNormal);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Normal { });
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
@@ -2630,7 +2636,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractLineClampShorthand(ExtractorStat
 {
     auto maxLines = state.style.maxLines().tryValue();
     if (!maxLines)
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 
     return CSSValuePair::create(
         createCSSValue(state.pool, state.style, *maxLines),
@@ -2642,7 +2648,7 @@ inline void ExtractorCustom::extractLineClampShorthandSerialization(ExtractorSta
 {
     auto maxLines = state.style.maxLines().tryValue();
     if (!maxLines) {
-        CSS::serializationForCSS(builder, context, CSS::Keyword::None { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
         return;
     }
 
@@ -2692,7 +2698,7 @@ inline void ExtractorCustom::extractMaskBorderShorthandSerialization(ExtractorSt
 inline RefPtr<CSSValue> ExtractorCustom::extractMaskPositionShorthand(ExtractorState& state)
 {
     auto mapper = [](auto& state, auto& layer) -> Ref<CSSValue> {
-        return ExtractorConverter::convertStyleType(state, layer.position());
+        return createCSSValue(state.pool, state.style, layer.position());
     };
     return extractFillLayerValue(state, state.style.maskLayers(), mapper);
 }
@@ -2702,7 +2708,7 @@ inline void ExtractorCustom::extractMaskPositionShorthandSerialization(Extractor
     auto mapper = [](auto& state, auto& builder, const auto& context, bool includeComma, auto& layer) {
         if (includeComma)
             builder.append(", "_s);
-        ExtractorSerializer::serializeStyleType(state, builder, context, layer.position());
+        serializationForCSS(builder, context, state.style, layer.position());
     };
     extractFillLayerValueSerialization(state, builder, context, state.style.maskLayers(), mapper);
 }
@@ -2720,7 +2726,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractOffsetShorthand(ExtractorState& 
         [&](const CSS::Keyword::Auto&) { },
         [&](const CSS::Keyword::Normal&) { },
         [&](const Position& position) {
-            innerList.append(ExtractorConverter::convertStyleType(state, position));
+            innerList.append(createCSSValue(state.pool, state.style, position));
         }
     );
 
@@ -2728,15 +2734,15 @@ inline RefPtr<CSSValue> ExtractorCustom::extractOffsetShorthand(ExtractorState& 
     bool nonInitialRotate = state.style.offsetRotate() != state.style.initialOffsetRotate();
 
     if (state.style.hasOffsetPath() || nonInitialDistance || nonInitialRotate)
-        innerList.append(ExtractorConverter::convertStyleType(state, state.style.offsetPath()));
+        innerList.append(createCSSValue(state.pool, state.style, state.style.offsetPath()));
 
     if (nonInitialDistance)
-        innerList.append(ExtractorConverter::convertStyleType(state, state.style.offsetDistance()));
+        innerList.append(createCSSValue(state.pool, state.style, state.style.offsetDistance()));
     if (nonInitialRotate)
-        innerList.append(ExtractorConverter::convertStyleType(state, state.style.offsetRotate()));
+        innerList.append(createCSSValue(state.pool, state.style, state.style.offsetRotate()));
 
     auto inner = innerList.isEmpty()
-        ? Ref<CSSValue> { CSSPrimitiveValue::create(CSSValueAuto) }
+        ? Ref<CSSValue> { createCSSValue(state.pool, state.style, CSS::Keyword::Auto { }) }
         : Ref<CSSValue> { CSSValueList::createSpaceSeparated(WTFMove(innerList)) };
 
     return WTF::switchOn(state.style.offsetAnchor(),
@@ -2746,7 +2752,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractOffsetShorthand(ExtractorState& 
         [&](const Position& position) -> Ref<CSSValue> {
             return CSSValueList::createSlashSeparated(
                 WTFMove(inner),
-                ExtractorConverter::convertStyleType(state, position)
+                createCSSValue(state.pool, state.style, position)
             );
         }
     );
@@ -2760,12 +2766,12 @@ inline void ExtractorCustom::extractOffsetShorthandSerialization(ExtractorState&
 
 inline RefPtr<CSSValue> ExtractorCustom::extractOverscrollBehaviorShorthand(ExtractorState& state)
 {
-    return ExtractorConverter::convert(state, std::max(state.style.overscrollBehaviorX(), state.style.overscrollBehaviorY()));
+    return createCSSValue(state.pool, state.style, std::max(state.style.overscrollBehaviorX(), state.style.overscrollBehaviorY()));
 }
 
 inline void ExtractorCustom::extractOverscrollBehaviorShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
 {
-    ExtractorSerializer::serialize(state, builder, context, std::max(state.style.overscrollBehaviorX(), state.style.overscrollBehaviorY()));
+    serializationForCSS(builder, context, state.style, std::max(state.style.overscrollBehaviorX(), state.style.overscrollBehaviorY()));
 }
 
 inline RefPtr<CSSValue> ExtractorCustom::extractPageBreakAfterShorthand(ExtractorState& state)
@@ -2806,8 +2812,8 @@ inline RefPtr<CSSValue> ExtractorCustom::extractPerspectiveOriginShorthand(Extra
         list.append(ExtractorConverter::convertNumberAsPixels(state, Style::evaluate(state.style.perspectiveOriginX(), box.width(), 1.0f /* FIXME FIND ZOOM */)));
         list.append(ExtractorConverter::convertNumberAsPixels(state, Style::evaluate(state.style.perspectiveOriginY(), box.height(), 1.0f /* FIXME FIND ZOOM */)));
     } else {
-        list.append(ExtractorConverter::convertStyleType(state, state.style.perspectiveOriginX()));
-        list.append(ExtractorConverter::convertStyleType(state, state.style.perspectiveOriginY()));
+        list.append(createCSSValue(state.pool, state.style, state.style.perspectiveOriginX()));
+        list.append(createCSSValue(state.pool, state.style, state.style.perspectiveOriginY()));
     }
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
@@ -2820,9 +2826,9 @@ inline void ExtractorCustom::extractPerspectiveOriginShorthandSerialization(Extr
         builder.append(' ');
         ExtractorSerializer::serializeNumberAsPixels(state, builder, context, Style::evaluate(state.style.perspectiveOriginY(), box.height(), 1.0f /* FIXME FIND ZOOM */));
     } else {
-        ExtractorSerializer::serializeStyleType(state, builder, context, state.style.perspectiveOriginX());
+        serializationForCSS(builder, context, state.style, state.style.perspectiveOriginX());
         builder.append(' ');
-        ExtractorSerializer::serializeStyleType(state, builder, context, state.style.perspectiveOriginY());
+        serializationForCSS(builder, context, state.style, state.style.perspectiveOriginY());
     }
 }
 
@@ -2846,7 +2852,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractScrollTimelineShorthand(Extracto
 {
     auto& timelines = state.style.scrollTimelines();
     if (timelines.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 
     CSSValueListBuilder list;
     for (auto& timeline : timelines) {
@@ -2854,12 +2860,12 @@ inline RefPtr<CSSValue> ExtractorCustom::extractScrollTimelineShorthand(Extracto
         auto axis = timeline->axis();
 
         ASSERT(!name.isNull());
-        auto nameCSSValue = CSSPrimitiveValue::createCustomIdent(name);
+        auto nameCSSValue = createCSSValue(state.pool, state.style, CustomIdentifier { name });
 
         if (axis == ScrollAxis::Block)
             list.append(WTFMove(nameCSSValue));
         else
-            list.append(CSSValuePair::createNoncoalescing(nameCSSValue, ExtractorConverter::convert(state, axis)));
+            list.append(CSSValuePair::createNoncoalescing(nameCSSValue, createCSSValue(state.pool, state.style, axis)));
     }
     return CSSValueList::createCommaSeparated(WTFMove(list));
 }
@@ -2868,17 +2874,17 @@ inline void ExtractorCustom::extractScrollTimelineShorthandSerialization(Extract
 {
     auto& timelines = state.style.scrollTimelines();
     if (timelines.isEmpty()) {
-        CSS::serializationForCSS(builder, context, CSS::Keyword::None { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
         return;
     }
 
     builder.append(interleave(timelines, [&](auto& builder, auto& timeline) {
         ASSERT(!timeline->name().isNull());
 
-        CSS::serializationForCSS(builder, context, CustomIdentifier { timeline->name() });
+        serializationForCSS(builder, context, state.style, CustomIdentifier { timeline->name() });
         if (auto axis = timeline->axis(); axis != ScrollAxis::Block) {
             builder.append(' ');
-            ExtractorSerializer::serialize(state, builder, context, axis);
+            serializationForCSS(builder, context, state.style, axis);
         }
     }, ", "_s));
 }
@@ -2890,14 +2896,14 @@ inline RefPtr<CSSValue> ExtractorCustom::extractTextBoxShorthand(ExtractorState&
     auto textBoxEdgeIsAuto = textBoxEdge == TextEdge { TextEdgeType::Auto, TextEdgeType::Auto };
 
     if (textBoxTrim == TextBoxTrim::None && textBoxEdgeIsAuto)
-        return CSSPrimitiveValue::create(CSSValueNormal);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Normal { });
     if (textBoxEdgeIsAuto)
-        return ExtractorConverter::convert(state, textBoxTrim);
+        return createCSSValue(state.pool, state.style, textBoxTrim);
     if (textBoxTrim == TextBoxTrim::TrimBoth)
         return ExtractorConverter::convertTextBoxEdge(state, textBoxEdge);
 
     return CSSValuePair::create(
-        ExtractorConverter::convert(state, textBoxTrim),
+        createCSSValue(state.pool, state.style, textBoxTrim),
         ExtractorConverter::convertTextBoxEdge(state, textBoxEdge)
     );
 }
@@ -2909,11 +2915,11 @@ inline void ExtractorCustom::extractTextBoxShorthandSerialization(ExtractorState
     auto textBoxEdgeIsAuto = textBoxEdge == TextEdge { TextEdgeType::Auto, TextEdgeType::Auto };
 
     if (textBoxTrim == TextBoxTrim::None && textBoxEdgeIsAuto) {
-        CSS::serializationForCSS(builder, context, CSS::Keyword::Normal { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::Normal { });
         return;
     }
     if (textBoxEdgeIsAuto) {
-        ExtractorSerializer::serialize(state, builder, context, textBoxTrim);
+        serializationForCSS(builder, context, state.style, textBoxTrim);
         return;
     }
     if (textBoxTrim == TextBoxTrim::TrimBoth) {
@@ -2921,7 +2927,7 @@ inline void ExtractorCustom::extractTextBoxShorthandSerialization(ExtractorState
         return;
     }
 
-    ExtractorSerializer::serialize(state, builder, context, textBoxTrim);
+    serializationForCSS(builder, context, state.style, textBoxTrim);
     builder.append(' ');
     ExtractorSerializer::serializeTextBoxEdge(state, builder, context, textBoxEdge);
 }
@@ -2934,7 +2940,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractTextDecorationShorthand(Extracto
     bool hasDefaultTextDecorationColor = state.style.textDecorationColor().isCurrentColor();
 
     if (hasDefaultTextDecorationLine && hasDefaultTextDecorationStyle && hasDefaultTextDecorationColor && hasDefaultTextDecorationThickness)
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 
     CSSValueListBuilder list;
     if (!hasDefaultTextDecorationLine)
@@ -2942,7 +2948,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractTextDecorationShorthand(Extracto
     if (!hasDefaultTextDecorationThickness)
         list.append(ExtractorConverter::convertStyleType<TextDecorationThickness>(state, state.style.textDecorationThickness()));
     if (!hasDefaultTextDecorationStyle)
-        list.append(ExtractorConverter::convert(state, state.style.textDecorationStyle()));
+        list.append(createCSSValue(state.pool, state.style, state.style.textDecorationStyle()));
     if (!hasDefaultTextDecorationColor)
         list.append(ExtractorConverter::convertStyleType<Color>(state, state.style.textDecorationColor()));
 
@@ -2957,26 +2963,26 @@ inline void ExtractorCustom::extractTextDecorationShorthandSerialization(Extract
     bool hasDefaultTextDecorationColor = state.style.textDecorationColor().isCurrentColor();
 
     if (hasDefaultTextDecorationLine && hasDefaultTextDecorationStyle && hasDefaultTextDecorationColor && hasDefaultTextDecorationThickness) {
-        CSS::serializationForCSS(builder, context, CSS::Keyword::None { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
         return;
     }
 
     if (!hasDefaultTextDecorationLine)
-        ExtractorSerializer::serialize(state, builder, context, state.style.textDecorationLine());
+        serializationForCSS(builder, context, state.style, state.style.textDecorationLine());
     if (!hasDefaultTextDecorationThickness) {
         if (!builder.isEmpty())
             builder.append(' ');
-        ExtractorSerializer::serialize(state, builder, context, state.style.textDecorationThickness());
+        serializationForCSS(builder, context, state.style, state.style.textDecorationThickness());
     }
     if (!hasDefaultTextDecorationStyle) {
         if (!builder.isEmpty())
             builder.append(' ');
-        ExtractorSerializer::serialize(state, builder, context, state.style.textDecorationStyle());
+        serializationForCSS(builder, context, state.style, state.style.textDecorationStyle());
     }
     if (!hasDefaultTextDecorationColor) {
         if (!builder.isEmpty())
             builder.append(' ');
-        ExtractorSerializer::serialize(state, builder, context, state.style.textDecorationColor());
+        serializationForCSS(builder, context, state.style, state.style.textDecorationColor());
     }
 }
 
@@ -2984,9 +2990,9 @@ inline RefPtr<CSSValue> ExtractorCustom::extractTextDecorationSkipShorthand(Extr
 {
     switch (state.style.textDecorationSkipInk()) {
     case TextDecorationSkipInk::None:
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
     case TextDecorationSkipInk::Auto:
-        return CSSPrimitiveValue::create(CSSValueAuto);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Auto { });
     case TextDecorationSkipInk::All:
         return nullptr;
     }
@@ -2997,10 +3003,10 @@ inline void ExtractorCustom::extractTextDecorationSkipShorthandSerialization(Ext
 {
     switch (state.style.textDecorationSkipInk()) {
     case TextDecorationSkipInk::None:
-        CSS::serializationForCSS(builder, context, CSS::Keyword::None { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
         return;
     case TextDecorationSkipInk::Auto:
-        CSS::serializationForCSS(builder, context, CSS::Keyword::Auto { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::Auto { });
         return;
     case TextDecorationSkipInk::All:
         return;
@@ -3014,13 +3020,13 @@ inline RefPtr<CSSValue> ExtractorCustom::extractTextWrapShorthand(ExtractorState
     auto textWrapStyle = state.style.textWrapStyle();
 
     if (textWrapStyle == TextWrapStyle::Auto)
-        return ExtractorConverter::convert(state, textWrapMode);
+        return createCSSValue(state.pool, state.style, textWrapMode);
     if (textWrapMode == TextWrapMode::Wrap)
-        return ExtractorConverter::convert(state, textWrapStyle);
+        return createCSSValue(state.pool, state.style, textWrapStyle);
 
     return CSSValuePair::create(
-        ExtractorConverter::convert(state, textWrapMode),
-        ExtractorConverter::convert(state, textWrapStyle)
+        createCSSValue(state.pool, state.style, textWrapMode),
+        createCSSValue(state.pool, state.style, textWrapStyle)
     );
 }
 
@@ -3030,17 +3036,17 @@ inline void ExtractorCustom::extractTextWrapShorthandSerialization(ExtractorStat
     auto textWrapStyle = state.style.textWrapStyle();
 
     if (textWrapStyle == TextWrapStyle::Auto) {
-        ExtractorSerializer::serialize(state, builder, context, textWrapMode);
+        serializationForCSS(builder, context, state.style, textWrapMode);
         return;
     }
     if (textWrapMode == TextWrapMode::Wrap) {
-        ExtractorSerializer::serialize(state, builder, context, textWrapStyle);
+        serializationForCSS(builder, context, state.style, textWrapStyle);
         return;
     }
 
-    ExtractorSerializer::serialize(state, builder, context, textWrapMode);
+    serializationForCSS(builder, context, state.style, textWrapMode);
     builder.append(' ');
-    ExtractorSerializer::serialize(state, builder, context, textWrapStyle);
+    serializationForCSS(builder, context, state.style, textWrapStyle);
 }
 
 inline RefPtr<CSSValue> ExtractorCustom::extractTransformOriginShorthand(ExtractorState& state)
@@ -3051,12 +3057,12 @@ inline RefPtr<CSSValue> ExtractorCustom::extractTransformOriginShorthand(Extract
         list.append(ExtractorConverter::convertNumberAsPixels(state, Style::evaluate(state.style.transformOriginX(), box.width(), 1.0f /* FIXME FIND ZOOM */)));
         list.append(ExtractorConverter::convertNumberAsPixels(state, Style::evaluate(state.style.transformOriginY(), box.height(), 1.0f /* FIXME FIND ZOOM */)));
         if (auto transformOriginZ = state.style.transformOriginZ(); transformOriginZ.value)
-            list.append(ExtractorConverter::convertStyleType(state, transformOriginZ));
+            list.append(createCSSValue(state.pool, state.style, transformOriginZ));
     } else {
-        list.append(ExtractorConverter::convertStyleType(state, state.style.transformOriginX()));
-        list.append(ExtractorConverter::convertStyleType(state, state.style.transformOriginY()));
+        list.append(createCSSValue(state.pool, state.style, state.style.transformOriginX()));
+        list.append(createCSSValue(state.pool, state.style, state.style.transformOriginY()));
         if (auto transformOriginZ = state.style.transformOriginZ(); transformOriginZ.value)
-            list.append(ExtractorConverter::convertStyleType(state, transformOriginZ));
+            list.append(createCSSValue(state.pool, state.style, transformOriginZ));
     }
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
@@ -3070,15 +3076,15 @@ inline void ExtractorCustom::extractTransformOriginShorthandSerialization(Extrac
         ExtractorSerializer::serializeNumberAsPixels(state, builder, context, Style::evaluate(state.style.transformOriginY(), box.height(), 1.0f /* FIXME FIND ZOOM */));
         if (auto transformOriginZ = state.style.transformOriginZ(); transformOriginZ.value) {
             builder.append(' ');
-            ExtractorSerializer::serializeStyleType(state, builder, context, transformOriginZ);
+            serializationForCSS(builder, context, state.style, transformOriginZ);
         }
     } else {
-        ExtractorSerializer::serializeStyleType(state, builder, context, state.style.transformOriginX());
+        serializationForCSS(builder, context, state.style, state.style.transformOriginX());
         builder.append(' ');
-        ExtractorSerializer::serializeStyleType(state, builder, context, state.style.transformOriginY());
+        serializationForCSS(builder, context, state.style, state.style.transformOriginY());
         if (auto transformOriginZ = state.style.transformOriginZ(); transformOriginZ.value) {
             builder.append(' ');
-            ExtractorSerializer::serializeStyleType(state, builder, context, transformOriginZ);
+            serializationForCSS(builder, context, state.style, transformOriginZ);
         }
     }
 }
@@ -3105,7 +3111,7 @@ inline Ref<CSSValue> convertSingleTransition(ExtractorState& state, const Transi
     if (transition.behavior() != Transition::initialBehavior())
         list.append(createCSSValue(state.pool, state.style, transition.behavior()));
     if (list.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueAll);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::All { });
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
@@ -3140,7 +3146,7 @@ inline RefPtr<CSSValue> ExtractorCustom::extractViewTimelineShorthand(ExtractorS
 {
     auto& timelines = state.style.viewTimelines();
     if (timelines.isEmpty())
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
 
     CSSValueListBuilder list;
     for (auto& timeline : timelines) {
@@ -3159,11 +3165,11 @@ inline RefPtr<CSSValue> ExtractorCustom::extractViewTimelineShorthand(ExtractorS
         else if (hasDefaultAxis)
             list.append(CSSValuePair::createNoncoalescing(nameCSSValue, createCSSValue(state.pool, state.style, insets)));
         else if (hasDefaultInsets)
-            list.append(CSSValuePair::createNoncoalescing(nameCSSValue, ExtractorConverter::convert(state, axis)));
+            list.append(CSSValuePair::createNoncoalescing(nameCSSValue, createCSSValue(state.pool, state.style, axis)));
         else {
             list.append(CSSValueList::createSpaceSeparated(
                 WTFMove(nameCSSValue),
-                ExtractorConverter::convert(state, axis),
+                createCSSValue(state.pool, state.style, axis),
                 createCSSValue(state.pool, state.style, insets)
             ));
         }
@@ -3184,23 +3190,23 @@ inline RefPtr<CSSValue> ExtractorCustom::extractWhiteSpaceShorthand(ExtractorSta
 
     // Convert to backwards-compatible keywords if possible.
     if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse && textWrapMode == TextWrapMode::Wrap)
-        return CSSPrimitiveValue::create(CSSValueNormal);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Normal { });
     if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrapMode == TextWrapMode::NoWrap)
-        return CSSPrimitiveValue::create(CSSValuePre);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::Pre { });
     if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrapMode == TextWrapMode::Wrap)
-        return CSSPrimitiveValue::create(CSSValuePreWrap);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::PreWrap { });
     if (whiteSpaceCollapse == WhiteSpaceCollapse::PreserveBreaks && textWrapMode == TextWrapMode::Wrap)
-        return CSSPrimitiveValue::create(CSSValuePreLine);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::PreLine { });
 
     // Omit default longhand values.
     if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse)
-        return ExtractorConverter::convert(state, textWrapMode);
+        return createCSSValue(state.pool, state.style, textWrapMode);
     if (textWrapMode == TextWrapMode::Wrap)
-        return ExtractorConverter::convert(state, whiteSpaceCollapse);
+        return createCSSValue(state.pool, state.style, whiteSpaceCollapse);
 
     return CSSValuePair::create(
-        ExtractorConverter::convert(state, whiteSpaceCollapse),
-        ExtractorConverter::convert(state, textWrapMode)
+        createCSSValue(state.pool, state.style, whiteSpaceCollapse),
+        createCSSValue(state.pool, state.style, textWrapMode)
     );
 }
 
@@ -3211,42 +3217,42 @@ inline void ExtractorCustom::extractWhiteSpaceShorthandSerialization(ExtractorSt
 
     // Convert to backwards-compatible keywords if possible.
     if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse && textWrapMode == TextWrapMode::Wrap) {
-        CSS::serializationForCSS(builder, context, CSS::Keyword::Normal { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::Normal { });
         return;
     }
     if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrapMode == TextWrapMode::NoWrap) {
-        CSS::serializationForCSS(builder, context, CSS::Keyword::Pre { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::Pre { });
         return;
     }
     if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrapMode == TextWrapMode::Wrap) {
-        CSS::serializationForCSS(builder, context, CSS::Keyword::PreWrap { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::PreWrap { });
         return;
     }
     if (whiteSpaceCollapse == WhiteSpaceCollapse::PreserveBreaks && textWrapMode == TextWrapMode::Wrap) {
-        CSS::serializationForCSS(builder, context, CSS::Keyword::PreLine { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::PreLine { });
         return;
     }
 
     // Omit default longhand values.
     if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse) {
-        ExtractorSerializer::serialize(state, builder, context, textWrapMode);
+        serializationForCSS(builder, context, state.style, textWrapMode);
         return;
     }
     if (textWrapMode == TextWrapMode::Wrap) {
-        ExtractorSerializer::serialize(state, builder, context, whiteSpaceCollapse);
+        serializationForCSS(builder, context, state.style, whiteSpaceCollapse);
         return;
     }
 
-    ExtractorSerializer::serialize(state, builder, context, whiteSpaceCollapse);
+    serializationForCSS(builder, context, state.style, whiteSpaceCollapse);
     builder.append(' ');
-    ExtractorSerializer::serialize(state, builder, context, textWrapMode);
+    serializationForCSS(builder, context, state.style, textWrapMode);
 }
 
 inline RefPtr<CSSValue> ExtractorCustom::extractWebkitBorderImageShorthand(ExtractorState& state)
 {
     auto& borderImage = state.style.borderImage();
     if (borderImage.source().isNone())
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return createCSSValue(state.pool, state.style, CSS::Keyword::None { });
     // -webkit-border-image has a legacy behavior that makes fixed border slices also set the border widths.
     bool overridesBorderWidths = borderImage.width().values.anyOf([](const auto& side) { return side.isFixed(); });
     if (overridesBorderWidths != borderImage.overridesBorderWidths())
@@ -3258,7 +3264,7 @@ inline void ExtractorCustom::extractWebkitBorderImageShorthandSerialization(Extr
 {
     auto& borderImage = state.style.borderImage();
     if (borderImage.source().isNone()) {
-        CSS::serializationForCSS(builder, context, CSS::Keyword::None { });
+        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
         return;
     }
     // -webkit-border-image has a legacy behavior that makes fixed border slices also set the border widths.

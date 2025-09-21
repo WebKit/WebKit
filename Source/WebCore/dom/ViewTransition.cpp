@@ -964,7 +964,7 @@ void ViewTransition::copyElementBaseProperties(RenderLayerModelObject& renderer,
         transform.translate(output.size.width() / 2, output.size.height() / 2);
         transform.translateRight(-output.size.width() / 2, -output.size.height() / 2);
 
-        Ref transformListValue = CSSTransformListValue::create(Style::ExtractorConverter::convertTransformationMatrix(documentElementRenderer->style(), transform));
+        Ref transformListValue = CSSTransformListValue::create(Style::ExtractorConverter::convertTransformationMatrix(CSSValuePool::singleton(), documentElementRenderer->style(), transform));
         RefPtr { output.properties }->setProperty(CSSPropertyTransform, WTFMove(transformListValue));
     }
 

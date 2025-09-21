@@ -56,9 +56,9 @@ auto CSSValueConversion<Translate>::operator()(BuilderState& state, const CSSVal
         return CSS::Keyword::None { };
 
     auto type = list->size() > 2 ? TransformOperation::Type::Translate3D : TransformOperation::Type::Translate;
-    auto tx = BuilderConverter::convertLength(state, list->item(0));
-    auto ty = list->size() > 1 ? BuilderConverter::convertLength(state, list->item(1)) : WebCore::Length(0, LengthType::Fixed);
-    auto tz = list->size() > 2 ? BuilderConverter::convertLength(state, list->item(2)) : WebCore::Length(0, LengthType::Fixed);
+    auto tx = BuilderConverter::convertLengthUsingDoubleNoClamping(state, list->item(0));
+    auto ty = list->size() > 1 ? BuilderConverter::convertLengthUsingDoubleNoClamping(state, list->item(1)) : WebCore::Length(0, LengthType::Fixed);
+    auto tz = list->size() > 2 ? BuilderConverter::convertLengthUsingDoubleNoClamping(state, list->item(2)) : WebCore::Length(0, LengthType::Fixed);
 
     return Translate { TranslateTransformOperation::create(WTFMove(tx), WTFMove(ty), WTFMove(tz), type) };
 }
