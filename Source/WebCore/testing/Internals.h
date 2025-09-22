@@ -295,6 +295,7 @@ public:
 
     // DOMTimers throttling testing.
     ExceptionOr<bool> isTimerThrottled(int timeoutId);
+    ExceptionOr<bool> isTimerClamped(int timeoutId);
     String requestAnimationFrameThrottlingReasons() const;
     double requestAnimationFrameInterval() const;
     bool scriptedAnimationsAreSuspended() const;

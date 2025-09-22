@@ -621,7 +621,7 @@ void ScriptExecutionContext::didChangeTimerAlignmentInterval()
         eventLoop->didChangeTimerAlignmentInterval(timer->timer());
 }
 
-Seconds ScriptExecutionContext::domTimerAlignmentInterval(bool) const
+Seconds ScriptExecutionContext::domTimerAlignmentInterval(TimerNestingState) const
 {
     return DOMTimer::defaultAlignmentInterval();
 }

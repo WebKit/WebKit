@@ -1575,7 +1575,16 @@ ExceptionOr<bool> Internals::isTimerThrottled(int timeoutId)
     if (timer->intervalClampedToMinimum() > timer->m_originalInterval)
         return true;
 
-    return !!scriptExecutionContext()->alignedFireTime(timer->hasReachedMaxNestingLevel(), MonotonicTime { });
+    return !!scriptExecutionContext()->alignedFireTime(timer->nestingStateForCurrentNestingLevel(), MonotonicTime { });
+}
+
+ExceptionOr<bool> Internals::isTimerClamped(int timeoutId)
+{
+    auto* timer = scriptExecutionContext()->findTimeout(timeoutId);
+    if (!timer)
+        return Exception { ExceptionCode::NotFoundError };
+
+    return timer->intervalClampedToMinimum() > timer->m_originalInterval;
 }
 
 String Internals::requestAnimationFrameThrottlingReasons() const

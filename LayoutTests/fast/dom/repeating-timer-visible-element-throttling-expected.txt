@@ -9,6 +9,14 @@ PASS internals.isTimerThrottled(timeoutId) is false
 PASS wasThrottled is false
 6th iteration, timer should still be unthrottled.
 PASS internals.isTimerThrottled(timeoutId) is false
+Iteration 7, timer should not be throttled (but it should be clamped to minimum).
+PASS internals.isTimerThrottled(timeoutId) is false
+Iteration 8, timer should not be throttled (but it should be clamped to minimum).
+PASS internals.isTimerThrottled(timeoutId) is false
+Iteration 9, timer should not be throttled (but it should be clamped to minimum).
+PASS internals.isTimerThrottled(timeoutId) is false
+10th iteration, timer should be throttled.
+PASS internals.isTimerThrottled(timeoutId) is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

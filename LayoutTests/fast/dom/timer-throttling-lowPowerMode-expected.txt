@@ -27,7 +27,7 @@ PASS internals.isTimerThrottled(timerHandle) is false
 * Nesting: 9
 PASS internals.isTimerThrottled(timerHandle) is false
 * Nesting: 10
-PASS internals.isTimerThrottled(timerHandle) is false
+PASS internals.isTimerThrottled(timerHandle) is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

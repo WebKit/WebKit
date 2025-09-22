@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2014, 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,9 +54,12 @@ namespace WebCore {
 static constexpr Seconds minIntervalForNonUserObservableChangeTimers { 1_s }; // Empirically determined to maximize battery life.
 static constexpr Seconds minIntervalForOneShotTimers { 0_ms };
 static constexpr Seconds minIntervalForRepeatingTimers { 1_ms };
-static constexpr int maxTimerNestingLevel = 10;
-static constexpr int maxTimerNestingLevelForOneShotTimers = 10;
+// The HTML spec says that for nesting level > 5 we clamp intervals to 4ms. We deviate from the spec for
+// nested one-shot timers by keeping them unclamped up to our unconditional throttling nesting level.
+static constexpr int maxTimerNestingLevelForUnconditionalThrottling = 10;
+static constexpr int maxTimerNestingLevelForOneShotTimers = maxTimerNestingLevelForUnconditionalThrottling;
 static constexpr int maxTimerNestingLevelForRepeatingTimers = 5;
+
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMTimer);
 
@@ -175,14 +178,14 @@ DOMTimer::DOMTimer(ScriptExecutionContext& context, Function<void(ScriptExecutio
     , m_userGestureTokenToForward(UserGestureIndicator::currentUserGesture())
 {
     CheckedRef eventLoop = context.eventLoop();
-    m_hasReachedMaxNestingLevel = m_nestingLevel >= (m_oneShot ? maxTimerNestingLevelForOneShotTimers : maxTimerNestingLevelForRepeatingTimers);
+    auto nestingState = nestingStateForCurrentNestingLevel();
     if (m_oneShot) {
-        m_timer = eventLoop->scheduleTask(m_currentTimerInterval, context, m_hasReachedMaxNestingLevel ? HasReachedMaxNestingLevel::Yes : HasReachedMaxNestingLevel::No, TaskSource::Timer, [weakThis = WeakPtr { *this }] {
+        m_timer = eventLoop->scheduleTask(m_currentTimerInterval, context, nestingState, TaskSource::Timer, [weakThis = WeakPtr { *this }] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->fired();
         });
     } else {
-        m_timer = eventLoop->scheduleRepeatingTask(m_originalInterval, m_currentTimerInterval, context, m_hasReachedMaxNestingLevel ? HasReachedMaxNestingLevel::Yes : HasReachedMaxNestingLevel::No, TaskSource::Timer, [weakThis = WeakPtr { *this }] {
+        m_timer = eventLoop->scheduleRepeatingTask(m_originalInterval, m_currentTimerInterval, context, nestingState, TaskSource::Timer, [weakThis = WeakPtr { *this }] {
             if (RefPtr protectedThis = weakThis.get())
                 protectedThis->fired();
         });
@@ -322,7 +325,7 @@ void DOMTimer::fired()
     }
 #endif
 
-    DOMTimerFireState fireState(context, std::min(m_nestingLevel + 1, maxTimerNestingLevel));
+    DOMTimerFireState fireState(context, std::min(m_nestingLevel + 1, maxTimerNestingLevelForUnconditionalThrottling));
 
     if (m_userGestureTokenToForward && m_userGestureTokenToForward->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwarding))
         m_userGestureTokenToForward = nullptr;
@@ -336,10 +339,12 @@ void DOMTimer::fired()
 
     // Simple case for non-one-shot timers.
     if (!m_oneShot) {
-        if (m_nestingLevel < maxTimerNestingLevel) {
+        if (m_nestingLevel < maxTimerNestingLevelForUnconditionalThrottling) {
+            auto previousNestingState = nestingStateForCurrentNestingLevel();
             m_nestingLevel++;
-            m_hasReachedMaxNestingLevel = m_nestingLevel >= maxTimerNestingLevelForRepeatingTimers;
-            context->checkedEventLoop()->setTimerHasReachedMaxNestingLevel(m_timer, m_hasReachedMaxNestingLevel);
+            auto currentNestingState = nestingStateForCurrentNestingLevel();
+            if (previousNestingState != currentNestingState)
+                context->checkedEventLoop()->setTimerNestingState(m_timer, currentNestingState);
             updateTimerIntervalIfNecessary();
         }
 
@@ -393,7 +398,7 @@ void DOMTimer::stop()
 
 void DOMTimer::updateTimerIntervalIfNecessary()
 {
-    ASSERT(m_nestingLevel <= maxTimerNestingLevel);
+    ASSERT(m_nestingLevel <= maxTimerNestingLevelForUnconditionalThrottling);
 
     if (!scriptExecutionContext())
         return;
@@ -416,12 +421,12 @@ void DOMTimer::updateTimerIntervalIfNecessary()
 Seconds DOMTimer::intervalClampedToMinimum() const
 {
     ASSERT(scriptExecutionContext());
-    ASSERT(m_nestingLevel <= maxTimerNestingLevel);
+    ASSERT(m_nestingLevel <= maxTimerNestingLevelForUnconditionalThrottling);
 
     Seconds interval = std::max(m_oneShot ? minIntervalForOneShotTimers : minIntervalForRepeatingTimers, m_originalInterval);
 
     // Only apply throttling to repeating timers.
-    if (m_nestingLevel < (m_oneShot ? maxTimerNestingLevelForOneShotTimers : maxTimerNestingLevelForRepeatingTimers))
+    if (m_nestingLevel <= (m_oneShot ? maxTimerNestingLevelForOneShotTimers : maxTimerNestingLevelForRepeatingTimers))
         return interval;
 
     // Apply two throttles - the global (per Page) minimum, and also a per-timer throttle.
@@ -431,9 +436,9 @@ Seconds DOMTimer::intervalClampedToMinimum() const
     return interval;
 }
 
-std::optional<MonotonicTime> ScriptExecutionContext::alignedFireTime(bool hasReachedMaxNestingLevel, MonotonicTime fireTime) const
+std::optional<MonotonicTime> ScriptExecutionContext::alignedFireTime(TimerNestingState nestingState, MonotonicTime fireTime) const
 {
-    Seconds alignmentInterval = domTimerAlignmentInterval(hasReachedMaxNestingLevel);
+    Seconds alignmentInterval = domTimerAlignmentInterval(nestingState);
     if (!alignmentInterval)
         return std::nullopt;
     
@@ -465,6 +470,15 @@ void DOMTimer::makeImminentlyScheduledWorkScopeIfPossible(ScriptExecutionContext
 void DOMTimer::clearImminentlyScheduledWorkScope()
 {
     m_imminentlyScheduledWorkScope = nullptr;
+}
+
+TimerNestingState DOMTimer::nestingStateForCurrentNestingLevel() const
+{
+    if (m_nestingLevel < (m_oneShot ? maxTimerNestingLevelForOneShotTimers : maxTimerNestingLevelForRepeatingTimers))
+        return TimerNestingState::Low;
+    if (m_nestingLevel < maxTimerNestingLevelForUnconditionalThrottling)
+        return TimerNestingState::SpecClamped;
+    return TimerNestingState::Maximum;
 }
 
 } // namespace WebCore

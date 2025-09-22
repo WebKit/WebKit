@@ -27,6 +27,13 @@ function timerCallback()
     shouldBeFalse("wasThrottled");
     debug("6th iteration, timer should still be unthrottled.");
     shouldBeFalse("internals.isTimerThrottled(timeoutId)");
+  } else if (iterationCount > 6 && iterationCount < 10) {
+    debug(`Iteration ${iterationCount}, timer should not be throttled.`);
+    shouldBeFalse("internals.isTimerThrottled(timeoutId)");
+  } else if (iterationCount == 10) {
+    // Maximally nested timers should be unconditionally throttled.
+    debug("10th iteration, timer should be throttled.");
+    shouldBeTrue("internals.isTimerThrottled(timeoutId)");
     clearInterval(timeoutId);
     finishJSTest();
   }

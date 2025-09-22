@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2014, 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,6 +56,7 @@ public:
     static Seconds defaultAlignmentInterval() { return 0_s; }
     static Seconds defaultAlignmentIntervalInLowPowerOrThermallyMitigatedMode() { return 30_ms; }
     static Seconds nonInteractedCrossOriginFrameAlignmentInterval() { return 30_ms; }
+    static Seconds maximallyNestedTimerAlignmentInterval() { return 30_ms; }
     static Seconds hiddenPageAlignmentInterval() { return 1_s; }
 
     enum class Type : bool { SingleShot, Repeating };
@@ -70,7 +71,6 @@ public:
     static void scriptDidInteractWithPlugin();
 
     EventLoopTimerHandle timer() const { return m_timer; }
-    bool hasReachedMaxNestingLevel() const { return m_hasReachedMaxNestingLevel; }
 
 private:
     DOMTimer(ScriptExecutionContext&, Function<void(ScriptExecutionContext&)>&&, Seconds interval, Type);
@@ -80,6 +80,7 @@ private:
 
     bool isDOMTimersThrottlingEnabled(const Document&) const;
     void updateThrottlingStateIfNecessary(const DOMTimerFireState&);
+    WEBCORE_EXPORT TimerNestingState nestingStateForCurrentNestingLevel() const;
 
     void fired();
 
@@ -102,7 +103,6 @@ private:
     Seconds m_originalInterval;
     TimerThrottleState m_throttleState;
     bool m_oneShot;
-    bool m_hasReachedMaxNestingLevel;
     Seconds m_currentTimerInterval;
     RefPtr<UserGestureToken> m_userGestureTokenToForward;
     RefPtr<ImminentlyScheduledWorkScope> m_imminentlyScheduledWorkScope;

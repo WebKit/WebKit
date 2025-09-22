@@ -2081,7 +2081,7 @@ private:
 
     Seconds minimumDOMTimerInterval() const final;
 
-    Seconds domTimerAlignmentInterval(bool hasReachedMaxNestingLevel) const final;
+    Seconds domTimerAlignmentInterval(TimerNestingState) const final;
 
     void updateTitleFromTitleElement();
     void updateTitle(const StringWithDirection&);

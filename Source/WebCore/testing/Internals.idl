@@ -914,6 +914,7 @@ enum ContentsFormat {
 
     // Query if a timer is currently throttled, to debug timer throttling.
     boolean isTimerThrottled(long timerHandle);
+    boolean isTimerClamped(long timerHandle);
 
     DOMString requestAnimationFrameThrottlingReasons();
     boolean areTimersThrottled();

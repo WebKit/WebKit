@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/TaskSource.h>
+#include <WebCore/TimerNestingState.h>
 #include <optional>
 #include <wtf/ApproximateTime.h>
 #include <wtf/CheckedRef.h>
@@ -98,8 +99,6 @@ private:
     RefPtr<EventLoopTimer> m_timer;
 };
 
-enum class HasReachedMaxNestingLevel : bool { No, Yes };
-
 // https://html.spec.whatwg.org/multipage/webappapis.html#event-loop
 class EventLoop : public RefCountedAndCanMakeWeakPtr<EventLoop> {
 public:
@@ -110,10 +109,10 @@ public:
     typedef Function<void ()> TaskFunction;
     void queueTask(std::unique_ptr<EventLoopTask>&&);
 
-    EventLoopTimerHandle scheduleTask(Seconds timeout, TimerAlignment*, HasReachedMaxNestingLevel, std::unique_ptr<EventLoopTask>&&);
+    EventLoopTimerHandle scheduleTask(Seconds timeout, TimerAlignment*, TimerNestingState, std::unique_ptr<EventLoopTask>&&);
     void removeScheduledTimer(EventLoopTimer&);
 
-    EventLoopTimerHandle scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, TimerAlignment*, HasReachedMaxNestingLevel, std::unique_ptr<EventLoopTask>&&);
+    EventLoopTimerHandle scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, TimerAlignment*, TimerNestingState, std::unique_ptr<EventLoopTask>&&);
     void removeRepeatingTimer(EventLoopTimer&);
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-microtask
@@ -215,16 +214,16 @@ public:
     void runAtEndOfMicrotaskCheckpoint(EventLoop::TaskFunction&&);
 
     EventLoopTimerHandle scheduleTask(Seconds timeout, TaskSource, EventLoop::TaskFunction&&);
-    EventLoopTimerHandle scheduleTask(Seconds timeout, TimerAlignment&, HasReachedMaxNestingLevel, TaskSource, EventLoop::TaskFunction&&);
+    EventLoopTimerHandle scheduleTask(Seconds timeout, TimerAlignment&, TimerNestingState, TaskSource, EventLoop::TaskFunction&&);
     void didExecuteScheduledTask(EventLoopTimer&);
     void removeScheduledTimer(EventLoopTimer&);
 
     EventLoopTimerHandle scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, TaskSource, EventLoop::TaskFunction&&);
-    EventLoopTimerHandle scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, TimerAlignment&, HasReachedMaxNestingLevel, TaskSource, EventLoop::TaskFunction&&);
+    EventLoopTimerHandle scheduleRepeatingTask(Seconds nextTimeout, Seconds interval, TimerAlignment&, TimerNestingState, TaskSource, EventLoop::TaskFunction&&);
     void removeRepeatingTimer(EventLoopTimer&);
 
     void didChangeTimerAlignmentInterval(EventLoopTimerHandle);
-    void setTimerHasReachedMaxNestingLevel(EventLoopTimerHandle, bool);
+    void setTimerNestingState(EventLoopTimerHandle, TimerNestingState);
     void adjustTimerNextFireTime(EventLoopTimerHandle, Seconds delta);
     void adjustTimerRepeatInterval(EventLoopTimerHandle, Seconds delta);
 

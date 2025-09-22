@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<div id="testElement">Test</div>
+<script>
+description("Tests that a repeating timer with an interval < 4ms will be clamped to 4ms after 5 iterations.");
+jsTestIsAsync = true;
+
+var iterationCount = 0;
+var timeoutId;
+var testElement = document.getElementById("testElement");
+var wasClamped = false;
+
+function timerCallback()
+{
+    ++iterationCount;
+    // Interact with the style of the element.
+    testElement.style["left"] = `${iterationCount}px`;
+
+    if (iterationCount == 5) {
+        wasClamped = internals.isTimerClamped(timeoutId);
+    } else if (iterationCount == 6) {
+        debug("5th iteration should not have clamped the timer.");
+        shouldBeFalse("wasClamped");
+        debug("6th iteration should be clamped");
+        shouldBeTrue("internals.isTimerClamped(timeoutId)");
+    } else if (iterationCount > 6) {
+        debug(`Iteration ${iterationCount}, timer should be clamped.`);
+        shouldBeTrue("internals.isTimerClamped(timeoutId)");
+    }
+
+    if (iterationCount == 10) {
+        clearInterval(timeoutId);
+        finishJSTest();
+    }
+}
+
+timeoutId = setInterval(timerCallback, 1);
+debug("The timer should not be initially throttled or clamped.");
+shouldBeFalse("internals.isTimerThrottled(timeoutId)");
+shouldBeFalse("internals.isTimerClamped(timeoutId)");
+</script>
+</body>
+</html>

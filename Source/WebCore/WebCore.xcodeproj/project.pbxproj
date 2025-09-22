@@ -1703,6 +1703,7 @@
 		44FA8DA42B0B787B007C99D8 /* LegacyRenderSVGResourceRadialGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 44FA8D9A2B0B787A007C99D8 /* LegacyRenderSVGResourceRadialGradient.h */; };
 		44FA8DA52B0B787B007C99D8 /* LegacyRenderSVGResourceRadialGradientInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 44FA8D9B2B0B787A007C99D8 /* LegacyRenderSVGResourceRadialGradientInlines.h */; };
 		4512502315DCE37D002F84E2 /* SpinButtonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4512502115DCE37D002F84E2 /* SpinButtonElement.h */; };
+		45213B562E7F6B6A00F6A18D /* TimerNestingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 45213B552E7F6A9800F6A18D /* TimerNestingState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		453EB637159C570400001BB7 /* DateTimeFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 453EB635159C570400001BB7 /* DateTimeFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		45830D4E1679B4F800ACF8C3 /* AutoscrollController.h in Headers */ = {isa = PBXBuildFile; fileRef = 45830D4C1679B4F800ACF8C3 /* AutoscrollController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		458FE40A1589DF0B005609E6 /* RenderSearchField.h in Headers */ = {isa = PBXBuildFile; fileRef = 458FE4081589DF0B005609E6 /* RenderSearchField.h */; };
@@ -11147,6 +11148,7 @@
 		4512502115DCE37D002F84E2 /* SpinButtonElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpinButtonElement.h; sourceTree = "<group>"; };
 		45160A892A09FA22009E39A2 /* JSMediaSessionCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaSessionCustom.cpp; sourceTree = "<group>"; };
 		451A49F8F8726BE071518BE2 /* ISOProtectionSystemSpecificHeaderBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISOProtectionSystemSpecificHeaderBox.cpp; sourceTree = "<group>"; };
+		45213B552E7F6A9800F6A18D /* TimerNestingState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TimerNestingState.h; sourceTree = "<group>"; };
 		45245AF12C322ADE0003D1FF /* JSReportingObserverCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSReportingObserverCustom.cpp; sourceTree = "<group>"; };
 		453EB635159C570400001BB7 /* DateTimeFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeFormat.h; sourceTree = "<group>"; };
 		454F512629A9E57D00CDBA10 /* StyleInvalidImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleInvalidImage.cpp; sourceTree = "<group>"; };
@@ -37244,6 +37246,7 @@
 				185BCF270F3279CE000EA262 /* ThreadTimers.h */,
 				93309EA1099EB78C0056E581 /* Timer.cpp */,
 				9305B24C098F1B6B00C28855 /* Timer.h */,
+				45213B552E7F6A9800F6A18D /* TimerNestingState.h */,
 				71AEE4EB21B5A49C00DDB036 /* TouchAction.h */,
 				513C7B6F2E7C312E00079881 /* TrackInfo.cpp */,
 				513C7B6B2E7C2A0E00079881 /* TrackInfo.h */,
@@ -46601,6 +46604,7 @@
 				9305B24D098F1B6B00C28855 /* Timer.h in Headers */,
 				E44613B00CD6331000FADA75 /* TimeRanges.h in Headers */,
 				2D7ED0AB1BAE99170043B3E5 /* TimerEventBasedMock.h in Headers */,
+				45213B562E7F6B6A00F6A18D /* TimerNestingState.h in Headers */,
 				5CC7900E266AFA89006924FE /* TimingAllowOrigin.h in Headers */,
 				49E912AE0EFAC906009D0CAF /* TimingFunction.h in Headers */,
 				72BB9E8A2952582000842DBB /* ToggleButtonMac.h in Headers */,

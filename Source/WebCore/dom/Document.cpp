@@ -4498,10 +4498,10 @@ void Document::setVisibilityHiddenDueToDismissal(bool hiddenDueToDismissal)
     dispatchEvent(Event::create(eventNames().visibilitychangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 }
 
-Seconds Document::domTimerAlignmentInterval(bool hasReachedMaxNestingLevel) const
+Seconds Document::domTimerAlignmentInterval(TimerNestingState nestingState) const
 {
-    auto alignmentInterval = ScriptExecutionContext::domTimerAlignmentInterval(hasReachedMaxNestingLevel);
-    if (!hasReachedMaxNestingLevel)
+    auto alignmentInterval = ScriptExecutionContext::domTimerAlignmentInterval(nestingState);
+    if (nestingState == TimerNestingState::Low)
         return alignmentInterval;
 
     // Apply Document-level DOMTimer throttling only if timers have reached their maximum nesting level as the Page may still be visible.
@@ -4513,6 +4513,9 @@ Seconds Document::domTimerAlignmentInterval(bool hasReachedMaxNestingLevel) cons
 
     if (!topOrigin().isSameOriginDomain(securityOrigin()) && !hasHadUserInteraction())
         alignmentInterval = std::max(alignmentInterval, DOMTimer::nonInteractedCrossOriginFrameAlignmentInterval());
+
+    if (nestingState == TimerNestingState::Maximum)
+        alignmentInterval = std::max(alignmentInterval, DOMTimer::maximallyNestedTimerAlignmentInterval());
 
     return alignmentInterval;
 }

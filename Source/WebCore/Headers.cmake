@@ -2378,6 +2378,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/ThreadSafeDataBuffer.h
     platform/ThreadTimers.h
     platform/Timer.h
+    platform/TimerNestingState.h
     platform/TouchAction.h
     platform/TrackInfo.h
     platform/UserActivity.h

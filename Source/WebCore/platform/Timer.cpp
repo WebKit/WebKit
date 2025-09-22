@@ -529,7 +529,7 @@ void TimerBase::setNextFireTime(MonotonicTime newTime)
     MonotonicTime oldTime = nextFireTime();
     // Don't realign zero-delay timers.
     if (auto* alignment = m_alignment.get(); newTime && alignment) {
-        if (auto newAlignedTime = alignment->alignedFireTime(hasReachedMaxNestingLevel(), newTime))
+        if (auto newAlignedTime = alignment->alignedFireTime(timerNestingState(), newTime))
             newTime = newAlignedTime.value();
     }
 

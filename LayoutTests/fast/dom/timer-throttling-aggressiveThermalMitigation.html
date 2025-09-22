@@ -8,6 +8,7 @@ jsTestIsAsync = true;
 
 let i = 0;
 const maxNestingLevel = 5;
+const unconditionalThrottlingLevel = 10;
 
 let enabled = true;
 debug("Enabling aggressive thermal mitigation");
@@ -16,7 +17,7 @@ evalAndLog("internals.setAggressiveThermalMitigationEnabled(true)");
 const timerHandle = setInterval(function() {
     i++;
     debug("* Nesting: " + i);
-    if (i >= maxNestingLevel && enabled)
+    if (i >= maxNestingLevel && enabled || i == unconditionalThrottlingLevel)
         shouldBeTrue("internals.isTimerThrottled(timerHandle)");
     else
         shouldBeFalse("internals.isTimerThrottled(timerHandle)");
@@ -28,7 +29,7 @@ const timerHandle = setInterval(function() {
         evalAndLog("internals.setAggressiveThermalMitigationEnabled(false)");
     }
 
-    if (i == 10) {
+    if (i == unconditionalThrottlingLevel) {
         clearInterval(timerHandle);
         finishJSTest();
     }

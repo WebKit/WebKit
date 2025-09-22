@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/ThreadTimers.h>
+#include <WebCore/TimerNestingState.h>
 #include <functional>
 #include <wtf/CheckedRef.h>
 #include <wtf/CompactRefPtrTuple.h>
@@ -59,7 +60,7 @@ namespace WebCore {
 class TimerAlignment : public CanMakeWeakPtr<TimerAlignment> {
 public:
     virtual ~TimerAlignment() = default;
-    virtual std::optional<MonotonicTime> alignedFireTime(bool hasReachedMaxNestingLevel, MonotonicTime) const = 0;
+    virtual std::optional<MonotonicTime> alignedFireTime(TimerNestingState, MonotonicTime) const = 0;
 };
 
 class TimerBase {
@@ -89,8 +90,8 @@ public:
     void setTimerAlignment(TimerAlignment& alignment) { m_alignment = alignment; }
     TimerAlignment* timerAlignment() { return m_alignment.get(); }
 
-    bool hasReachedMaxNestingLevel() const { return bitfields().hasReachedMaxNestingLevel; }
-    void setHasReachedMaxNestingLevel(bool);
+    TimerNestingState timerNestingState() const { return bitfields().nestingState; }
+    void setTimerNestingState(TimerNestingState);
 
     void augmentFireInterval(Seconds delta) { setNextFireTime(m_heapItemWithBitfields.pointer()->time + delta); }
     void augmentRepeatInterval(Seconds delta) { augmentFireInterval(delta); m_repeatInterval += delta; }
@@ -101,7 +102,7 @@ public:
 
 protected:
     struct TimerBitfields {
-        uint8_t hasReachedMaxNestingLevel : 1 { false };
+        TimerNestingState nestingState : 2 { TimerNestingState::Low };
         uint8_t shouldRestartWhenTimerFires : 1 { false }; // DeferrableOneShotTimer
     };
 
@@ -228,10 +229,10 @@ inline bool TimerBase::isActive() const
     return static_cast<bool>(nextFireTime());
 }
 
-inline void TimerBase::setHasReachedMaxNestingLevel(bool value)
+inline void TimerBase::setTimerNestingState(TimerNestingState nestingState)
 {
     auto values = bitfields();
-    values.hasReachedMaxNestingLevel = value;
+    values.nestingState = nestingState;
     setBitfields(values);
 }
 

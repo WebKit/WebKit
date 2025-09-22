@@ -8,6 +8,7 @@ jsTestIsAsync = true;
 
 let i = 0;
 const maxNestingLevel = 5;
+const unconditionalThrottlingLevel = 10;
 
 let lowPowerModeEnabled = true;
 debug("Enabling low power mode");
@@ -16,7 +17,7 @@ evalAndLog("internals.setLowPowerModeEnabled(true)");
 const timerHandle = setInterval(function() {
     i++;
     debug("* Nesting: " + i);
-    if (i >= maxNestingLevel && lowPowerModeEnabled)
+    if (i >= maxNestingLevel && lowPowerModeEnabled || i == unconditionalThrottlingLevel)
         shouldBeTrue("internals.isTimerThrottled(timerHandle)");
     else
         shouldBeFalse("internals.isTimerThrottled(timerHandle)");
@@ -28,7 +29,7 @@ const timerHandle = setInterval(function() {
         evalAndLog("internals.setLowPowerModeEnabled(false)");
     }
 
-    if (i == 10) {
+    if (i == unconditionalThrottlingLevel) {
         clearInterval(timerHandle);
         finishJSTest();
     }
