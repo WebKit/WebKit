@@ -31,7 +31,6 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
-class LockdownModeObserver;
 class WebUserContentControllerProxy;
 class WebsiteDataStore;
 struct WebsitePoliciesData;
@@ -166,9 +165,6 @@ private:
     RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;
     RefPtr<WebKit::WebUserContentControllerProxy> m_userContentController;
     std::optional<bool> m_lockdownModeEnabled;
-#if PLATFORM(COCOA)
-    const std::unique_ptr<WebKit::LockdownModeObserver> m_lockdownModeObserver;
-#endif
 };
 
 } // namespace API

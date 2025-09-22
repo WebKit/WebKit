@@ -25,22 +25,14 @@
 
 #include "config.h"
 #include "APIWebsitePolicies.h"
-
 #include "WebProcessPool.h"
 #include "WebUserContentControllerProxy.h"
 #include "WebsiteDataStore.h"
 #include "WebsitePoliciesData.h"
 
-#if PLATFORM(COCOA)
-#include "WebPagePreferencesLockdownModeObserver.h"
-#endif
-
 namespace API {
 
 WebsitePolicies::WebsitePolicies()
-#if PLATFORM(COCOA)
-    : m_lockdownModeObserver(makeUniqueWithoutRefCountedCheck<WebKit::WebPagePreferencesLockdownModeObserver, WebKit::LockdownModeObserver>(*this))
-#endif
 {
 }
 

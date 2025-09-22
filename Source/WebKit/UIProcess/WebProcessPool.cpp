@@ -2536,12 +2536,6 @@ bool WebProcessPool::hasServiceWorkerBackgroundActivityForTesting() const
 }
 
 #if !PLATFORM(COCOA)
-void addLockdownModeObserver(LockdownModeObserver&)
-{
-}
-void removeLockdownModeObserver(LockdownModeObserver&)
-{
-}
 bool lockdownModeEnabledBySystem()
 {
     return false;
