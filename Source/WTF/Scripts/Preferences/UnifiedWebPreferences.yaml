@@ -6821,6 +6821,20 @@ SelectionHonorsOverflowScrolling:
     WebCore:
       default: false
 
+SeparateDeferModuleScriptTasksEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "Separate Defer Module Script Tasks"
+  humanReadableDescription: "Execute defer and module scripts in separate tasks for better responsiveness"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 SerifFontFamily:
   type: String
   status: embedder

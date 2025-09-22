@@ -85,6 +85,10 @@ private:
     // cause nested script execution when parsing <style> tags since </style>
     // tags can cause Document to call executeScriptsWaitingForStylesheets.
     bool m_hasScriptsWaitingForStylesheets;
+
+    // When SeparateDeferModuleScriptTasksEnabled is true, this tracks whether
+    // we're executing scripts asynchronously with task separation.
+    bool m_executingScriptsAsync;
 };
 
 } // namespace WebCore
