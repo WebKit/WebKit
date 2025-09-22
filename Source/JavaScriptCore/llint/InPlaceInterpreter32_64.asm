@@ -4420,31 +4420,22 @@ mintAlign(_fa7)
 # Regular calls have to save space for return values, while tail calls are reusing the stack frame
 # and thus do not have to care.
 
-mintAlign(_stackzero)
+mintAlign(_argument_stack)
     mintPop(argumINTTmp, lr)
     store2ia argumINTTmp, lr, [sc3]
-    mintArgDispatch()
-
-mintAlign(_stackeight)
-    mintPop(argumINTTmp, lr)
-    subp 16, sc3
-    store2ia argumINTTmp, lr, 8[sc3]
     mintArgDispatch()
 
 # Since we're writing into the same frame, we're going to first push stack arguments onto the stack.
 # Once we're done, we'll copy them back down into the new frame, to avoid having to deal with writing over
 # arguments lower down on the stack.
 
-mintAlign(_tail_stackzero)
+mintAlign(_tail_argument_stack)
     break
 
-mintAlign(_tail_stackeight)
+mintAlign(_pad_argument_stack)
     break
 
-mintAlign(_gap)
-    break
-
-mintAlign(_tail_gap)
+mintAlign(_tail_pad_argument_stack)
     break
 
 mintAlign(_tail_call)
@@ -4508,7 +4499,7 @@ _wasm_ipint_call_return_location_wide32:
     const mintRetSrc = sc1
     const mintRetDst = sc2
 
-    loadi IPInt::CallReturnMetadata::firstStackArgumentSPOffset[MC], mintRetSrc
+    loadi IPInt::CallReturnMetadata::firstStackResultSPOffset[MC], mintRetSrc
     advanceMC(IPInt::CallReturnMetadata::resultBytecode)
     leap [sp, mintRetSrc], mintRetSrc
 
@@ -4628,15 +4619,12 @@ mintAlign(_fr7)
     stored wfa7, [mintRetDst]
     mintRetDispatch()
 
-mintAlign(_stack)
+mintAlign(_result_stack)
     load2ia [mintRetSrc], sc0, sc1
-    addp SlotSize, mintRetSrc
+    # XXX: constant
+    addp 16, mintRetSrc
     subp StackValueSize, mintRetDst
     store2ia sc0, sc1, [mintRetDst]
-    mintRetDispatch()
-
-mintAlign(_stack_gap)
-    addp SlotSize, mintRetSrc
     mintRetDispatch()
 
 mintAlign(_end)

@@ -10042,8 +10042,8 @@ macro mintPop(reg)
     addq V128ISize, mintSS
 end
 
-macro mintPopF(reg)
-    loadd [mintSS], reg
+macro mintPopV(reg)
+    loadv [mintSS], reg
     addq V128ISize, mintSS
 end
 
@@ -10100,9 +10100,6 @@ end
     const targetEntrypoint = sc2
     const targetInstance = sc3
 
-    # sc2 = target entrypoint
-    # sc3 = target instance
-
     move r0, targetEntrypoint
     move r1, targetInstance
 
@@ -10126,7 +10123,7 @@ end
     # arg
     # ...
     # arg
-    # arg             <- initial SP
+    # arg             <- initial SP (wasm stack)
 
     # store sp as our shadow stack for arguments later
     move sp, t4
@@ -10137,7 +10134,7 @@ end
     # arg
     # ...
     # arg
-    # arg             <- sc0 = initial sp
+    # arg             <- t4 = initial SP (wasm stack)
     # reserved
     # reserved        <- sp
 
@@ -10152,11 +10149,11 @@ end
     # arg
     # ...
     # arg
-    # arg             <- sc0 = initial sp
+    # arg             <- t4 = wasm stack (will be consumed by mINT (shadow stack))
     # reserved
     # reserved
     # t3, PC
-    # PL, wasmInstance
+    # PL, wasmInstance <- t2 = native argument stack (will be pushed by mINT)
     # call frame
     # call frame
     # call frame
@@ -10169,8 +10166,8 @@ end
     storep IPIntCallFunctionSlot, CodeBlock - CallerFrameAndPCSize[sp]
 
     push targetEntrypoint, targetInstance
-    move t2, sc3
 
+    move t2, sc3
     move t4, mintSS
 
     # need a common entrypoint because of x86 PC base
@@ -10230,8 +10227,8 @@ end
     addp FirstArgumentOffset, sc2
     addp t3, sc2
 
-    #  <caller frame>
-    #  return val                  <- sc2
+    #  <caller frame>              <- sc2
+    #  return val
     #  return val
     #  argument
     #  argument
@@ -10353,78 +10350,127 @@ else
 end
 
 mintAlign(_fa0)
-    mintPopF(wfa0)
+    mintPopV(wfa0)
     mintArgDispatch()
 
 mintAlign(_fa1)
-    mintPopF(wfa1)
+    mintPopV(wfa1)
     mintArgDispatch()
 
 mintAlign(_fa2)
-    mintPopF(wfa2)
+    mintPopV(wfa2)
     mintArgDispatch()
 
 mintAlign(_fa3)
-    mintPopF(wfa3)
+    mintPopV(wfa3)
     mintArgDispatch()
 
 mintAlign(_fa4)
-    mintPopF(wfa4)
+    mintPopV(wfa4)
     mintArgDispatch()
 
 mintAlign(_fa5)
-    mintPopF(wfa5)
+    mintPopV(wfa5)
     mintArgDispatch()
 
 mintAlign(_fa6)
-    mintPopF(wfa6)
+    mintPopV(wfa6)
     mintArgDispatch()
 
 mintAlign(_fa7)
-    mintPopF(wfa7)
+    mintPopV(wfa7)
     mintArgDispatch()
 
 # Note that the regular call and tail call opcodes will be implemented slightly differently.
 # Regular calls have to save space for return values, while tail calls are reusing the stack frame
 # and thus do not have to care.
 
-mintAlign(_stackzero)
+# CallArgumentBytecode::CallArgDecSP (0x10)
+mintAlign(_call_argument_dec_sp)
+    subp 2 * SlotSize, sc3
+    mintArgDispatch()
+
+# CallArgumentBytecode::CallArgStore0 (0x11)
+mintAlign(_call_argument_store_0)
     mintPop(sc2)
     storeq sc2, [sc3]
     mintArgDispatch()
 
-mintAlign(_stackeight)
+# CallArgumentBytecode::CallArgDecSPStore8 (0x12)
+mintAlign(_call_argument_dec_sp_store_8)
     mintPop(sc2)
-    subp 16, sc3
+    subp 2 * SlotSize, sc3
     storeq sc2, 8[sc3]
     mintArgDispatch()
 
-# Since we're writing into the same frame, we're going to first push stack arguments onto the stack.
+# CallArgumentBytecode::CallArgDecSPStoreVector0 (0x13)
+mintAlign(_call_argument_dec_sp_store_vector_0)
+    subp 2 * SlotSize, sc3
+    loadq [mintSS], sc2
+    storeq sc2, [sc3]
+    loadq 8[mintSS], sc2
+    storeq sc2, 8[sc3]
+    addq StackValueSize, mintSS
+    mintArgDispatch()
+
+# CallArgumentBytecode::TailCallArgDecSPStoreVector8 (0x14)
+mintAlign(_call_argument_dec_sp_store_vector_8)
+    subp 2 * SlotSize, sc3
+    loadq [mintSS], sc2
+    storeq sc2, 8[sc3]
+    loadq 8[mintSS], sc2
+    storeq sc2, 16[sc3]
+    addq StackValueSize, mintSS
+    mintArgDispatch()
+
+# For tail calls, we're writing into the same frame. We're going to first push stack arguments onto the stack.
 # Once we're done, we'll copy them back down into the new frame, to avoid having to deal with writing over
 # arguments lower down on the stack.
 
-mintAlign(_tail_stackzero)
+
+# CallArgumentBytecode::TailCallArgDecSP (0x15)
+mintAlign(_tail_call_argument_dec_sp)
+    subp 2 * SlotSize, sp
+    mintArgDispatch()
+
+# CallArgumentBytecode::TailCallArgStore0 (0x16)
+mintAlign(_tail_call_argument_store_0)
     mintPop(sc3)
     storeq sc3, [sp]
     mintArgDispatch()
 
-mintAlign(_tail_stackeight)
+# CallArgumentBytecode::TailCallArgDecSPStore8 (0x17)
+mintAlign(_tail_call_argument_dec_sp_store_8)
     mintPop(sc3)
-    subp 16, sp
+    subp 2 * SlotSize, sp
     storeq sc3, 8[sp]
     mintArgDispatch()
 
-mintAlign(_gap)
-    subp 16, sc3
+# CallArgumentBytecode::TailCallArgDecSPStoreVector0 (0x18)
+mintAlign(_tail_call_argument_dec_sp_store_vector_0)
+    subp 2 * SlotSize, sp
+    loadq [mintSS], sc3
+    storeq sc3, [sp]
+    loadq 8[mintSS], sc3
+    storeq sc3, 8[sp]
+    addq StackValueSize, mintSS
     mintArgDispatch()
 
-mintAlign(_tail_gap)
-    subp 16, sp
+# CallArgumentBytecode::TailCallArgDecSPStoreVector8 (0x19)
+mintAlign(_tail_call_argument_dec_sp_store_vector_8)
+    subp 2 * SlotSize, sp
+    loadq [mintSS], sc3
+    storeq sc3, 8[sp]
+    loadq 8[mintSS], sc3
+    storeq sc3, 16[sp]
+    addq StackValueSize, mintSS
     mintArgDispatch()
 
+# CallArgumentBytecode::TailCall (0x1a)
 mintAlign(_tail_call)
     jmp .ipint_perform_tail_call
 
+# CallArgumentBytecode::Call (0x1b)
 mintAlign(_call)
     pop wasmInstance, ws0
     # pop targetInstance, targetEntrypoint
@@ -10483,10 +10529,11 @@ _wasm_ipint_call_return_location_wide32:
     const mintRetSrc = sc1
     const mintRetDst = sc2
 
-    loadi IPInt::CallReturnMetadata::firstStackArgumentSPOffset[MC], mintRetSrc
+    loadi IPInt::CallReturnMetadata::firstStackResultSPOffset[MC], mintRetSrc
     advanceMC(IPInt::CallReturnMetadata::resultBytecode)
     leap [sp, mintRetSrc], mintRetSrc
 
+    # load "saved t3" from the stack
 if ARM64 or ARM64E
     loadp (2 * SlotSize)[sc3], mintRetDst
 elsif X86_64
@@ -10605,15 +10652,21 @@ mintAlign(_fr7)
     storev wfa7, [mintRetDst]
     mintRetDispatch()
 
-mintAlign(_stack)
+# CallResultBytecode::ResultStack (0x10)
+mintAlign(_result_stack)
     loadq [mintRetSrc], sc0
     addp SlotSize, mintRetSrc
     subp StackValueSize, mintRetDst
     storeq sc0, [mintRetDst]
     mintRetDispatch()
 
-mintAlign(_stack_gap)
-    addp SlotSize, mintRetSrc
+# CallResultBytecode::ResultStackVector (0x11)
+mintAlign(_result_stack_vector)
+    # safe to use wfa0 since register result bytecodes come before stack result
+    loadv [mintRetSrc], wfa0
+    addp 2 * SlotSize, mintRetSrc
+    subp StackValueSize, mintRetDst
+    storev wfa0, [mintRetDst]
     mintRetDispatch()
 
 mintAlign(_end)
@@ -10627,12 +10680,12 @@ mintAlign(_end)
     # return result     <- mintRetDst => new SP
     # t3, PC
     # PL, wasmInstance  <- sc3
-    # call frame return <- sp
+    # call frame return <- mintRetSrc
     # call frame return
     # call frame
     # call frame
     # call frame
-    # call frame
+    # call frame        <- sp
 
     # note: we don't care about t3 anymore
 if ARM64 or ARM64E
@@ -10647,10 +10700,12 @@ if X86_64
 end
 
     # Restore PC / MC
+    # XXX: where does ARM get PC restored?
     loadp Callee[cfr], ws0
     unboxWasmCallee(ws0, ws1)
     storep ws0, UnboxedWasmCalleeStackSlot[cfr]
 if X86_64
+    # XXX: why?
     move sc2, wasmInstance
     loadq 8[sc3], PL
     loadp (2 * SlotSize)[sc3], PC
@@ -10662,8 +10717,8 @@ end
 
 .ipint_perform_tail_call:
 
-    #  <caller frame>
-    #  return val                  <- sc2
+    #  <caller frame>              <- sc2
+    #  return val
     #  return val
     #  argument
     #  argument
@@ -10672,11 +10727,11 @@ end
     #  call frame
     #  call frame                  <- cfr
     #  (IPInt locals)
-    #  (IPInt stack)
+    #  (IPInt stack)               <- sc1 (was shadow stack, now dead and can re-use)
     #  argument 0
     #  ...
     #  argument n-1
-    #  argument n                  <- sc1
+    #  argument n
     #  entrypoint, targetInstance
     #  callee, function info
     #  saved MC/PC
@@ -10686,14 +10741,15 @@ end
     #  stack arguments
     #  stack arguments             <- sp
 
-    # load the size of stack values in, and subtract that from sc2
+    # load the size of the arguments and results space, and subtract that from sc2
     loadi [MC], sc3
-    mulp -SlotSize, sc3
+    negq sc3
 
-    # copy from sc2 downwards
+    # copy args to sc2 region
     validateOpcodeConfig(sc0)
 .ipint_tail_call_copy_stackargs_loop:
-    btiz sc3, .ipint_tail_call_copy_stackargs_loop_end
+    # XXX: change condition to zero or positive?
+    bqgteq sc3, 0, .ipint_tail_call_copy_stackargs_loop_end
 if ARM64 or ARM64E
     loadpairq [sp], sc0, sc1
     storepairq sc0, sc1, [sc2, sc3]
@@ -10712,7 +10768,6 @@ end
 
     # reload it here, which isn't optimal, but we don't really have registers
     loadi [MC], sc3
-    mulq SlotSize, sc3
     subp sc3, sc2
 
     # re-setup the call frame, and load our return address in
@@ -10753,7 +10808,7 @@ end
     #  argument 0
     #  ...
     #  argument n-1
-    #  argument n                  <- sc1
+    #  argument n
 
     # on ARM: lr = return address
 
@@ -10848,35 +10903,35 @@ else
 end
 
 uintAlign(_fr0)
-    popFloat64(wfa0)
+    popVec(wfa0)
     uintDispatch()
 
 uintAlign(_fr1)
-    popFloat64(wfa1)
+    popVec(wfa1)
     uintDispatch()
 
 uintAlign(_fr2)
-    popFloat64(wfa2)
+    popVec(wfa2)
     uintDispatch()
 
 uintAlign(_fr3)
-    popFloat64(wfa3)
+    popVec(wfa3)
     uintDispatch()
 
 uintAlign(_fr4)
-    popFloat64(wfa4)
+    popVec(wfa4)
     uintDispatch()
 
 uintAlign(_fr5)
-    popFloat64(wfa5)
+    popVec(wfa5)
     uintDispatch()
 
 uintAlign(_fr6)
-    popFloat64(wfa6)
+    popVec(wfa6)
     uintDispatch()
 
 uintAlign(_fr7)
-    popFloat64(wfa7)
+    popVec(wfa7)
     uintDispatch()
 
 # destination on stack is sc0
@@ -10884,7 +10939,21 @@ uintAlign(_fr7)
 uintAlign(_stack)
     popInt64(sc1, sc2)
     storeq sc1, [sc0]
-    subp 8, sc0
+    subp SlotSize, sc0
+    uintDispatch()
+
+uintAlign(_stack_vector)
+    if ARM64 or ARM64E
+        loadpairq [sp], sc1, sc2
+        storepairq sc1, sc2, [sc0]
+    else
+        loadq [sp], sc1
+        loadq 8[sp], sc2
+        storeq sc1, [sc0]
+        storeq sc2, 8[sc0]
+    end
+    addq StackValueSize, sp
+    subp 2 * SlotSize, sc0
     uintDispatch()
 
 uintAlign(_ret)
@@ -10967,49 +11036,56 @@ else
 end
 
 argumINTAlign(_fa0)
-    stored wfa0, [argumINTDst]
+    storev wfa0, [argumINTDst]
     addp LocalSize, argumINTDst
     argumINTDispatch()
 
 argumINTAlign(_fa1)
-    stored wfa1, [argumINTDst]
+    storev wfa1, [argumINTDst]
     addp LocalSize, argumINTDst
     argumINTDispatch()
 
 argumINTAlign(_fa2)
-    stored wfa2, [argumINTDst]
+    storev wfa2, [argumINTDst]
     addp LocalSize, argumINTDst
     argumINTDispatch()
 
 argumINTAlign(_fa3)
-    stored wfa3, [argumINTDst]
+    storev wfa3, [argumINTDst]
     addp LocalSize, argumINTDst
     argumINTDispatch()
 
 argumINTAlign(_fa4)
-    stored wfa4, [argumINTDst]
+    storev wfa4, [argumINTDst]
     addp LocalSize, argumINTDst
     argumINTDispatch()
 
 argumINTAlign(_fa5)
-    stored wfa5, [argumINTDst]
+    storev wfa5, [argumINTDst]
     addp LocalSize, argumINTDst
     argumINTDispatch()
 
 argumINTAlign(_fa6)
-    stored wfa6, [argumINTDst]
+    storev wfa6, [argumINTDst]
     addp LocalSize, argumINTDst
     argumINTDispatch()
 
 argumINTAlign(_fa7)
-    stored wfa7, [argumINTDst]
+    storev wfa7, [argumINTDst]
     addp LocalSize, argumINTDst
     argumINTDispatch()
 
 argumINTAlign(_stack)
     loadq [argumINTSrc], csr0
-    addp 8, argumINTSrc
+    addp SlotSize, argumINTSrc
     storeq csr0, [argumINTDst]
+    addp LocalSize, argumINTDst
+    argumINTDispatch()
+
+argumINTAlign(_stack_vector)
+    loadv [argumINTSrc], ft0
+    addp 2 * SlotSize, argumINTSrc
+    storev ft0, [argumINTDst]
     addp LocalSize, argumINTDst
     argumINTDispatch()
 
