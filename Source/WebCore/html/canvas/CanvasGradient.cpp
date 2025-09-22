@@ -34,17 +34,17 @@
 namespace WebCore {
 
 CanvasGradient::CanvasGradient(const FloatPoint& p0, const FloatPoint& p1)
-    : m_gradient(Gradient::create(Gradient::LinearData { p0, p1 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }))
+    : m_storage(Data { Gradient::LinearData { p0, p1 }, { } })
 {
 }
 
 CanvasGradient::CanvasGradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1)
-    : m_gradient(Gradient::create(Gradient::RadialData { p0, p1, r0, r1, 1 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }))
+    : m_storage(Data { Gradient::RadialData { p0, p1, r0, r1, 1 }, { } })
 {
 }
 
 CanvasGradient::CanvasGradient(const FloatPoint& centerPoint, float angleInRadians)
-    : m_gradient(Gradient::create(Gradient::ConicData { centerPoint, angleInRadians }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }))
+    : m_storage(Data { Gradient::ConicData { centerPoint, angleInRadians }, { } })
 {
 }
 
@@ -73,8 +73,11 @@ ExceptionOr<void> CanvasGradient::addColorStop(ScriptExecutionContext& scriptExe
     auto color = parseColor(colorString, scriptExecutionContext);
     if (!color.isValid())
         return Exception { ExceptionCode::SyntaxError };
-
-    m_gradient->addColorStop({ static_cast<float>(value), WTFMove(color) });
+    if (std::holds_alternative<Ref<const Gradient>>(m_storage)) {
+        Ref gradient = std::get<Ref<const Gradient>>(WTFMove(m_storage));
+        m_storage = Data { gradient->data(), gradient->stops() };
+    }
+    std::get<Data>(m_storage).stops.constructAndAppend(static_cast<float>(value), WTFMove(color));
     return { };
 }
 

@@ -353,10 +353,10 @@ public:
     }
 };
 
-template<typename GradientAdapter, typename StyleGradient> GradientColorStops computeStopsForDeprecatedVariants(GradientAdapter&, const StyleGradient& styleGradient, const RenderStyle& style)
+template<typename GradientAdapter, typename StyleGradient> SortedGradientColorStops computeStopsForDeprecatedVariants(GradientAdapter&, const StyleGradient& styleGradient, const RenderStyle& style)
 {
     bool hasColorFilter = style.hasAppleColorFilter();
-    auto result = styleGradient.parameters.stops.value.template map<GradientColorStops::StopVector>([&](auto& stop) -> WebCore::GradientColorStop {
+    auto result = styleGradient.parameters.stops.value.template map<GradientColorStops>([&](auto& stop) -> WebCore::GradientColorStop {
         return {
             resolveColorStopPosition(stop.position),
             resolveColorStopColor(stop.color, style, hasColorFilter)
@@ -365,10 +365,10 @@ template<typename GradientAdapter, typename StyleGradient> GradientColorStops co
 
     std::ranges::stable_sort(result, { }, &WebCore::GradientColorStop::offset);
 
-    return GradientColorStops::Sorted { WTFMove(result) };
+    return SortedGradientColorStops { WTFMove(result) };
 }
 
-template<typename GradientAdapter, typename StyleGradient> GradientColorStops computeStops(GradientAdapter& gradientAdapter, const StyleGradient& styleGradient, const RenderStyle& style)
+template<typename GradientAdapter, typename StyleGradient> SortedGradientColorStops computeStops(GradientAdapter& gradientAdapter, const StyleGradient& styleGradient, const RenderStyle& style)
 {
     bool hasColorFilter = style.hasAppleColorFilter();
 
@@ -635,8 +635,8 @@ template<typename GradientAdapter, typename StyleGradient> GradientColorStops co
     if (stops.size() > 1 && (*stops.first().offset < 0 || *stops.last().offset > 1))
         gradientAdapter.normalizeStopsAndEndpointsOutsideRange(stops, styleGradient.parameters.colorInterpolationMethod.method);
 
-    return GradientColorStops::Sorted {
-        stops.template map<GradientColorStops::StopVector>([](auto& stop) -> WebCore::GradientColorStop {
+    return SortedGradientColorStops {
+        stops.template map<GradientColorStops>([](auto& stop) -> WebCore::GradientColorStop {
             return { *stop.offset, stop.color };
         })
     };
@@ -811,7 +811,7 @@ static inline float horizontalEllipseRadius(const FloatSize& p, float aspectRati
 
 // MARK: - Linear create.
 
-template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, LinearGradient>& linear, const FloatSize& size, const RenderStyle& style)
+template<CSSValueID Name> static Ref<const WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, LinearGradient>& linear, const FloatSize& size, const RenderStyle& style)
 {
     ASSERT(!size.isEmpty());
 
@@ -861,7 +861,7 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
 
 // MARK: - Prefixed Linear create.
 
-template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, PrefixedLinearGradient>& linear, const FloatSize& size, const RenderStyle& style)
+template<CSSValueID Name> static Ref<const WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, PrefixedLinearGradient>& linear, const FloatSize& size, const RenderStyle& style)
 {
     ASSERT(!size.isEmpty());
 
@@ -916,7 +916,7 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
 
 // MARK: - Deprecated Linear create.
 
-template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, DeprecatedLinearGradient>& linear, const FloatSize& size, const RenderStyle& style)
+template<CSSValueID Name> static Ref<const WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, DeprecatedLinearGradient>& linear, const FloatSize& size, const RenderStyle& style)
 {
     ASSERT(!size.isEmpty());
 
@@ -932,7 +932,7 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
 
 // MARK: - Radial create.
 
-template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, RadialGradient>& radial, const FloatSize& size, const RenderStyle& style)
+template<CSSValueID Name> static Ref<const WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, RadialGradient>& radial, const FloatSize& size, const RenderStyle& style)
 {
     ASSERT(!size.isEmpty());
 
@@ -1027,7 +1027,7 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
 
 // MARK: - Prefixed Radial create.
 
-template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, PrefixedRadialGradient>& radial, const FloatSize& size, const RenderStyle& style)
+template<CSSValueID Name> static Ref<const WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, PrefixedRadialGradient>& radial, const FloatSize& size, const RenderStyle& style)
 {
     ASSERT(!size.isEmpty());
 
@@ -1134,7 +1134,7 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
 
 // MARK: - Deprecated Radial create.
 
-template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, DeprecatedRadialGradient>& radial, const FloatSize& size, const RenderStyle& style)
+template<CSSValueID Name> static Ref<const WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, DeprecatedRadialGradient>& radial, const FloatSize& size, const RenderStyle& style)
 {
     ASSERT(!size.isEmpty());
 
@@ -1154,7 +1154,7 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
 
 // MARK: - Conic create.
 
-template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, ConicGradient>& conic, const FloatSize& size, const RenderStyle& style)
+template<CSSValueID Name> static Ref<const WebCore::Gradient> createPlatformGradient(const FunctionNotation<Name, ConicGradient>& conic, const FloatSize& size, const RenderStyle& style)
 {
     ASSERT(!size.isEmpty());
 
@@ -1174,7 +1174,7 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
 
 // MARK: - createPlatformGradient
 
-Ref<WebCore::Gradient> createPlatformGradient(const Gradient& gradient, const FloatSize& size, const RenderStyle& style)
+Ref<const WebCore::Gradient> createPlatformGradient(const Gradient& gradient, const FloatSize& size, const RenderStyle& style)
 {
     return WTF::switchOn(gradient, [&](auto& gradient) { return createPlatformGradient(gradient, size, style); });
 }

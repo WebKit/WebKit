@@ -52,7 +52,7 @@ struct GradientData {
         return !gradient;
     }
 
-    RefPtr<Gradient> gradient;
+    RefPtr<const Gradient> gradient;
     AffineTransform userspaceTransform;
     Inputs inputs;
 };
@@ -97,7 +97,7 @@ private:
     virtual SVGUnitTypes::SVGUnitType gradientUnits() const = 0;
     virtual AffineTransform gradientTransform() const = 0;
     virtual bool collectGradientAttributes() = 0;
-    virtual Ref<Gradient> buildGradient(const RenderStyle&) const = 0;
+    virtual Ref<const Gradient> buildGradient(const RenderStyle&) const = 0;
 
     HashMap<RenderObject*, std::unique_ptr<GradientData>> m_gradientMap;
 

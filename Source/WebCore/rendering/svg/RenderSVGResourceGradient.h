@@ -45,7 +45,7 @@ protected:
     RenderSVGResourceGradient(Type, SVGElement&, RenderStyle&&);
 
     virtual void collectGradientAttributesIfNeeded() = 0;
-    virtual RefPtr<Gradient> createGradient(const RenderStyle&) = 0;
+    virtual RefPtr<const Gradient> createGradient(const RenderStyle&) = 0;
 
     virtual AffineTransform gradientTransform() const = 0;
 
@@ -53,7 +53,7 @@ protected:
     GradientColorStops stopsByApplyingColorFilter(const GradientColorStops&, const RenderStyle&) const;
     GradientSpreadMethod platformSpreadMethodFromSVGType(SVGSpreadMethodType) const;
 
-    RefPtr<Gradient> m_gradient;
+    RefPtr<const Gradient> m_gradient;
 };
 
 }

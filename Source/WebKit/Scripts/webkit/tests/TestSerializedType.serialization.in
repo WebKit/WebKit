@@ -364,3 +364,7 @@ using WebCore::ConditionalVariant = Variant<
 >;
 
 using WebCore::NonConditionalVariant = Variant<int, double>
+
+[ConstRefCounted] class WebCore::Gradient {
+    int zz();
+}

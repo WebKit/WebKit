@@ -398,7 +398,7 @@ void RemoteRenderingBackend::releaseFontCustomPlatformData(WebCore::RenderingRes
     MESSAGE_CHECK(success, "FontCustomPlatformData released before being cached.");
 }
 
-void RemoteRenderingBackend::cacheGradient(Ref<Gradient>&& gradient, RemoteGradientIdentifier identifier)
+void RemoteRenderingBackend::cacheGradient(Ref<const Gradient>&& gradient, RemoteGradientIdentifier identifier)
 {
     assertIsCurrent(workQueue());
     bool success = m_remoteResourceCache.cacheGradient(identifier, WTFMove(gradient));

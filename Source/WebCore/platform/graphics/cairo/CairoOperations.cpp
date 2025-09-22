@@ -536,7 +536,7 @@ FillSource::FillSource(const GraphicsContextState& state)
         color = state.fillBrush().color();
 }
 
-FillSource::FillSource(const GraphicsContextState& state, Gradient& useGradient, const AffineTransform& gradientSpaceTransform)
+FillSource::FillSource(const GraphicsContextState& state, const Gradient&useGradient, const AffineTransform& gradientSpaceTransform)
     : globalAlpha(state.alpha())
     , fillRule(state.fillRule())
 {

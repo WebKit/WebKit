@@ -38,6 +38,7 @@ import sys
 # Alias - this type is not a struct or class, but a typedef.
 # Nested - this type is only serialized as a member of its parent, so work around the need for http://wg21.link/P0289 and don't forward declare it in the header.
 # RefCounted - deserializer returns a std::optional<Ref<T>> instead of a std::optional<T>.
+# ConstRefCounted - deserializer returns a std::optional<Ref<const T>> instead of a std::optional<T>.
 # LegacyPopulateFromEmptyConstructor - instead of calling a constructor with the members, call the empty constructor then insert the members one at a time.
 # OptionSet - for enum classes, instead of only allowing deserialization of the exact values, allow deserialization of any bit combination of the values.
 # RValue - serializer takes an rvalue reference, instead of an lvalue.
@@ -92,6 +93,7 @@ class SerializedType(object):
         self.condition = condition
         self.encoders = ['Encoder']
         self.return_ref = False
+        self.return_const_ref = False
         self.construct_subclass = None
         self.create_using = False
         self.populate_from_empty_constructor = False
@@ -131,6 +133,8 @@ class SerializedType(object):
                         self.nested = True
                     elif attribute == 'RefCounted':
                         self.return_ref = True
+                    elif attribute == 'ConstRefCounted':
+                        self.return_const_ref = True
                     elif attribute == 'DisableMissingMemberCheck':
                         self.disableMissingMemberCheck = True
                     elif attribute == 'RValue':
@@ -496,23 +500,43 @@ _license_header = """/*
 """
 
 
+def coder_encode_decode_type_declarations(type, name_with_template):
+    """Returns tuple containing type declaraations for ArgumentCoder<> specilization, encode function type,
+       decode function."""
+    if type.cf_type:
+        return (f'{name_with_template}', f'{name_with_template}', f'std::optional<RetainPtr<{name_with_template}>>')
+    if type.rvalue:
+        return (f'{name_with_template}', f'{name_with_template}&&', f'std::optional<{name_with_template}>')
+    if type.return_ref:
+        return (f'{name_with_template}', f'const {name_with_template}&', f'std::optional<Ref<{name_with_template}>>')
+    if type.return_const_ref:
+        return (f'{name_with_template}', f'const {name_with_template}&', f'std::optional<Ref<const {name_with_template}>>')
+    return (f'{name_with_template}', f'const {name_with_template}&', f'std::optional<{name_with_template}>')
+
+
 def one_argument_coder_declaration_cf(type):
     result = []
     result.append('')
     if type.condition is not None:
         result.append(f'#if {type.condition}')
     name_with_template = type.namespace_and_name()
-    result.append(f'template<> struct ArgumentCoder<{name_with_template}> {{')
+    (specialization_type, encode_type, decode_type) = coder_encode_decode_type_declarations(type, name_with_template)
+    result.append(f'template<> struct ArgumentCoder<{specialization_type}> {{')
     for encoder in type.encoders:
-        result.append(f'    static void encode({encoder}&, {name_with_template});')
+        result.append(f'    static void encode({encoder}&, {encode_type});')
+    result.append(f'    static {decode_type} decode(Decoder&);')
     result.append('};')
-    result.append(f'template<> struct ArgumentCoder<RetainPtr<{name_with_template}>> {{')
+    # FIXME: template<> ArgumentCoder<RetainPtr<T>> missing.
+    result.append(f'template<> struct ArgumentCoder<RetainPtr<{specialization_type}>> {{')
     for encoder in type.encoders:
         result.append(f'    static void encode({encoder}& encoder, const RetainPtr<{name_with_template}>& retainPtr)')
         result.append('    {')
         result.append(f'        ArgumentCoder<{name_with_template}>::encode(encoder, retainPtr.get());')
         result.append('    }')
-    result.append(f'    static std::optional<RetainPtr<{name_with_template}>> decode(Decoder&);')
+    result.append(f'    static {decode_type} decode(Decoder& decoder)')
+    result.append('    {')
+    result.append(f'        return ArgumentCoder<{specialization_type}>::decode(decoder);')
+    result.append('    }')
     result.append('};')
     if type.condition is not None:
         result.append('#endif')
@@ -529,16 +553,11 @@ def one_argument_coder_declaration(type, template_argument):
     name_with_template = type.namespace_and_name()
     if template_argument is not None:
         name_with_template = f'{name_with_template}<{template_argument.namespace}::{template_argument.name}>'
-    result.append(f'template<> struct ArgumentCoder<{name_with_template}> {{')
+    [specialization_type_decl, encode_type_decl, decode_type_decl] = coder_encode_decode_type_declarations(type, name_with_template)
+    result.append(f'template<> struct ArgumentCoder<{specialization_type_decl}> {{')
     for encoder in type.encoders:
-        if type.rvalue:
-            result.append(f'    static void encode({encoder}&, {name_with_template}&&);')
-        else:
-            result.append(f'    static void encode({encoder}&, const {name_with_template}&);')
-    if type.return_ref:
-        result.append(f'    static std::optional<Ref<{name_with_template}>> decode(Decoder&);')
-    else:
-        result.append(f'    static std::optional<{name_with_template}> decode(Decoder&);')
+        result.append(f'    static void encode({encoder}&, {encode_type_decl});')
+    result.append(f'    static {decode_type_decl} decode(Decoder&);')
     result.append('};')
     if type.condition is not None:
         result.append('#endif')
@@ -743,7 +762,7 @@ def check_type_members(type, checking_parent_class):
     if type.can_assert_member_order_is_correct():
         # FIXME: Add this check for types with parent classes, too.
         if type.parent_class is None and not checking_parent_class:
-            result.append(f'    struct ShouldBeSameSizeAs{type.name_as_identifier()} : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<{type.namespace_and_name()}>, {"true" if type.return_ref else "false"}> {{')
+            result.append(f'    struct ShouldBeSameSizeAs{type.name_as_identifier()} : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<{type.namespace_and_name()}>, {"true" if type.return_ref or type.return_const_ref else "false"}> {{')
             for member in type.members:
                 if member.condition is not None:
                     result.append(f'#if {member.condition}')
@@ -991,7 +1010,7 @@ def construct_type(type, specialization, indentation):
     fulltype = type.namespace_and_name_for_construction(specialization)
     if type.create_using:
         result.append(f'{indent(indentation)}{fulltype}::{type.create_using}(')
-    elif type.return_ref:
+    elif type.return_ref or type.return_const_ref:
         result.append(f'{indent(indentation)}{fulltype}::create(')
     else:
         result.append(f'{indent(indentation)}{fulltype} {{')
@@ -1010,7 +1029,7 @@ def construct_type(type, specialization, indentation):
     for i in range(len(type.dictionary_members)):
         member = type.dictionary_members[i]
         result.append(f'{indent(indentation + 1)}WTFMove(*{member.type}){"," if i < len(type.dictionary_members) - 1 else ""}')
-    if type.create_using or type.return_ref:
+    if type.create_using or type.return_ref or type.return_const_ref:
         result.append(indent(indentation) + ')')
     else:
         result.append(indent(indentation) + '}')
@@ -1022,6 +1041,8 @@ def generate_one_impl(type, template_argument, serialized_types):
     name_with_template = type.namespace_and_name()
     if template_argument is not None:
         name_with_template = f'{name_with_template}<{template_argument.namespace}::{template_argument.name}>'
+    [specialization_type_decl, encode_type_decl, decode_type_decl] = coder_encode_decode_type_declarations(type, name_with_template)
+
     if type.condition is not None:
         result.append(f'#if {type.condition}')
 
@@ -1045,12 +1066,7 @@ def generate_one_impl(type, template_argument, serialized_types):
         if type.members_are_subclasses:
             result.append('IGNORE_WARNINGS_BEGIN("missing-noreturn")')
         instanceArgName = 'instance' if type.generic_wrapper is None else 'passedInstance'
-        if type.cf_type is not None:
-            result.append(f'void ArgumentCoder<{name_with_template}>::encode({encoder}& encoder, {name_with_template} {instanceArgName})')
-        elif type.rvalue:
-            result.append(f'void ArgumentCoder<{name_with_template}>::encode({encoder}& encoder, {name_with_template}&& {instanceArgName})')
-        else:
-            result.append(f'void ArgumentCoder<{name_with_template}>::encode({encoder}& encoder, const {name_with_template}& {instanceArgName})')
+        result.append(f'void ArgumentCoder<{specialization_type_decl}>::encode({encoder}& encoder, {encode_type_decl} {instanceArgName})')
         result.append('{')
         if type.generic_wrapper is not None:
             if type.rvalue:
@@ -1066,12 +1082,7 @@ def generate_one_impl(type, template_argument, serialized_types):
         if type.members_are_subclasses:
             result.append('IGNORE_WARNINGS_END')
         result.append('')
-    if type.cf_type is not None:
-        result.append(f'std::optional<RetainPtr<{name_with_template}>> ArgumentCoder<RetainPtr<{name_with_template}>>::decode(Decoder& decoder)')
-    elif type.return_ref:
-        result.append(f'std::optional<Ref<{name_with_template}>> ArgumentCoder<{name_with_template}>::decode(Decoder& decoder)')
-    else:
-        result.append(f'std::optional<{name_with_template}> ArgumentCoder<{name_with_template}>::decode(Decoder& decoder)')
+    result.append(f'{decode_type_decl} ArgumentCoder<{specialization_type_decl}>::decode(Decoder& decoder)')
     result.append('{')
     result = result + decode_type(type, serialized_types)
     if type.cf_type is None:

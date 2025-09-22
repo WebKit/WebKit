@@ -31,9 +31,6 @@
 
 namespace WebCore {
 
-class Gradient;
-class GradientColorStops;
-
 class StyleGradientImage final : public StyleGeneratedImage {
 public:
     static Ref<StyleGradientImage> create(Style::Gradient gradient)

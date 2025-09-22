@@ -62,7 +62,7 @@ float LegacyRenderSVGResourceRadialGradient::focalRadius(const RadialGradientAtt
     return SVGLengthContext::resolveLength(protectedRadialGradientElement().ptr(), attributes.gradientUnits(), attributes.fr());
 }
 
-Ref<Gradient> LegacyRenderSVGResourceRadialGradient::buildGradient(const RenderStyle& style) const
+Ref<const Gradient> LegacyRenderSVGResourceRadialGradient::buildGradient(const RenderStyle& style) const
 {
     return Gradient::create(
         Gradient::RadialData { focalPoint(m_attributes), centerPoint(m_attributes), focalRadius(m_attributes), radius(m_attributes), 1 },

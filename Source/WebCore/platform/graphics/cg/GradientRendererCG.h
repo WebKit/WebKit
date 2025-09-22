@@ -29,13 +29,12 @@
 #include <WebCore/ColorComponents.h>
 #include <WebCore/ColorInterpolationMethod.h>
 #include <WebCore/DestinationColorSpace.h>
+#include <WebCore/GradientColorStops.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
-
-class GradientColorStops;
 
 struct ColorConvertedToInterpolationColorSpaceStop {
     float offset;

@@ -471,7 +471,7 @@ IntRect GraphicsContext::clipBounds() const
     return IntRect();
 }
 
-void GraphicsContext::fillRect(const FloatRect& rect, Gradient& gradient)
+void GraphicsContext::fillRect(const FloatRect& rect, const Gradient&gradient)
 {
     gradient.fill(*this, rect);
 }

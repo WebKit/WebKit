@@ -360,7 +360,9 @@ GradientColorStops LegacyRenderSVGResourceGradient::stopsByApplyingColorFilter(c
     if (!style.hasAppleColorFilter())
         return stops;
 
-    return stops.mapColors([&] (auto& color) { return style.colorByApplyingColorFilter(color); });
+    return mapGradientColors(stops, [&] (auto& color) {
+        return style.colorByApplyingColorFilter(color);
+    });
 }
 
 GradientSpreadMethod LegacyRenderSVGResourceGradient::platformSpreadMethodFromSVGType(SVGSpreadMethodType method)

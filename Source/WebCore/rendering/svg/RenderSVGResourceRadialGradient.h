@@ -51,7 +51,7 @@ public:
 
 private:
     void collectGradientAttributesIfNeeded() final;
-    RefPtr<Gradient> createGradient(const RenderStyle&) final;
+    RefPtr<const Gradient> createGradient(const RenderStyle&) final;
 
     void element() const = delete;
     ASCIILiteral renderName() const final { return "RenderSVGResourceRadialGradient"_s; }

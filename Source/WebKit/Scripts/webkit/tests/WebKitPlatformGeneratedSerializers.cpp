@@ -381,7 +381,7 @@ void ArgumentCoder<CFStringRef>::encode(StreamConnectionEncoder& encoder, CFStri
     encoder << WTF::String { instance };
 }
 
-std::optional<RetainPtr<CFStringRef>> ArgumentCoder<RetainPtr<CFStringRef>>::decode(Decoder& decoder)
+std::optional<RetainPtr<CFStringRef>> ArgumentCoder<CFStringRef>::decode(Decoder& decoder)
 {
     auto result = decoder.decode<WTF::String>();
     if (!decoder.isValid()) [[unlikely]]

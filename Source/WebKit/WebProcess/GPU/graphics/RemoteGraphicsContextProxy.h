@@ -115,8 +115,8 @@ private:
     void fillPath(const WebCore::Path&) final;
     void fillRect(const WebCore::FloatRect&, RequiresClipToRect) final;
     void fillRect(const WebCore::FloatRect&, const WebCore::Color&) final;
-    void fillRect(const WebCore::FloatRect&, WebCore::Gradient&) final;
-    void fillRect(const WebCore::FloatRect&, WebCore::Gradient&, const WebCore::AffineTransform&, RequiresClipToRect) final;
+    void fillRect(const WebCore::FloatRect&, const WebCore::Gradient&) final;
+    void fillRect(const WebCore::FloatRect&, const WebCore::Gradient&, const WebCore::AffineTransform&, RequiresClipToRect) final;
     void fillRect(const WebCore::FloatRect&, const WebCore::Color&, WebCore::CompositeOperator, WebCore::BlendMode) final;
     void fillRoundedRect(const WebCore::FloatRoundedRect&, const WebCore::Color&, WebCore::BlendMode) final;
     void fillRectWithRoundedHole(const WebCore::FloatRect&, const WebCore::FloatRoundedRect&, const WebCore::Color&) final;
@@ -146,7 +146,7 @@ private:
     bool recordResourceUse(WebCore::ImageBuffer&);
     bool recordResourceUse(const WebCore::SourceImage&);
     bool recordResourceUse(WebCore::Font&);
-    std::optional<RemoteGradientIdentifier> recordResourceUse(WebCore::Gradient&);
+    std::optional<RemoteGradientIdentifier> recordResourceUse(const WebCore::Gradient&);
     bool recordResourceUse(WebCore::Filter&);
     std::optional<RemoteDisplayListIdentifier> recordResourceUse(const WebCore::DisplayList::DisplayList&);
 

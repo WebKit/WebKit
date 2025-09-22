@@ -34,7 +34,7 @@ class ImageBuffer;
 
 class GradientImage final : public GeneratedImage {
 public:
-    static Ref<GradientImage> create(Gradient& generator, const FloatSize& size)
+    static Ref<GradientImage> create(const Gradient& generator, const FloatSize& size)
     {
         return adoptRef(*new GradientImage(generator, size));
     }
@@ -44,14 +44,14 @@ public:
     const Gradient& gradient() const { return m_gradient.get(); }
 
 private:
-    WEBCORE_EXPORT GradientImage(Gradient&, const FloatSize&);
+    WEBCORE_EXPORT GradientImage(const Gradient&, const FloatSize&);
 
     ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { }) final;
     void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) final;
     bool isGradientImage() const final { return true; }
     void dump(WTF::TextStream&) const final;
     
-    const Ref<Gradient> m_gradient;
+    const Ref<const Gradient> m_gradient;
     RefPtr<ImageBuffer> m_cachedImage;
     FloatSize m_cachedAdjustedSize;
     unsigned m_cachedGeneratorHash { 0 };

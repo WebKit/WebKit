@@ -1250,15 +1250,15 @@ static void drawWritingToolsUnderline(GraphicsContext& context, const FloatRect&
 
     auto xOffset = frameX * fmod(animationProgress + midY / frameY, 1.0);
     constexpr std::array colorList { purpleColor, redColor, yellowColor, redColor, purpleColor, purpleColor, redColor, yellowColor, redColor, purpleColor };
-
-    Ref gradient = Gradient::create(Gradient::LinearData { FloatPoint(0 - xOffset, 0), FloatPoint(frameX * 2 - xOffset, frameY) }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-
     auto colorStop = 0.f;
     auto colorIncrement = 1.0 / colorList.size();
+    GradientColorStops stops;
+    stops.reserveCapacity(colorList.size());
     for (auto color : colorList) {
-        gradient->addColorStop({ colorStop, color });
+        stops.constructAndAppend(colorStop, color);
         colorStop += colorIncrement;
     }
+    Ref gradient = Gradient::create(Gradient::LinearData { FloatPoint(0 - xOffset, 0), FloatPoint(frameX * 2 - xOffset, frameY) }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad, SortedGradientColorStops { WTFMove(stops) });
 
     context.save();
     context.setFillGradient(WTFMove(gradient));

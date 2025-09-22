@@ -99,6 +99,7 @@ class ScrollingStateFrameHostingNodeWithStuffAfterTuple;
 class AppKitControlSystemImage;
 #endif
 template<typename> class RectEdges;
+class Gradient;
 struct Amazing;
 }
 
@@ -331,19 +332,24 @@ template<> struct ArgumentCoder<WebKit::CoreIPCDDScannerResult> {
 
 template<> struct ArgumentCoder<CFFooRef> {
     static void encode(Encoder&, CFFooRef);
+    static std::optional<RetainPtr<CFFooRef>> decode(Decoder&);
 };
 template<> struct ArgumentCoder<RetainPtr<CFFooRef>> {
     static void encode(Encoder& encoder, const RetainPtr<CFFooRef>& retainPtr)
     {
         ArgumentCoder<CFFooRef>::encode(encoder, retainPtr.get());
     }
-    static std::optional<RetainPtr<CFFooRef>> decode(Decoder&);
+    static std::optional<RetainPtr<CFFooRef>> decode(Decoder& decoder)
+    {
+        return ArgumentCoder<CFFooRef>::decode(decoder);
+    }
 };
 
 #if USE(CFBAR)
 template<> struct ArgumentCoder<CFBarRef> {
     static void encode(Encoder&, CFBarRef);
     static void encode(StreamConnectionEncoder&, CFBarRef);
+    static std::optional<RetainPtr<CFBarRef>> decode(Decoder&);
 };
 template<> struct ArgumentCoder<RetainPtr<CFBarRef>> {
     static void encode(Encoder& encoder, const RetainPtr<CFBarRef>& retainPtr)
@@ -354,7 +360,10 @@ template<> struct ArgumentCoder<RetainPtr<CFBarRef>> {
     {
         ArgumentCoder<CFBarRef>::encode(encoder, retainPtr.get());
     }
-    static std::optional<RetainPtr<CFBarRef>> decode(Decoder&);
+    static std::optional<RetainPtr<CFBarRef>> decode(Decoder& decoder)
+    {
+        return ArgumentCoder<CFBarRef>::decode(decoder);
+    }
 };
 #endif
 
@@ -362,6 +371,7 @@ template<> struct ArgumentCoder<RetainPtr<CFBarRef>> {
 template<> struct ArgumentCoder<CFStringRef> {
     static void encode(Encoder&, CFStringRef);
     static void encode(StreamConnectionEncoder&, CFStringRef);
+    static std::optional<RetainPtr<CFStringRef>> decode(Decoder&);
 };
 template<> struct ArgumentCoder<RetainPtr<CFStringRef>> {
     static void encode(Encoder& encoder, const RetainPtr<CFStringRef>& retainPtr)
@@ -372,7 +382,10 @@ template<> struct ArgumentCoder<RetainPtr<CFStringRef>> {
     {
         ArgumentCoder<CFStringRef>::encode(encoder, retainPtr.get());
     }
-    static std::optional<RetainPtr<CFStringRef>> decode(Decoder&);
+    static std::optional<RetainPtr<CFStringRef>> decode(Decoder& decoder)
+    {
+        return ArgumentCoder<CFStringRef>::decode(decoder);
+    }
 };
 #endif
 
@@ -426,6 +439,11 @@ template<> struct ArgumentCoder<WebCore::AppKitControlSystemImage> {
 template<> struct ArgumentCoder<WebCore::RectEdges<bool>> {
     static void encode(Encoder&, const WebCore::RectEdges<bool>&);
     static std::optional<WebCore::RectEdges<bool>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::Gradient> {
+    static void encode(Encoder&, const WebCore::Gradient&);
+    static std::optional<Ref<const WebCore::Gradient>> decode(Decoder&);
 };
 
 } // namespace IPC

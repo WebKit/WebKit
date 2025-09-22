@@ -575,7 +575,7 @@ void SVGTextBoxPainter<TextBoxPath>::paintTextWithShadows(const RenderStyle& sty
 
         {
             // Optimized code path to support gradient/pattern fill/stroke on text without using temporary ImageBuffers / masking.
-            RefPtr<Gradient> gradient;
+            RefPtr<const Gradient> gradient;
             RefPtr<Pattern> pattern;
             if (renderer().document().settings().layerBasedSVGEngineEnabled()) {
                 auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(renderer());

@@ -48,7 +48,7 @@ RemoteResourceCacheProxy::~RemoteResourceCacheProxy()
 {
 }
 
-RemoteGradientIdentifier RemoteResourceCacheProxy::recordGradientUse(Gradient& gradient)
+RemoteGradientIdentifier RemoteResourceCacheProxy::recordGradientUse(const Gradient& gradient)
 {
     auto result = m_gradients.ensure(&gradient, [] {
         return RemoteGradientIdentifier::generate();

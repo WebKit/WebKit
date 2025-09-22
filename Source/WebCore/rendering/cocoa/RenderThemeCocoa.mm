@@ -774,18 +774,17 @@ static void drawShapeWithBorder(GraphicsContext& context, float deviceScaleFacto
     context.strokePath(path);
 }
 
-static RefPtr<Gradient> checkboxRadioBackgroundGradientForVectorBasedControls(const FloatRect& rect, OptionSet<ControlStyle::State> states)
+static RefPtr<const Gradient> checkboxRadioBackgroundGradientForVectorBasedControls(const FloatRect& rect, OptionSet<ControlStyle::State> states)
 {
     // FIXME: This is just a copy of RenderThemeIOS::checkboxRadioBackgroundGradient(...). Refactor to remove this duplicate code.
     bool isPressed = states.contains(ControlStyle::State::Pressed);
     if (isPressed)
         return nullptr;
-
+    GradientColorStops stops;
     bool isEmpty = !states.containsAny({ ControlStyle::State::Checked, ControlStyle::State::Indeterminate });
-    auto gradient = Gradient::create(Gradient::LinearData { rect.minXMinYCorner(), rect.maxXMaxYCorner() }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-    gradient->addColorStop({ 0.0f, DisplayP3<float> { 0, 0, 0, isEmpty ? 0.05f : 0.125f } });
-    gradient->addColorStop({ 1.0f, DisplayP3<float> { 0, 0, 0, 0 } });
-    return gradient;
+    stops.constructAndAppend(0.0f, DisplayP3<float> { 0, 0, 0, isEmpty ? 0.05f : 0.125f });
+    stops.constructAndAppend(1.0f, DisplayP3<float> { 0, 0, 0, 0 });
+    return Gradient::create(Gradient::LinearData { rect.minXMinYCorner(), rect.maxXMaxYCorner() }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad, SortedGradientColorStops { WTFMove(stops) });
 }
 
 constexpr auto checkboxCornerRadiusRatio = 5.5f / checkboxRadioSizeForVectorBasedControls;
@@ -1532,9 +1531,11 @@ bool RenderThemeCocoa::paintColorWellDecorationsForVectorBasedControls(const Ren
     };
     constexpr int numColorStops = std::size(colorStops);
 
-    Ref gradient = Gradient::create(Gradient::ConicData { rect.center(), 0 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
+    GradientColorStops stops;
+    stops.reserveCapacity(numColorStops);
     for (int i = 0; i < numColorStops; ++i)
-        gradient->addColorStop({ i * 1.0f / (numColorStops - 1), colorStops[i] });
+        stops.constructAndAppend(i * 1.0f / (numColorStops - 1), colorStops[i]);
+    Ref gradient = Gradient::create(Gradient::ConicData { rect.center(), 0 }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied }, GradientSpreadMethod::Pad);
 
     FloatRect strokeRect = rect;
     strokeRect.inflate(-strokeThickness / 2.0f);

@@ -38,13 +38,13 @@ messages -> RemoteGraphicsContext Stream {
     SetFillPackedColor(struct WebCore::PackedColor::RGBA color) StreamBatched
     SetFillColor(WebCore::Color color) StreamBatched
     SetFillCachedGradient(WebKit::RemoteGradientIdentifier identifier, WebCore::AffineTransform spaceTransform) StreamBatched
-    SetFillGradient(Ref<WebCore::Gradient> gradient, WebCore::AffineTransform spaceTransform) StreamBatched
+    SetFillGradient(Ref<const WebCore::Gradient> gradient, WebCore::AffineTransform spaceTransform) StreamBatched
     SetFillPattern(WebCore::RenderingResourceIdentifier tileImageIdentifier, WebCore::PatternParameters pattern) StreamBatched
     SetFillRule(enum:bool WebCore::WindRule rule) StreamBatched
     SetStrokePackedColor(WebCore::PackedColor::RGBA color) StreamBatched
     SetStrokeColor(WebCore::Color color) StreamBatched
     SetStrokeCachedGradient(WebKit::RemoteGradientIdentifier identifier, WebCore::AffineTransform spaceTransform) StreamBatched
-    SetStrokeGradient(Ref<WebCore::Gradient> gradient, WebCore::AffineTransform spaceTransform) StreamBatched
+    SetStrokeGradient(Ref<const WebCore::Gradient> gradient, WebCore::AffineTransform spaceTransform) StreamBatched
     SetStrokePattern(WebCore::RenderingResourceIdentifier tileImageIdentifier, WebCore::PatternParameters pattern) StreamBatched
     SetStrokePackedColorAndThickness(WebCore::PackedColor::RGBA color, float thickness) StreamBatched
     SetStrokeThickness(float thickness) StreamBatched
@@ -93,8 +93,8 @@ messages -> RemoteGraphicsContext Stream {
     DrawFocusRingRects(Vector<WebCore::FloatRect> rects, float outlineOffset, float outlineWidth, WebCore::Color color)
     FillRect(WebCore::FloatRect rect, enum:bool WebCore::RequiresClipToRect requiresClipToRect)
     FillRectWithColor(WebCore::FloatRect rect, WebCore::Color color)
-    FillRectWithGradient(WebCore::FloatRect rect, Ref<WebCore::Gradient> gradient)
-    FillRectWithGradientAndSpaceTransform(WebCore::FloatRect rect, Ref<WebCore::Gradient> gradient, WebCore::AffineTransform transform, enum:bool WebCore::RequiresClipToRect requiresClipToRect)
+    FillRectWithGradient(WebCore::FloatRect rect, Ref<const WebCore::Gradient> gradient)
+    FillRectWithGradientAndSpaceTransform(WebCore::FloatRect rect, Ref<const WebCore::Gradient> gradient, WebCore::AffineTransform transform, enum:bool WebCore::RequiresClipToRect requiresClipToRect)
     FillCompositedRect(WebCore::FloatRect rect, WebCore::Color color, enum:uint8_t WebCore::CompositeOperator op, enum:uint8_t WebCore::BlendMode blendMode)
     FillRoundedRect(WebCore::FloatRoundedRect rect, WebCore::Color color, enum:uint8_t WebCore::BlendMode blendMode)
     FillRectWithRoundedHole(WebCore::FloatRect rect, WebCore::FloatRoundedRect roundedHoleRect, WebCore::Color color)

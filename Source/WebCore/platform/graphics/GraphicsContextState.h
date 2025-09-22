@@ -89,7 +89,7 @@ public:
     const SourceBrush& fillBrush() const { return m_fillBrush; }
     void setFillBrush(const SourceBrush& brush) { setProperty(Change::FillBrush, &GraphicsContextState::m_fillBrush, brush); }
     void setFillColor(const Color& color) { setProperty(Change::FillBrush, &GraphicsContextState::m_fillBrush, { color }); }
-    void setFillGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform) { m_fillBrush.setGradient(WTFMove(gradient), spaceTransform); m_changeFlags.add(Change::FillBrush); }
+    void setFillGradient(Ref<const Gradient>&& gradient, const AffineTransform& spaceTransform) { m_fillBrush.setGradient(WTFMove(gradient), spaceTransform); m_changeFlags.add(Change::FillBrush); }
     void setFillPattern(Ref<Pattern>&& pattern) { m_fillBrush.setPattern(WTFMove(pattern)); m_changeFlags.add(Change::FillBrush); }
 
     WindRule fillRule() const { return m_fillRule; }
@@ -99,7 +99,7 @@ public:
     const SourceBrush& strokeBrush() const { return m_strokeBrush; }
     void setStrokeBrush(const SourceBrush& brush) { setProperty(Change::StrokeBrush, &GraphicsContextState::m_strokeBrush, brush); }
     void setStrokeColor(const Color& color) { setProperty(Change::StrokeBrush, &GraphicsContextState::m_strokeBrush, { color }); }
-    void setStrokeGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform) { m_strokeBrush.setGradient(WTFMove(gradient), spaceTransform); m_changeFlags.add(Change::StrokeBrush); }
+    void setStrokeGradient(Ref<const Gradient>&& gradient, const AffineTransform& spaceTransform) { m_strokeBrush.setGradient(WTFMove(gradient), spaceTransform); m_changeFlags.add(Change::StrokeBrush); }
     void setStrokePattern(Ref<Pattern>&& pattern) { m_strokeBrush.setPattern(WTFMove(pattern)); m_changeFlags.add(Change::StrokeBrush); }
 
     float strokeThickness() const { return m_strokeThickness; }

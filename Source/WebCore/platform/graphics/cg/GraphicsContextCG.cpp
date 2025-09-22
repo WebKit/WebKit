@@ -841,7 +841,7 @@ void GraphicsContextCG::fillRect(const FloatRect& rect, RequiresClipToRect requi
     CGContextFillRect(context, rect);
 }
 
-void GraphicsContextCG::fillRect(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)
+void GraphicsContextCG::fillRect(const FloatRect& rect, const Gradient&gradient, const AffineTransform& gradientSpaceTransform, RequiresClipToRect requiresClipToRect)
 {
     CGContextRef context = platformContext();
 

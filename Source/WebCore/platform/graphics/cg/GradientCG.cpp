@@ -32,39 +32,31 @@
 #include "GradientRendererCG.h"
 #include "GraphicsContextCG.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <wtf/Locker.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
 
-void Gradient::stopsChanged()
-{
-    m_platformRenderer = { };
-}
-
-void Gradient::fill(GraphicsContext& context, const FloatRect& rect)
+void Gradient::fill(GraphicsContext& context, const FloatRect& rect) const
 {
     context.clip(rect);
     paint(context);
 }
 
-void Gradient::paint(GraphicsContext& context)
+void Gradient::paint(GraphicsContext& context) const
 {
     paint(context.platformContext(), context.colorSpace());
 }
 
-void Gradient::paint(CGContextRef platformContext, std::optional<DestinationColorSpace> colorSpace)
+void Gradient::paint(CGContextRef platformContext, std::optional<DestinationColorSpace> colorSpace) const
 {
-    auto ensurePlatformRenderer = [&] {
-        if (m_platformRenderer && m_platformRenderer->colorSpace() == colorSpace)
-            return;
-
-        m_platformRenderer = GradientRendererCG { m_colorInterpolationMethod, m_stops.sorted(), colorSpace };
-    };
-
-    ensurePlatformRenderer();
+    Locker locker { m_lock };
+    if (!m_platformRenderer && m_platformRenderer->colorSpace() != colorSpace)
+        m_platformRenderer = GradientRendererCG { m_colorInterpolationMethod, m_stops, colorSpace };
 
     WTF::switchOn(m_data,
         [&] (const LinearData& data) {
+            assertIsHeld(m_lock);
             switch (m_spreadMethod) {
             case GradientSpreadMethod::Repeat:
             case GradientSpreadMethod::Reflect: {
@@ -88,13 +80,6 @@ void Gradient::paint(CGContextRef platformContext, std::optional<DestinationColo
                 CGFloat pixelSize = CGFAbs(CGContextConvertSizeToUserSpace(platformContext, CGSizeMake(1, 1)).width);
                 if (CGFAbs(dx) < pixelSize)
                     dx = dx < 0 ? -pixelSize : pixelSize;
-
-                auto drawLinearGradient = [&](CGFloat start, CGFloat end, bool flip) {
-                    CGPoint left = CGPointMake(flip ? end : start, 0);
-                    CGPoint right = CGPointMake(flip ? start : end, 0);
-
-                    m_platformRenderer->drawLinearGradient(platformContext, left, right, extendOptions);
-                };
 
                 auto isLeftOf = [](CGFloat start, CGFloat end, CGRect boundingBox) -> bool {
                     return std::max(start, end) <= CGRectGetMinX(boundingBox);
@@ -120,7 +105,11 @@ void Gradient::paint(CGContextRef platformContext, std::optional<DestinationColo
 
                 // Draw gradient forward till the points are outside boundingBox.
                 for (; isIntersecting(start, start + dx, boundingBox); start += dx) {
-                    drawLinearGradient(start, start + dx, flip);
+                    CGPoint left = CGPointMake(start, 0);
+                    CGPoint right = CGPointMake(start + dx, 0);
+                    if (flip)
+                        std::swap(left, right);
+                    m_platformRenderer->drawLinearGradient(platformContext, left, right, extendOptions);
                     flip = !flip && m_spreadMethod == GradientSpreadMethod::Reflect;
                 }
 
@@ -136,7 +125,11 @@ void Gradient::paint(CGContextRef platformContext, std::optional<DestinationColo
 
                 // Draw gradient backward till the points are outside boundingBox.
                 for (; isIntersecting(end, end - dx, boundingBox); end -= dx) {
-                    drawLinearGradient(end - dx, end, flip);
+                    CGPoint left = CGPointMake(end - dx, 0);
+                    CGPoint right = CGPointMake(end, 0);
+                    if (flip)
+                        std::swap(left, right);
+                    m_platformRenderer->drawLinearGradient(platformContext, left, right, extendOptions);
                     flip = !flip && m_spreadMethod == GradientSpreadMethod::Reflect;
                 }
                 break;
@@ -149,6 +142,7 @@ void Gradient::paint(CGContextRef platformContext, std::optional<DestinationColo
             }
         },
         [&] (const RadialData& data) {
+            assertIsHeld(m_lock);
             bool needScaling = data.aspectRatio != 1;
             if (needScaling) {
                 CGContextSaveGState(platformContext);
@@ -167,6 +161,7 @@ void Gradient::paint(CGContextRef platformContext, std::optional<DestinationColo
                 CGContextRestoreGState(platformContext);
         },
         [&] (const ConicData& data) {
+            assertIsHeld(m_lock);
             CGContextSaveGState(platformContext);
             CGContextTranslateCTM(platformContext, data.point0.x(), data.point0.y());
             CGContextRotateCTM(platformContext, (CGFloat)-piOverTwoDouble);

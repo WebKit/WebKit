@@ -61,6 +61,7 @@
 #include <WebCore/AppKitControlSystemImage.h>
 #endif
 #include <WebCore/FloatBoxExtent.h>
+#include <WebCore/Gradient.h>
 #include <WebCore/InheritanceGrandchild.h>
 #include <WebCore/InheritsFrom.h>
 #include <WebCore/MoveOnlyBaseClass.h>
@@ -558,6 +559,12 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             {
                 "bool"_s,
                 "left()"_s
+            },
+        } },
+        { "WebCore::Gradient"_s, {
+            {
+                "int"_s,
+                "zz()"_s
             },
         } },
 #if USE(PASSKIT)
