@@ -134,7 +134,7 @@ void BitVector::mergeSlow(const BitVector& other)
     
     auto a = outOfLineBits()->wordsSpan();
     auto b = other.outOfLineBits()->wordsSpan();
-    for (size_t i = 0; i < a.size(); ++i)
+    for (auto i = 0uz; i < a.size(); ++i)
         a[i] |= b[i];
 }
 
@@ -157,7 +157,7 @@ void BitVector::filterSlow(const BitVector& other)
     auto a = outOfLineBits()->wordsSpan();
     auto b = other.outOfLineBits()->wordsSpan();
     auto commonSize = std::min(a.size(), b.size());
-    for (size_t i = 0; i < commonSize; ++i)
+    for (auto i = 0uz; i < commonSize; ++i)
         a[i] &= b[i];
     
     if (a.size() > b.size())
@@ -183,7 +183,7 @@ void BitVector::excludeSlow(const BitVector& other)
     auto a = outOfLineBits()->wordsSpan();
     auto b = other.outOfLineBits()->wordsSpan();
     auto commonSize = std::min(a.size(), b.size());
-    for (size_t i = 0; i < commonSize; ++i)
+    for (auto i = 0uz; i < commonSize; ++i)
         a[i] &= ~b[i];
 }
 
@@ -269,7 +269,7 @@ uintptr_t BitVector::hashSlowCase() const
 
 void BitVector::dump(PrintStream& out) const
 {
-    for (size_t i = 0; i < size(); ++i)
+    for (auto i = 0uz; i < size(); ++i)
         out.print(get(i) ? "1" : "-");
 }
 

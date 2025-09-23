@@ -235,9 +235,10 @@ struct VectorComparer<false, T>
 {
     static bool compare(const T* a, const T* b, size_t size)
     {
-        for (size_t i = 0; i < size; ++i)
+        for (auto i = 0uz; i < size; ++i) {
             if (!(a[i] == b[i]))
                 return false;
+        }
         return true;
     }
 };
@@ -744,7 +745,7 @@ public:
 
         asanSetInitialBufferSizeTo(size);
 
-        for (size_t i = 0; i < size; ++i)
+        for (auto i = 0uz; i < size; ++i)
             unsafeAppendWithoutCapacityCheck(valueGenerator(i));
     }
 
@@ -756,7 +757,7 @@ public:
 
         asanSetInitialBufferSizeTo(size);
 
-        for (size_t i = 0; i < size; ++i) {
+        for (auto i = 0uz; i < size; ++i) {
             if (auto item = valueGenerator(i))
                 unsafeAppendWithoutCapacityCheck(WTFMove(*item));
             else if (nulloptBehavior == NulloptBehavior::Abort)
@@ -1172,7 +1173,7 @@ bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::contains(c
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 size_t Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::findIf(NOESCAPE const Invocable<bool(const T&)> auto& matches) const
 {
-    for (size_t i = 0; i < size(); ++i) {
+    for (auto i = 0uz; i < size(); ++i) {
         if (matches(at(i)))
             return i;
     }
@@ -1255,7 +1256,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendUsingFunctor(size_t size, NOESCAPE const Invocable<T(size_t)> auto& valueGenerator)
 {
     reserveCapacity(this->size() + size);
-    for (size_t i = 0; i < size; ++i)
+    for (auto i = 0uz; i < size; ++i)
         unsafeAppendWithoutCapacityCheck(valueGenerator(i));
 }
 
@@ -1804,7 +1805,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::reverse()
 {
-    for (size_t i = 0; i < m_size / 2; ++i)
+    for (auto i = 0uz; i < m_size / 2; ++i)
         std::swap(at(i), at(m_size - 1 - i));
 }
 
@@ -1814,7 +1815,7 @@ inline ResultVector Vector<T, inlineCapacity, OverflowHandler, minCapacity, Mall
 {
     ResultVector result;
     result.reserveInitialCapacity(size());
-    for (size_t i = 0; i < size(); ++i)
+    for (auto i = 0uz; i < size(); ++i)
         result.unsafeAppendWithoutCapacityCheck(mapFunction(at(i)));
     return result;
 }
@@ -1863,7 +1864,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::checkConsistency()
 {
 #if ENABLE(SECURITY_ASSERTIONS)
-    for (size_t i = 0; i < size(); ++i)
+    for (auto i = 0uz; i < size(); ++i)
         ValueCheck<T>::checkConsistency(at(i));
 #endif
 }

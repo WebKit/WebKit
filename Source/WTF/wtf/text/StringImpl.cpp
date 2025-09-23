@@ -734,7 +734,7 @@ template<StringImpl::CaseConvertType type, typename CharacterType>
 ALWAYS_INLINE Ref<StringImpl> StringImpl::convertASCIICase(StringImpl& impl, std::span<const CharacterType> data)
 {
     size_t failingIndex;
-    for (size_t i = 0; i < data.size(); ++i) {
+    for (auto i = 0uz; i < data.size(); ++i) {
         CharacterType character = data[i];
         if constexpr (type == CaseConvertType::Lower) {
             if (isASCIIUpper(character)) [[unlikely]] {
@@ -883,7 +883,7 @@ size_t StringImpl::find(std::span<const LChar> matchString, size_t start)
 
         unsigned searchHash = 0;
         unsigned matchHash = 0;
-        for (size_t i = 0; i < matchString.size(); ++i) {
+        for (auto i = 0uz; i < matchString.size(); ++i) {
             searchHash += searchCharacters[i];
             matchHash += matchString[i];
         }
@@ -903,7 +903,7 @@ size_t StringImpl::find(std::span<const LChar> matchString, size_t start)
 
     unsigned searchHash = 0;
     unsigned matchHash = 0;
-    for (size_t i = 0; i < matchString.size(); ++i) {
+    for (auto i = 0uz; i < matchString.size(); ++i) {
         searchHash += searchCharacters[i];
         matchHash += matchString[i];
     }

@@ -320,7 +320,7 @@ public:
     ALWAYS_INLINE void forEachSetBit(const Func& func) const
     {
         size_t n = arrayLength();
-        for (size_t i = 0; i < n; ++i) {
+        for (auto i = 0uz; i < n; ++i) {
             uint32_t word = m_words.word(i);
             size_t j = i * 32;
             while (word) {
@@ -351,7 +351,7 @@ public:
     // then it will return that index. Returns numBits when we get to the end. For example, you
     // can write a loop to iterate over all set bits like this:
     //
-    // for (size_t i = 0; i < bits.numBits(); i = bits.findBit(i + 1, true))
+    // for (auto i = 0uz; i < bits.numBits(); i = bits.findBit(i + 1, true))
     //     ...
     ALWAYS_INLINE size_t findBit(size_t startIndex, bool value) const
     {
@@ -391,7 +391,7 @@ public:
     
     void dump(PrintStream& out) const
     {
-        for (size_t i = 0; i < numBits(); ++i)
+        for (auto i = 0uz; i < numBits(); ++i)
             out.print((*this)[i] ? "1" : "-");
     }
     

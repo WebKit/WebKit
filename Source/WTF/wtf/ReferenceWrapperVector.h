@@ -161,7 +161,7 @@ template<typename T, size_t inlineCapacity>
 template<typename MatchFunction>
 size_t ReferenceWrapperVector<T, inlineCapacity>::findIf(NOESCAPE const MatchFunction& matches) const
 {
-    for (size_t i = 0; i < size(); ++i) {
+    for (auto i = 0uz; i < size(); ++i) {
         if (matches(at(i)))
             return i;
     }

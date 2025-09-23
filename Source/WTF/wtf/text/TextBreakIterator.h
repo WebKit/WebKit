@@ -264,7 +264,7 @@ public:
 
         void update(char16_t last)
         {
-            for (size_t i = 0; i < m_priorContext.size() - 1; ++i)
+            for (auto i = 0uz; i < m_priorContext.size() - 1; ++i)
                 m_priorContext[i] = m_priorContext[i + 1];
             m_priorContext[m_priorContext.size() - 1] = last;
         }

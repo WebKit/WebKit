@@ -91,7 +91,7 @@ bool SequesteredImmortalHeap::scavengeImpl(void* /*userdata*/)
         Locker listLocker { m_scavengerLock };
         auto bound = m_nextFreeIndex;
         ASSERT(bound <= m_allocatorSlots.size());
-        for (size_t i = 0; i < bound; i++) {
+        for (auto i = 0uz; i < bound; i++) {
             // FIXME: Refactor the SeqImmortalHeap <-> SeqArenaAllocator
             // relationship so that we don't have to assume data layouts
             // here

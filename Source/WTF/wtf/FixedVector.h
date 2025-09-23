@@ -253,7 +253,7 @@ bool FixedVector<T, Malloc>::contains(const auto& value) const
 template<typename T, typename Malloc>
 size_t FixedVector<T, Malloc>::findIf(NOESCAPE const Invocable<bool(const T&)> auto& matches) const
 {
-    for (size_t i = 0; i < size(); ++i) {
+    for (auto i = 0uz; i < size(); ++i) {
         if (matches(at(i)))
             return i;
     }

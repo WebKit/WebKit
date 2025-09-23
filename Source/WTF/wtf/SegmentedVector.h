@@ -228,7 +228,7 @@ namespace WTF {
 
         void destroyAllItems()
         {
-            for (size_t i = 0; i < m_size; ++i)
+            for (auto i = 0uz; i < m_size; ++i)
                 at(i).~T();
         }
 

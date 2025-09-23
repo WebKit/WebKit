@@ -163,7 +163,7 @@ void ConcurrentWorkQueue::apply(size_t iterations, WTF::Function<void(size_t ind
         }
     };
 
-    for (size_t i = 0; i < workerCount; ++i)
+    for (auto i = 0uz; i < workerCount; ++i)
         threadPool->dispatch(&applier);
     applier();
 

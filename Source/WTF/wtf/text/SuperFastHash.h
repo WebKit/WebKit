@@ -230,7 +230,7 @@ private:
     static constexpr unsigned computeHashImpl(std::span<const T> characters)
     {
         unsigned result = stringHashingStartValue;
-        for (size_t i = 0; i + 1 < characters.size(); i += 2)
+        for (auto i = 0uz; i + 1 < characters.size(); i += 2)
             result = calculateWithTwoCharacters(result, Converter::convert(characters[i]), Converter::convert(characters[i + 1]));
         if (characters.size() % 2)
             return calculateWithRemainingLastCharacter(result, Converter::convert(characters.back()));

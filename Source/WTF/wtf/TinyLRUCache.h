@@ -68,7 +68,7 @@ public:
 
         // cacheBuffer[0] is the LRU entry, so remove it.
         if (m_size == capacity) {
-            for (size_t i = 0; i < m_size - 1; ++i)
+            for (auto i = 0uz; i < m_size - 1; ++i)
                 cacheBuffer[i] = WTFMove(cacheBuffer[i + 1]);
         } else
             ++m_size;

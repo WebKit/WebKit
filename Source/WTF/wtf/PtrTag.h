@@ -125,7 +125,7 @@ template<size_t N>
 constexpr uintptr_t makePtrTagHash(const char (&str)[N])
 {
     uintptr_t result = 134775813;
-    for (size_t i = 0; i < N; ++i)
+    for (auto i = 0uz; i < N; ++i)
         result += ((result * str[i]) ^ (result >> 16));
     return result & 0xffff;
 }

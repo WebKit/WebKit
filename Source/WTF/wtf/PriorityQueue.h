@@ -65,7 +65,7 @@ public:
 
     void decreaseKey(NOESCAPE const Invocable<bool(T&)> auto& desiredElement)
     {
-        for (size_t i = 0; i < m_buffer.size(); ++i) {
+        for (auto i = 0uz; i < m_buffer.size(); ++i) {
             if (desiredElement(m_buffer[i])) {
                 siftDown(i);
                 return;
@@ -76,7 +76,7 @@ public:
 
     void increaseKey(NOESCAPE const Invocable<bool(T&)> auto& desiredElement)
     {
-        for (size_t i = 0; i < m_buffer.size(); ++i) {
+        for (auto i = 0uz; i < m_buffer.size(); ++i) {
             if (desiredElement(m_buffer[i])) {
                 siftUp(i);
                 return;
@@ -90,7 +90,7 @@ public:
 
     bool isValidHeap() const
     {
-        for (size_t i = 0; i < m_buffer.size(); ++i) {
+        for (auto i = 0uz; i < m_buffer.size(); ++i) {
             if (leftChildOf(i) < m_buffer.size() && !isHigherPriority(m_buffer[i], m_buffer[leftChildOf(i)]))
                 return false;
             if (rightChildOf(i) < m_buffer.size() && !isHigherPriority(m_buffer[i], m_buffer[rightChildOf(i)]))

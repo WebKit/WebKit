@@ -276,7 +276,7 @@ inline constexpr void BitSet<bitSetSize, WordType>::setAll()
 template<size_t bitSetSize, typename WordType>
 inline constexpr void BitSet<bitSetSize, WordType>::invert()
 {
-    for (size_t i = 0; i < words; ++i)
+    for (auto i = 0uz; i < words; ++i)
         bits[i] = ~bits[i];
     cleanseLastWord();
 }
@@ -298,9 +298,9 @@ inline constexpr int64_t BitSet<bitSetSize, WordType>::findRunOfZeros(size_t run
     if (runLength > bitSetSize)
         return -1;
 
-    for (size_t i = 0; i <= (bitSetSize - runLength) ; i++) {
+    for (auto i = 0uz; i <= (bitSetSize - runLength) ; i++) {
         bool found = true; 
-        for (size_t j = i; j <= (i + runLength - 1) ; j++) { 
+        for (auto j = i; j <= (i + runLength - 1) ; j++) {
             if (get(j)) {
                 found = false; 
                 break;

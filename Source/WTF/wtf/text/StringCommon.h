@@ -341,7 +341,7 @@ ALWAYS_INLINE bool equal(const LChar* a, std::span<const char16_t> b)
         return *a == b.front();
     return true;
 #else
-    for (size_t i = 0; i < b.size(); ++i) {
+    for (auto i = 0uz; i < b.size(); ++i) {
         if (a[i] != b[i])
             return false;
     }
@@ -414,7 +414,7 @@ template<typename CharacterTypeA, typename CharacterTypeB> inline bool equalIgno
 {
     ASSERT(a.size() >= lengthToCheck);
     ASSERT(b.size() >= lengthToCheck);
-    for (size_t i = 0; i < lengthToCheck; ++i) {
+    for (auto i = 0uz; i < lengthToCheck; ++i) {
         if (toASCIILower(a[i]) != toASCIILower(b[i]))
             return false;
     }
@@ -469,7 +469,7 @@ size_t findIgnoringASCIICase(std::span<const SearchCharacterType> source, std::s
     // delta is the number of additional times to test; delta == 0 means test only once.
     size_t delta = startSearchedCharacters.size() - matchCharacters.size();
 
-    for (size_t i = 0; i <= delta; ++i) {
+    for (auto i = 0uz; i <= delta; ++i) {
         if (equalIgnoringASCIICaseWithLength(startSearchedCharacters.subspan(i), matchCharacters, matchCharacters.size()))
             return startOffset + i;
     }
@@ -496,7 +496,7 @@ ALWAYS_INLINE static size_t findInner(std::span<const SearchCharacterType> searc
     unsigned searchHash = 0;
     unsigned matchHash = 0;
 
-    for (size_t i = 0; i < matchCharacters.size(); ++i) {
+    for (auto i = 0uz; i < matchCharacters.size(); ++i) {
         searchHash += searchCharacters[i];
         matchHash += matchCharacters[i];
     }
@@ -749,7 +749,7 @@ ALWAYS_INLINE static size_t reverseFindInner(std::span<const SearchCharacterType
 
     unsigned searchHash = 0;
     unsigned matchHash = 0;
-    for (size_t i = 0; i < matchCharacters.size(); ++i) {
+    for (auto i = 0uz; i < matchCharacters.size(); ++i) {
         searchHash += searchCharacters[delta + i];
         matchHash += matchCharacters[i];
     }
@@ -769,7 +769,7 @@ template<typename CharacterType> inline bool equalLettersIgnoringASCIICaseWithLe
 {
     ASSERT(characters.size() >= length);
     ASSERT(lowercaseLetters.size() >= length);
-    for (size_t i = 0; i < length; ++i) {
+    for (auto i = 0uz; i < length; ++i) {
         if (!isASCIIAlphaCaselessEqual(characters[i], lowercaseLetters[i]))
             return false;
     }

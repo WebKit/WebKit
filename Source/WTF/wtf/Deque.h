@@ -575,7 +575,7 @@ template<typename Func>
 inline size_t Deque<T, inlineCapacity>::removeAllMatching(const Func& func)
 {
     auto oldSize = size();
-    for (size_t i = 0; i < oldSize; ++i) {
+    for (auto i = 0uz; i < oldSize; ++i) {
         auto value = takeFirst();
         if (!func(value))
             append(WTFMove(value));

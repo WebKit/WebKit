@@ -281,11 +281,11 @@ private:
         {
             ASSERT(size + count <= capacity);
             ASSERT(count <= rightSize);
-            for (size_t i = 0; i < count; i++) {
+            for (auto i = 0uz; i < count; i++) {
                 intervals[i + size] = rightNode->intervals[i];
                 payloads[i + size] = rightNode->payloads[i];
             }
-            for (size_t i = 0; i < rightSize - count; i++) {
+            for (auto i = 0uz; i < rightSize - count; i++) {
                 rightNode->intervals[i] = rightNode->intervals[i + count];
                 rightNode->payloads[i] = rightNode->payloads[i + count];
             }
@@ -303,7 +303,7 @@ private:
                 rightNode->intervals[i] = rightNode->intervals[i - count];
                 rightNode->payloads[i] = rightNode->payloads[i - count];
             }
-            for (size_t i = 0; i < count; i++) {
+            for (auto i = 0uz; i < count; i++) {
                 rightNode->intervals[i] = intervals[size - count + i];
                 rightNode->payloads[i] = payloads[size - count + i];
             }
@@ -340,7 +340,7 @@ private:
         size_t firstIntervalEndAfter(size_t size, T point) const
         {
             ASSERT(size <= capacity);
-            for (size_t i = 0; i < size; i++) {
+            for (auto i = 0uz; i < size; i++) {
                 if (point < intervals[i].end())
                     return i;
             }
@@ -434,7 +434,7 @@ private:
         {
             ASSERT(size);
             ASSERT(size <= innerOrder);
-            for (size_t i = 0; i < size - 1; i++) {
+            for (auto i = 0uz; i < size - 1; i++) {
                 if (endPoint <= this->intervals[i + 1].begin())
                     return i;
             }
@@ -884,7 +884,7 @@ private:
                 continue;
             }
             InnerNode* inner = node.asInner();
-            for (size_t i = 0; i < node.size(); ++i)
+            for (auto i = 0uz; i < node.size(); ++i)
                 stack.append({ inner->child(i), distanceToLeaf - 1 });
             freeNode(inner);
         }
@@ -902,7 +902,7 @@ private:
             printIndent();
             out.println("Inner(size=", nodeRef.size(), ", coverage=", inner->coverage(nodeRef.size()), "):");
 
-            for (size_t i = 0; i < nodeRef.size(); ++i) {
+            for (auto i = 0uz; i < nodeRef.size(); ++i) {
                 printIndent();
                 out.println("  [", i, "] ", inner->interval(i));
                 dumpSubtree(out, inner->child(i), distanceToLeaf - 1, indent + 2);
@@ -912,7 +912,7 @@ private:
             LeafNode* leaf = nodeRef.asLeaf();
             printIndent();
             out.print("Leaf(size=", nodeRef.size(), "): ");
-            for (size_t i = 0; i < nodeRef.size(); ++i)
+            for (auto i = 0uz; i < nodeRef.size(); ++i)
                 out.print(comma, leaf->interval(i), "=", leaf->value(i));
             out.println();
         }

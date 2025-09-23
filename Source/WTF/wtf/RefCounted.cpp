@@ -73,7 +73,7 @@ public:
     static void forEachLIFO(const Callback& callback)
     {
         size_t last = s_end.load(std::memory_order_acquire) - 1;
-        for (size_t i = 0; i < s_size; ++i) {
+        for (auto i = 0uz; i < s_size; ++i) {
             size_t index = (last - i) & s_sizeMask;
             RefLogStackShot* stackShot = s_buffer[index].load(std::memory_order_acquire);
             if (!stackShot)

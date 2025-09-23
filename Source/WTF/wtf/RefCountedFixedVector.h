@@ -137,7 +137,7 @@ inline bool operator==(const RefCountedFixedVectorBase<T, isThreadSafe>& a, cons
 {
     if (a.size() != b.size())
         return false;
-    for (size_t i = 0; i < a.size(); ++i) {
+    for (auto i = 0uz; i < a.size(); ++i) {
         if (a.at(i) != b.at(i))
             return false;
     }
