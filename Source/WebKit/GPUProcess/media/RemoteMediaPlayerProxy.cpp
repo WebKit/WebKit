@@ -118,9 +118,6 @@ RemoteMediaPlayerProxy::~RemoteMediaPlayerProxy()
     if (m_performTaskAtTimeCompletionHandler)
         m_performTaskAtTimeCompletionHandler(std::nullopt);
     setShouldEnableAudioSourceProvider(false);
-
-    for (auto& request : std::exchange(m_layerHostingContextRequests, { }))
-        request({ });
 }
 
 void RemoteMediaPlayerProxy::invalidate()

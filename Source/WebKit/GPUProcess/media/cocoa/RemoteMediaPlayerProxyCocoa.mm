@@ -49,24 +49,10 @@
 
 namespace WebKit {
 
-void RemoteMediaPlayerProxy::setVideoLayerSizeIfPossible(const WebCore::FloatSize& size)
-{
-    if (!m_inlineLayerHostingContext || !m_inlineLayerHostingContext->rootLayer() || size.isEmpty())
-        return;
-
-    ALWAYS_LOG(LOGIDENTIFIER, size.width(), "x", size.height());
-
-    // We do not want animations here.
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    [m_inlineLayerHostingContext->protectedRootLayer() setFrame:CGRectMake(0, 0, size.width(), size.height())];
-    [CATransaction commit];
-}
-
 void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    setVideoLayerSizeIfPossible(m_configuration.videoLayerSize);
+    layerHostingContextManager.setVideoLayerSizeIfPossible();
     protectedConnection()->send(Messages::MediaPlayerPrivateRemote::FirstVideoFrameAvailable(), m_id);
 }
 
@@ -74,42 +60,22 @@ void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    RetainPtr layer = protectedPlayer()->platformLayer();
-    if (layer && !m_inlineLayerHostingContext) {
-        LayerHostingContextOptions contextOptions;
-#if USE(EXTENSIONKIT)
-        contextOptions.useHostable = true;
-#endif
+    bool canShowWhileLocked =
 #if PLATFORM(IOS_FAMILY)
-        contextOptions.canShowWhileLocked = m_configuration.canShowWhileLocked;
+        m_configuration.canShowWhileLocked;
+#else
+        false;
 #endif
-        m_inlineLayerHostingContext = LayerHostingContext::create(contextOptions);
-        if (m_configuration.videoLayerSize.isEmpty())
-            m_configuration.videoLayerSize = enclosingIntRect(WebCore::FloatRect(layer.get().frame)).size();
-        auto& size = m_configuration.videoLayerSize;
-        [layer setFrame:CGRectMake(0, 0, size.width(), size.height())];
-        protectedConnection()->send(Messages::MediaPlayerPrivateRemote::LayerHostingContextChanged(m_inlineLayerHostingContext->hostingContext(), size), m_id);
-        for (auto& request : std::exchange(m_layerHostingContextRequests, { }))
-            request(m_inlineLayerHostingContext->hostingContext());
-    } else if (!layer && m_inlineLayerHostingContext) {
-        m_inlineLayerHostingContext = nullptr;
-        protectedConnection()->send(Messages::MediaPlayerPrivateRemote::LayerHostingContextChanged({ }, { }), m_id);
-    }
 
-    if (m_inlineLayerHostingContext)
-        m_inlineLayerHostingContext->setRootLayer(layer.get());
+    if (auto maybeHostingContext = layerHostingContextManager.createHostingContextIfNeeded(protectedPlayer()->platformLayer(), canShowWhileLocked))
+        protectedConnection()->send(Messages::MediaPlayerPrivateRemote::LayerHostingContextChanged(*maybeHostingContext, layerHostingContextManager.videoLayerSize()), m_id);
 
     protectedConnection()->send(Messages::MediaPlayerPrivateRemote::RenderingModeChanged(), m_id);
 }
 
 void RemoteMediaPlayerProxy::requestHostingContext(CompletionHandler<void(WebCore::HostingContext)>&& completionHandler)
 {
-    if (m_inlineLayerHostingContext) {
-        completionHandler(m_inlineLayerHostingContext->hostingContext());
-        return;
-    }
-
-    m_layerHostingContextRequests.append(WTFMove(completionHandler));
+    layerHostingContextManager.requestHostingContext(WTFMove(completionHandler));
 }
 
 void RemoteMediaPlayerProxy::setVideoLayerSizeFenced(const WebCore::FloatSize& size, WTF::MachSendRightAnnotated&& sendRightAnnotated)
@@ -117,32 +83,9 @@ void RemoteMediaPlayerProxy::setVideoLayerSizeFenced(const WebCore::FloatSize& s
     RELEASE_LOG(Media, "RemoteMediaPlayerProxy::setVideoLayerSizeFenced: send right %d, fence data size %lu", sendRightAnnotated.sendRight.sendRight(), sendRightAnnotated.data.size());
 
     ALWAYS_LOG(LOGIDENTIFIER, size.width(), "x", size.height());
-
-#if USE(EXTENSIONKIT)
-    RetainPtr<BELayerHierarchyHostingTransactionCoordinator> hostingUpdateCoordinator;
-#endif
-
-    if (m_inlineLayerHostingContext) {
-#if USE(EXTENSIONKIT)
-#if ENABLE(MACH_PORT_LAYER_HOSTING)
-        auto sendRightAnnotatedCopy = sendRightAnnotated;
-        hostingUpdateCoordinator = LayerHostingContext::createHostingUpdateCoordinator(WTFMove(sendRightAnnotatedCopy));
-#else
-        hostingUpdateCoordinator = LayerHostingContext::createHostingUpdateCoordinator(sendRightAnnotated.sendRight.sendRight());
-#endif // ENABLE(MACH_PORT_LAYER_HOSTING)
-        [hostingUpdateCoordinator addLayerHierarchy:m_inlineLayerHostingContext->hostable().get()];
-#else
-        m_inlineLayerHostingContext->setFencePort(sendRightAnnotated.sendRight.sendRight());
-#endif // USE(EXTENSIONKIT)
-    }
-
-    m_configuration.videoLayerSize = size;
-    setVideoLayerSizeIfPossible(size);
-
-    protectedPlayer()->setVideoLayerSizeFenced(size, WTFMove(sendRightAnnotated));
-#if USE(EXTENSIONKIT)
-    [hostingUpdateCoordinator commit];
-#endif
+    layerHostingContextManager.setVideoLayerSizeFenced(size, WTF::MachSendRightAnnotated { sendRightAnnotated }, [&] {
+        protectedPlayer()->setVideoLayerSizeFenced(size, WTFMove(sendRightAnnotated));
+    });
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerOnNewVideoFrameMetadata(WebCore::VideoFrameMetadata&& metadata, RetainPtr<CVPixelBufferRef>&& buffer)

@@ -28,6 +28,9 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "Connection.h"
+#if PLATFORM(COCOA)
+#include "LayerHostingContextManager.h"
+#endif
 #include "MediaPlayerPrivateRemote.h"
 #include "MessageReceiver.h"
 #include "RemoteLegacyCDMSessionIdentifier.h"
@@ -371,8 +374,7 @@ private:
     void currentTimeChanged(const MediaTime&);
 
 #if PLATFORM(COCOA)
-    WebCore::FloatSize mediaPlayerVideoLayerSize() const final { return m_configuration.videoLayerSize; }
-    void setVideoLayerSizeIfPossible(const WebCore::FloatSize&);
+    WebCore::FloatSize mediaPlayerVideoLayerSize() const final { return layerHostingContextManager.videoLayerSize(); }
     void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&&);
     void colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
 #endif
@@ -427,11 +429,6 @@ private:
     RefPtr<SandboxExtension> m_sandboxExtension;
     Ref<IPC::Connection> m_webProcessConnection;
     RefPtr<WebCore::MediaPlayer> m_player;
-    Vector<LayerHostingContextCallback> m_layerHostingContextRequests;
-    std::unique_ptr<LayerHostingContext> m_inlineLayerHostingContext;
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-    std::unique_ptr<LayerHostingContext> m_fullscreenLayerHostingContext;
-#endif
     WeakPtr<RemoteMediaPlayerManagerProxy> m_manager;
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_engineIdentifier;
     Vector<WebCore::ContentType> m_typesRequiringHardwareSupport;
@@ -472,6 +469,9 @@ private:
     SoundStageSize m_soundStageSize { SoundStageSize::Auto };
 #if !RELEASE_LOG_DISABLED
     const Ref<const Logger> m_logger;
+#endif
+#if PLATFORM(COCOA)
+    LayerHostingContextManager layerHostingContextManager;
 #endif
 };
 
