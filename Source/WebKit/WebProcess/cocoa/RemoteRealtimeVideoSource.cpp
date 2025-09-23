@@ -72,15 +72,16 @@ Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::clone()
             return;
         }
 
-        clone = adoptRef(*new RemoteRealtimeVideoSource(proxy().clone(), MediaDeviceHashSalts { deviceIDHashSalts() }, manager(), *pageIdentifier()));
+        Ref manager = this->manager();
+        clone = adoptRef(*new RemoteRealtimeVideoSource(proxy().clone(), MediaDeviceHashSalts { deviceIDHashSalts() }, manager, *pageIdentifier()));
 
         clone->m_registerOwnerCallback = m_registerOwnerCallback;
         clone->setSettings(RealtimeMediaSourceSettings { settings() });
         clone->setCapabilities(RealtimeMediaSourceCapabilities { capabilities() });
         clone->setMuted(muted());
 
-        manager().addSource(*clone);
-        manager().protectedRemoteCaptureSampleManager()->addSource(*clone);
+        manager->addSource(*clone);
+        manager->protectedRemoteCaptureSampleManager()->addSource(*clone);
         proxy().createRemoteCloneSource(clone->identifier(), *pageIdentifier());
 
         bool isNewClonedSource = true;
