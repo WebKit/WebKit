@@ -94,40 +94,22 @@ math[display="inline" i] {
     math-style: compact;
 }
 
-ms, mtext, mi, mn, mo, annotation, mtd {
-    white-space: nowrap !important;
-}
-
-/* Fractions */
-mfrac {
-    padding-inline: 1px;
-}
-
-mfrac > * {
-    math-style: compact;
-}
-
-msub > * + *, msup > * + *, msubsup > * + *, mmultiscripts > * + *, munder > * + *, mover > * + *, munderover > * + * {
-    font-size: 0.71em;
-    math-style: compact;
-}
-
-mroot > *:last-child {
-    font-size: 0.5041em; /* This 0.71^2 since the scriptlevel is incremented by 2 in the index. */
-    math-style: compact;
+/* <mrow>-like elements */
+merror {
+    border: 1px solid red;
+    background-color: lightYellow;
 }
 
 mphantom {
     visibility: hidden;
 }
 
-/* This is a special style for erroneous markup. */
-/* https://w3c.github.io/mathml-core/#error-message-merror */
-merror {
-    border: 1px solid red;
-    background-color: lightYellow;
+/* Token elements */
+ms, mtext, mi, mn, mo, annotation, mtd {
+    white-space: nowrap !important;
 }
 
+/* Tables */
 mtable {
     display: inline-table;
     text-align: center;
@@ -195,7 +177,34 @@ mtable[columnlines="dashed"] > mtr > mtd + mtd {
     border-left: dashed thin;
 }
 
+/* Fractions */
+mfrac {
+    padding-inline: 1px;
+}
+
+mfrac > * {
+    math-style: compact;
+}
+
+mfrac > :nth-child(2) {
+    math-shift: compact;
+}
+
 /* Other rules for scriptlevel, displaystyle and math-shift */
+mroot > *:last-child {
+    font-size: 0.5041em; /* This 0.71^2 since the scriptlevel is incremented by 2 in the index. */
+    math-style: compact;
+}
+
+mroot, msqrt {
+    math-shift: compact;
+}
+
+msub > * + *, msup > * + *, msubsup > * + *, mmultiscripts > * + *, munder > * + *, mover > * + *, munderover > * + * {
+    font-size: 0.71em;
+    math-style: compact;
+}
+
 munder[accentunder="true" i] > :nth-child(2),
 mover[accent="true" i] > :nth-child(2),
 munderover[accentunder="true" i] > :nth-child(2),
@@ -203,9 +212,6 @@ munderover[accent="true" i] > :nth-child(3) {
   font-size: inherit;
 }
 
-mfrac > :nth-child(2),
-mroot,
-msqrt,
 msub > :nth-child(2),
 msubsup > :nth-child(2),
 mmultiscripts > :nth-child(even),

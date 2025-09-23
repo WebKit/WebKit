@@ -28,11 +28,18 @@
 
 #if ENABLE(MATHML)
 
+#include "ElementInlines.h"
+#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(MathMLUnknownElement);
+
+bool MathMLUnknownElement::rendererIsNeeded(const RenderStyle&)
+{
+    return document().settings().coreMathMLEnabled();
+}
 
 } // namespace WebCore
 

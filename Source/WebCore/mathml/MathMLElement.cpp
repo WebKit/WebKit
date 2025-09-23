@@ -228,7 +228,7 @@ void MathMLElement::collectPresentationalHintsForAttribute(const QualifiedName& 
 bool MathMLElement::childShouldCreateRenderer(const Node& child) const
 {
     // In general, only MathML children are allowed. Text nodes are only visible in token MathML elements.
-    return is<MathMLElement>(child);
+    return document().settings().coreMathMLEnabled() || is<MathMLElement>(child);
 }
 
 bool MathMLElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
