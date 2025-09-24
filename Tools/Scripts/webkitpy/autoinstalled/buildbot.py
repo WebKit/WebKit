@@ -32,7 +32,6 @@ import rapidfuzz
 AutoInstall.install('markupsafe')
 AutoInstall.install('jinja2')
 
-AutoInstall.install(Package('attrs', Version(21, 3), aliases=['attr']))
 AutoInstall.install(Package('constantly', Version(15, 1, 0)))
 AutoInstall.install(Package('dateutil', Version(2, 8, 1), pypi_name='python-dateutil', wheel=True))
 AutoInstall.install(Package('future', Version(0, 18, 2), aliases=['libfuturize', 'libpasteurize', 'past']))

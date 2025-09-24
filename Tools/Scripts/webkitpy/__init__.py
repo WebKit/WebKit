@@ -73,7 +73,7 @@ if sys.version_info < (3, 11):
 AutoInstall.register(Package('importlib_metadata', Version(4, 8, 1)))
 AutoInstall.register(Package('typing_extensions', Version(4, 12, 2), wheel=True))
 AutoInstall.register(Package('atomicwrites', Version(1, 1, 5)))
-AutoInstall.register(Package('attrs', Version(21, 3, 0), aliases=['attr']))
+AutoInstall.register(Package('attrs', Version(24, 2, 0), aliases=['attr']))
 AutoInstall.register(Package('bs4', Version(4, 12, 0), pypi_name='beautifulsoup4'))
 AutoInstall.register(Package('configparser', Version(4, 0, 2), implicit_deps=['pyparsing'], aliases=['backports.configparser']))
 AutoInstall.register(Package('contextlib2', Version(0, 6, 0)))
@@ -98,7 +98,7 @@ if sys.platform == 'linux':
     AutoInstall.register(Package('selenium', Version(4, 24, 0), wheel=True, implicit_deps=['websocket']))
     AutoInstall.register(Package('filetype', Version(1, 2, 0), wheel=True))
 else:
-    AutoInstall.register(Package('selenium', Version(4, 12, 0), wheel=True))
+    AutoInstall.register(Package('selenium', Version(4, 26, 1), wheel=True))
 
 AutoInstall.register(Package('toml', Version(0, 10, 1), implicit_deps=['pyparsing']))
 AutoInstall.register(Package('wcwidth', Version(0, 2, 5)))
