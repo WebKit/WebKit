@@ -390,9 +390,7 @@ if ARM64 or ARM64E
 elsif X86_64
     loadb [MC], sc1
     addq 1, MC
-    bilt sc1, 0x12, .safe
-    break
-.safe:
+    bigteq sc1, (constexpr IPInt::UIntBytecode::NumOpcodes), _ipint_uint_dispatch_err
     lshiftq 6, sc1
     leap (_uint_begin - _mint_entry_relativePCBase)[PC, sc1], sc1
     jmp sc1
