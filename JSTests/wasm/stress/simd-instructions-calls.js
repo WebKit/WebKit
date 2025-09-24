@@ -24,12 +24,28 @@ const testCases = [
         resultMapping: [11]
     },
     {
+        name: "many_args_alternating_many_results",
+        signature: {
+            params: ['v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64'],
+            results: ['f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128'],
+        },
+        resultMapping: [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    },
+    {
         name: "stack_args_no_stack_returns",
         signature: {
             params: ['f64', 'v128', 'f64', 'v128', 'v128', 'f64', 'f64', 'v128', 'f64', 'f64', 'v128', 'f64', 'v128'],
             results: ['f64', 'f64', 'f64', 'f64', 'v128', 'v128', 'v128']
         },
         resultMapping: [8, 5, 9, 11, 12, 3, 10]
+    },
+    {
+        name: "no_stack_args_with_stack_returns",
+        signature: {
+            params: ['f64', 'f64', 'f64', 'f64', 'v128', 'v128', 'v128'],
+            results: ['f64', 'v128', 'f64', 'v128', 'v128', 'f64', 'f64', 'v128', 'f64', 'f64', 'v128', 'f64', 'v128']
+        },
+        resultMapping: [1, 6, 0, 4, 5, 1, 2, 6, 3, 0, 4, 1, 5]
     }
     // More test cases can be added here
 ];
