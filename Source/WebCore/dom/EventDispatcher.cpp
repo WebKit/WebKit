@@ -40,6 +40,9 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "MouseEvent.h"
+#include "Page.h"
+#include "PointerCaptureController.h"
+#include "PointerEvent.h"
 #include "ScopedEventQueue.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
@@ -170,6 +173,12 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(node));
 
     LOG_WITH_STREAM(Events, stream << "EventDispatcher::dispatchEvent " << event << " on node " << node);
+
+    // Clear pointer event suppression when lostpointercapture is dispatched.
+    if (RefPtr pointerEvent = dynamicDowncast<PointerEvent>(event); pointerEvent && pointerEvent->type() == eventNames().lostpointercaptureEvent) {
+        if (RefPtr page = node.document().page())
+            page->pointerCaptureController().clearEventSuppression(pointerEvent->pointerId());
+    }
 
     Ref protectedNode { node };
     Ref document = node.document();

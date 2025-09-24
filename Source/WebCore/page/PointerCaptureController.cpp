@@ -166,7 +166,19 @@ void PointerCaptureController::elementWasRemovedSlow(Element& element)
             // at the document.
             ASSERT(isInBounds<PointerID>(pointerId));
             auto pointerType = capturingData->pointerType;
-            releasePointerCapture(&element, pointerId);
+
+            // Begin suppressing events for this processing cycle only.
+            capturingData->suppressEventProcessing = true;
+            capturingData->pendingTargetOverride = nullptr;
+
+            // Notify EventHandler that capture has changed.
+            if (capturingData->pointerType == mousePointerEventType()) {
+                if (RefPtr frame = element.document().frame())
+                    frame->eventHandler().pointerCaptureElementDidChange(nullptr);
+            }
+
+            updateHaveAnyCapturingElement();
+
             // FIXME: Spec doesn't specify which task source to use.
             element.document().queueTaskToDispatchEvent(TaskSource::UserInteraction, PointerEvent::create(eventNames().lostpointercaptureEvent, pointerId, pointerType));
             return;
@@ -632,6 +644,22 @@ void PointerCaptureController::processPendingPointerCapture(PointerID pointerId)
     capturingData->targetOverride = pendingTargetOverride;
 
     m_processingPendingPointerCapture = false;
+}
+
+void PointerCaptureController::clearEventSuppression(PointerID pointerId)
+{
+    RefPtr capturingData = m_activePointerIdsToCapturingData.get(pointerId);
+    if (capturingData)
+        capturingData->suppressEventProcessing = false;
+}
+
+bool PointerCaptureController::shouldSuppressEventProcessing(PointerID pointerId) const
+{
+    if (!m_page || !m_page->chrome().client().supportsEventSuppression())
+        return false;
+
+    RefPtr capturingData = m_activePointerIdsToCapturingData.get(pointerId);
+    return capturingData && capturingData->suppressEventProcessing;
 }
 
 } // namespace WebCore

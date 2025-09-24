@@ -5436,6 +5436,11 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& r
             auto& pointerCaptureController = page->pointerCaptureController();
             RefPtr previousCaptureElement = pointerCaptureController.pointerCaptureElement(this, event.pointerId());
             pointerCaptureController.processPendingPointerCapture(event.pointerId());
+
+            // Check if event processing should be suppressed due to the possible removal of the captured element.
+            if (pointerCaptureController.shouldSuppressEventProcessing(event.pointerId()))
+                return MouseEventWithHitTestResults(event, HitTestResult(LayoutPoint()));
+
             RefPtr captureElement = pointerCaptureController.pointerCaptureElement(this, event.pointerId());
             // If the capture element has changed while running the Process Pending Capture Element steps then
             // we need to indicate that when calling updateHoverActiveState to be sure that the :active and :hover

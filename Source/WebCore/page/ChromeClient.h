@@ -757,6 +757,8 @@ public:
 
     virtual bool usePluginRendererScrollableArea(LocalFrame&) const { return true; }
 
+    virtual bool supportsEventSuppression() { return true; }
+
     WEBCORE_EXPORT virtual ~ChromeClient();
 
 protected:
