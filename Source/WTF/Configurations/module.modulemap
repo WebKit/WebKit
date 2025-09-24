@@ -1,0 +1,62 @@
+module wtf {
+    // AutodrainedPool must never be parsed in an objective-C
+    // context.
+    explicit module AutodrainedPool {
+        requires cplusplus11, !objc
+        header "AutodrainedPool.h"
+        export *
+    }
+    // This header depends on surrounding preprocessor context.
+    // Works only on some platforms.
+    explicit module MetadataSPI {
+        requires cplusplus11
+        textual header "spi/mac/MetadataSPI.h"
+        export *
+    }
+    // The following WTF headers can be used in C contexts as well as C++
+    // so we put them in a separate submodule. We'll call it Platform
+    // since the majority of the files are Platform-related.
+    // (Some are interdependent so we couldn't split them into
+    // totally standalone submodules even if we wanted to.)
+    explicit module Platform {
+        header "Assertions.h"
+        header "Compiler.h"
+        header "ExportMacros.h"
+        header "spi/cocoa/IOSurfaceSPI.h"
+        header "SwiftBridging.h"
+        header "Platform.h"
+        header "PlatformCallingConventions.h"
+        header "PlatformCPU.h"
+        header "PlatformEnable.h"
+        header "PlatformEnableCocoa.h"
+        header "PlatformHave.h"
+        header "PlatformLegacy.h"
+        header "PlatformOS.h"
+        header "PlatformUse.h"
+        export *
+    }
+    // Swiftc cannot currently parse various bits of WTF so we have to
+    // exile them outside the main WTF module.
+    // Swift cannot understand a std::optional in here, rdar://152718041.
+    explicit module TextBreakIterator {
+        requires cplusplus11
+        header "text/TextBreakIterator.h"
+        export *
+    }
+    // Due to conflict between wtf::Task and Swift.Task.
+    // FIXME: resolve this using a typealias in Foundation+Extras.swift,
+    // as we have done for other similarly conflicting types, but
+    // which for some reason doesn't seem to work for Task.
+    explicit module CoroutineUtilities {
+        requires cplusplus11
+        header "CoroutineUtilities.h"
+        export *
+    }
+    // Everything else - dozens of headers
+    explicit module Cxx {
+        requires cplusplus11
+        umbrella "."
+        export *
+    }
+    export *
+}
