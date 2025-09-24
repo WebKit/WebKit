@@ -101,6 +101,17 @@ if (DEVELOPER_MODE)
     )
     set(testwasmdebugger_FRAMEWORKS ${jsc_FRAMEWORKS})
 
+    set(unittests_SOURCES
+        ../unittests/SelfTests.cpp
+        ../unittests/Test.cpp
+        ../unittests/TestRunner.cpp
+        ../unittests/WebAssemblyTests.cpp
+    )
+    set(unittests_DEFINITIONS ${jsc_PRIVATE_DEFINITIONS})
+    set(unittests_PRIVATE_INCLUDE_DIRECTORIES ${jsc_PRIVATE_INCLUDE_DIRECTORIES})
+    set(unittests_FRAMEWORKS ${jsc_FRAMEWORKS})
+
+
     WEBKIT_EXECUTABLE_DECLARE(testapi)
     WEBKIT_EXECUTABLE_DECLARE(testRegExp)
     WEBKIT_EXECUTABLE_DECLARE(testmasm)
@@ -108,6 +119,7 @@ if (DEVELOPER_MODE)
     WEBKIT_EXECUTABLE_DECLARE(testair)
     WEBKIT_EXECUTABLE_DECLARE(testdfg)
     WEBKIT_EXECUTABLE_DECLARE(testwasmdebugger)
+    WEBKIT_EXECUTABLE_DECLARE(unittests)
 
     if (COMPILER_IS_GCC_OR_CLANG)
         WEBKIT_ADD_TARGET_CXX_FLAGS(testb3 -Wno-array-bounds)
@@ -131,6 +143,7 @@ if (DEVELOPER_MODE)
     WEBKIT_EXECUTABLE(testair)
     WEBKIT_EXECUTABLE(testdfg)
     WEBKIT_EXECUTABLE(testwasmdebugger)
+    WEBKIT_EXECUTABLE(unittests)
 
     file(COPY
         "${JAVASCRIPTCORE_DIR}/API/tests/testapiScripts"

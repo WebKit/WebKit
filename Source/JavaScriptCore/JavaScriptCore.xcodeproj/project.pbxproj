@@ -37,6 +37,7 @@
 			);
 			dependencies = (
 				FF0F56982E33479D002A232A /* PBXTargetDependency */,
+				23073C292E7E7D9A00268245 /* PBXTargetDependency */,
 				52CD0F662242F5A3004A18A5 /* PBXTargetDependency */,
 				7954BE0D20B63348009BC83A /* PBXTargetDependency */,
 				FE533CAF1F217EC60016A1FE /* PBXTargetDependency */,
@@ -791,6 +792,9 @@
 		14F7256614EE265E00B1652B /* WeakHandleOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F7256414EE265E00B1652B /* WeakHandleOwner.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14F79F70216EAFD200046D39 /* Opcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07950ED1D3AE00F1F681 /* Opcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A28D4A8177B71C80007FA3C /* JSStringRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A28D4A7177B71C80007FA3C /* JSStringRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2309FE462E8308E400A605F3 /* Test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2309FE452E8308E400A605F3 /* Test.cpp */; };
+		2309FE4C2E83111000A605F3 /* wasm-module-builder.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2309FE4B2E8310F900A605F3 /* wasm-module-builder.js */; };
+		2309FE4E2E83BEF300A605F3 /* WebAssemblyTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2309FE4D2E83BEF300A605F3 /* WebAssemblyTests.cpp */; };
 		233D76752E288A2F00EB9FFB /* basic.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 53C3D5E421ECE6CE0087FDFC /* basic.js */; };
 		233D76762E288A2F00EB9FFB /* foo.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 52D1308F221CE03A009C836C /* foo.js */; };
 		233D76882E288AD500EB9FFB /* testapi.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 233D767F2E288A8600EB9FFB /* testapi.js */; };
@@ -802,6 +806,16 @@
 		233D768F2E288BCA00EB9FFB /* missingImport.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 233D767B2E288A8600EB9FFB /* missingImport.js */; };
 		233D76902E288BCA00EB9FFB /* referenceError.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 233D767C2E288A8600EB9FFB /* referenceError.js */; };
 		233D76912E288BCA00EB9FFB /* syntaxError.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 233D767D2E288A8600EB9FFB /* syntaxError.js */; };
+		236F6FBA2E85D6F4008450C8 /* TestRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 236F6FB92E85D6F4008450C8 /* TestRunner.cpp */; };
+		236F6FBC2E85E2A6008450C8 /* SelfTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 236F6FBB2E85E2A6008450C8 /* SelfTests.cpp */; };
+		237F0F9C2E8AE84B00897217 /* libJavaScriptCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 44F93E022AE71F5400FFA37C /* libJavaScriptCore.a */; };
+		237F0FA02E8AE8CE00897217 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 237F0F9F2E8AE8CD00897217 /* libWTF.a */; };
+		237F0FA22E8AE93700897217 /* libpas.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 237F0FA12E8AE93700897217 /* libpas.a */; };
+		237F0FA42E8AE94B00897217 /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 237F0FA32E8AE94B00897217 /* libbmalloc.a */; };
+		237F0FA62E8AE9B200897217 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 237F0FA52E8AE9B200897217 /* CoreFoundation.framework */; };
+		237F0FA72E8AEA4400897217 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 23073C132E7E47D100268245 /* Foundation.framework */; };
+		237F0FA92E8AEAA000897217 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 237F0FA82E8AEAA000897217 /* Security.framework */; };
+		237F0FAB2E8AEAE400897217 /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 237F0FAA2E8AEAE400897217 /* libicucore.tbd */; };
 		23863EEB2E5EC93E00E57879 /* WebAssemblyBuiltinTrampoline.h in Headers */ = {isa = PBXBuildFile; fileRef = 23863EEA2E5EC92900E57879 /* WebAssemblyBuiltinTrampoline.h */; };
 		2392A1302DD51DB100DD1CB9 /* WebAssemblyBuiltin.h in Headers */ = {isa = PBXBuildFile; fileRef = 2392A12A2DD51DB100DD1CB9 /* WebAssemblyBuiltin.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2392A1312DD51DB100DD1CB9 /* WebAssemblyCompileOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2392A12C2DD51DB100DD1CB9 /* WebAssemblyCompileOptions.h */; };
@@ -2522,6 +2536,27 @@
 			remoteGlobalIDString = 65FB3F6609D11E9100F49DEB;
 			remoteInfo = "Derived Sources";
 		};
+		23073C172E7E7D3600268245 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 65FB3F6609D11E9100F49DEB;
+			remoteInfo = "Derived Sources";
+		};
+		23073C282E7E7D9A00268245 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 23073C152E7E7D3600268245;
+			remoteInfo = testmisc;
+		};
+		237F0F9D2E8AE88900897217 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 44F93E012AE71F5300FFA37C;
+			remoteInfo = libJavaScriptCore;
+		};
 		44F93E102AE7200100FFA37C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -2644,6 +2679,26 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		23073C182E7E7D3600268245 /* Product Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Product Dependencies";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2309FE3B2E82722F00A605F3 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = unittestScripts;
+			dstSubfolderSpec = 7;
+			files = (
+				2309FE4C2E83111000A605F3 /* wasm-module-builder.js in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		233D76732E28893100EB9FFB /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3936,6 +3991,13 @@
 		1CAA8B4A0D32C39A0041BCFF /* JavaScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScript.h; sourceTree = "<group>"; };
 		1CAA8B4B0D32C39A0041BCFF /* JavaScriptCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptCore.h; sourceTree = "<group>"; };
 		20ECB15EFC524624BC2F02D5 /* ModuleNamespaceAccessCase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleNamespaceAccessCase.cpp; sourceTree = "<group>"; };
+		23004DB32EBBCD2A00DAA1D5 /* System.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = System.framework; path = System/Library/Frameworks/System.framework; sourceTree = SDKROOT; };
+		23073C132E7E47D100268245 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		23073C262E7E7D3600268245 /* unittests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = unittests; sourceTree = BUILT_PRODUCTS_DIR; };
+		2309FE442E8308E400A605F3 /* Test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Test.h; sourceTree = "<group>"; };
+		2309FE452E8308E400A605F3 /* Test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Test.cpp; sourceTree = "<group>"; };
+		2309FE4B2E8310F900A605F3 /* wasm-module-builder.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "wasm-module-builder.js"; sourceTree = "<group>"; };
+		2309FE4D2E83BEF300A605F3 /* WebAssemblyTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAssemblyTests.cpp; sourceTree = "<group>"; };
 		233D76772E288A8600EB9FFB /* badModuleImportId.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = badModuleImportId.js; sourceTree = "<group>"; };
 		233D76782E288A8600EB9FFB /* bar.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = bar.js; sourceTree = "<group>"; };
 		233D76792E288A8600EB9FFB /* dependenciesEntry.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = dependenciesEntry.js; sourceTree = "<group>"; };
@@ -3945,6 +4007,14 @@
 		233D767D2E288A8600EB9FFB /* syntaxError.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = syntaxError.js; sourceTree = "<group>"; };
 		233D767F2E288A8600EB9FFB /* testapi.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = testapi.js; sourceTree = "<group>"; };
 		233D76802E288A8600EB9FFB /* testapi-function-overrides.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "testapi-function-overrides.js"; sourceTree = "<group>"; };
+		236F6FB92E85D6F4008450C8 /* TestRunner.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestRunner.cpp; sourceTree = "<group>"; };
+		236F6FBB2E85E2A6008450C8 /* SelfTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SelfTests.cpp; sourceTree = "<group>"; };
+		237F0F9F2E8AE8CD00897217 /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libWTF.a; path = usr/local/lib/libWTF.a; sourceTree = SDKROOT; };
+		237F0FA12E8AE93700897217 /* libpas.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpas.a; path = usr/local/lib/libpas.a; sourceTree = SDKROOT; };
+		237F0FA32E8AE94B00897217 /* libbmalloc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbmalloc.a; path = usr/local/lib/libbmalloc.a; sourceTree = SDKROOT; };
+		237F0FA52E8AE9B200897217 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		237F0FA82E8AEAA000897217 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		237F0FAA2E8AEAE400897217 /* libicucore.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libicucore.tbd; path = usr/lib/libicucore.tbd; sourceTree = SDKROOT; };
 		23863EE92E5EC91500E57879 /* WebAssemblyBuiltinTrampoline.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyBuiltinTrampoline.cpp; path = js/WebAssemblyBuiltinTrampoline.cpp; sourceTree = "<group>"; };
 		23863EEA2E5EC92900E57879 /* WebAssemblyBuiltinTrampoline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAssemblyBuiltinTrampoline.h; path = js/WebAssemblyBuiltinTrampoline.h; sourceTree = "<group>"; };
 		2392A12A2DD51DB100DD1CB9 /* WebAssemblyBuiltin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAssemblyBuiltin.h; path = js/WebAssemblyBuiltin.h; sourceTree = "<group>"; };
@@ -6408,6 +6478,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		23073C1E2E7E7D3600268245 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				237F0FA62E8AE9B200897217 /* CoreFoundation.framework in Frameworks */,
+				237F0FA72E8AEA4400897217 /* Foundation.framework in Frameworks */,
+				237F0FA42E8AE94B00897217 /* libbmalloc.a in Frameworks */,
+				237F0FAB2E8AEAE400897217 /* libicucore.tbd in Frameworks */,
+				237F0F9C2E8AE84B00897217 /* libJavaScriptCore.a in Frameworks */,
+				237F0FA22E8AE93700897217 /* libpas.a in Frameworks */,
+				237F0FA02E8AE8CE00897217 /* libWTF.a in Frameworks */,
+				237F0FA92E8AEAA000897217 /* Security.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		44F93DFF2AE71F5300FFA37C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -6496,6 +6581,7 @@
 				932F5BD90822A1C700736975 /* JavaScriptCore.framework */,
 				44F93E022AE71F5400FFA37C /* libJavaScriptCore.a */,
 				FF0F56942E33437C002A232A /* testwasmdebugger */,
+				23073C262E7E7D3600268245 /* unittests */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -6551,6 +6637,7 @@
 				9959E9251BD17F1E001AA413 /* Scripts */,
 				141211000A48772600480255 /* tests */,
 				8603CEF014C753EF00AE59E3 /* tools */,
+				2309FE302E81B64B00A605F3 /* unittests */,
 				7B98D1331B60CD1E0023B1A4 /* wasm */,
 				86EAC48C0F93E8B9008EC948 /* yarr */,
 				2B1B1C4D2E3A871500D7D9ED /* SaferCPPExpectations */,
@@ -6561,16 +6648,24 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				237F0FA52E8AE9B200897217 /* CoreFoundation.framework */,
 				6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */,
 				FF0F569B2E334C90002A232A /* Foundation.framework */,
+				23073C132E7E47D100268245 /* Foundation.framework */,
 				51F0EB6105C86C6B00E6DF1B /* Foundation.framework */,
+				237F0FA32E8AE94B00897217 /* libbmalloc.a */,
 				5D5D8AD00E0D0EBE00F9C692 /* libedit.dylib */,
 				9322A00306C341D3009067BB /* libicucore.dylib */,
+				237F0FAA2E8AEAE400897217 /* libicucore.tbd */,
 				51F0EC0705C86C9A00E6DF1B /* libobjc.dylib */,
+				237F0FA12E8AE93700897217 /* libpas.a */,
 				DDE9930E278D086600F60D26 /* libWebKitAdditions.a */,
+				237F0F9F2E8AE8CD00897217 /* libWTF.a */,
 				1498CAD3214656C400710879 /* libWTF.a */,
 				371D842C17C98B6E00ECF994 /* libz.dylib */,
+				237F0FA82E8AEAA000897217 /* Security.framework */,
 				A5098B031C16AA0200087797 /* Security.framework */,
+				23004DB32EBBCD2A00DAA1D5 /* System.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -7651,6 +7746,27 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
+		};
+		2309FE302E81B64B00A605F3 /* unittests */ = {
+			isa = PBXGroup;
+			children = (
+				2309FE3E2E8272A000A605F3 /* unittestScripts */,
+				236F6FBB2E85E2A6008450C8 /* SelfTests.cpp */,
+				2309FE452E8308E400A605F3 /* Test.cpp */,
+				2309FE442E8308E400A605F3 /* Test.h */,
+				236F6FB92E85D6F4008450C8 /* TestRunner.cpp */,
+				2309FE4D2E83BEF300A605F3 /* WebAssemblyTests.cpp */,
+			);
+			path = unittests;
+			sourceTree = "<group>";
+		};
+		2309FE3E2E8272A000A605F3 /* unittestScripts */ = {
+			isa = PBXGroup;
+			children = (
+				2309FE4B2E8310F900A605F3 /* wasm-module-builder.js */,
+			);
+			path = unittestScripts;
+			sourceTree = "<group>";
 		};
 		233D767E2E288A8600EB9FFB /* dependencyListTests */ = {
 			isa = PBXGroup;
@@ -12608,6 +12724,28 @@
 			productReference = 14BD688E215191310050DAFF /* JSCLLIntSettingsExtractor */;
 			productType = "com.apple.product-type.tool";
 		};
+		23073C152E7E7D3600268245 /* unittests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 23073C212E7E7D3600268245 /* Build configuration list for PBXNativeTarget "unittests" */;
+			buildPhases = (
+				23073C182E7E7D3600268245 /* Product Dependencies */,
+				23073C1A2E7E7D3600268245 /* Generate Entitlements */,
+				23073C1B2E7E7D3600268245 /* Sources */,
+				23073C1E2E7E7D3600268245 /* Frameworks */,
+				2309FE3B2E82722F00A605F3 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				237F0F9E2E8AE88900897217 /* PBXTargetDependency */,
+				23073C162E7E7D3600268245 /* PBXTargetDependency */,
+			);
+			name = unittests;
+			productInstallPath = /usr/local/bin;
+			productName = unittests;
+			productReference = 23073C262E7E7D3600268245 /* unittests */;
+			productType = "com.apple.product-type.tool";
+		};
 		44F93E012AE71F5300FFA37C /* libJavaScriptCore */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 44F93E082AE71F5600FFA37C /* Build configuration list for PBXNativeTarget "libJavaScriptCore" */;
@@ -12824,6 +12962,7 @@
 				5325BDBF21DFF2B100A0DEE1 /* Apply Configuration to XCFileLists */,
 				52CD0F592242F569004A18A5 /* testdfg */,
 				FF0F56862E33437C002A232A /* testwasmdebugger */,
+				23073C152E7E7D3600268245 /* unittests */,
 			);
 		};
 /* End PBXProject section */
@@ -12853,6 +12992,26 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "if [[ ${WK_PLATFORM_NAME} != \"iphoneos\" ]] && [[ ${WK_PLATFORM_NAME} != \"xros\" ]]; then\n    exit 0\nfi\n\nif [[ ! -d \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks\" ]]; then\n    mkdir -p \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks\"\nfi\n\nln -s -h -f ../Frameworks/JavaScriptCore.framework \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/JavaScriptCore.framework\"\n";
+		};
+		23073C1A2E7E7D3600268245 /* Generate Entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/process-entitlements.sh",
+			);
+			name = "Generate Entitlements";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(WK_PROCESSED_XCENT_FILE)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/process-entitlements.sh\n";
 		};
 		3713F014142905240036387F /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -13510,6 +13669,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		23073C1B2E7E7D3600268245 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				236F6FBC2E85E2A6008450C8 /* SelfTests.cpp in Sources */,
+				2309FE462E8308E400A605F3 /* Test.cpp in Sources */,
+				236F6FBA2E85D6F4008450C8 /* TestRunner.cpp in Sources */,
+				2309FE4E2E83BEF300A605F3 /* WebAssemblyTests.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		44F93DFE2AE71F5300FFA37C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -13865,6 +14035,21 @@
 			isa = PBXTargetDependency;
 			target = 65FB3F6609D11E9100F49DEB /* Derived Sources */;
 			targetProxy = 14D9D9D9218462B5009126C2 /* PBXContainerItemProxy */;
+		};
+		23073C162E7E7D3600268245 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 65FB3F6609D11E9100F49DEB /* Derived Sources */;
+			targetProxy = 23073C172E7E7D3600268245 /* PBXContainerItemProxy */;
+		};
+		23073C292E7E7D9A00268245 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 23073C152E7E7D3600268245 /* unittests */;
+			targetProxy = 23073C282E7E7D9A00268245 /* PBXContainerItemProxy */;
+		};
+		237F0F9E2E8AE88900897217 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 44F93E012AE71F5300FFA37C /* libJavaScriptCore */;
+			targetProxy = 237F0F9D2E8AE88900897217 /* PBXContainerItemProxy */;
 		};
 		44F93E112AE7200100FFA37C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -14259,6 +14444,38 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "Unlock keychain";
+			};
+			name = Production;
+		};
+		23073C222E7E7D3600268245 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FEE0A12229FE250400CED5E4 /* TestExecutable.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		23073C232E7E7D3600268245 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FEE0A12229FE250400CED5E4 /* TestExecutable.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		23073C242E7E7D3600268245 /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FEE0A12229FE250400CED5E4 /* TestExecutable.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Profiling;
+		};
+		23073C252E7E7D3600268245 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FEE0A12229FE250400CED5E4 /* TestExecutable.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -14745,6 +14962,17 @@
 				14CFB10223035EF300F0048C /* Release */,
 				14CFB10323035EF300F0048C /* Profiling */,
 				14CFB10423035EF300F0048C /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		23073C212E7E7D3600268245 /* Build configuration list for PBXNativeTarget "unittests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				23073C222E7E7D3600268245 /* Debug */,
+				23073C232E7E7D3600268245 /* Release */,
+				23073C242E7E7D3600268245 /* Profiling */,
+				23073C252E7E7D3600268245 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
