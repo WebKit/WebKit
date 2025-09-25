@@ -673,17 +673,6 @@ ImageOrientation BitmapImageSource::frameOrientationAtIndex(unsigned index) cons
     return const_cast<BitmapImageSource&>(*this).frameAtIndexCacheIfNeeded(index).orientation();
 }
 
-void BitmapImageSource::setHasHDRContentForTesting()
-{
-    if (m_hasHDRContentForTesting)
-        return;
-
-    m_hasHDRContentForTesting = true;
-
-    if (auto imageObserver = this->imageObserver())
-        imageObserver->imageContentChanged(*m_bitmapImage);
-}
-
 DecodingStatus BitmapImageSource::frameDecodingStatusAtIndex(unsigned index) const
 {
     return const_cast<BitmapImageSource&>(*this).frameAtIndexCacheIfNeeded(index).decodingStatus();

@@ -1275,12 +1275,6 @@ void Internals::setForceUpdateImageDataEnabledForTesting(HTMLImageElement& eleme
         cachedImage->setForceUpdateImageDataEnabledForTesting(enabled);
 }
 
-void Internals::setHasHDRContentForTesting(HTMLImageElement& element)
-{
-    if (auto* bitmapImage = bitmapImageFromImageElement(element))
-        bitmapImage->setHasHDRContentForTesting();
-}
-
 #if ENABLE(WEB_CODECS)
 bool Internals::hasPendingActivity(const WebCodecsVideoDecoder& decoder) const
 {
