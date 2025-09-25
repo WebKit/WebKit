@@ -7,7 +7,7 @@ const verbose = true;
 
 const testCases = [
     {
-        name: "swap_v128_simple",
+        name: "simple_swap_v128",
         signature: {
             params: ['v128', 'v128'],
             results: ['v128', 'v128']
@@ -16,7 +16,47 @@ const testCases = [
         resultMapping: [1, 0]  // result[0] = param[1], result[1] = param[0] (swapped)
     },
     {
-        name: "many_args_alternating",
+        name: "simple_10_results_stack_v128_v128",
+        signature: {
+            params: ['v128', 'f64'],
+            results: ['v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'v128']
+        },
+        resultMapping: [0, 1, 0, 1, 0, 1, 0, 1, 0, 0]
+    },
+    {
+        name: "simple_10_results_stack_f64_f64",
+        signature: {
+            params: ['v128', 'f64'],
+            results: ['v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'f64', 'f64']
+        },
+        resultMapping: [0, 1, 0, 1, 0, 1, 0, 1, 1, 1]
+    },
+    {
+        name: "simple_10_results_stack_f64_v128",
+        signature: {
+            params: ['v128', 'f64'],
+            results: ['v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'f64', 'v128']
+        },
+        resultMapping: [0, 1, 0, 1, 0, 1, 0, 1, 1, 0]
+    },
+        {
+        name: "simple_10_results_stack_v128_f64",
+        signature: {
+            params: ['v128', 'f64'],
+            results: ['v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64']
+        },
+        resultMapping: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+    },
+        {
+        name: "simple_20_results_stack_i64_v128_i64_v128",
+        signature: {
+            params: ['i64', 'f64'],
+            results: ['i64', 'f64', 'i64', 'f64', 'i64', 'f64', 'i64', 'f64', 'i64', 'f64', 'i64', 'f64', 'i64', 'f64', 'i64', 'f64', 'i64', 'f64', 'i64', 'f64'] // 10 results
+        },
+        resultMapping: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+    },
+    {
+        name: "many_args_alternating_f64_v128",
         signature: {
             params: ['f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'i32'],
             results: ['v128']
@@ -24,12 +64,28 @@ const testCases = [
         resultMapping: [11]
     },
     {
-        name: "many_args_alternating_many_results",
+        name: "many_args_alternating_v128_f64",
+        signature: {
+            params: ['v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128'],
+            results: ['v128']
+        },
+        resultMapping: [10]
+    },
+    {
+        name: "many_args_alternating_many_results_reversed",
         signature: {
             params: ['v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64'],
             results: ['f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128'],
         },
         resultMapping: [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    },
+    {
+        name: "many_args_alternating_many_results_shifted",
+        signature: {
+            params: ['v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64'],
+            results: ['v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64'],
+        },
+        resultMapping: [2, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2, 3]
     },
     {
         name: "stack_args_no_stack_returns",
@@ -46,9 +102,8 @@ const testCases = [
             results: ['f64', 'v128', 'f64', 'v128', 'v128', 'f64', 'f64', 'v128', 'f64', 'f64', 'v128', 'f64', 'v128']
         },
         resultMapping: [1, 6, 0, 4, 5, 1, 2, 6, 3, 0, 4, 1, 5]
-    }
-    // More test cases can be added here
-];
+    },
+]
 
 function generateSignature(name, params, results) {
     const paramStr = params.map((type, i) => `(param $p${i} ${type})`).join(' ');
@@ -203,18 +258,22 @@ async function runTests(callOp, testCases) {
 
             if (type === 'f64') {
                 const actual = getF64(offset);
-                console.log(`    Result ${i} (f64): ${actual} ✓`);
-                //assert.eq(actual, expectedValue, `Result ${i} (f64) should be ${expectedValue}, got ${actual}`);
+                assert.eq(actual, expectedValue, `Result ${i} (f64) should be ${expectedValue}, got ${actual}`);
+                if (verbose)
+                    console.log(`    Result ${i} (f64): ${actual} ✓`);
             } else if (type === 'i64') {
                 const actual = getI64(offset);
-                console.log(`    Result ${i} (i64): ${actual} ✓`);
-                //assert.eq(actual, expectedValue, `Result ${i} (i64) should be ${expectedValue}, got ${actual}`);
+                const expectedBigInt = BigInt(expectedValue);
+                assert.eq(actual, expectedBigInt, `Result ${i} (i64) should be ${expectedBigInt}, got ${actual}`);
+                if (verbose)
+                    console.log(`    Result ${i} (i64): ${actual} ✓`);
             } else if (type === 'v128') {
                 const actual = getI32x4(offset);
-                console.log(`    Result ${i} (v128): [0x${actual.map(x => x.toString(16)).join(', 0x')}] ✓`);
                 for (let j = 0; j < 4; j++) {
-                    //assert.eq(actual[j], expectedValue[j], `Result ${i} (v128) lane ${j} should be 0x${expectedValue[j].toString(16)}, got 0x${actual[j].toString(16)}`);
+                    assert.eq(actual[j], expectedValue[j], `Result ${i} (v128) lane ${j} should be 0x${expectedValue[j].toString(16)}, got 0x${actual[j].toString(16)}`);
                 }
+                if (verbose)
+                    console.log(`    Result ${i} (v128): [0x${actual.map(x => x.toString(16)).join(', 0x')}] ✓`);
             }
         }
     }
