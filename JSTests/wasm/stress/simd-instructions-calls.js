@@ -3,7 +3,7 @@
 import { instantiate } from "../wabt-wrapper.js"
 import * as assert from "../assert.js"
 
-const verbose = true;
+const verbose = false;
 
 const testCases = [
     {
@@ -231,10 +231,12 @@ async function runTests(callOp, testCases) {
         return i64View[byteOffset / 8];
     }
 
-    console.log(`Testing with ${callOp}...`);
+    if (verbose)
+        console.log(`Testing with ${callOp}...`);
 
     for (const testCase of testCases) {
-        console.log(`  Running ${testCase.name}...`);
+        if (verbose)
+            console.log(`  Running ${testCase.name}...`);
         const resultAddr = 0;
 
         // Clear memory
