@@ -2832,14 +2832,14 @@ static void addCallArgumentBytecode(Vector<uint8_t, 16>& results, const CallInfo
     ASSERT(spOffset == frameSize);
 }
 
-static Checked<uint32_t> addCallResultBytecode(Vector<uint8_t, 16>& results, const CallInformation& callConvention)
+static intptr_t addCallResultBytecode(Vector<uint8_t, 16>& results, const CallInformation& callConvention)
 {
     constexpr static int NUM_MINT_RET_GPRS = 8;
     constexpr static int NUM_MINT_RET_FPRS = 8;
     ASSERT_UNUSED(NUM_MINT_RET_GPRS, wasmCallingConvention().jsrArgs.size() <= NUM_MINT_RET_GPRS);
     ASSERT_UNUSED(NUM_MINT_RET_FPRS, wasmCallingConvention().fprArgs.size() <= NUM_MINT_RET_FPRS);
 
-    Checked<uint32_t> firstStackResultSPOffset = 0;
+    intptr_t firstStackResultSPOffset = 0;
     bool hasSeenStackResult = false;
     intptr_t spOffset = 0;
 
