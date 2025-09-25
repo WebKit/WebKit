@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PlatformDisplayDefault.h"
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
 
 #include "GLContext.h"
 #include <epoxy/egl.h>
@@ -59,4 +59,4 @@ PlatformDisplayDefault::~PlatformDisplayDefault()
 
 } // namespace WebCore
 
-#endif // PLATFORM(GTK)
+#endif // PLATFORM(GTK) || PLATFORM(WPE)

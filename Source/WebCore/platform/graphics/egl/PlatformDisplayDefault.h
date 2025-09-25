@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
 
 #include "PlatformDisplay.h"
 
@@ -44,4 +44,4 @@ private:
 
 } // namespace WebCore
 
-#endif // PLATFORM(GTK)
+#endif // PLATFORM(GTK) || PLATFORM(WPE)

@@ -74,7 +74,7 @@ public:
 #if USE(GBM)
         GBM,
 #endif
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
         Default,
 #endif
     };

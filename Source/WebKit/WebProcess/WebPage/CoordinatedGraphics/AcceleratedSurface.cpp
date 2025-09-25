@@ -516,6 +516,9 @@ AcceleratedSurface::SwapChain::SwapChain(uint64_t surfaceID)
         break;
 #if USE(GBM)
     case PlatformDisplay::Type::GBM:
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    case PlatformDisplay::Type::Default:
+#endif
         if (display.eglExtensions().EXT_image_dma_buf_import)
             m_type = Type::EGLImage;
         else
