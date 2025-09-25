@@ -4421,27 +4421,60 @@ mintAlign(_fa7)
 # and thus do not have to care.
 
 mintAlign(_argument_stack)
+
+
+# CallArgumentBytecode::CallArgDecSP (0x10)
+mintAlign(_call_argument_dec_sp)
+    break
+
+# CallArgumentBytecode::CallArgStore0 (0x11)
+mintAlign(_call_argument_store_0)
     mintPop(argumINTTmp, lr)
     store2ia argumINTTmp, lr, [sc3]
     mintArgDispatch()
+
+# CallArgumentBytecode::CallArgDecSPStore8 (0x12)
+mintAlign(_call_argument_dec_sp_store_8)
+    break
+
+# CallArgumentBytecode::CallArgDecSPStoreVector0 (0x13)
+mintAlign(_call_argument_dec_sp_store_vector_0)
+    break
+
+# CallArgumentBytecode::TailCallArgDecSPStoreVector8 (0x14)
+mintAlign(_call_argument_dec_sp_store_vector_8)
+    break
 
 # Since we're writing into the same frame, we're going to first push stack arguments onto the stack.
 # Once we're done, we'll copy them back down into the new frame, to avoid having to deal with writing over
 # arguments lower down on the stack.
 
-mintAlign(_tail_argument_stack)
+# CallArgumentBytecode::TailCallArgDecSP (0x15)
+mintAlign(_tail_call_argument_dec_sp)
     break
 
-mintAlign(_pad_argument_stack)
+# CallArgumentBytecode::TailCallArgStore0 (0x16)
+mintAlign(_tail_call_argument_store_0)
     break
 
-mintAlign(_tail_pad_argument_stack)
+# CallArgumentBytecode::TailCallArgDecSPStore8 (0x17)
+mintAlign(_tail_call_argument_dec_sp_store_8)
     break
 
+# CallArgumentBytecode::TailCallArgDecSPStoreVector0 (0x18)
+mintAlign(_tail_call_argument_dec_sp_store_vector_0)
+    break
+
+# CallArgumentBytecode::TailCallArgDecSPStoreVector8 (0x19)
+mintAlign(_tail_call_argument_dec_sp_store_vector_8)
+    break
+
+# CallArgumentBytecode::TailCall (0x1a)
 mintAlign(_tail_call)
     jmp .ipint_perform_tail_call
 
-mintAlign(_call)
+# CallArgumentBytecode::Call (0x1b)
+ign(_call)
     pop wasmInstance, ws0
     # pop targetInstance, targetEntrypoint
 
@@ -4856,9 +4889,12 @@ uintAlign(_fr7)
 
 uintAlign(_stack)
     popInt64(argumINTTmp, lr)
-    store2ia argumINTTmp, lr, [sc0]
     subp 8, sc0
+    store2ia argumINTTmp, lr, [sc0]
     uintDispatch()
+
+uintAlign(_stack_vector)
+    break
 
 uintAlign(_ret)
     jmp .ipint_exit
@@ -4983,6 +5019,9 @@ argumINTAlign(_stack)
     store2ia argumINTTmp, lr, [argumINTDst]
     addp LocalSize, argumINTDst
     argumINTDispatch()
+
+argumINTAlign(_stack_vector)
+    break
 
 argumINTAlign(_end)
     jmp .ipint_entry_end_local
