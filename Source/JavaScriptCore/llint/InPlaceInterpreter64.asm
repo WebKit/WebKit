@@ -413,6 +413,7 @@ end)
     loadp Wasm::IPIntCallee::m_uINTBytecode + VectorBufferOffset[ws0], MC
     ipintEpilogueOSR(10)
 if X86_64
+    # XXX: why?
     loadp UnboxedWasmCalleeStackSlot[cfr], ws0
 end
     loadi Wasm::IPIntCallee::m_topOfReturnStackFPOffset[ws0], sc0
@@ -10535,6 +10536,7 @@ _wasm_ipint_call_return_location_wide32:
 if ARM64 or ARM64E
     loadp (2 * SlotSize)[sc3], mintRetDst
 elsif X86_64
+    # XXX: why this difference?
     loadp (3 * SlotSize)[sc3], mintRetDst
 end
 
