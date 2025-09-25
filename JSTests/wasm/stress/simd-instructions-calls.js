@@ -108,6 +108,62 @@ const testCases = [
         },
         resultMapping: [1, 6, 0, 4, 5, 1, 2, 6, 3, 0, 4, 1, 5]
     },
+    {
+        name: "pure_v128_many_results",
+        signature: {
+            params: ['v128', 'v128', 'v128', 'v128', 'v128', 'v128', 'v128', 'v128', 'v128'],
+            results: ['v128', 'v128', 'v128', 'v128', 'v128', 'v128', 'v128', 'v128', 'v128', 'v128', 'v128', 'v128', 'v128']
+        },
+        resultMapping: [0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3]
+    },
+    {
+        name: "odd_results_v128_f64",
+        signature: {
+            params: ['v128', 'v128', 'v128', 'v128', 'v128', 'f64', 'f64', 'f64', 'f64'],
+            results: ['v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128', 'f64', 'v128'] // 9 results (odd)
+        },
+        resultMapping: [0, 5, 1, 6, 2, 7, 3, 8, 4]
+    },
+    {
+        name: "alternating_25_results",
+        signature: {
+            params: ['v128', 'v128', 'v128', 'v128', 'v128', 'f64', 'f64', 'f64', 'f64'],
+            results: new Array(25).fill(null).map((_, i) => i % 2 === 0 ? 'v128' : 'f64')
+        },
+        resultMapping: new Array(25).fill(null).map((_, i) => i % 2 === 0 ? (i % 10) % 5 : 5 + (i % 8) % 4)
+    },
+    {
+        name: "v128_20_results",
+        signature: {
+            params: ['v128', 'v128', 'v128', 'v128', 'v128', 'v128', 'v128', 'v128', 'v128'], // 9 v128 params
+            results: new Array(20).fill('v128') // 20 v128 results
+        },
+        resultMapping: new Array(20).fill(null).map((_, i) => i % 9)
+    },
+    {
+        name: "random_case_1",
+        signature: {
+            params: ['f64', 'v128', 'i64', 'f64', 'v128', 'i64', 'v128', 'f64', 'i64', 'v128', 'f64', 'i64', 'v128', 'f64'], // 14 params
+            results: ['v128', 'f64', 'i64', 'v128', 'f64', 'i64', 'v128', 'f64', 'i64', 'v128', 'f64', 'i64', 'v128', 'f64', 'i64', 'v128', 'f64', 'i64'] // 18 results
+        },
+        resultMapping: [1, 0, 2, 4, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 8, 4, 7, 11]
+    },
+    {
+        name: "random_case_2",
+        signature: {
+            params: ['v128', 'i64', 'v128', 'f64', 'v128', 'i64', 'f64', 'v128', 'i64', 'f64', 'v128', 'i64'], // 12 params
+            results: ['i64', 'v128', 'f64', 'i64', 'v128', 'f64', 'i64', 'v128', 'f64', 'i64', 'v128', 'f64', 'i64', 'v128', 'f64', 'i64', 'v128', 'f64', 'i64', 'v128', 'f64'] // 21 results
+        },
+        resultMapping: [1, 0, 3, 5, 2, 6, 8, 4, 9, 11, 7, 3, 1, 0, 6, 5, 2, 9, 8, 4, 3]
+    },
+        {
+        name: "random_case_3",
+        signature: {
+            params: ['f64', 'f64', 'v128', 'i64', 'v128', 'f64', 'i64', 'v128', 'f64', 'i64', 'v128', 'f64', 'i64', 'v128', 'f64', 'i64'], // 16 params
+            results: ['v128', 'i64', 'f64', 'v128', 'i64', 'f64', 'v128', 'i64', 'f64', 'v128', 'i64', 'f64', 'v128'] // 13 results
+        },
+        resultMapping: [2, 3, 0, 4, 6, 1, 7, 9, 8, 10, 12, 11, 13]
+    },
 ]
 
 function generateSignature(name, params, results) {
