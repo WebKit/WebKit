@@ -2867,7 +2867,7 @@ static Checked<uint32_t> addCallResultBytecode(Vector<uint8_t, 16>& results, con
 
             if (!hasSeenStackResult) {
                 hasSeenStackResult = true;
-                // uINT needs to be able to locate the first stack result.
+                // mINT needs to be able to locate the first stack result.
                 spOffset = loc.offsetFromSP();
                 firstStackResultSPOffset = spOffset;
             }
@@ -2904,8 +2904,9 @@ void IPIntGenerator::addCallCommonData(const FunctionSignature&, const CallInfor
     addCallArgumentBytecode<false>(m_cachedCallBytecode, callConvention);
     m_cachedCallBytecode.reverse();
 
+    Checked<uint32_t> frameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callConvention.headerAndArgumentStackSizeInBytes);
     IPInt::CallReturnMetadata commonReturn {
-        .stackFrameSize = static_cast<uint32_t>(callConvention.headerAndArgumentStackSizeInBytes),
+        .stackFrameSize = frameSize,
         .firstStackResultSPOffset = 0, // TBD
         .resultBytecode = { }
     };
@@ -2974,12 +2975,13 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCall(unsigned callProfileInd
     results.appendUsingFunctor(signature.returnCount(), [](unsigned) { return Value { }; });
     changeStackSize(signature.returnCount() - signature.argumentCount());
 
+    Checked<uint32_t> frameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callConvention.headerAndArgumentStackSizeInBytes);
     IPInt::CallMetadata functionIndexMetadata {
         .length = safeCast<uint8_t>(getCurrentInstructionLength()),
         .callProfileIndex = callProfileIndex,
         .functionIndex = index,
         .signature = {
-            static_cast<uint32_t>(callConvention.headerAndArgumentStackSizeInBytes),
+            frameSize,
             static_cast<uint16_t>(signature.returnCount() > signature.argumentCount() ? signature.returnCount() - signature.argumentCount() : 0),
             static_cast<uint16_t>(signature.argumentCount())
         },
@@ -3021,13 +3023,14 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallIndirect(unsigned callPr
     const unsigned callIndex = 1;
     changeStackSize(signature.returnCount() - signature.argumentCount() - callIndex);
 
+    Checked<uint32_t> frameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callConvention.headerAndArgumentStackSizeInBytes);
     IPInt::CallIndirectMetadata functionIndexMetadata {
         .length = safeCast<uint8_t>(getCurrentInstructionLength()),
         .callProfileIndex = callProfileIndex,
         .tableIndex = tableIndex,
         .rtt = m_metadata->addSignature(originalSignature),
         .signature = {
-            static_cast<uint32_t>(callConvention.headerAndArgumentStackSizeInBytes),
+            frameSize,
             static_cast<uint16_t>(signature.returnCount() > signature.argumentCount() ? signature.returnCount() - signature.argumentCount() : 0),
             static_cast<uint16_t>(signature.argumentCount())
         },
@@ -3068,11 +3071,12 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCallRef(unsigned callProfile
     const unsigned callRef = 1;
     changeStackSize(signature.returnCount() - signature.argumentCount() - callRef);
 
+    Checked<uint32_t> frameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callConvention.headerAndArgumentStackSizeInBytes);
     IPInt::CallRefMetadata callMetadata {
         .length = safeCast<uint8_t>(getCurrentInstructionLength()),
         .callProfileIndex = callProfileIndex,
         .signature = {
-            static_cast<uint32_t>(callConvention.headerAndArgumentStackSizeInBytes),
+            frameSize,
             static_cast<uint16_t>(signature.returnCount() > signature.argumentCount() ? signature.returnCount() - signature.argumentCount() : 0),
             static_cast<uint16_t>(signature.argumentCount())
         },
