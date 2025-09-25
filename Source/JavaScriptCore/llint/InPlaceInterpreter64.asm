@@ -10426,7 +10426,6 @@ mintAlign(_call_argument_dec_sp_store_vector_8)
 # Once we're done, we'll copy them back down into the new frame, to avoid having to deal with writing over
 # arguments lower down on the stack.
 
-
 # CallArgumentBytecode::TailCallArgDecSP (0x15)
 mintAlign(_tail_call_argument_dec_sp)
     subp 2 * SlotSize, sp
