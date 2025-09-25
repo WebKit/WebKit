@@ -926,7 +926,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArguments(const TypeDefiniti
     for (size_t i = 0; i < numArgs; ++i) {
         const ArgumentLocation& argLoc = callCC.params[i];
         const ValueLocation& loc = argLoc.location;
-            
+
         dataLogLnIf(dmhVerbose, "XXX: argumINT callCC: arg", i, " loc: ", loc);
 
         if (loc.isGPR()) {
@@ -949,9 +949,9 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addArguments(const TypeDefiniti
                 break;
             case Width::Width128:
                 m_metadata->m_argumINTBytecode.append(static_cast<uint8_t>(IPInt::ArgumINTBytecode::StackVector));
-                break;            
+                break;
             default:
-                RELEASE_ASSERT_NOT_REACHED("No argumINT bytecode for result width");                break;
+                RELEASE_ASSERT_NOT_REACHED("No argumINT bytecode for result width");
             }
         }
     }

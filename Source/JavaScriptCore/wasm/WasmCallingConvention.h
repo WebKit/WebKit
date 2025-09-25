@@ -280,7 +280,7 @@ public:
         size_t totalFrameSize = resultStackOffset;
         ASSERT(totalFrameSize >= argStackOffset);
         // XXX
-        //ASSERT(!(totalFrameSize % stackAlignmentBytes()));
+        ASSERT(!(totalFrameSize % stackAlignmentBytes()));
 
         return { thisArgument, WTFMove(params), WTFMove(results), totalFrameSize, headerSize };
     }

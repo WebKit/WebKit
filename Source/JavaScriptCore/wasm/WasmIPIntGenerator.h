@@ -181,7 +181,7 @@ struct CallSignatureMetadata {
 enum class CallArgumentBytecode : uint8_t { // (mINT)
     ArgumentGPR = 0x0, // 0x00 - 0x07: push into a0, a1, ...
     ArgumentFPR = 0x8, // 0x08 - 0x0f: push into fa0, fa1, ...
-    
+
     // Note: addCallArgumentBytecode() requires these CallArg and TailCallArg have a fixed offset from each other
 
     CallArgDecSP = 0x10,
