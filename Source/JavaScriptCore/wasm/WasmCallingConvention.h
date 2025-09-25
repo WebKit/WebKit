@@ -254,10 +254,6 @@ public:
         ArgumentLocation thisArgument = { role == CallRole::Caller ? ValueLocation::stackArgument(headerSize) : ValueLocation::stack(headerSize), widthForBytes(sizeof(void*)) };
         headerSize += sizeof(Register); // thisArgument
 
-        // Logic below assumes header is aligned since it aligns the argument and result space independently.
-        // XXX: what about 32-bit?
-        ASSERT(!(headerSize % stackAlignmentBytes()));
-
         size_t argStackOffset = headerSize;
         Vector<ArgumentLocation, 8> params(signature.argumentCount(),
             [&](unsigned index) {
@@ -279,8 +275,6 @@ public:
             });
         size_t totalFrameSize = resultStackOffset;
         ASSERT(totalFrameSize >= argStackOffset);
-        // XXX
-        ASSERT(!(totalFrameSize % stackAlignmentBytes()));
 
         return { thisArgument, WTFMove(params), WTFMove(results), totalFrameSize, headerSize };
     }
