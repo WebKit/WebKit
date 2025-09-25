@@ -466,7 +466,7 @@ private:
     Vector<uint8_t> m_argumINTBytecode;
     Vector<uint8_t> m_uINTBytecode;
 
-    unsigned m_highestReturnStackOffset;
+    unsigned m_topOfReturnStackFPOffset;
 
     unsigned m_localSizeToAlloc;
     unsigned m_numRethrowSlotsToAlloc;

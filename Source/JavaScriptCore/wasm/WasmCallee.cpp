@@ -232,7 +232,7 @@ IPIntCallee::IPIntCallee(FunctionIPIntMetadataGenerator& generator, FunctionSpac
     , m_metadata(WTFMove(generator.m_metadata))
     , m_argumINTBytecode(WTFMove(generator.m_argumINTBytecode))
     , m_uINTBytecode(WTFMove(generator.m_uINTBytecode))
-    , m_highestReturnStackOffset(generator.m_highestReturnStackOffset)
+    , m_topOfReturnStackFPOffset(generator.m_topOfReturnStackFPOffset)
     , m_localSizeToAlloc(roundUpToMultipleOf<2>(generator.m_numLocals))
     , m_numRethrowSlotsToAlloc(generator.m_numAlignedRethrowSlots)
     , m_numLocals(generator.m_numLocals)

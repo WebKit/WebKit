@@ -415,7 +415,7 @@ end)
 .ipint_end_ret:
     loadp Wasm::IPIntCallee::m_uINTBytecode + VectorBufferOffset[ws0], MC
     ipintEpilogueOSR(10)
-    loadp Wasm::IPIntCallee::m_highestReturnStackOffset[ws0], sc0
+    loadp Wasm::IPIntCallee::m_topOfReturnStackFPOffset[ws0], sc0
     addp cfr, sc0
     uintEnter()
 

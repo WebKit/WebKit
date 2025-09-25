@@ -157,7 +157,7 @@ void FunctionIPIntMetadataGenerator::addReturnData(const FunctionSignature& sig,
             }
 
             RELEASE_ASSERT(loc.isStack());
-            m_highestReturnStackOffset = loc.offsetFromFP();
+            m_topOfReturnStackFPOffset = loc.offsetFromFP() + bytesForWidth(argLoc.width);
             switch (argLoc.width) {
             case Width::Width64:
                 return static_cast<uint8_t>(IPInt::UIntBytecode::Stack);

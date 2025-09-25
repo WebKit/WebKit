@@ -415,7 +415,7 @@ end)
 if X86_64
     loadp UnboxedWasmCalleeStackSlot[cfr], ws0
 end
-    loadi Wasm::IPIntCallee::m_highestReturnStackOffset[ws0], sc0
+    loadi Wasm::IPIntCallee::m_topOfReturnStackFPOffset[ws0], sc0
     addp cfr, sc0
 
     initPCRelative(mint_entry, PC)
@@ -10660,7 +10660,7 @@ mintAlign(_result_stack)
 
 # CallResultBytecode::ResultStackVector (0x11)
 mintAlign(_result_stack_vector)
-    # safe to use wfa0 since register result bytecodes come before stack result
+    # safe to use wfa0 since frN bytecodes always come before vector stack result
     loadv [mintRetSrc], wfa0
     addp 2 * SlotSize, mintRetSrc
     subp StackValueSize, mintRetDst
@@ -10746,7 +10746,6 @@ end
     # copy args to sc2 region
     validateOpcodeConfig(sc0)
 .ipint_tail_call_copy_stackargs_loop:
-    # XXX: change condition to zero or positive?
     bqgteq sc3, 0, .ipint_tail_call_copy_stackargs_loop_end
 if ARM64 or ARM64E
     loadpairq [sp], sc0, sc1
@@ -10936,11 +10935,12 @@ uintAlign(_fr7)
 
 uintAlign(_stack)
     popInt64(sc1, sc2)
-    storeq sc1, [sc0]
     subp SlotSize, sc0
+    storeq sc1, [sc0]
     uintDispatch()
 
 uintAlign(_stack_vector)
+    subp 2 * SlotSize, sc0
     if ARM64 or ARM64E
         loadpairq [sp], sc1, sc2
         storepairq sc1, sc2, [sc0]
@@ -10951,7 +10951,6 @@ uintAlign(_stack_vector)
         storeq sc2, 8[sc0]
     end
     addq StackValueSize, sp
-    subp 2 * SlotSize, sc0
     uintDispatch()
 
 uintAlign(_ret)
