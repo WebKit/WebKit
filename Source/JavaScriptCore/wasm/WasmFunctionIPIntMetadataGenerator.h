@@ -123,7 +123,7 @@ private:
     std::span<const uint8_t> m_bytecode;
     MetadataBuffer m_metadata { };
     Vector<uint8_t, 8> m_uINTBytecode { };
-    unsigned m_highestReturnStackOffset;
+    unsigned m_topOfReturnStackFPOffset;
 
     uint32_t m_bytecodeOffset { 0 };
     unsigned m_maxFrameSizeInV128 { 0 };
