@@ -4652,13 +4652,17 @@ mintAlign(_fr7)
     stored wfa7, [mintRetDst]
     mintRetDispatch()
 
+# CallResultBytecode::ResultStack (0x10)
 mintAlign(_result_stack)
     load2ia [mintRetSrc], sc0, sc1
-    # XXX: constant
     addp 16, mintRetSrc
     subp StackValueSize, mintRetDst
     store2ia sc0, sc1, [mintRetDst]
     mintRetDispatch()
+
+# CallResultBytecode::ResultStackVector (0x11)
+mintAlign(_result_stack_vector)
+    break
 
 mintAlign(_end)
 
