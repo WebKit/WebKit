@@ -264,7 +264,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     if (parameters.request.isPrivateTokenUsageByThirdPartyAllowed())
         [mutableRequest _setAllowPrivateAccessTokensForThirdParty:YES];
 
-#if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     if (isOptInCookiePartitioningEnabled() && [mutableRequest respondsToSelector:@selector(_setAllowOnlyPartitionedCookies:)]) {
         auto shouldAllowOnlyPartitioned = thirdPartyCookieBlockingDecision == WebCore::ThirdPartyCookieBlockingDecision::AllExceptPartitioned ? YES : NO;
         [mutableRequest _setAllowOnlyPartitionedCookies:shouldAllowOnlyPartitioned];
@@ -299,7 +299,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         m_task.get()._hostOverride = adoptNS(nw_endpoint_create_host_with_numeric_port("localhost", url.port().value_or(0))).get();
 #endif
 
-#if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     updateTaskWithStoragePartitionIdentifier(request);
 #endif
 

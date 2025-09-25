@@ -75,7 +75,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifi
     readNextMessage();
     protectedChannel()->didSendHandshakeRequest(ResourceRequest { [m_task currentRequest] });
 
-#if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     updateTaskWithStoragePartitionIdentifier(request);
 #endif
 }

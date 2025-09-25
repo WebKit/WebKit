@@ -43,7 +43,7 @@ NetworkStorageSession& WebCookieCache::inMemoryStorageSession()
         auto storageSession = WebCore::createPrivateStorageSession(sessionName.createCFString().get(), cookieAcceptPolicy);
         auto cookieStorage = adoptCF(_CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession.get()));
         m_inMemoryStorageSession = makeUnique<NetworkStorageSession>(WebProcess::singleton().sessionID(), WTFMove(storageSession), WTFMove(cookieStorage), NetworkStorageSession::IsInMemoryCookieStore::Yes);
-#if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
         m_inMemoryStorageSession->setOptInCookiePartitioningEnabled(m_optInCookiePartitioningEnabled);
 #endif
     }
@@ -52,7 +52,7 @@ NetworkStorageSession& WebCookieCache::inMemoryStorageSession()
 
 void WebCookieCache::setOptInCookiePartitioningEnabled(bool enabled)
 {
-#if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     m_optInCookiePartitioningEnabled = enabled;
     if (m_inMemoryStorageSession)
         m_inMemoryStorageSession->setOptInCookiePartitioningEnabled(enabled);
