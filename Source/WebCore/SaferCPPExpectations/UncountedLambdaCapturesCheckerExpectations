@@ -34,7 +34,6 @@ css/StyleRule.cpp
 dom/ContentVisibilityDocumentState.cpp
 dom/CustomElementDefaultARIA.cpp
 dom/RejectedPromiseTracker.cpp
-editing/Editor.cpp
 html/FormAssociatedCustomElement.cpp
 html/track/TrackBase.cpp
 inspector/InspectorOverlay.cpp
@@ -43,7 +42,6 @@ loader/NetscapePlugInStreamLoader.cpp
 loader/WorkerThreadableLoader.cpp
 page/ImageAnalysisQueue.cpp
 page/IntelligenceTextEffectsSupport.cpp
-page/Navigator.cpp
 page/ShareDataReader.cpp
 page/cocoa/ResourceUsageOverlayCocoa.mm
 page/writing-tools/WritingToolsController.mm

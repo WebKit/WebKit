@@ -4257,8 +4257,8 @@ void Editor::scanSelectionForTelephoneNumbers()
 
     m_detectedTelephoneNumberRanges.clear();
     
-    auto notifyController = makeScopeExit([&] {
-        if (RefPtr page = document().page())
+    auto notifyController = makeScopeExit([protectedThis = Ref { *this }] {
+        if (RefPtr page = protectedThis->document().page())
             page->protectedServicesOverlayController()->selectedTelephoneNumberRangesChanged();
     });
 
