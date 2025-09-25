@@ -305,8 +305,8 @@ static WebCore::ApplePayDateComponentsRange toDateComponentsRange(PKDateComponen
     ASSERT(dateComponentsRange);
 
     WebCore::ApplePayDateComponentsRange result;
-    result.startDateComponents = toDateComponents(dateComponentsRange.startDateComponents);
-    result.endDateComponents = toDateComponents(dateComponentsRange.endDateComponents);
+    result.startDateComponents = toDateComponents(RetainPtr { dateComponentsRange.startDateComponents }.get());
+    result.endDateComponents = toDateComponents(RetainPtr { dateComponentsRange.endDateComponents }.get());
     return result;
 }
 
@@ -317,13 +317,13 @@ static WebCore::ApplePayShippingMethod toShippingMethod(PKShippingMethod *shippi
     ASSERT(shippingMethod);
 
     WebCore::ApplePayShippingMethod result;
-    result.amount = shippingMethod.amount.stringValue;
+    result.amount = RetainPtr { shippingMethod.amount }.get().stringValue;
     result.detail = shippingMethod.detail;
     result.identifier = shippingMethod.identifier;
     result.label = shippingMethod.label;
 #if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
     if (shippingMethod.dateComponentsRange)
-        result.dateComponentsRange = toDateComponentsRange(shippingMethod.dateComponentsRange);
+        result.dateComponentsRange = toDateComponentsRange(RetainPtr { shippingMethod.dateComponentsRange }.get());
 #endif
 #if ENABLE(APPLE_PAY_SELECTED_SHIPPING_METHOD)
     result.selected = selected;

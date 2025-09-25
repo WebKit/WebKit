@@ -760,7 +760,7 @@ void PDFPluginBase::visibilityDidChange(bool)
 
 FloatSize PDFPluginBase::pdfDocumentSizeForPrinting() const
 {
-    return FloatSize { [[m_pdfDocument pageAtIndex:0] boundsForBox:kPDFDisplayBoxCropBox].size };
+    return FloatSize { [retainPtr([m_pdfDocument pageAtIndex:0]) boundsForBox:kPDFDisplayBoxCropBox].size };
 }
 
 void PDFPluginBase::invalidateRect(const IntRect& rect)
@@ -1637,7 +1637,7 @@ unsigned PDFPluginBase::countFindMatches(const String& target, WebCore::FindOpti
         return 0;
 
     NSStringCompareOptions nsOptions = options.contains(FindOption::CaseInsensitive) ? NSCaseInsensitiveSearch : 0;
-    return [[m_pdfDocument findString:target.createNSString().get() withOptions:nsOptions] count];
+    return [retainPtr([m_pdfDocument findString:target.createNSString().get() withOptions:nsOptions]) count];
 }
 
 RefPtr<PluginView> PDFPluginBase::protectedView() const

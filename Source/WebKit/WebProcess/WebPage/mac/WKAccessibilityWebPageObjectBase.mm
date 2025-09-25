@@ -248,7 +248,7 @@ namespace ax = WebCore::Accessibility;
 
 - (id)accessibilityFocusedUIElement
 {
-    return [[self accessibilityRootObjectWrapper:[self focusedLocalFrame]] accessibilityFocusedUIElement];
+    return [retainPtr([self accessibilityRootObjectWrapper:[self focusedLocalFrame]]) accessibilityFocusedUIElement];
 }
 
 - (WebCore::LocalFrame *)focusedLocalFrame

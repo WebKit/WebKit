@@ -93,7 +93,7 @@ bool InjectedBundle::decodeBundleParameters(API::Data* bundleParameterDataPtr)
 
     auto unarchiver = createUnarchiver(*bundleParameterDataPtr);
 
-    NSDictionary *dictionary = nil;
+    RetainPtr<NSDictionary> dictionary;
     @try {
         dictionary = [unarchiver.get() decodeObjectOfClasses:classesForCoder() forKey:@"parameters"];
         if (![dictionary isKindOfClass:[NSDictionary class]]) {
@@ -106,7 +106,7 @@ bool InjectedBundle::decodeBundleParameters(API::Data* bundleParameterDataPtr)
     }
     
     ASSERT(!m_bundleParameters || m_bundleParameters.get());
-    m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:dictionary]);
+    m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:dictionary.get()]);
     return true;
 }
 
@@ -127,10 +127,10 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
 
     WKBundleAdditionalClassesForParameterCoderFunctionPtr additionalClassesForParameterCoderFunction = nullptr;
     WKBundleInitializeFunctionPtr initializeFunction = nullptr;
-    if (NSString *executablePath = [m_platformBundle executablePath]) {
-        if (dlopen_preflight(executablePath.fileSystemRepresentation)) {
+    if (RetainPtr executablePath = [m_platformBundle executablePath]) {
+        if (dlopen_preflight(executablePath.get().fileSystemRepresentation)) {
             // We don't hold onto this handle anywhere more permanent since we never dlclose.
-            if (void* handle = dlopen(executablePath.fileSystemRepresentation, RTLD_LAZY | RTLD_GLOBAL | RTLD_FIRST)) {
+            if (void* handle = dlopen(executablePath.get().fileSystemRepresentation, RTLD_LAZY | RTLD_GLOBAL | RTLD_FIRST)) {
                 additionalClassesForParameterCoderFunction = std::bit_cast<WKBundleAdditionalClassesForParameterCoderFunctionPtr>(dlsym(handle, "WKBundleAdditionalClassesForParameterCoder"));
                 initializeFunction = std::bit_cast<WKBundleInitializeFunctionPtr>(dlsym(handle, "WKBundleInitialize"));
             }
@@ -172,7 +172,7 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
     }
 
     // Otherwise, look to see if the bundle has a principal class
-    Class principalClass = [m_platformBundle principalClass];
+    RetainPtr principalClass = [m_platformBundle principalClass];
     if (!principalClass) {
         WTFLogAlways("InjectedBundle::load failed - No initialize function or principal class found in the bundle executable.\n");
         return false;
@@ -250,7 +250,7 @@ NSSet* InjectedBundle::classesForCoder()
 
 void InjectedBundle::setBundleParameter(const String& key, std::span<const uint8_t> value)
 {
-    id parameter = nil;
+    RetainPtr<id> parameter;
     auto unarchiver = createUnarchiver(value);
     @try {
         parameter = [unarchiver decodeObjectOfClasses:classesForCoder() forKey:@"parameter"];
@@ -262,12 +262,12 @@ void InjectedBundle::setBundleParameter(const String& key, std::span<const uint8
     if (!m_bundleParameters && parameter)
         m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:@{ }]);
 
-    [m_bundleParameters setParameter:parameter forKey:key.createNSString().get()];
+    [m_bundleParameters setParameter:parameter.get() forKey:key.createNSString().get()];
 }
 
 void InjectedBundle::setBundleParameters(std::span<const uint8_t> value)
 {
-    NSDictionary *parameters = nil;
+    RetainPtr<NSDictionary> parameters;
     auto unarchiver = createUnarchiver(value);
     @try {
         parameters = [unarchiver decodeObjectOfClasses:classesForCoder() forKey:@"parameters"];
@@ -281,11 +281,11 @@ void InjectedBundle::setBundleParameters(std::span<const uint8_t> value)
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION([parameters isKindOfClass:[NSDictionary class]]);
 
     if (!m_bundleParameters) {
-        m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:parameters]);
+        m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:parameters.get()]);
         return;
     }
 
-    [m_bundleParameters setParametersForKeyWithDictionary:parameters];
+    [m_bundleParameters setParametersForKeyWithDictionary:parameters.get()];
 }
 
 } // namespace WebKit

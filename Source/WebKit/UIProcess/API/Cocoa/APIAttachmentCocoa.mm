@@ -101,8 +101,9 @@ WTF::String Attachment::fileName() const
 {
     Locker locker { m_fileWrapperLock };
 
-    if ([m_fileWrapper filename].length)
-        return [m_fileWrapper filename];
+    RetainPtr filename = [m_fileWrapper filename];
+    if (filename.get().length)
+        return filename.get();
 
     return [m_fileWrapper preferredFilename];
 }
@@ -114,7 +115,8 @@ void Attachment::setFileWrapperAndUpdateContentType(NSFileWrapper *fileWrapper, 
         if (fileWrapper.directory)
             updatedContentType = UTTypeDirectory.identifier;
         else if (fileWrapper.regularFile) {
-            if (RetainPtr<NSString> pathExtension = (fileWrapper.filename.length ? fileWrapper.filename : fileWrapper.preferredFilename).pathExtension)
+            RetainPtr<NSString> filename = fileWrapper.filename;
+            if (RetainPtr<NSString> pathExtension = RetainPtr { filename.get().length ? filename : fileWrapper.preferredFilename }.get().pathExtension)
                 updatedContentType = WebCore::MIMETypeRegistry::mimeTypeForExtension(WTF::String(pathExtension.get())).createNSString();
             if (!updatedContentType.get().length)
                 updatedContentType = UTTypeData.identifier;
@@ -134,10 +136,10 @@ std::optional<uint64_t> Attachment::fileSizeForDisplay() const
         return std::nullopt;
     }
 
-    if (auto fileSize = [[m_fileWrapper fileAttributes][NSFileSize] unsignedLongLongValue])
+    if (auto fileSize = [retainPtr([m_fileWrapper fileAttributes][NSFileSize]) unsignedLongLongValue])
         return fileSize;
 
-    return [m_fileWrapper regularFileContents].length;
+    return RetainPtr { [m_fileWrapper regularFileContents] }.get().length;
 }
 
 RefPtr<WebCore::FragmentedSharedBuffer> Attachment::associatedElementData() const
@@ -145,7 +147,7 @@ RefPtr<WebCore::FragmentedSharedBuffer> Attachment::associatedElementData() cons
     if (m_associatedElementType == WebCore::AttachmentAssociatedElementType::None)
         return nullptr;
 
-    NSData *data = nil;
+    RetainPtr<NSData> data;
     {
         Locker locker { m_fileWrapperLock };
 
@@ -158,7 +160,7 @@ RefPtr<WebCore::FragmentedSharedBuffer> Attachment::associatedElementData() cons
     if (!data)
         return nullptr;
 
-    return WebCore::SharedBuffer::create(data);
+    return WebCore::SharedBuffer::create(data.get());
 }
 
 NSData *Attachment::associatedElementNSData() const

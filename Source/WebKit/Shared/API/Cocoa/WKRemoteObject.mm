@@ -49,7 +49,7 @@
 
 - (BOOL)conformsToProtocol:(Protocol *)protocol
 {
-    return [super conformsToProtocol:protocol] || protocol_conformsToProtocol([_interface protocol], protocol);
+    return [super conformsToProtocol:protocol] || protocol_conformsToProtocol(retainPtr([_interface protocol]).get(), protocol);
 }
 
 static const char* methodArgumentTypeEncodingForSelector(Protocol *protocol, SEL selector)

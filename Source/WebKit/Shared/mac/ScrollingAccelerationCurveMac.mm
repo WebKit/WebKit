@@ -51,7 +51,7 @@ static float fromCFNumber(CFNumberRef number)
 
 static float readFixedPointParameter(NSDictionary *parameters, const char *key)
 {
-    return fromFixedPoint([[parameters objectForKey:@(key)] floatValue]);
+    return fromFixedPoint([retainPtr([parameters objectForKey:@(key)]) floatValue]);
 }
 
 static ScrollingAccelerationCurve fromIOHIDCurve(NSDictionary *parameters, float resolution, float frameRate)

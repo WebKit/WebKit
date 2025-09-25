@@ -420,7 +420,7 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(SpellDocumentTag sp
             TextCheckingResult result;
             result.type = TextCheckingType::Link;
             result.range = resultRange;
-            result.replacement = [[incomingResult URL] absoluteString];
+            result.replacement = [retainPtr([incomingResult URL]) absoluteString];
             results.append(WTFMove(result));
         } else if (resultType == NSTextCheckingTypeQuote && checkingTypes.contains(TextCheckingType::Quote)) {
             TextCheckingResult result;
@@ -487,7 +487,7 @@ void TextChecker::checkGrammarOfString(SpellDocumentTag, StringView, Vector<WebC
 
 bool TextChecker::spellingUIIsShowing()
 {
-    return [[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible];
+    return [retainPtr([[NSSpellChecker sharedSpellChecker] spellingPanel]).get() isVisible];
 }
 
 void TextChecker::toggleSpellingUIIsShowing()
@@ -533,7 +533,7 @@ void TextChecker::getGuessesForWord(SpellDocumentTag spellDocumentTag, const Str
         [checker checkString:context.createNSString().get() range:NSMakeRange(0, context.length()) types:NSTextCheckingTypeOrthography options:options inSpellDocumentWithTag:spellDocumentTag orthography:&orthography wordCount:0];
         language = [checker languageForWordRange:NSMakeRange(0, context.length()) inString:context.createNSString().get() orthography:orthography];
     }
-    guesses = makeVector<String>([checker guessesForWordRange:NSMakeRange(0, word.length()) inString:word.createNSString().get() language:language.get() inSpellDocumentWithTag:spellDocumentTag]);
+    guesses = makeVector<String>(RetainPtr { [checker guessesForWordRange:NSMakeRange(0, word.length()) inString:word.createNSString().get() language:language.get() inSpellDocumentWithTag:spellDocumentTag] }.get());
 }
 
 void TextChecker::learnWord(SpellDocumentTag, const String& word)

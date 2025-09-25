@@ -175,7 +175,7 @@ void NetworkDataTaskCocoa::updateFirstPartyInfoForSession(const URL& requestURL)
 
     CheckedPtr session = networkSession();
     auto cnameDomain = [this]() {
-        if (RetainPtr lastResolvedCNAMEInChain = [[m_task _resolvedCNAMEChain] lastObject])
+        if (RetainPtr lastResolvedCNAMEInChain = [retainPtr([m_task _resolvedCNAMEChain]) lastObject])
             return lastCNAMEDomain(lastResolvedCNAMEInChain.get());
         return WebCore::RegistrableDomain { };
     }();
@@ -420,7 +420,7 @@ void NetworkDataTaskCocoa::didReceiveResponse(WebCore::ResourceResponse&& respon
     if (isTopLevelNavigation())
         updateFirstPartyInfoForSession(response.url());
 #if ENABLE(NETWORK_ISSUE_REPORTING)
-    else if (NetworkIssueReporter::shouldReport([m_task _incompleteTaskMetrics])) {
+    else if (NetworkIssueReporter::shouldReport(RetainPtr { [m_task _incompleteTaskMetrics] }.get())) {
         if (CheckedPtr session = networkSession())
             session->reportNetworkIssue(*m_webPageProxyID, firstRequest().url());
     }
@@ -585,7 +585,7 @@ String NetworkDataTaskCocoa::suggestedFilename() const
 {
     if (!m_suggestedFilename.isEmpty())
         return m_suggestedFilename;
-    return m_task.get().response.suggestedFilename;
+    return RetainPtr { m_task.get().response }.get().suggestedFilename;
 }
 
 void NetworkDataTaskCocoa::cancel()
@@ -668,7 +668,8 @@ NetworkDataTask::State NetworkDataTaskCocoa::state() const
 
 WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge& challenge)
 {
-    return WebCore::Credential([NSURLCredential credentialForTrust: RetainPtr { challenge.protectedNSURLAuthenticationChallenge().get().protectionSpace.serverTrust }.get()]);
+    auto protectionSpace = retainPtr(challenge.protectedNSURLAuthenticationChallenge().get().protectionSpace);
+    return WebCore::Credential([NSURLCredential credentialForTrust: RetainPtr { protectionSpace.get().serverTrust }.get()]);
 }
 
 String NetworkDataTaskCocoa::description() const

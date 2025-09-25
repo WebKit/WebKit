@@ -44,7 +44,7 @@ using namespace WebCore;
 static std::optional<String> getBase64EncodedPNGData(const RetainPtr<CGImageRef>&& cgImage)
 {
     RetainPtr<NSMutableData> imageData = adoptNS([[NSMutableData alloc] init]);
-    RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData((CFMutableDataRef)imageData.get(), bridge_cast(UTTypePNG.identifier), 1, 0));
+    RetainPtr<CGImageDestinationRef> destination = adoptCF(CGImageDestinationCreateWithData((CFMutableDataRef)imageData.get(), RetainPtr { bridge_cast(UTTypePNG.identifier) }.get(), 1, 0));
     if (!destination)
         return std::nullopt;
 
@@ -83,7 +83,7 @@ std::optional<String> WebAutomationSession::platformGenerateLocalFilePathForRemo
 
     RetainPtr temporaryDirectory = FileSystem::createTemporaryDirectory(@"WebDriver");
     RetainPtr remoteFile = adoptNS([[NSURL alloc] initFileURLWithPath:remoteFilePath.createNSString().get() isDirectory:NO]);
-    RetainPtr localFilePath = [temporaryDirectory stringByAppendingPathComponent:remoteFile.get().lastPathComponent];
+    RetainPtr localFilePath = [temporaryDirectory stringByAppendingPathComponent:RetainPtr { remoteFile.get().lastPathComponent }.get()];
 
     NSError *fileWriteError;
     [fileContents.get() writeToFile:localFilePath.get() options:NSDataWritingAtomic error:&fileWriteError];

@@ -51,7 +51,7 @@
     if (!(self = [super init]))
         return nil;
 
-    WTFBeginSignpost(self, DataTask, "%{public}@ %{private}@", task.originalRequest.HTTPMethod, task.originalRequest.URL);
+    WTFBeginSignpost(self, DataTask, "%{public}@ %{private}@", RetainPtr { task.originalRequest.HTTPMethod }.get(), RetainPtr { task.originalRequest.URL }.get());
     _identifier = identifier;
     _session = WeakPtr { session };
 

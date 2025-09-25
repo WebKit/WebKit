@@ -172,9 +172,8 @@
         }
     }
     for (id page in [self accessibilityChildren]) {
-        id focusedElement = [page accessibilityFocusedUIElement];
-        if (focusedElement)
-            return focusedElement;
+        if (RetainPtr focusedElement = [page accessibilityFocusedUIElement])
+            return focusedElement.autorelease();
     }
     return nil;
 }
@@ -197,7 +196,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     RetainPtr<NSMutableArray> visiblePageElements = adoptNS([[NSMutableArray alloc] init]);
     for (id page in [self accessibilityChildren]) {
-        id focusedElement = [page accessibilityFocusedUIElement];
+        RetainPtr focusedElement = [page accessibilityFocusedUIElement];
         if (focusedElement)
             [visiblePageElements addObject:page];
     }
@@ -212,7 +211,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (NSRect)accessibilityFrame
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    id accessibilityParent = [self accessibilityParent];
+    RetainPtr accessibilityParent = [self accessibilityParent];
     NSSize size = [[accessibilityParent accessibilityAttributeValue:NSAccessibilitySizeAttribute] sizeValue];
     NSPoint origin = [[accessibilityParent accessibilityAttributeValue:NSAccessibilityPositionAttribute] pointValue];
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -342,9 +341,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (id)accessibilityHitTest:(NSPoint)point
 {
     for (id element in [self accessibilityChildren]) {
-        id result = [element accessibilityHitTest:point];
+        RetainPtr result = [element accessibilityHitTest:point];
         if (result)
-            return result;
+            return result.autorelease();
     }
     return self;
 }

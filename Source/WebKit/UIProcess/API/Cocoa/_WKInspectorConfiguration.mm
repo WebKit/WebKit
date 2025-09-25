@@ -81,30 +81,30 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (auto* processPool = self.processPool)
-        [configuration setProcessPool:processPool];
+    if (auto processPool = retainPtr(self.processPool))
+        [configuration setProcessPool:processPool.get()];
     ALLOW_DEPRECATED_DECLARATIONS_END
 
-    if (auto* groupIdentifier = self.groupIdentifier)
-        [configuration _setGroupIdentifier:groupIdentifier];
+    if (auto groupIdentifier = retainPtr(self.groupIdentifier))
+        [configuration _setGroupIdentifier:groupIdentifier.get()];
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    _WKInspectorConfiguration *configuration = [(_WKInspectorConfiguration *)[[self class] allocWithZone:zone] init];
+    RetainPtr configuration = adoptNS([(_WKInspectorConfiguration *)[[self class] allocWithZone:zone] init]);
 
     for (auto pair : _configuration->urlSchemeHandlers()) {
         Ref handler = downcast<WebKit::WebURLSchemeHandlerCocoa>(pair.first.get());
         [configuration setURLSchemeHandler:handler->apiHandler() forURLScheme:pair.second.createNSString().get()];
     }
 
-    if (auto* processPool = self.processPool)
-        [configuration setProcessPool:processPool];
+    if (auto processPool = retainPtr(self.processPool))
+        [configuration setProcessPool:processPool.get()];
 
-    if (auto* groupIdentifier = self.groupIdentifier)
-        [configuration setGroupIdentifier:groupIdentifier];
+    if (auto groupIdentifier = retainPtr(self.groupIdentifier))
+        [configuration setGroupIdentifier:groupIdentifier.get()];
 
-    return configuration;
+    return configuration.leakRef();
 }
 
 @end

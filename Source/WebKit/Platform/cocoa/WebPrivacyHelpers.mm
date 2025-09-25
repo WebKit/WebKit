@@ -88,11 +88,11 @@ SOFT_LINK_OPTIONAL(libnetwork, nw_context_set_tracker_lookup_callback, void, __c
 - (void)didUpdate:(NSNotification *)notification
 {
     ASSERT(PAL::isWebPrivacyFrameworkAvailable());
-    auto type = dynamic_objc_cast<NSNumber>([notification.userInfo objectForKey:PAL::get_WebPrivacy_WPNotificationUserInfoResourceTypeKeySingleton()]);
+    RetainPtr type = dynamic_objc_cast<NSNumber>([notification.userInfo objectForKey:PAL::get_WebPrivacy_WPNotificationUserInfoResourceTypeKeySingleton()]);
     if (!type)
         return;
 
-    if (_callback && type.integerValue == _resourceType)
+    if (_callback && type.get().integerValue == _resourceType)
         _callback();
 }
 
@@ -164,8 +164,8 @@ void LinkDecorationFilteringController::updateList(CompletionHandler<void()>&& c
         if (error)
             RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request query parameters from WebPrivacy.");
         else {
-            auto rules = [data rules];
-            for (WPLinkFilteringRule *rule : rules) {
+            RetainPtr rules = [data rules];
+            for (WPLinkFilteringRule *rule : rules.get()) {
                 auto domain = WebCore::RegistrableDomain { URL { makeString("http://"_s, String { rule.domain }) } };
                 result.append(WebCore::LinkDecorationFilteringData { WTFMove(domain), [rule respondsToSelector:@selector(path)] ? rule.path : @"", rule.queryParameter });
             }
@@ -208,8 +208,8 @@ void requestLinkDecorationFilteringData(LinkFilteringRulesCallback&& callback)
         if (error)
             RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request allowed query parameters from WebPrivacy.");
         else {
-            auto rules = [data rules];
-            for (WPLinkFilteringRule *rule : rules) {
+            RetainPtr rules = [data rules];
+            for (WPLinkFilteringRule *rule : rules.get()) {
                 auto domain = WebCore::RegistrableDomain { URL { makeString("http://"_s, String { rule.domain }) } };
                 result.append(WebCore::LinkDecorationFilteringData { WTFMove(domain), { }, rule.queryParameter });
             }
@@ -240,8 +240,8 @@ void StorageAccessPromptQuirkController::didUpdateCachedListData()
 static HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> quirkDomainsDictToMap(NSDictionary<NSString *, NSArray<NSString *> *> *quirkDomains)
 {
     HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> map;
-    auto* topDomains = quirkDomains.allKeys;
-    for (NSString *topDomain : topDomains) {
+    auto topDomains = retainPtr(quirkDomains.allKeys);
+    for (NSString *topDomain : topDomains.get()) {
         Vector<WebCore::RegistrableDomain> subFrameDomains;
         for (NSString *subFrameDomain : [quirkDomains objectForKey:topDomain])
             subFrameDomains.append(WebCore::RegistrableDomain::fromRawString(subFrameDomain));
@@ -281,9 +281,9 @@ void StorageAccessPromptQuirkController::updateList(CompletionHandler<void()>&& 
         if (error)
             RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request storage access quirks from WebPrivacy.");
         else {
-            auto quirks = [data quirks];
+            auto quirks = retainPtr([data quirks]);
             auto hasQuirkDomainsAndTriggerPages = [PAL::getWPStorageAccessPromptQuirkClassSingleton() instancesRespondToSelector:@selector(quirkDomains)] && [PAL::getWPStorageAccessPromptQuirkClassSingleton() instancesRespondToSelector:@selector(triggerPages)];
-            for (WPStorageAccessPromptQuirk *quirk : quirks) {
+            for (WPStorageAccessPromptQuirk *quirk : quirks.get()) {
                 if (hasQuirkDomainsAndTriggerPages)
                     result.append(WebCore::OrganizationStorageAccessPromptQuirk { quirk.name, quirkDomainsDictToMap(quirk.quirkDomains), quirkPagesArrayToVector(quirk.triggerPages) });
                 else
@@ -323,8 +323,8 @@ void StorageAccessUserAgentStringQuirkController::updateList(CompletionHandler<v
         if (error)
             RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request storage access user agent string quirks from WebPrivacy.");
         else {
-            auto quirks = [data quirks];
-            for (WPStorageAccessUserAgentStringQuirk *quirk : quirks)
+            RetainPtr quirks = [data quirks];
+            for (WPStorageAccessUserAgentStringQuirk *quirk : quirks.get())
                 result.add(WebCore::RegistrableDomain::fromRawString(quirk.domain), quirk.userAgentString);
             setCachedListData(WTFMove(result));
         }
@@ -706,7 +706,7 @@ void configureForAdvancedPrivacyProtections(NSURLSession *session)
     if (!canSetTrackerLookupCallback)
         return;
 
-    auto context = session._networkContext;
+    auto context = retainPtr(session._networkContext);
     if (!context)
         return;
 
@@ -717,7 +717,7 @@ void configureForAdvancedPrivacyProtections(NSURLSession *session)
     if (!setTrackerLookupCallback)
         return;
 
-    setTrackerLookupCallback(context, ^(nw_endpoint_t endpoint, const char** hostName, const char** owner, bool* canBlock) {
+    setTrackerLookupCallback(context.get(), ^(nw_endpoint_t endpoint, const char** hostName, const char** owner, bool* canBlock) {
         if (auto address = ipAddress(endpoint)) {
             if (auto* info = TrackerAddressLookupInfo::find(*address)) {
                 *owner = info->owner().data();

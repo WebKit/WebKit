@@ -46,15 +46,15 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    _WKContentWorldConfiguration *clone = [(_WKContentWorldConfiguration *)[[self class] allocWithZone:zone] init];
+    auto clone = adoptNS([(_WKContentWorldConfiguration *)[[self class] allocWithZone:zone] init]);
 
-    clone.name = self.name;
-    clone.allowAccessToClosedShadowRoots = self.allowAccessToClosedShadowRoots;
-    clone.allowAutofill = self.allowAutofill;
-    clone.allowElementUserInfo = self.allowElementUserInfo;
-    clone.disableLegacyBuiltinOverrides = self.disableLegacyBuiltinOverrides;
+    clone.get().name = _name.createNSString().get();
+    clone.get().allowAccessToClosedShadowRoots = self.allowAccessToClosedShadowRoots;
+    clone.get().allowAutofill = self.allowAutofill;
+    clone.get().allowElementUserInfo = self.allowElementUserInfo;
+    clone.get().disableLegacyBuiltinOverrides = self.disableLegacyBuiltinOverrides;
 
-    return clone;
+    return clone.leakRef();
 }
 
 #pragma mark NSSecureCoding protocol implementation
@@ -66,7 +66,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
-    [coder encodeObject:self.name forKey:@"name"];
+    [coder encodeObject:_name.createNSString().get() forKey:@"name"];
     [coder encodeBool:self.allowAccessToClosedShadowRoots forKey:@"allowAccessToClosedShadowRoots"];
     [coder encodeBool:self.allowAutofill forKey:@"allowAutofill"];
     [coder encodeBool:self.allowElementUserInfo forKey:@"allowElementUserInfo"];
@@ -78,7 +78,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     if (!(self = [self init]))
         return nil;
 
-    self.name = [coder decodeObjectOfClass:[NSString class] forKey:@"name"];
+    self.name = retainPtr([coder decodeObjectOfClass:[NSString class] forKey:@"name"]).get();
     self.allowAccessToClosedShadowRoots = [coder decodeBoolForKey:@"allowAccessToClosedShadowRoots"];
     self.allowAutofill = [coder decodeBoolForKey:@"allowAutofill"];
     self.allowElementUserInfo = [coder decodeBoolForKey:@"allowElementUserInfo"];

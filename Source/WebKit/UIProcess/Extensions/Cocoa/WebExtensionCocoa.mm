@@ -147,7 +147,7 @@ SecStaticCodeRef WebExtension::bundleStaticCode() const
         return m_bundleStaticCode.get();
 
     SecStaticCodeRef staticCodeRef;
-    OSStatus error = SecStaticCodeCreateWithPath(bridge_cast(m_bundle.get().bundleURL), kSecCSDefaultFlags, &staticCodeRef);
+    OSStatus error = SecStaticCodeCreateWithPath(RetainPtr { bridge_cast(m_bundle.get().bundleURL) }.get(), kSecCSDefaultFlags, &staticCodeRef);
     if (error != noErr || !staticCodeRef) {
         if (staticCodeRef)
             CFRelease(staticCodeRef);

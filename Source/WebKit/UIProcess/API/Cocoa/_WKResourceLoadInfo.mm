@@ -150,64 +150,64 @@ static _WKResourceLoadInfoResourceType toWKResourceLoadInfoResourceType(WebKit::
     if (!(self = [super init]))
         return nil;
 
-    NSNumber *resourceLoadID = [coder decodeObjectOfClass:[NSNumber class] forKey:@"resourceLoadID"];
+    RetainPtr<NSNumber> resourceLoadID = [coder decodeObjectOfClass:[NSNumber class] forKey:@"resourceLoadID"];
     if (!resourceLoadID) {
         [self release];
         return nil;
     }
 
-    _WKFrameHandle *frame = [coder decodeObjectOfClass:[_WKFrameHandle class] forKey:@"frame"];
+    RetainPtr<_WKFrameHandle> frame = [coder decodeObjectOfClass:[_WKFrameHandle class] forKey:@"frame"];
     if (!frame) {
         [self release];
         return nil;
     }
 
-    _WKFrameHandle *parentFrame = [coder decodeObjectOfClass:[_WKFrameHandle class] forKey:@"parentFrame"];
+    RetainPtr<_WKFrameHandle> parentFrame = [coder decodeObjectOfClass:[_WKFrameHandle class] forKey:@"parentFrame"];
     // parentFrame is nullable, so decoding null is ok.
 
-    NSUUID *documentID = [coder decodeObjectOfClass:NSUUID.class forKey:@"documentID"];
+    RetainPtr<NSUUID> documentID = [coder decodeObjectOfClass:NSUUID.class forKey:@"documentID"];
     // documentID is nullable, so decoding null is ok.
 
-    NSURL *originalURL = [coder decodeObjectOfClass:[NSURL class] forKey:@"originalURL"];
+    RetainPtr<NSURL> originalURL = [coder decodeObjectOfClass:[NSURL class] forKey:@"originalURL"];
     if (!originalURL) {
         [self release];
         return nil;
     }
 
-    NSString *originalHTTPMethod = [coder decodeObjectOfClass:[NSString class] forKey:@"originalHTTPMethod"];
+    RetainPtr<NSString> originalHTTPMethod = [coder decodeObjectOfClass:[NSString class] forKey:@"originalHTTPMethod"];
     if (!originalHTTPMethod) {
         [self release];
         return nil;
     }
 
-    NSDate *eventTimestamp = [coder decodeObjectOfClass:[NSDate class] forKey:@"eventTimestamp"];
+    RetainPtr<NSDate> eventTimestamp = [coder decodeObjectOfClass:[NSDate class] forKey:@"eventTimestamp"];
     if (!eventTimestamp) {
         [self release];
         return nil;
     }
 
-    NSNumber *loadedFromCache = [coder decodeObjectOfClass:[NSNumber class] forKey:@"loadedFromCache"];
+    RetainPtr<NSNumber> loadedFromCache = [coder decodeObjectOfClass:[NSNumber class] forKey:@"loadedFromCache"];
     if (!loadedFromCache) {
         [self release];
         return nil;
     }
 
-    NSNumber *type = [coder decodeObjectOfClass:[NSNumber class] forKey:@"type"];
+    RetainPtr<NSNumber> type = [coder decodeObjectOfClass:[NSNumber class] forKey:@"type"];
     if (!type) {
         [self release];
         return nil;
     }
 
     WebKit::ResourceLoadInfo info {
-        ObjectIdentifier<WebKit::NetworkResourceLoadIdentifierType>(resourceLoadID.unsignedLongLongValue),
+        ObjectIdentifier<WebKit::NetworkResourceLoadIdentifierType>(resourceLoadID.get().unsignedLongLongValue),
         frame->_frameHandle->frameID(),
         parentFrame ? parentFrame->_frameHandle->frameID() : std::nullopt,
-        documentID ? WTF::UUID::fromNSUUID(documentID) : std::nullopt,
-        originalURL,
-        originalHTTPMethod,
-        WallTime::fromRawSeconds(eventTimestamp.timeIntervalSince1970),
-        static_cast<bool>(loadedFromCache.boolValue),
-        static_cast<WebKit::ResourceLoadInfo::Type>(type.unsignedCharValue),
+        documentID ? WTF::UUID::fromNSUUID(documentID.get()) : std::nullopt,
+        originalURL.get(),
+        originalHTTPMethod.get(),
+        WallTime::fromRawSeconds(eventTimestamp.get().timeIntervalSince1970),
+        static_cast<bool>(loadedFromCache.get().boolValue),
+        static_cast<WebKit::ResourceLoadInfo::Type>(type.get().unsignedCharValue),
     };
 
     API::Object::constructInWrapper<API::ResourceLoadInfo>(self, WTFMove(info));

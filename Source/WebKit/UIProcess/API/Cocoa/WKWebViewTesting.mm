@@ -130,7 +130,7 @@
 #if PLATFORM(IOS_FAMILY)
         dumpCALayer(ts, [_contentView layer], true);
 #else
-        dumpCALayer(ts, self.layer, true);
+        dumpCALayer(ts, retainPtr(self.layer).get(), true);
 #endif
     }
 
@@ -191,7 +191,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     if (layer.maskedCorners != allCorners)
         ts.dumpProperty("layer masked corners"_s, makeString(layer.maskedCorners));
     
-    if (traverse && layer.sublayers.count > 0) {
+    if (traverse && retainPtr(layer.sublayers).get().count > 0) {
         TextStream::GroupScope scope(ts);
         ts << "sublayers"_s;
         for (CALayer *sublayer in layer.sublayers) {

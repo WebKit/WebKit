@@ -500,10 +500,10 @@ void WebInspectorUIProxy::platformCreateFrontendWindow()
     m_inspectorWindow = WebInspectorUIProxy::createFrontendWindow(savedWindowFrame, InspectionTargetType::Local, protectedInspectedPage().get());
     [m_inspectorWindow setDelegate:m_objCAdapter.get()];
 
-    WKWebView *inspectorView = [m_inspectorViewController webView];
-    NSView *contentView = [m_inspectorWindow contentView];
-    inspectorView.frame = [contentView bounds];
-    [contentView addSubview:inspectorView];
+    RetainPtr inspectorView = [m_inspectorViewController webView];
+    RetainPtr contentView = [m_inspectorWindow contentView];
+    inspectorView.get().frame = [contentView bounds];
+    [contentView addSubview:inspectorView.get()];
 
     updateInspectorWindowTitle();
     applyForcedAppearance();
@@ -674,7 +674,7 @@ void WebInspectorUIProxy::platformShowCertificate(const CertificateInfo& certifi
     [certificatePanel beginSheetForWindow:window.get() modalDelegate:nil didEndSelector:NULL contextInfo:nullptr trust:certificateInfo.trust().get() showGroup:YES];
 
     // This must be called after the trust panel has been displayed, because the certificateView doesn't exist beforehand.
-    SFCertificateView *certificateView = [certificatePanel certificateView];
+    RetainPtr certificateView = [certificatePanel certificateView];
     [certificateView setDisplayTrust:YES];
     [certificateView setEditableTrust:NO];
     [certificateView setDisplayDetails:YES];
@@ -774,10 +774,10 @@ void WebInspectorUIProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
         return;
 
     RetainPtr inspectedView = inspectedPage->inspectorAttachmentView();
-    WKWebView *inspectorView = [m_inspectorViewController webView];
+    RetainPtr inspectorView = [m_inspectorViewController webView];
 
     NSRect inspectedViewFrame = inspectedView.get().frame;
-    NSRect oldInspectorViewFrame = inspectorView.frame;
+    NSRect oldInspectorViewFrame = inspectorView.get().frame;
     NSRect newInspectorViewFrame = NSZeroRect;
     NSRect parentBounds = inspectedView.get().superview.bounds;
     CGFloat inspectedViewTop = NSMaxY(inspectedViewFrame);
@@ -845,7 +845,7 @@ void WebInspectorUIProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
 
     // Disable screen updates to make sure the layers for both views resize in sync.
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [inspectorView.window disableScreenUpdatesUntilFlush];
+    [inspectorView.get().window disableScreenUpdatesUntilFlush];
     ALLOW_DEPRECATED_DECLARATIONS_END
 
     [inspectorView setFrame:newInspectorViewFrame];
@@ -856,7 +856,7 @@ void WebInspectorUIProxy::platformAttach()
 {
     ASSERT(protectedInspectedPage());
     RetainPtr inspectedView = protectedInspectedPage()->inspectorAttachmentView();
-    WKWebView *inspectorView = [m_inspectorViewController webView];
+    RetainPtr inspectorView = [m_inspectorViewController webView];
 
     if (m_inspectorWindow) {
         [m_inspectorWindow setDelegate:nil];
@@ -884,8 +884,8 @@ void WebInspectorUIProxy::platformAttach()
 
     inspectedViewFrameDidChange(currentDimension);
 
-    [inspectedView.get().superview addSubview:inspectorView positioned:NSWindowBelow relativeTo:inspectedView.get()];
-    [inspectorView.window makeFirstResponder:inspectorView];
+    [inspectedView.get().superview addSubview:inspectorView.get() positioned:NSWindowBelow relativeTo:inspectedView.get()];
+    [inspectorView.get().window makeFirstResponder:inspectorView.get()];
 
     [m_inspectorViewController didAttachOrDetach];
 }
@@ -894,7 +894,7 @@ void WebInspectorUIProxy::platformDetach()
 {
     RefPtr inspectedPage = m_inspectedPage.get();
     RetainPtr inspectedView = inspectedPage ? inspectedPage->inspectorAttachmentView() : nil;
-    WKWebView *inspectorView = [m_inspectorViewController webView];
+    RetainPtr inspectorView = [m_inspectorViewController webView];
 
     [inspectorView removeFromSuperview];
     [inspectorView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
@@ -939,7 +939,7 @@ void WebInspectorUIProxy::platformSetSheetRect(const FloatRect& rect)
 
 void WebInspectorUIProxy::platformStartWindowDrag()
 {
-    if (auto* webView = [m_inspectorViewController webView]) {
+    if (RetainPtr webView = [m_inspectorViewController webView]) {
         if (RefPtr page = webView->_page)
             page->startWindowDrag();
     }

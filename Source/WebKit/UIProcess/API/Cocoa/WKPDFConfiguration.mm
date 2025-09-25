@@ -44,12 +44,12 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    WKPDFConfiguration *pdfConfiguration = [(WKPDFConfiguration *)[[self class] allocWithZone:zone] init];
+    RetainPtr pdfConfiguration = adoptNS([(WKPDFConfiguration *)[[self class] allocWithZone:zone] init]);
 
-    pdfConfiguration.rect = self.rect;
-    pdfConfiguration.allowTransparentBackground = self.allowTransparentBackground;
+    pdfConfiguration.get().rect = self.rect;
+    pdfConfiguration.get().allowTransparentBackground = self.allowTransparentBackground;
 
-    return pdfConfiguration;
+    return pdfConfiguration.leakRef();
 }
 
 @end

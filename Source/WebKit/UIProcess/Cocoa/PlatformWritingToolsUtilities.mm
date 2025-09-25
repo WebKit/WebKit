@@ -163,7 +163,7 @@ WebCore::WritingTools::Session::CompositionType convertToWebCompositionSessionTy
 
 std::optional<WebCore::WritingTools::Context> convertToWebContext(WTContext *context)
 {
-    auto contextUUID = WTF::UUID::fromNSUUID(context.uuid);
+    auto contextUUID = WTF::UUID::fromNSUUID(RetainPtr { context.uuid }.get());
     if (!contextUUID)
         return std::nullopt;
 
@@ -172,7 +172,7 @@ std::optional<WebCore::WritingTools::Context> convertToWebContext(WTContext *con
 
 std::optional<WebCore::WritingTools::Session> convertToWebSession(WTSession *session)
 {
-    auto sessionUUID = WTF::UUID::fromNSUUID(session.uuid);
+    auto sessionUUID = WTF::UUID::fromNSUUID(RetainPtr { session.uuid }.get());
     if (!sessionUUID)
         return std::nullopt;
 
@@ -181,7 +181,7 @@ std::optional<WebCore::WritingTools::Session> convertToWebSession(WTSession *ses
 
 std::optional<WebCore::WritingTools::TextSuggestion> convertToWebTextSuggestion(WTTextSuggestion *suggestion)
 {
-    auto suggestionUUID = WTF::UUID::fromNSUUID(suggestion.uuid);
+    auto suggestionUUID = WTF::UUID::fromNSUUID(RetainPtr { suggestion.uuid }.get());
     if (!suggestionUUID)
         return std::nullopt;
 

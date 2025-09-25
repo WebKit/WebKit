@@ -85,14 +85,18 @@ NSString * const _WKTextManipulationItemErrorItemKey = @"item";
     if (!otherItem)
         return NO;
 
-    if (!(self.identifier == otherItem.identifier || [self.identifier isEqualToString:otherItem.identifier]) || self.tokens.count != otherItem.tokens.count)
+    auto selfTokens = retainPtr(self.tokens);
+    auto selfTokensCount = selfTokens.get().count;
+    auto otherTokens = retainPtr(otherItem.tokens);
+    auto otherTokensCount = otherTokens.get().count;
+    if (!(self.identifier == otherItem.identifier || [self.identifier isEqualToString:otherItem.identifier]) || selfTokensCount != otherTokensCount)
         return NO;
 
     __block BOOL tokensAreEqual = YES;
-    NSUInteger count = std::min(self.tokens.count, otherItem.tokens.count);
-    [self.tokens enumerateObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, count)] options:0 usingBlock:^(_WKTextManipulationToken *token, NSUInteger index, BOOL* stop) {
-        _WKTextManipulationToken *otherToken = otherItem.tokens[index];
-        if (![token isEqualToTextManipulationToken:otherToken includingContentEquality:includingContentEquality]) {
+    NSUInteger count = std::min(selfTokensCount, otherTokensCount);
+    [selfTokens enumerateObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, count)] options:0 usingBlock:^(_WKTextManipulationToken *token, NSUInteger index, BOOL* stop) {
+        auto otherToken = retainPtr(otherTokens.get()[index]);
+        if (![token isEqualToTextManipulationToken:otherToken.get() includingContentEquality:includingContentEquality]) {
             tokensAreEqual = NO;
             *stop = YES;
         }
@@ -114,12 +118,12 @@ NSString * const _WKTextManipulationItemErrorItemKey = @"item";
 - (NSString *)_descriptionPreservingPrivacy:(BOOL)preservePrivacy
 {
     NSMutableArray<NSString *> *recursiveDescriptions = [NSMutableArray array];
-    [self.tokens enumerateObjectsUsingBlock:^(_WKTextManipulationToken *token, NSUInteger index, BOOL* stop) {
-        NSString *description = preservePrivacy ? token.description : token.debugDescription;
-        [recursiveDescriptions addObject:description];
+    [retainPtr(self.tokens) enumerateObjectsUsingBlock:^(_WKTextManipulationToken *token, NSUInteger index, BOOL* stop) {
+        RetainPtr description = preservePrivacy ? token.description : token.debugDescription;
+        [recursiveDescriptions addObject:description.get()];
     }];
-    RetainPtr tokenDescription = adoptNS([[NSString alloc] initWithFormat:@"[\n\t%@\n]", [recursiveDescriptions componentsJoinedByString:@",\n\t"]]);
-    return [NSString stringWithFormat:@"<%@: %p; identifier = %@ tokens = %@>", self.class, self, self.identifier, tokenDescription.get()];
+    RetainPtr tokenDescription = adoptNS([[NSString alloc] initWithFormat:@"[\n\t%@\n]", RetainPtr { [recursiveDescriptions componentsJoinedByString:@",\n\t"] }.get()]);
+    return [NSString stringWithFormat:@"<%@: %p; identifier = %@ tokens = %@>", self.class, self, RetainPtr { self.identifier }.get(), tokenDescription.get()];
 }
 
 @end

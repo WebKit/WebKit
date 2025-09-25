@@ -57,7 +57,7 @@
 - (NSString *)debugDescription
 {
     auto rect = self.rectInWebView;
-    return [NSString stringWithFormat:@"'%@' at {{%.0f, %.0f}, {%.0f, %.0f}}", self.text, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height];
+    return [NSString stringWithFormat:@"'%@' at {{%.0f, %.0f}, {%.0f, %.0f}}", RetainPtr { self.text }.get(), rect.origin.x, rect.origin.y, rect.size.width, rect.size.height];
 }
 
 @end

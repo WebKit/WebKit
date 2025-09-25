@@ -147,8 +147,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (NSArray *)accessibilityChildren
 {
-    id wrapper = [self accessibilityRootObjectWrapper:[self focusedLocalFrame]];
-    return wrapper ? @[wrapper] : @[];
+    RetainPtr wrapper = [self accessibilityRootObjectWrapper:[self focusedLocalFrame]];
+    return wrapper ? @[wrapper.get()] : @[];
 }
 
 - (NSArray *)accessibilityChildrenInNavigationOrder
@@ -353,7 +353,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             }
         }
 
-        return [[protectedSelf accessibilityRootObjectWrapper:[protectedSelf focusedLocalFrame]] accessibilityHitTest:convertedPoint];
+        return [retainPtr([protectedSelf accessibilityRootObjectWrapper:[protectedSelf focusedLocalFrame]]) accessibilityHitTest:convertedPoint];
     });
 }
 ALLOW_DEPRECATED_DECLARATIONS_END

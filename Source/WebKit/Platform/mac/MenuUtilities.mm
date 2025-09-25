@@ -84,6 +84,14 @@ SOFT_LINK_CLASS(TelephonyUtilities, TUCall)
 
 @end
 
+#if HAVE(DATA_DETECTORS_MAC_ACTION)
+using PlatformDDAction = DDMacAction;
+SPECIALIZE_OBJC_TYPE_TRAITS(DDMacAction, PAL::getDDMacActionClassSingleton())
+#else
+using PlatformDDAction = DDAction;
+SPECIALIZE_OBJC_TYPE_TRAITS(DDAction, PAL::getDDActionClassSingleton())
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -94,27 +102,13 @@ NSString *menuItemTitleForTelephoneNumberGroup()
     return [getTUCallClassSingleton() supplementalDialTelephonyCallString];
 }
 
-#if HAVE(DATA_DETECTORS_MAC_ACTION)
-static DDMacAction *actionForMenuItem(NSMenuItem *item)
-#else
-static DDAction *actionForMenuItem(NSMenuItem *item)
-#endif
+static PlatformDDAction *actionForMenuItem(NSMenuItem *item)
 {
-    auto *representedObject = dynamic_objc_cast<NSDictionary>(item.representedObject);
+    RetainPtr representedObject = dynamic_objc_cast<NSDictionary>(item.representedObject);
     if (!representedObject)
         return nil;
 
-    id action = [representedObject objectForKey:@"DDAction"];
-
-#if HAVE(DATA_DETECTORS_MAC_ACTION)
-    if (![action isKindOfClass:PAL::getDDMacActionClassSingleton()])
-        return nil;
-#else
-    if (![action isKindOfClass:PAL::getDDActionClassSingleton()])
-        return nil;
-#endif
-
-    return action;
+    return dynamic_objc_cast<PlatformDDAction>([representedObject objectForKey:@"DDAction"]);
 }
 
 NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
@@ -147,13 +141,13 @@ RetainPtr<NSMenu> menuForTelephoneNumber(const String& telephoneNumber, NSView *
     auto urlComponents = adoptNS([[NSURLComponents alloc] init]);
     [urlComponents setScheme:@"tel"];
     [urlComponents setPath:telephoneNumber.createNSString().get()];
-    auto item = adoptNS([PAL::allocRVItemInstance() initWithURL:[urlComponents URL] rangeInContext:NSMakeRange(0, telephoneNumber.length())]);
-    auto presenter = adoptNS([PAL::allocRVPresenterInstance() init]);
-    auto delegate = adoptNS([[WKEmptyPresenterHighlightDelegate alloc] initWithRect:rect]);
+    RetainPtr item = adoptNS([PAL::allocRVItemInstance() initWithURL:[urlComponents URL] rangeInContext:NSMakeRange(0, telephoneNumber.length())]);
+    RetainPtr presenter = adoptNS([PAL::allocRVPresenterInstance() init]);
+    RetainPtr delegate = adoptNS([[WKEmptyPresenterHighlightDelegate alloc] initWithRect:rect]);
     auto context = WebCore::createRVPresentingContextWithRetainedDelegate(NSZeroPoint, webView, delegate.get());
-    NSArray *proposedMenuItems = [presenter menuItemsForItem:item.get() documentContext:nil presentingContext:context.get() options:nil];
+    RetainPtr proposedMenuItems = retainPtr([presenter menuItemsForItem:item.get() documentContext:nil presentingContext:context.get() options:nil]);
 
-    [menu setItemArray:proposedMenuItems];
+    [menu setItemArray:proposedMenuItems.get()];
 
     return menu;
 }

@@ -97,7 +97,7 @@ struct PendingReply {
     if (!_remoteObjectProxies)
         _remoteObjectProxies = [NSMapTable strongToWeakObjectsMapTable];
 
-    if (RetainPtr<id> remoteObjectProxy = [_remoteObjectProxies objectForKey:interface.identifier])
+    if (RetainPtr<id> remoteObjectProxy = [_remoteObjectProxies objectForKey:RetainPtr { interface.identifier }.get()])
         return remoteObjectProxy.autorelease();
 
     RetainPtr<NSString> identifier = adoptNS([interface.identifier copy]);
@@ -208,7 +208,7 @@ static NSString *replyBlockSignature(Protocol *protocol, SEL selector, NSUIntege
     if (!targetMethodSignature)
         return nil;
 
-    return [targetMethodSignature _signatureForBlockAtArgumentIndex:blockIndex]._typeString;
+    return RetainPtr { [targetMethodSignature _signatureForBlockAtArgumentIndex:blockIndex] }.get()._typeString;
 }
 
 - (void)_invokeMethod:(const WebKit::RemoteObjectInvocation&)remoteObjectInvocation
@@ -248,7 +248,7 @@ static NSString *replyBlockSignature(Protocol *protocol, SEL selector, NSUIntege
         }
 
         RetainPtr<NSString> wireBlockSignature = [NSMethodSignature signatureWithObjCTypes:replyInfo->blockSignature.utf8().data()]._typeString;
-        RetainPtr<NSString> expectedBlockSignature = replyBlockSignature([interface protocol], invocation.get().selector, i);
+        RetainPtr<NSString> expectedBlockSignature = replyBlockSignature(RetainPtr { [interface protocol] }.get(), invocation.get().selector, i);
 
         if (!expectedBlockSignature) {
             NSLog(@"_invokeMethod: Failed to validate reply block signature: could not find local signature");

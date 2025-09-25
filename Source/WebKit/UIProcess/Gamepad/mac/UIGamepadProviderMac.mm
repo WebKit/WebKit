@@ -39,7 +39,7 @@ namespace WebKit {
 WebPageProxy* UIGamepadProvider::platformWebPageProxyForGamepadInput()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    auto responder = [[NSApp keyWindow] firstResponder];
+    RetainPtr responder = [[NSApp keyWindow] firstResponder];
 
     if (RetainPtr view = dynamic_objc_cast<WKWebView>(responder))
         return view->_page.get();

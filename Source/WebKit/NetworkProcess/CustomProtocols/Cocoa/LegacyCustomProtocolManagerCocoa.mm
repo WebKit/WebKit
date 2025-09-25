@@ -185,7 +185,7 @@ void LegacyCustomProtocolManager::didFailWithError(LegacyCustomProtocolID custom
     RetainPtr<NSError> nsError = error.nsError();
 
     dispatchOnInitializationRunLoop(protocol.get(), ^ {
-        [[protocol client] URLProtocol:protocol.get() didFailWithError:nsError.get()];
+        [retainPtr([protocol client]) URLProtocol:protocol.get() didFailWithError:nsError.get()];
     });
 
     removeCustomProtocol(customProtocolID);
@@ -200,7 +200,7 @@ void LegacyCustomProtocolManager::didLoadData(LegacyCustomProtocolID customProto
     RetainPtr nsData = toNSData(data);
 
     dispatchOnInitializationRunLoop(protocol.get(), ^ {
-        [[protocol client] URLProtocol:protocol.get() didLoadData:nsData.get()];
+        [retainPtr([protocol client]) URLProtocol:protocol.get() didLoadData:nsData.get()];
     });
 }
 
@@ -213,7 +213,7 @@ void LegacyCustomProtocolManager::didReceiveResponse(LegacyCustomProtocolID cust
     RetainPtr<NSURLResponse> nsResponse = response.nsURLResponse();
 
     dispatchOnInitializationRunLoop(protocol.get(), ^ {
-        [[protocol client] URLProtocol:protocol.get() didReceiveResponse:nsResponse.get() cacheStoragePolicy:toNSURLCacheStoragePolicy(cacheStoragePolicy)];
+        [retainPtr([protocol client]) URLProtocol:protocol.get() didReceiveResponse:nsResponse.get() cacheStoragePolicy:toNSURLCacheStoragePolicy(cacheStoragePolicy)];
     });
 }
 
@@ -224,7 +224,7 @@ void LegacyCustomProtocolManager::didFinishLoading(LegacyCustomProtocolID custom
         return;
 
     dispatchOnInitializationRunLoop(protocol.get(), ^ {
-        [[protocol client] URLProtocolDidFinishLoading:protocol.get()];
+        [retainPtr([protocol client]) URLProtocolDidFinishLoading:protocol.get()];
     });
 
     removeCustomProtocol(customProtocolID);
@@ -240,7 +240,7 @@ void LegacyCustomProtocolManager::wasRedirectedToRequest(LegacyCustomProtocolID 
     RetainPtr<NSURLResponse> nsRedirectResponse = redirectResponse.nsURLResponse();
 
     dispatchOnInitializationRunLoop(protocol.get(), [protocol, nsRequest, nsRedirectResponse]() {
-        [[protocol client] URLProtocol:protocol.get() wasRedirectedToRequest:nsRequest.get() redirectResponse:nsRedirectResponse.get()];
+        [retainPtr([protocol client]) URLProtocol:protocol.get() wasRedirectedToRequest:nsRequest.get() redirectResponse:nsRedirectResponse.get()];
     });
 }
 

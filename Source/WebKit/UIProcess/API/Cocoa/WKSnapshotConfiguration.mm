@@ -63,18 +63,18 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    WKSnapshotConfiguration *snapshotConfiguration = [(WKSnapshotConfiguration *)[[self class] allocWithZone:zone] init];
+    RetainPtr snapshotConfiguration = adoptNS([(WKSnapshotConfiguration *)[[self class] allocWithZone:zone] init]);
 
-    snapshotConfiguration.rect = self.rect;
-    snapshotConfiguration.snapshotWidth = self.snapshotWidth;
-    snapshotConfiguration.afterScreenUpdates = self.afterScreenUpdates;
+    snapshotConfiguration.get().rect = self.rect;
+    snapshotConfiguration.get().snapshotWidth = self.snapshotWidth;
+    snapshotConfiguration.get().afterScreenUpdates = self.afterScreenUpdates;
 
 #if PLATFORM(MAC)
-    snapshotConfiguration._includesSelectionHighlighting = self._includesSelectionHighlighting;
+    snapshotConfiguration.get()._includesSelectionHighlighting = self._includesSelectionHighlighting;
 #endif
-    snapshotConfiguration._usesTransparentBackground = self._usesTransparentBackground;
+    snapshotConfiguration.get()._usesTransparentBackground = self._usesTransparentBackground;
 
-    return snapshotConfiguration;
+    return snapshotConfiguration.leakRef();
 }
 
 #if PLATFORM(MAC)

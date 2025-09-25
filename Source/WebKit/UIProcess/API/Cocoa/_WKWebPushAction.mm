@@ -71,28 +71,24 @@ static RetainPtr<NSUUID> uuidFromPushPartition(NSString *pushPartition)
 
 + (_WKWebPushAction *)webPushActionWithDictionary:(NSDictionary *)dictionary
 {
-    NSNumber *version = dictionary[WebKit::WebPushD::pushActionVersionKey()];
-    if (!version || ![version isKindOfClass:[NSNumber class]])
-        return nil;
-
-    NSString *pushPartition = dictionary[WebKit::WebPushD::pushActionPartitionKey()];
-    if (!pushPartition || ![pushPartition isKindOfClass:[NSString class]])
-        return nil;
-
+    auto versionValue = retainPtr(dictionary[WebKit::WebPushD::pushActionVersionKey()]);
+    auto pushPartitionValue = retainPtr(dictionary[WebKit::WebPushD::pushActionPartitionKey()]);
     RetainPtr uuid = uuidFromPushPartition(pushPartition);
-    if (!uuid)
-        return nil;
+    auto typeValue = retainPtr(dictionary[WebKit::WebPushD::pushActionTypeKey()]);
+    {
+        auto* version = dynamic_objc_cast<NSNumber>(versionValue.get());
+        auto* pushPartition = dynamic_objc_cast<NSString>(pushPartitionValue.get());
+        auto* type = dynamic_objc_cast<NSString>(typeValue.get());
+        if (!version || !pushPartition || !uuid || !type)
+            return nil;
 
-    NSString *type = dictionary[WebKit::WebPushD::pushActionTypeKey()];
-    if (!type || ![type isKindOfClass:[NSString class]])
-        return nil;
+        RetainPtr result = adoptNS([[_WKWebPushAction alloc] init]);
+        result.get().version = version;
+        result.get().webClipIdentifier = uuid.get();
+        result.get().type = type;
 
-    RetainPtr result = adoptNS([[_WKWebPushAction alloc] init]);
-    result.get().version = version;
-    result.get().webClipIdentifier = uuid.get();
-    result.get().type = type;
-
-    return result.autorelease();
+        return result.autorelease();
+    }
 }
 
 + (_WKWebPushAction *)_webPushActionWithNotificationResponse:(UNNotificationResponse *)response

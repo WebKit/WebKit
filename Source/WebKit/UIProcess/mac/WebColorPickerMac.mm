@@ -172,7 +172,7 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     controller.get().delegate = self;
 
     if (_suggestedColors) {
-        NSUInteger numColors = [[_suggestedColors allKeys] count];
+        NSUInteger numColors = [retainPtr([_suggestedColors allKeys]).get() count];
         CGFloat swatchWidth = (colorPickerMatrixNumColumns * colorPickerMatrixSwatchWidth + (colorPickerMatrixNumColumns * colorPickerMatrixBorderWidth - numColors)) / numColors;
         CGFloat swatchHeight = colorPickerMatrixSwatchWidth;
 
@@ -191,7 +191,7 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
 }
 
 - (void)popoverDidClose:(NSNotification *)notification {
-    [self.webDelegate didClosePopover];
+    [retainPtr(self.webDelegate).get() didClosePopover];
 }
 
 - (NSView *)hitTest:(NSPoint)point
@@ -217,7 +217,7 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
         return self;
 
     [_popoverWell setAlphaValue:0.0];
-    [[view window].contentView addSubview:_popoverWell.get()];
+    [retainPtr([view window].contentView) addSubview:_popoverWell.get()];
 
     return self;
 }
@@ -236,7 +236,7 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     if (suggestions.size()) {
         suggestedColors = adoptNS([[NSColorList alloc] init]);
         for (size_t i = 0; i < std::min(suggestions.size(), maxColorSuggestions); i++)
-            [suggestedColors insertColor:cocoaColor(suggestions.at(i)).get() key:@(i).stringValue atIndex:i];
+            [suggestedColors insertColor:cocoaColor(suggestions.at(i)).get() key:RetainPtr { @(i).stringValue }.get() atIndex:i];
     }
 
     [_popoverWell setSuggestedColors:suggestedColors.get()];
@@ -288,7 +288,7 @@ void WebColorPickerMac::showColorPicker(const WebCore::Color& color)
     }
 
     if (RefPtr picker = _picker.get())
-        picker->didChooseColor(WebCore::colorFromCocoaColor([_popoverWell color]));
+        picker->didChooseColor(WebCore::colorFromCocoaColor(RetainPtr { [_popoverWell color] }.get()));
 }
 
 - (void)setColor:(NSColor *)color

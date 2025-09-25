@@ -72,7 +72,7 @@ RefPtr<WebCore::SharedBuffer> AuxiliaryProcessProxy::fetchAudioComponentServerRe
 
 Vector<String> AuxiliaryProcessProxy::platformOverrideLanguages() const
 {
-    static const NeverDestroyed<Vector<String>> overrideLanguages = makeVector<String>([[NSUserDefaults standardUserDefaults] stringArrayForKey:@"AppleLanguages"]);
+    static const NeverDestroyed<Vector<String>> overrideLanguages = makeVector<String>(RetainPtr { [[NSUserDefaults standardUserDefaults] stringArrayForKey:@"AppleLanguages"] }.get());
     return overrideLanguages;
 }
 

@@ -183,9 +183,9 @@ private:
 
     void didReceiveData(WebKit::DownloadProxy& download, uint64_t, uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite) final
     {
-        NSProgress *progress = wrapper(download).progress;
-        progress.totalUnitCount = totalBytesExpectedToWrite;
-        progress.completedUnitCount = totalBytesWritten;
+        auto progress = retainPtr(wrapper(download).progress);
+        progress.get().totalUnitCount = totalBytesExpectedToWrite;
+        progress.get().completedUnitCount = totalBytesWritten;
     }
 
     void didFinish(WebKit::DownloadProxy& download) final

@@ -183,7 +183,7 @@ static _WKWebPushPermissionState toWKPermissionsState(WebCore::PushPermissionSta
         if (result) {
             NSMutableArray<_WKNotificationData *> *nsResult = [NSMutableArray arrayWithCapacity:result.value().size()];
             for (auto& data : result.value())
-                [nsResult addObject:[[[_WKNotificationData alloc] _initWithCoreData:data] autorelease]];
+                [nsResult addObject:adoptNS([[_WKNotificationData alloc] _initWithCoreData:data]).autorelease()];
 
             return completionHandlerCopy(nsResult, nil);
         }

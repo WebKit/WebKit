@@ -283,11 +283,11 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     URL manifestURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"manifest_url"];
     URL startURL = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"start_url"];
     URL manifestId = [aDecoder decodeObjectOfClass:[NSURL class] forKey:@"manifestId"];
-    WebCore::CocoaColor *backgroundColor = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"background_color"];
-    WebCore::CocoaColor *themeColor = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"theme_color"];
-    NSArray<NSString *> *categories = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [NSString class]]] forKey:@"categories"];
-    NSArray<_WKApplicationManifestIcon *> *icons = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestIcon class]]] forKey:@"icons"];
-    NSArray<_WKApplicationManifestIcon *> *shortcuts = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestShortcut class], [_WKApplicationManifestIcon class]]] forKey:@"shortcuts"];
+    RetainPtr<WebCore::CocoaColor> backgroundColor = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"background_color"];
+    RetainPtr<WebCore::CocoaColor> themeColor = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"theme_color"];
+    RetainPtr<NSArray<NSString *>> categories = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [NSString class]]] forKey:@"categories"];
+    RetainPtr<NSArray<_WKApplicationManifestIcon *>> icons = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestIcon class]]] forKey:@"icons"];
+    RetainPtr<NSArray<_WKApplicationManifestIcon *>> shortcuts = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestShortcut class], [_WKApplicationManifestIcon class]]] forKey:@"shortcuts"];
 
     WebCore::ApplicationManifest coreApplicationManifest {
         WTFMove(rawJSON),
@@ -302,11 +302,11 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
         WTFMove(manifestURL),
         WTFMove(startURL),
         WTFMove(manifestId),
-        WebCore::roundAndClampToSRGBALossy(backgroundColor.CGColor),
-        WebCore::roundAndClampToSRGBALossy(themeColor.CGColor),
-        makeVector<String>(categories),
-        makeVector<WebCore::ApplicationManifest::Icon>(icons),
-        makeVector<WebCore::ApplicationManifest::Shortcut>(shortcuts),
+        WebCore::roundAndClampToSRGBALossy(backgroundColor.get().CGColor),
+        WebCore::roundAndClampToSRGBALossy(themeColor.get().CGColor),
+        makeVector<String>(categories.get()),
+        makeVector<WebCore::ApplicationManifest::Icon>(icons.get()),
+        makeVector<WebCore::ApplicationManifest::Shortcut>(shortcuts.get()),
     };
 
     API::Object::constructInWrapper<API::ApplicationManifest>(self, WTFMove(coreApplicationManifest));

@@ -158,7 +158,7 @@ void CcidService::updateSlots(NSArray *slots)
     callOnMainRunLoop([service = m_service, change = retainPtr(change)] () mutable {
         if (!service)
             return;
-        service->updateSlots(change.get()[NSKeyValueChangeNewKey]);
+        service->updateSlots(RetainPtr { change.get()[NSKeyValueChangeNewKey] }.get());
     });
 }
 @end
@@ -183,7 +183,7 @@ void CcidService::updateSlots(NSArray *slots)
 
     if (!m_service)
         return;
-    switch ([change[NSKeyValueChangeNewKey] intValue]) {
+    switch ([retainPtr(change[NSKeyValueChangeNewKey]) intValue]) {
     case TKSmartCardSlotStateMissing:
         [self removeObserver];
         return;

@@ -1262,7 +1262,7 @@ void WebPushDaemon::getAppBadgeForTesting(PushClientConnection& connection, Comp
 
     String bundleIdentifier = connection.pushPartitionIfExists().isEmpty() ? connection.hostAppCodeSigningIdentifier() : connection.pushPartitionIfExists();
     RetainPtr center = adoptNS([[_WKMockUserNotificationCenter alloc] initWithBundleIdentifier:bundleIdentifier.createNSString().get()]);
-    NSNumber *centerBadge = [center getAppBadgeForTesting];
+    RetainPtr centerBadge = [center getAppBadgeForTesting];
 
     if (centerBadge)
         completionHandler([centerBadge unsignedLongLongValue]);

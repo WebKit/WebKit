@@ -66,21 +66,22 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
 
 - (NSData *)data
 {
-    NSData *result = nil;
+    RetainPtr<NSData> result;
     _attachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
         // FIXME: Handle attachments backed by NSFileWrappers that represent directories.
         result = fileWrapper.isRegularFile ? fileWrapper.regularFileContents : nil;
     });
-    return result;
+    return result.autorelease();
 }
 
 - (NSString *)name
 {
-    NSString *result = nil;
+    RetainPtr<NSString> result;
     _attachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
-        result = fileWrapper.filename.length ? fileWrapper.filename : fileWrapper.preferredFilename;
+        auto filename = retainPtr(fileWrapper.filename);
+        result = filename.get().length ? filename.get() : fileWrapper.preferredFilename;
     });
-    return result;
+    return result.autorelease();
 }
 
 - (NSString *)filePath
@@ -185,7 +186,7 @@ static const NSInteger InvalidAttachmentErrorCode = 2;
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@ %p id='%@'>", [self class], self, self.uniqueIdentifier];
+    return [NSString stringWithFormat:@"<%@ %p id='%@'>", [self class], self, retainPtr(self.uniqueIdentifier).get()];
 }
 
 - (BOOL)isConnected

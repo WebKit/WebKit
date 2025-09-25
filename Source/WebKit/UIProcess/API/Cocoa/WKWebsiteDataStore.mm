@@ -215,15 +215,15 @@ private:
             return { };
 
         HashMap<WTF::String, bool> result;
-        NSDictionary<NSString *, NSNumber *> *permissions = [m_delegate.getAutoreleased() notificationPermissionsForWebsiteDataStore:m_dataStore.getAutoreleased()];
-        for (NSString *key in permissions) {
-            NSNumber *value = permissions[key];
+        RetainPtr<NSDictionary<NSString *, NSNumber *>> permissions = [m_delegate.getAutoreleased() notificationPermissionsForWebsiteDataStore:m_dataStore.getAutoreleased()];
+        for (NSString *key in permissions.get()) {
+            auto value = retainPtr(permissions.get()[key]);
             auto originString = WebCore::SecurityOriginData::fromURL(URL(key)).toString();
             if (originString.isEmpty()) {
                 RELEASE_LOG(Push, "[WKWebsiteDataStoreDelegate notificationPermissionsForWebsiteDataStore:] returned a URL string that could not be parsed into a security origin. Skipping.");
                 continue;
             }
-            result.set(originString, value.boolValue);
+            result.set(originString, value.get().boolValue);
         }
 
         return result;
@@ -614,8 +614,8 @@ struct WKWebsiteData {
         }
 
         NSString *unsupportedPrefix = @"This API does not support fetching: ";
-        NSString *unsupportedMessage = [unsupportedPrefix stringByAppendingString:dataType];
-        NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : unsupportedMessage, };
+        RetainPtr unsupportedMessage = [unsupportedPrefix stringByAppendingString:dataType];
+        NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : unsupportedMessage.get(), };
 
         completionHandler(nullptr, adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:userInfo]).get());
 

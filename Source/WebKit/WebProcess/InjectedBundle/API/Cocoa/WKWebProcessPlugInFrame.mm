@@ -63,7 +63,7 @@
 
 + (instancetype)lookUpContentFrameFromWindowOrFrameElement:(JSValue *)value
 {
-    return wrapper(WebKit::WebFrame::contentFrameForWindowOrFrameElement(value.context.JSGlobalContextRef, value.JSValueRef)).autorelease();
+    return wrapper(WebKit::WebFrame::contentFrameForWindowOrFrameElement(RetainPtr { value.context }.get().JSGlobalContextRef, value.JSValueRef)).autorelease();
 }
 
 - (void)dealloc
@@ -102,19 +102,19 @@
 - (JSValue *)jsCSSStyleDeclarationForCSSStyleDeclarationHandle:(WKWebProcessPlugInCSSStyleDeclarationHandle *)cssStyleDeclarationHandle inWorld:(WKWebProcessPlugInScriptWorld *)world
 {
     JSValueRef valueRef = _frame->jsWrapperForWorld(&[cssStyleDeclarationHandle _cssStyleDeclarationHandle], &[world _scriptWorld]);
-    return [JSValue valueWithJSValueRef:valueRef inContext:[self jsContextForWorld:world]];
+    return [JSValue valueWithJSValueRef:valueRef inContext:RetainPtr { [self jsContextForWorld:world] }.get()];
 }
 
 - (JSValue *)jsNodeForNodeHandle:(WKWebProcessPlugInNodeHandle *)nodeHandle inWorld:(WKWebProcessPlugInScriptWorld *)world
 {
     JSValueRef valueRef = _frame->jsWrapperForWorld(&[nodeHandle _nodeHandle], &[world _scriptWorld]);
-    return [JSValue valueWithJSValueRef:valueRef inContext:[self jsContextForWorld:world]];
+    return [JSValue valueWithJSValueRef:valueRef inContext:RetainPtr { [self jsContextForWorld:world] }.get()];
 }
 
 - (JSValue *)jsRangeForRangeHandle:(WKWebProcessPlugInRangeHandle *)rangeHandle inWorld:(WKWebProcessPlugInScriptWorld *)world
 {
     JSValueRef valueRef = _frame->jsWrapperForWorld(&[rangeHandle _rangeHandle], &[world _scriptWorld]);
-    return [JSValue valueWithJSValueRef:valueRef inContext:[self jsContextForWorld:world]];
+    return [JSValue valueWithJSValueRef:valueRef inContext:RetainPtr { [self jsContextForWorld:world] }.get()];
 }
 
 - (WKWebProcessPlugInBrowserContextController *)_browserContextController

@@ -102,15 +102,15 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    _WKInspectorDebuggableInfo *debuggableInfo = [(_WKInspectorDebuggableInfo *)[[self class] allocWithZone:zone] init];
+    auto debuggableInfo = adoptNS([(_WKInspectorDebuggableInfo *)[[self class] allocWithZone:zone] init]);
 
-    debuggableInfo.debuggableType = self.debuggableType;
-    debuggableInfo.targetPlatformName = self.targetPlatformName;
-    debuggableInfo.targetBuildVersion = self.targetBuildVersion;
-    debuggableInfo.targetProductVersion = self.targetProductVersion;
-    debuggableInfo.targetIsSimulator = self.targetIsSimulator;
+    debuggableInfo.get().debuggableType = self.debuggableType;
+    debuggableInfo.get().targetPlatformName = retainPtr(self.targetPlatformName).get();
+    debuggableInfo.get().targetBuildVersion = retainPtr(self.targetBuildVersion).get();
+    debuggableInfo.get().targetProductVersion = retainPtr(self.targetProductVersion).get();
+    debuggableInfo.get().targetIsSimulator = self.targetIsSimulator;
 
-    return debuggableInfo;
+    return debuggableInfo.leakRef();
 }
 
 #pragma mark WKObject protocol implementation

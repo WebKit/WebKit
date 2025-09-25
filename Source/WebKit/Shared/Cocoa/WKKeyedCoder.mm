@@ -120,7 +120,7 @@
 
 - (BOOL)decodeBoolForKey:(NSString *)key
 {
-    return [[self decodeObjectOfClass:[NSNumber class] forKey:key] boolValue];
+    return [retainPtr([self decodeObjectOfClass:[NSNumber class] forKey:key]) boolValue];
 }
 
 - (void)encodeInt64:(int64_t)value forKey:(NSString *)key
@@ -130,7 +130,7 @@
 
 - (int64_t)decodeInt64ForKey:(NSString *)key
 {
-    return [[self decodeObjectOfClass:[NSNumber class] forKey:key] longLongValue];
+    return [retainPtr([self decodeObjectOfClass:[NSNumber class] forKey:key]) longLongValue];
 }
 
 - (void)encodeInteger:(NSInteger)value forKey:(NSString *)key
@@ -140,7 +140,7 @@
 
 - (NSInteger)decodeIntegerForKey:(NSString *)key
 {
-    return [[self decodeObjectOfClass:[NSNumber class] forKey:key] integerValue];
+    return [retainPtr([self decodeObjectOfClass:[NSNumber class] forKey:key]) integerValue];
 }
 
 - (NSDictionary *)accumulatedDictionary

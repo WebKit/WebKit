@@ -44,15 +44,15 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    _WKAutomationSessionConfiguration *configuration = [(_WKAutomationSessionConfiguration *)[[self class] allocWithZone:zone] init];
+    auto configuration = adoptNS([(_WKAutomationSessionConfiguration *)[[self class] allocWithZone:zone] init]);
 
-    configuration.acceptInsecureCertificates = self.acceptInsecureCertificates;
-    configuration.allowsInsecureMediaCapture = self.allowsInsecureMediaCapture;
-    configuration.suppressesICECandidateFiltering = self.suppressesICECandidateFiltering;
-    configuration.alwaysAllowAutoplay = self.alwaysAllowAutoplay;
-    configuration.siteIsolationEnabled = self.siteIsolationEnabled;
+    configuration.get().acceptInsecureCertificates = self.acceptInsecureCertificates;
+    configuration.get().allowsInsecureMediaCapture = self.allowsInsecureMediaCapture;
+    configuration.get().suppressesICECandidateFiltering = self.suppressesICECandidateFiltering;
+    configuration.get().alwaysAllowAutoplay = self.alwaysAllowAutoplay;
+    configuration.get().siteIsolationEnabled = self.siteIsolationEnabled;
 
-    return configuration;
+    return configuration.leakRef();
 }
 
 @end

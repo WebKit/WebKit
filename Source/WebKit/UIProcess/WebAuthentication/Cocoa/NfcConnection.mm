@@ -108,9 +108,9 @@ void NfcConnection::didDetectTags(NSArray *tags)
 
     // A physical NFC tag could have multiple interfaces.
     // Therefore, we use tagID to detect if there are multiple physical tags.
-    RetainPtr<NSData> tagID = ((NFTag *)tags[0]).tagID;
+    RetainPtr<NSData> tagID = retainPtr((NFTag *)tags[0]).get().tagID;
     for (NFTag *tag : tags) {
-        if ([tagID isEqualToData:tag.tagID])
+        if ([tagID isEqualToData:RetainPtr { tag.tagID }.get()])
             continue;
         service->didDetectMultipleTags();
         restartPolling();

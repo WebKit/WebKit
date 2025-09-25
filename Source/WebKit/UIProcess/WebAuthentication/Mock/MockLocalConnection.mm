@@ -182,7 +182,7 @@ RetainPtr<NSArray> MockLocalConnection::getExistingCredentials(const String& rpI
         return nullptr;
     RetainPtr nsAttributesArray = bridge_cast(adoptCF(checked_cf_cast<CFArrayRef>(attributesArrayRef)));
     return [nsAttributesArray sortedArrayUsingComparator:^(NSDictionary *a, NSDictionary *b) {
-        return [b[(id)kSecAttrModificationDate] compare:a[(id)kSecAttrModificationDate]];
+        return [retainPtr(b[(id)kSecAttrModificationDate]) compare:retainPtr(a[(id)kSecAttrModificationDate]).get()];
     }];
 }
 

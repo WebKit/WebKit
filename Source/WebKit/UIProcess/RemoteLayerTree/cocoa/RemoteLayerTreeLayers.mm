@@ -48,7 +48,7 @@
 
 - (NSString *)description
 {
-    return WebKit::RemoteLayerTreeNode::appendLayerDescription(super.description, self);
+    return WebKit::RemoteLayerTreeNode::appendLayerDescription(RetainPtr { super.description }.get(), self);
 }
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)

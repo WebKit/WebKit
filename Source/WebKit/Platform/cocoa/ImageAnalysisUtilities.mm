@@ -72,26 +72,26 @@ static FloatQuad floatQuad(VKQuad *quad)
 static Vector<FloatQuad> floatQuads(NSArray<VKQuad *> *vkQuads)
 {
     return Vector<FloatQuad>(vkQuads.count, [vkQuads](size_t i) {
-        return floatQuad(vkQuads[i]);
+        return floatQuad(RetainPtr { vkQuads[i] }.get());
     });
 }
 
 TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
 {
-    NSArray<VKWKLineInfo *> *allLines = analysis.allLines;
+    RetainPtr<NSArray<VKWKLineInfo *>> allLines = analysis.allLines;
     TextRecognitionResult result;
-    result.lines.reserveInitialCapacity(allLines.count);
+    result.lines.reserveInitialCapacity(allLines.get().count);
 
     bool isFirstLine = true;
     size_t nextLineIndex = 1;
-    for (VKWKLineInfo *line in allLines) {
+    for (VKWKLineInfo *line in allLines.get()) {
         Vector<TextRecognitionWordData> children;
-        NSArray<VKWKTextInfo *> *vkChildren = line.children;
-        children.reserveInitialCapacity(vkChildren.count);
+        RetainPtr<NSArray<VKWKTextInfo *>> vkChildren = line.children;
+        children.reserveInitialCapacity(vkChildren.get().count);
 
         String lineText = line.string;
         unsigned searchLocation = 0;
-        for (VKWKTextInfo *child in vkChildren) {
+        for (VKWKTextInfo *child in vkChildren.get()) {
             if (searchLocation >= lineText.length()) {
                 ASSERT_NOT_REACHED();
                 continue;
@@ -113,13 +113,13 @@ TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
             })();
 
             searchLocation = matchLocation + childText.length();
-            children.append({ WTFMove(childText), floatQuad(child.quad), hasLeadingWhitespace });
+            children.append({ WTFMove(childText), floatQuad(RetainPtr { child.quad }.get()), hasLeadingWhitespace });
         }
-        VKWKLineInfo *nextLine = nextLineIndex < allLines.count ? allLines[nextLineIndex] : nil;
+        RetainPtr nextLine = nextLineIndex < allLines.get().count ? allLines.get()[nextLineIndex] : nil;
         // The `shouldWrap` property indicates whether or not a line should wrap, relative to the previous line.
         bool hasTrailingNewline = nextLine && (![nextLine respondsToSelector:@selector(shouldWrap)] || ![nextLine shouldWrap]);
         bool isVertical = [line respondsToSelector:@selector(layoutDirection)] && [line layoutDirection] == CRLayoutDirectionTopToBottom;
-        result.lines.append({ floatQuad(line.quad), WTFMove(children), hasTrailingNewline, isVertical });
+        result.lines.append({ floatQuad(RetainPtr { line.quad }.get()), WTFMove(children), hasTrailingNewline, isVertical });
         isFirstLine = false;
         nextLineIndex++;
     }
@@ -129,7 +129,7 @@ TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
         auto dataDetectors = RetainPtr { analysis.textDataDetectors };
         result.dataDetectors.reserveInitialCapacity([dataDetectors count]);
         for (VKWKDataDetectorInfo *info in dataDetectors.get())
-            result.dataDetectors.append({ info.result, floatQuads(info.boundingQuads) });
+            result.dataDetectors.append({ info.result, floatQuads(RetainPtr { info.boundingQuads }.get()) });
     }
 #endif // ENABLE(DATA_DETECTION)
 
@@ -178,11 +178,11 @@ static TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysisTranslati
 {
     TextRecognitionResult result;
 
-    NSArray<VKCTranslatedParagraph *> *paragraphs = translation.paragraphs;
-    result.blocks.reserveInitialCapacity(paragraphs.count);
+    RetainPtr<NSArray<VKCTranslatedParagraph *>> paragraphs = translation.paragraphs;
+    result.blocks.reserveInitialCapacity(paragraphs.get().count);
 
-    for (VKCTranslatedParagraph *paragraph in paragraphs) {
-        if (!paragraph.text.length) {
+    for (VKCTranslatedParagraph *paragraph in paragraphs.get()) {
+        if (!RetainPtr { paragraph.text }.get().length) {
             RELEASE_LOG(Translation, "[#%{public}s] Skipping empty translation paragraph", transactionID.loggingString().utf8().data());
             continue;
         }
@@ -190,7 +190,7 @@ static TextRecognitionResult makeTextRecognitionResult(VKCImageAnalysisTranslati
         if (paragraph.isPassthrough)
             continue;
 
-        auto quad = floatQuad(paragraph.quad);
+        auto quad = floatQuad(RetainPtr { paragraph.quad }.get());
         if (quad.p2().x() > quad.p4().x() && quad.p2().y() > quad.p4().y()
             && quad.p1().x() < quad.p3().x() && quad.p1().y() > quad.p3().y()) {
             // The entire quad is flipped about the x-axis. Maintain valid positions for each of the quad points
@@ -239,19 +239,19 @@ void requestVisualTranslation(CocoaImageAnalyzer *analyzer, NSURL *imageURL, con
                 return completion({ });
             }
 
-            auto allLines = [analysis allLines];
+            RetainPtr allLines = [analysis allLines];
             if (shouldLogFullImageTranslationResults()) {
                 StringBuilder stringToLog;
                 bool firstLine = true;
-                for (VKWKLineInfo *info in allLines) {
+                for (VKWKLineInfo *info in allLines.get()) {
                     if (!firstLine)
                         stringToLog.append("\\n"_s);
                     stringToLog.append(String { info.string });
                     firstLine = false;
                 }
-                RELEASE_LOG(Translation, "[#%{public}s] Image translation recognized text in %.3f sec. (line count: %zu): \"%{private}s\"", currentRequestID.loggingString().utf8().data(), imageAnalysisDelay.seconds(), allLines.count, stringToLog.toString().utf8().data());
+                RELEASE_LOG(Translation, "[#%{public}s] Image translation recognized text in %.3f sec. (line count: %zu): \"%{private}s\"", currentRequestID.loggingString().utf8().data(), imageAnalysisDelay.seconds(), allLines.get().count, stringToLog.toString().utf8().data());
             } else
-                RELEASE_LOG(Translation, "[#%{public}s] Image translation recognized text in %.3f sec. (line count: %zu)", currentRequestID.loggingString().utf8().data(), imageAnalysisDelay.seconds(), allLines.count);
+                RELEASE_LOG(Translation, "[#%{public}s] Image translation recognized text in %.3f sec. (line count: %zu)", currentRequestID.loggingString().utf8().data(), imageAnalysisDelay.seconds(), allLines.get().count);
 
             auto translationStartTime = MonotonicTime::now();
             auto completionBlock = makeBlockPtr([completion = WTFMove(completion), currentRequestID, translationStartTime](VKCImageAnalysisTranslation *translation, NSError *error) mutable {
@@ -293,7 +293,7 @@ void requestBackgroundRemoval(CGImageRef image, CompletionHandler<void(CGImageRe
     }
 
     // FIXME (rdar://88834023): We should find a way to avoid this extra transcoding.
-    auto tiffData = transcode(image, (__bridge CFStringRef)UTTypeTIFF.identifier);
+    auto tiffData = transcode(image, (__bridge CFStringRef)RetainPtr { UTTypeTIFF.identifier }.get());
     if (![tiffData length]) {
         completion(nullptr);
         return;
@@ -419,7 +419,7 @@ void requestPayloadForQRCode(CGImageRef image, CompletionHandler<void(NSString *
                 if (![result.symbology isEqualToString:PAL::get_Vision_VNBarcodeSymbologyQRSingleton()])
                     continue;
 
-                callCompletionOnMainRunLoopWithResult(result.payloadStringValue);
+                callCompletionOnMainRunLoopWithResult(RetainPtr { result.payloadStringValue }.get());
                 return;
             }
 

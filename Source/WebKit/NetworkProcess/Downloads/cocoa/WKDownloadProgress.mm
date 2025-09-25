@@ -273,7 +273,7 @@ Vector<uint8_t> activityAccessToken()
     float fraction = (total > 0) ? (float)completed / (float)total : -1;
     auto xattrContents = adoptNS([[NSString alloc] initWithFormat:@"%.3f", fraction]);
 
-    setxattr(self.fileURL.fileSystemRepresentation, "com.apple.progress.fractionCompleted", xattrContents.get().UTF8String, [xattrContents.get() lengthOfBytesUsingEncoding:NSUTF8StringEncoding], 0, 0);
+    setxattr(RetainPtr { self.fileURL }.get().fileSystemRepresentation, "com.apple.progress.fractionCompleted", xattrContents.get().UTF8String, [xattrContents.get() lengthOfBytesUsingEncoding:NSUTF8StringEncoding], 0, 0);
 }
 
 - (void)dealloc

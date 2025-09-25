@@ -114,7 +114,7 @@ static const Seconds PostAnimationDelay { 100_ms };
 
 - (void)layoutSublayers
 {
-    auto* sublayers = [self sublayers];
+    RetainPtr sublayers = [self sublayers];
     
     if ([sublayers count] != 1) {
         ASSERT_NOT_REACHED();
@@ -155,7 +155,7 @@ static const Seconds PostAnimationDelay { 100_ms };
     } else
         transform = CGAffineTransformMakeScale(targetVideoFrame.width() / sourceVideoFrame.width(), targetVideoFrame.height() / sourceVideoFrame.height());
 
-    auto* videoSublayer = [sublayers objectAtIndex:0];
+    RetainPtr videoSublayer = [sublayers objectAtIndex:0];
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     [videoSublayer setPosition:CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds))];
@@ -182,14 +182,14 @@ static const Seconds PostAnimationDelay { 100_ms };
         return;
     }
 
-    auto* sublayers = [self sublayers];
+    RetainPtr sublayers = [self sublayers];
     if ([sublayers count] != 1) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    auto* videoSublayer = [sublayers objectAtIndex:0];
-    if (!CGRectIsEmpty(self.videoLayerFrame) && CGRectEqualToRect(self.videoLayerFrame, videoSublayer.bounds) && CGAffineTransformIsIdentity(videoSublayer.affineTransform))
+    RetainPtr videoSublayer = [sublayers objectAtIndex:0];
+    if (!CGRectIsEmpty(self.videoLayerFrame) && CGRectEqualToRect(self.videoLayerFrame, videoSublayer.get().bounds) && CGAffineTransformIsIdentity(videoSublayer.get().affineTransform))
         return;
 
     [CATransaction begin];

@@ -49,9 +49,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    WKFindResult *findResult = [(WKFindResult *)[[self class] allocWithZone:zone] _initWithMatchFound:_matchFound];
-
-    return findResult;
+    return adoptNS([(WKFindResult *)[[self class] allocWithZone:zone] _initWithMatchFound:_matchFound]).leakRef();
 }
 
 @end

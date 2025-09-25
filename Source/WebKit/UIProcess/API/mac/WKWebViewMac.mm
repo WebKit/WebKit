@@ -874,8 +874,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (NSArray<NSString *> *)accessibilityParameterizedAttributeNames
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    NSArray<NSString *> *names = [super accessibilityParameterizedAttributeNames];
-    return [names arrayByAddingObject:@"AXConvertRelativeFrame"];
+    RetainPtr<NSArray<NSString *>> names = [super accessibilityParameterizedAttributeNames];
+    return [names.get() arrayByAddingObject:@"AXConvertRelativeFrame"];
 }
 
 - (NSView *)hitTest:(NSPoint)point
@@ -1293,7 +1293,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_web_prepareForImmediateActionAnimation
 {
-    id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)[self UIDelegate];
+    auto uiDelegate = retainPtr((id <WKUIDelegatePrivate>)[self UIDelegate]);
     if ([uiDelegate respondsToSelector:@selector(_prepareForImmediateActionAnimationForWebView:)])
         [uiDelegate _prepareForImmediateActionAnimationForWebView:self];
     else
@@ -1302,7 +1302,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_web_cancelImmediateActionAnimation
 {
-    id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)[self UIDelegate];
+    auto uiDelegate = retainPtr((id <WKUIDelegatePrivate>)[self UIDelegate]);
     if ([uiDelegate respondsToSelector:@selector(_cancelImmediateActionAnimationForWebView:)])
         [uiDelegate _cancelImmediateActionAnimationForWebView:self];
     else
@@ -1311,7 +1311,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_web_completeImmediateActionAnimation
 {
-    id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)[self UIDelegate];
+    auto uiDelegate = retainPtr((id <WKUIDelegatePrivate>)[self UIDelegate]);
     if ([uiDelegate respondsToSelector:@selector(_completeImmediateActionAnimationForWebView:)])
         [uiDelegate _completeImmediateActionAnimationForWebView:self];
     else
@@ -1349,7 +1349,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (WKDragDestinationAction)_web_dragDestinationActionForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
-    id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)[self UIDelegate];
+    auto uiDelegate = retainPtr((id <WKUIDelegatePrivate>)[self UIDelegate]);
     if ([uiDelegate respondsToSelector:@selector(_webView:dragDestinationActionMaskForDraggingInfo:)])
         return [uiDelegate _webView:self dragDestinationActionMaskForDraggingInfo:draggingInfo];
 
@@ -1361,7 +1361,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_web_didPerformDragOperation:(BOOL)handled
 {
-    id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)self.UIDelegate;
+    auto uiDelegate = retainPtr((id <WKUIDelegatePrivate>)self.UIDelegate);
     if ([uiDelegate respondsToSelector:@selector(_webView:didPerformDragOperation:)])
         [uiDelegate _webView:self didPerformDragOperation:handled];
 }

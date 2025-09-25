@@ -280,7 +280,7 @@ id WebProcess::accessibilityFocusedUIElement()
         RetainPtr objectWrapper = object ? object->wrapper() : nil;
         if (objectWrapper) {
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            id associatedParent = [objectWrapper accessibilityAttributeValue:@"_AXAssociatedPluginParent"];
+            RetainPtr associatedParent = [objectWrapper accessibilityAttributeValue:@"_AXAssociatedPluginParent"];
             ALLOW_DEPRECATED_DECLARATIONS_END
             if (associatedParent)
                 objectWrapper = associatedParent;
@@ -1390,7 +1390,7 @@ void WebProcess::handlePreferenceChange(const String& domain, const String& key,
 {
     if (key == "AppleLanguages"_s) {
         // We need to set AppleLanguages for the volatile domain, similarly to what we do in XPCServiceMain.mm.
-        NSDictionary *existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
+        RetainPtr existingArguments = [[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain];
         RetainPtr<NSMutableDictionary> newArguments = adoptNS([existingArguments mutableCopy]);
         [newArguments setValue:value forKey:@"AppleLanguages"];
         [[NSUserDefaults standardUserDefaults] setVolatileDomain:newArguments.get() forName:NSArgumentDomain];

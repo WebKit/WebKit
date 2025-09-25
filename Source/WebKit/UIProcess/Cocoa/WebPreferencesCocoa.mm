@@ -110,7 +110,7 @@ static RetainPtr<id> debugUserDefaultsValue(const String& identifier, const Stri
 
     if (!object) {
         // Allow debug preferences to be set globally, using the debug key prefix.
-        object = [standardUserDefaults objectForKey:[globalDebugKeyPrefix.createNSString() stringByAppendingString:key.createNSString().get()]];
+        object = [standardUserDefaults objectForKey:RetainPtr { [globalDebugKeyPrefix.createNSString() stringByAppendingString:key.createNSString().get()] }.get()];
     }
 
     return object;

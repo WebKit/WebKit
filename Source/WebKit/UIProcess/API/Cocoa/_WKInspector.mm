@@ -202,11 +202,11 @@ private:
 
 - (void)_setDiagnosticLoggingDelegate:(id<_WKDiagnosticLoggingDelegate>)delegate
 {
-    auto inspectorWebView = self.inspectorWebView;
+    auto inspectorWebView = retainPtr(self.inspectorWebView);
     if (!inspectorWebView)
         return;
 
-    inspectorWebView._diagnosticLoggingDelegate = delegate;
+    inspectorWebView.get()._diagnosticLoggingDelegate = delegate;
     _inspector->setDiagnosticLoggingAvailable(!!delegate);
 }
 

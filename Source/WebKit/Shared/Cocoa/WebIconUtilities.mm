@@ -113,7 +113,7 @@ RetainPtr<CocoaImage> fallbackIconForFile(NSURL *file)
 
 #if PLATFORM(MAC)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return [[NSWorkspace sharedWorkspace] iconForFileType:[@"." stringByAppendingString:file.pathExtension]];
+    return [[NSWorkspace sharedWorkspace] iconForFileType:RetainPtr { [@"." stringByAppendingString:RetainPtr { file.pathExtension }.get()] }.get()];
 ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     NSError *error = nil;

@@ -85,12 +85,12 @@ auto GroupActivitiesSession::state() const -> State
 
 String GroupActivitiesSession::uuid() const
 {
-    return [m_groupSession uuid].UUIDString;
+    return RetainPtr { [m_groupSession uuid] }.get().UUIDString;
 }
 
 URL GroupActivitiesSession::fallbackURL() const
 {
-    return [m_groupSession activity].fallbackURL;
+    return RetainPtr { [m_groupSession activity] }.get().fallbackURL;
 }
 
 void GroupActivitiesSession::addStateChangeObserver(const StateChangeObserver& observer)

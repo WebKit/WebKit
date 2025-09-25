@@ -299,11 +299,11 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
     [attributedString enumerateAttributesInRange:NSMakeRange(0, [attributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange range, BOOL *stop) {
         RetainPtr<NSMutableDictionary> scaledAttributes = adoptNS([attributes mutableCopy]);
-        NSFont *font = [scaledAttributes objectForKey:NSFontAttributeName];
+        RetainPtr font = checked_objc_cast<NSFont>([scaledAttributes objectForKey:NSFontAttributeName]);
         if (font)
-            font = [fontManager convertFont:font toSize:font.pointSize * pageScaleFactor()];
+            font = [fontManager convertFont:font.get() toSize:font.get().pointSize * pageScaleFactor()];
         if (font)
-            [scaledAttributes setObject:font forKey:NSFontAttributeName];
+            [scaledAttributes setObject:font.get() forKey:NSFontAttributeName];
         [scaledAttributedString addAttributes:scaledAttributes.get() range:range];
     }];
 #endif // PLATFORM(MAC)
@@ -516,7 +516,7 @@ void WebPage::resolveAccessibilityHitTestForTesting(WebCore::FrameIdentifier fra
         return completionHandler("NULL"_s);
 #if PLATFORM(MAC)
     if (RetainPtr coreObject = [m_mockAccessibilityElement accessibilityRootObjectWrapper:webFrame->protectedCoreLocalFrame().get()]) {
-        if (id hitTestResult = [coreObject accessibilityHitTest:point]) {
+        if (RetainPtr hitTestResult = [coreObject accessibilityHitTest:point]) {
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             completionHandler([hitTestResult accessibilityAttributeValue:@"AXInfoStringForTesting"]);
             ALLOW_DEPRECATED_DECLARATIONS_END
@@ -1295,7 +1295,7 @@ static void drawPDFPage(PDFDocument *pdfDocument, CFIndex pageIndex, CGContextRe
 
     CGContextScaleCTM(context, pageSetupScaleFactor, pageSetupScaleFactor);
 
-    PDFPage *pdfPage = [pdfDocument pageAtIndex:pageIndex];
+    RetainPtr pdfPage = [pdfDocument pageAtIndex:pageIndex];
     NSRect cropBox = [pdfPage boundsForBox:kPDFDisplayBoxCropBox];
     if (NSIsEmptyRect(cropBox))
         cropBox = [pdfPage boundsForBox:kPDFDisplayBoxMediaBox];
@@ -1330,12 +1330,12 @@ static void drawPDFPage(PDFDocument *pdfDocument, CFIndex pageIndex, CGContextRe
         if (![[annotation valueForAnnotationKey:get_PDFKit_PDFAnnotationKeySubtypeSingleton()] isEqualToString:get_PDFKit_PDFAnnotationSubtypeLinkSingleton()])
             continue;
 
-        NSURL *url = annotation.URL;
+        auto url = retainPtr(annotation.URL);
         if (!url)
             continue;
 
         CGRect transformedRect = CGRectApplyAffineTransform(annotation.bounds, transform);
-        CGPDFContextSetURLForRect(context, (CFURLRef)url, transformedRect);
+        CGPDFContextSetURLForRect(context, (CFURLRef)url.get(), transformedRect);
     }
 
     CGContextRestoreGState(context);

@@ -41,6 +41,7 @@
 #import <wtf/RunLoop.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 #import <wtf/text/Base64.h>
@@ -856,10 +857,10 @@ static std::optional<RawPushMessage> makeRawPushMessage(NSString *topic, NSDicti
 
     @autoreleasepool {
         message.topic = topic;
-        NSString *contentEncoding = userInfo[@"content_encoding"];
-        NSString *payloadBase64 = userInfo[@"payload"];
+        RetainPtr contentEncoding = checked_objc_cast<NSString>(userInfo[@"content_encoding"]);
+        RetainPtr payloadBase64 = checked_objc_cast<NSString>(userInfo[@"payload"]);
 
-        if (!contentEncoding.length || !payloadBase64.length) {
+        if (!contentEncoding.get().length || !payloadBase64.get().length) {
             message.encoding = ContentEncoding::Empty;
             return message;
         }
@@ -869,15 +870,15 @@ static std::optional<RawPushMessage> makeRawPushMessage(NSString *topic, NSDicti
         else if ([contentEncoding isEqualToString:@"aesgcm"]) {
             message.encoding = ContentEncoding::AESGCM;
 
-            NSString *serverPublicKeyBase64URL = userInfo[@"as_publickey"];
-            NSString *saltBase64URL = userInfo[@"as_salt"];
+            RetainPtr serverPublicKeyBase64URL = checked_objc_cast<NSString>(userInfo[@"as_publickey"]);
+            RetainPtr saltBase64URL = checked_objc_cast<NSString>(userInfo[@"as_salt"]);
             if (!serverPublicKeyBase64URL || !saltBase64URL) {
                 RELEASE_LOG_ERROR(Push, "Dropping aesgcm-encrypted push without required server key and salt");
                 return std::nullopt;
             }
 
-            auto serverPublicKey = base64URLDecode(serverPublicKeyBase64URL);
-            auto salt = base64URLDecode(saltBase64URL);
+            auto serverPublicKey = base64URLDecode(serverPublicKeyBase64URL.get());
+            auto salt = base64URLDecode(saltBase64URL.get());
             if (!serverPublicKey || !salt) {
                 RELEASE_LOG_ERROR(Push, "Dropping aesgcm-encrypted push with improperly encoded server key and salt");
                 return std::nullopt;
@@ -886,11 +887,11 @@ static std::optional<RawPushMessage> makeRawPushMessage(NSString *topic, NSDicti
             message.serverPublicKey = WTFMove(*serverPublicKey);
             message.salt = WTFMove(*salt);
         } else {
-            RELEASE_LOG_ERROR(Push, "Dropping push with unknown content encoding: %{public}s", contentEncoding.UTF8String);
+            RELEASE_LOG_ERROR(Push, "Dropping push with unknown content encoding: %{public}s", contentEncoding.get().UTF8String);
             return std::nullopt;
         }
 
-        auto payload = base64Decode(payloadBase64);
+        auto payload = base64Decode(payloadBase64.get());
         if (!payload) {
             RELEASE_LOG_ERROR(Push, "Dropping push with improperly encoded payload");
             return std::nullopt;

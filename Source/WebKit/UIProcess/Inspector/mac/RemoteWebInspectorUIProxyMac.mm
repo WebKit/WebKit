@@ -125,8 +125,8 @@ WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
     [m_window setDelegate:m_objCAdapter.get()];
     [m_window setFrameAutosaveName:@"WKRemoteWebInspectorWindowFrame"];
 
-    NSView *contentView = m_window.get().contentView;
-    [webView() setFrame:contentView.bounds];
+    auto contentView = retainPtr(m_window.get().contentView);
+    [webView() setFrame:contentView.get().bounds];
     [contentView addSubview:webView()];
 
     return webView()->_page.get();
@@ -259,7 +259,7 @@ void RemoteWebInspectorUIProxy::platformShowCertificate(const CertificateInfo& c
     [certificatePanel beginSheetForWindow:m_window.get() modalDelegate:nil didEndSelector:NULL contextInfo:nullptr trust:certificateInfo.trust().get() showGroup:YES];
 
     // This must be called after the trust panel has been displayed, because the certificateView doesn't exist beforehand.
-    SFCertificateView *certificateView = [certificatePanel certificateView];
+    RetainPtr certificateView = [certificatePanel certificateView];
     [certificateView setDisplayTrust:YES];
     [certificateView setEditableTrust:NO];
     [certificateView setDisplayDetails:YES];

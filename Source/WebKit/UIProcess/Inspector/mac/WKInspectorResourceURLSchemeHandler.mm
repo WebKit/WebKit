@@ -81,25 +81,25 @@
     RetainPtr operation = [NSBlockOperation blockOperationWithBlock:^{
         [_fileLoadOperations removeObjectForKey:urlSchemeTask];
 
-        NSURL *requestURL = urlSchemeTask.request.URL;
-        NSURL *fileURLForRequest = [_cachedBundle URLForResource:requestURL.relativePath withExtension:@""];
+        auto requestURL = retainPtr(RetainPtr { urlSchemeTask.request }.get().URL);
+        RetainPtr fileURLForRequest = [_cachedBundle URLForResource:retainPtr(requestURL.get().relativePath).get() withExtension:@""];
         if (!fileURLForRequest) {
-            LOG_ERROR("Unable to find Web Inspector resource: %@", requestURL.absoluteString);
+            LOG_ERROR("Unable to find Web Inspector resource: %@", requestURL.get().absoluteString);
             [urlSchemeTask didFailWithError:[NSError errorWithDomain:NSCocoaErrorDomain code:NSURLErrorFileDoesNotExist userInfo:nil]];
             return;
         }
 
         NSError *readError;
-        NSData *fileData = [NSData dataWithContentsOfURL:fileURLForRequest options:0 error:&readError];
+        NSData *fileData = [NSData dataWithContentsOfURL:fileURLForRequest.get() options:0 error:&readError];
         if (!fileData) {
-            LOG_ERROR("Unable to read data for Web Inspector resource: %@", requestURL.absoluteString);
+            LOG_ERROR("Unable to read data for Web Inspector resource: %@", requestURL.get().absoluteString);
             [urlSchemeTask didFailWithError:[NSError errorWithDomain:NSCocoaErrorDomain code:NSURLErrorResourceUnavailable userInfo:@{
                 NSUnderlyingErrorKey: readError,
             }]];
             return;
         }
 
-        RetainPtr mimeType = WebCore::MIMETypeRegistry::mimeTypeForExtension(String(fileURLForRequest.pathExtension)).createNSString();
+        RetainPtr mimeType = WebCore::MIMETypeRegistry::mimeTypeForExtension(String(fileURLForRequest.get().pathExtension)).createNSString();
         if (!mimeType)
             mimeType = @"application/octet-stream";
 
@@ -110,13 +110,13 @@
         }.mutableCopy);
 
         // Allow fetches for resources that use a registered custom URL scheme.
-        if (_allowedURLSchemesForCSP && [self.mainResourceURLsForCSP containsObject:requestURL]) {
-            RetainPtr listOfCustomProtocols = adoptNS([[NSString alloc] initWithFormat:@"%@:", [_allowedURLSchemesForCSP.get().allObjects componentsJoinedByString:@": "]]);
+        if (_allowedURLSchemesForCSP && [retainPtr(self.mainResourceURLsForCSP) containsObject:requestURL.get()]) {
+            RetainPtr listOfCustomProtocols = adoptNS([[NSString alloc] initWithFormat:@"%@:", RetainPtr { [retainPtr(_allowedURLSchemesForCSP.get().allObjects) componentsJoinedByString:@": "] }.get()]);
             RetainPtr stringForCSPPolicy = adoptNS([[NSString alloc] initWithFormat:@"connect-src * %@; img-src * file: blob: resource: %@", listOfCustomProtocols.get(), listOfCustomProtocols.get()]);
             [headerFields setObject:stringForCSPPolicy.get() forKey:@"Content-Security-Policy"];
         }
 
-        RetainPtr<NSHTTPURLResponse> urlResponse = adoptNS([[NSHTTPURLResponse alloc] initWithURL:urlSchemeTask.request.URL statusCode:200 HTTPVersion:nil headerFields:headerFields.get()]);
+        RetainPtr<NSHTTPURLResponse> urlResponse = adoptNS([[NSHTTPURLResponse alloc] initWithURL:RetainPtr { urlSchemeTask.request.URL }.get() statusCode:200 HTTPVersion:nil headerFields:headerFields.get()]);
         [urlSchemeTask didReceiveResponse:urlResponse.get()];
         [urlSchemeTask didReceiveData:fileData];
         [urlSchemeTask didFinish];
@@ -129,7 +129,7 @@
 - (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
 {
     dispatch_assert_queue(mainDispatchQueueSingleton());
-    if (NSOperation *operation = [_fileLoadOperations objectForKey:urlSchemeTask]) {
+    if (RetainPtr operation = [_fileLoadOperations objectForKey:urlSchemeTask]) {
         [operation cancel];
         [_fileLoadOperations removeObjectForKey:urlSchemeTask];
     }

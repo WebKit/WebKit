@@ -35,12 +35,12 @@
 
 static NSString *JavaScriptSnippetToOpenURLExternally(NSURL *url)
 {
-    return [NSString stringWithFormat:@"InspectorFrontendHost.openURLExternally(\"%@\")", url.absoluteString];
+    return [NSString stringWithFormat:@"InspectorFrontendHost.openURLExternally(\"%@\")", RetainPtr { url.absoluteString }.get()];
 }
 
 static NSString *JavaScriptSnippetToFetchURL(NSURL *url)
 {
-    return [NSString stringWithFormat:@"fetch(\"%@\")", url.absoluteString];
+    return [NSString stringWithFormat:@"fetch(\"%@\")", RetainPtr { url.absoluteString }.get()];
 }
 
 @implementation _WKInspector (WKTesting)
@@ -63,7 +63,7 @@ static NSString *JavaScriptSnippetToFetchURL(NSURL *url)
     else {
         // Force the navigation request to be handled naturally through the
         // internal NavigationDelegate of WKInspectorViewController.
-        [self.inspectorWebView loadRequest:[NSURLRequest requestWithURL:url]];
+        [retainPtr(self.inspectorWebView) loadRequest:[NSURLRequest requestWithURL:url]];
     }
 }
 

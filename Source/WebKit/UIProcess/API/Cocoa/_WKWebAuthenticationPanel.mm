@@ -307,12 +307,12 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
         }
         auto& username = it->second.getString();
 
-        id credentialID = attributes[bridge_cast(kSecAttrAlias)];
+        auto credentialID = adoptNS(attributes[bridge_cast(kSecAttrAlias)]);
         if (!credentialID)
             credentialID = attributes[bridge_cast(kSecAttrApplicationLabel)];
         auto credential = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
             username.createNSString().get(), _WKLocalAuthenticatorCredentialNameKey,
-            credentialID, _WKLocalAuthenticatorCredentialIDKey,
+            credentialID.get(), _WKLocalAuthenticatorCredentialIDKey,
             attributes[bridge_cast(kSecAttrLabel)], _WKLocalAuthenticatorCredentialRelyingPartyIDKey,
             attributes[bridge_cast(kSecAttrModificationDate)], _WKLocalAuthenticatorCredentialLastModificationDateKey,
             attributes[bridge_cast(kSecAttrCreationDate)], _WKLocalAuthenticatorCredentialCreationDateKey,
@@ -832,8 +832,8 @@ static WebCore::PublicKeyCredentialUserEntity publicKeyCredentialUserEntity(_WKP
 static Vector<WebCore::PublicKeyCredentialParameters> publicKeyCredentialParameters(NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters)
 {
     return Vector<WebCore::PublicKeyCredentialParameters>(publicKeyCredentialParamaters.count, [publicKeyCredentialParamaters](size_t i) {
-        _WKPublicKeyCredentialParameters *param = publicKeyCredentialParamaters[i];
-        return WebCore::PublicKeyCredentialParameters { WebCore::PublicKeyCredentialType::PublicKey, param.algorithm.longLongValue };
+        auto param = retainPtr(publicKeyCredentialParamaters[i]);
+        return WebCore::PublicKeyCredentialParameters { WebCore::PublicKeyCredentialType::PublicKey, param.get().algorithm.longLongValue };
     });
 }
 
@@ -860,16 +860,16 @@ static WebCore::AuthenticatorTransport authenticatorTransport(_WKWebAuthenticati
 static Vector<WebCore::AuthenticatorTransport> authenticatorTransports(NSArray<NSNumber *> *transports)
 {
     return Vector<WebCore::AuthenticatorTransport>(transports.count, [transports](size_t i) {
-        NSNumber *transport = transports[i];
-        return authenticatorTransport((_WKWebAuthenticationTransport)transport.intValue);
+        auto transport = retainPtr(transports[i]);
+        return authenticatorTransport((_WKWebAuthenticationTransport)transport.get().intValue);
     });
 }
 
 static Vector<WebCore::PublicKeyCredentialDescriptor> publicKeyCredentialDescriptors(NSArray<_WKPublicKeyCredentialDescriptor *> *credentials)
 {
     return Vector<WebCore::PublicKeyCredentialDescriptor>(credentials.count, [credentials](size_t i) {
-        _WKPublicKeyCredentialDescriptor *credential = credentials[i];
-        return WebCore::PublicKeyCredentialDescriptor { WebCore::PublicKeyCredentialType::PublicKey, WebCore::toBufferSource(credential.identifier).variant(), authenticatorTransports(credential.transports) };
+        auto credential = retainPtr(credentials[i]);
+        return WebCore::PublicKeyCredentialDescriptor { WebCore::PublicKeyCredentialType::PublicKey, WebCore::toBufferSource(credential.get().identifier).variant(), authenticatorTransports(credential.get().transports) };
     });
 }
 

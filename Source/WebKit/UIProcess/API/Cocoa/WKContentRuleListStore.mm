@@ -81,7 +81,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 + (instancetype)storeWithURL:(NSURL *)url
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return wrapper(API::ContentRuleListStore::storeWithPath(url.absoluteURL.path)).autorelease();
+    return wrapper(API::ContentRuleListStore::storeWithPath(RetainPtr { url.absoluteURL }.get().path)).autorelease();
 #else
     return nil;
 #endif
@@ -238,7 +238,7 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 + (instancetype)storeWithURLAndLegacyFilename:(NSURL *)url
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    return wrapper(API::ContentRuleListStore::storeWithPath(url.absoluteURL.path)).autorelease();
+    return wrapper(API::ContentRuleListStore::storeWithPath(RetainPtr { url.absoluteURL }.get().path)).autorelease();
 #else
     return nil;
 #endif

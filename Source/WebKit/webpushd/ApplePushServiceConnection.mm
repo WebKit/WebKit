@@ -62,7 +62,7 @@
     ASSERT(isMainRunLoop());
 
     if (RefPtr connection = _connection.get())
-        connection->didReceivePushMessage(message.topic, message.userInfo);
+        connection->didReceivePushMessage(RetainPtr { message.topic }.get(), RetainPtr { message.userInfo }.get());
 }
 
 @end
@@ -100,7 +100,7 @@ void ApplePushServiceConnection::subscribe(const String& topic, const Vector<uin
             return;
 
         auto handler = protectedThis->m_subscribeHandlers.take(identifier);
-        handler(token.tokenURL, error);
+        handler(RetainPtr { token.tokenURL }.get(), error);
     }).get()];
 }
 
@@ -124,22 +124,22 @@ void ApplePushServiceConnection::unsubscribe(const String& topic, const Vector<u
 
 Vector<String> ApplePushServiceConnection::enabledTopics()
 {
-    return makeVector<String>([m_connection enabledTopics]);
+    return makeVector<String>(RetainPtr { [m_connection enabledTopics] }.get());
 }
 
 Vector<String> ApplePushServiceConnection::ignoredTopics()
 {
-    return makeVector<String>([m_connection ignoredTopics]);
+    return makeVector<String>(RetainPtr { [m_connection ignoredTopics] }.get());
 }
 
 Vector<String> ApplePushServiceConnection::opportunisticTopics()
 {
-    return makeVector<String>([m_connection opportunisticTopics]);
+    return makeVector<String>(RetainPtr { [m_connection opportunisticTopics] }.get());
 }
 
 Vector<String> ApplePushServiceConnection::nonWakingTopics()
 {
-    return makeVector<String>([m_connection nonWakingTopics]);
+    return makeVector<String>(RetainPtr { [m_connection nonWakingTopics] }.get());
 }
 
 void ApplePushServiceConnection::setEnabledTopics(Vector<String>&& topics)

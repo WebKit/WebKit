@@ -151,8 +151,8 @@
     RefPtr plugin = _plugin.get();
     plugin->didMutatePDFDocument();
 
-    NSString *fieldName = checked_objc_cast<NSString>([[notification userInfo] objectForKey:@"PDFFormFieldName"]);
-    plugin->repaintAnnotationsForFormField(fieldName);
+    RetainPtr fieldName = checked_objc_cast<NSString>([[notification userInfo] objectForKey:@"PDFFormFieldName"]);
+    plugin->repaintAnnotationsForFormField(fieldName.get());
 }
 @end
 
@@ -1928,22 +1928,22 @@ auto UnifiedPDFPlugin::pdfElementTypesForPagePoint(const IntPoint& pointInPDFPag
     }
 #endif
 
-    if (auto annotation = [page annotationAtPoint:pointInPDFPageSpace]) {
+    if (RetainPtr annotation = [page annotationAtPoint:pointInPDFPageSpace]) {
         pdfElementTypes.add(PDFElementType::Annotation);
 
-        if (annotationIsLinkWithDestination(annotation))
+        if (annotationIsLinkWithDestination(annotation.get()))
             pdfElementTypes.add(PDFElementType::Link);
 
-        if (annotationIsOfType(annotation, AnnotationType::Popup))
+        if (annotationIsOfType(annotation.get(), AnnotationType::Popup))
             pdfElementTypes.add(PDFElementType::Popup);
 
-        if (annotationIsOfType(annotation, AnnotationType::Text))
+        if (annotationIsOfType(annotation.get(), AnnotationType::Text))
             pdfElementTypes.add(PDFElementType::Icon);
 
         if (![annotation isReadOnly]) {
-            if (annotationIsWidgetOfType(annotation, WidgetType::Text))
+            if (annotationIsWidgetOfType(annotation.get(), WidgetType::Text))
                 pdfElementTypes.add(PDFElementType::TextField);
-            if (annotationIsWidgetOfType(annotation, WidgetType::Button))
+            if (annotationIsWidgetOfType(annotation.get(), WidgetType::Button))
                 pdfElementTypes.add(PDFElementType::Control);
         }
     }
@@ -2194,10 +2194,10 @@ bool UnifiedPDFPlugin::handleKeyboardEvent(const WebKeyboardEvent& event)
 void UnifiedPDFPlugin::followLinkAnnotation(PDFAnnotation *annotation, std::optional<PlatformMouseEvent>&& event)
 {
     ASSERT(annotationIsLinkWithDestination(annotation));
-    if (NSURL *url = [annotation URL])
-        navigateToURL(url, WTFMove(event));
-    else if (PDFDestination *destination = [annotation destination])
-        revealPDFDestination(destination);
+    if (RetainPtr url = [annotation URL])
+        navigateToURL(url.get(), WTFMove(event));
+    else if (RetainPtr destination = [annotation destination])
+        revealPDFDestination(destination.get());
 }
 
 RepaintRequirements UnifiedPDFPlugin::repaintRequirementsForAnnotation(PDFAnnotation *annotation, IsAnnotationCommit isAnnotationCommit)
@@ -2846,8 +2846,8 @@ static NSData *htmlDataFromSelection(PDFSelection *selection)
     if ([selection respondsToSelector:@selector(htmlData)])
         return [selection htmlData];
 #endif
-    auto attributedString = selection.attributedString;
-    return [attributedString dataFromRange:NSMakeRange(0, attributedString.length)
+    auto attributedString = retainPtr(selection.attributedString);
+    return [attributedString dataFromRange:NSMakeRange(0, attributedString.get().length)
                         documentAttributes:@{ NSDocumentTypeDocumentAttribute : NSHTMLTextDocumentType }
                                      error:nil];
 }
@@ -2869,13 +2869,13 @@ bool UnifiedPDFPlugin::performCopyEditingOperation() const
 
 #if HAVE(PDFSELECTION_HTMLDATA_RTFDATA)
     if ([m_currentSelection respondsToSelector:@selector(rtfData)]) {
-        if (NSData *rtfData = [m_currentSelection rtfData])
-            pasteboardItems.append({ rtfData, rtfPasteboardType() });
+        if (RetainPtr rtfData = [m_currentSelection rtfData])
+            pasteboardItems.append({ rtfData.get(), rtfPasteboardType() });
     }
 #endif
 
-    if (NSData *plainStringData = [[m_currentSelection string] dataUsingEncoding:NSUTF8StringEncoding])
-        pasteboardItems.append({ plainStringData, stringPasteboardType() });
+    if (RetainPtr plainStringData = [[m_currentSelection string] dataUsingEncoding:NSUTF8StringEncoding])
+        pasteboardItems.append({ plainStringData.get(), stringPasteboardType() });
 
     writeItemsToGeneralPasteboard(WTFMove(pasteboardItems));
     return true;
@@ -2939,13 +2939,13 @@ void UnifiedPDFPlugin::extendCurrentSelectionIfNeeded()
 {
     if (!hasSelection())
         return;
-    PDFPage *firstPageOfCurrentSelection = [[m_currentSelection pages] firstObject];
+    RetainPtr firstPageOfCurrentSelection = [[m_currentSelection pages] firstObject];
 
-    auto oldStartPageIndex = std::exchange(m_selectionTrackingData.startPageIndex, [m_pdfDocument indexForPage:firstPageOfCurrentSelection]);
+    auto oldStartPageIndex = std::exchange(m_selectionTrackingData.startPageIndex, [m_pdfDocument indexForPage:firstPageOfCurrentSelection.get()]);
     auto oldStartPagePoint = std::exchange(m_selectionTrackingData.startPagePoint, IntPoint { [m_currentSelection firstCharCenter] });
     m_selectionTrackingData.selectionToExtendWith = WTFMove(m_currentSelection);
 
-    RetainPtr selection = [m_pdfDocument selectionFromPage:firstPageOfCurrentSelection atPoint:m_selectionTrackingData.startPagePoint toPage:m_documentLayout.pageAtIndex(oldStartPageIndex).get() atPoint:oldStartPagePoint];
+    RetainPtr selection = [m_pdfDocument selectionFromPage:firstPageOfCurrentSelection.get() atPoint:m_selectionTrackingData.startPagePoint toPage:m_documentLayout.pageAtIndex(oldStartPageIndex).get() atPoint:oldStartPagePoint];
     [selection addSelection:m_selectionTrackingData.selectionToExtendWith.get()];
     setCurrentSelection(WTFMove(selection));
 }

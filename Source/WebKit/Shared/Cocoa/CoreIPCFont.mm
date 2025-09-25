@@ -41,7 +41,7 @@
 namespace WebKit {
 
 CoreIPCFont::CoreIPCFont(WebCore::CocoaFont *font)
-    : m_fontDescriptorAttributes(font.fontDescriptor.fontAttributes)
+    : m_fontDescriptorAttributes(RetainPtr { font.fontDescriptor }.get().fontAttributes)
 {
 }
 

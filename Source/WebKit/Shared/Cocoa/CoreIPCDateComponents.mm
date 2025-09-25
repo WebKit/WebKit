@@ -48,9 +48,9 @@ std::array<NSCalendarUnit, CoreIPCDateComponents::numberOfComponentIndexes> cale
 CoreIPCDateComponents::CoreIPCDateComponents(NSDateComponents *components)
 {
     if (components.calendar)
-        m_calendarIdentifier = components.calendar.calendarIdentifier;
+        m_calendarIdentifier = RetainPtr { components.calendar }.get().calendarIdentifier;
     if (components.timeZone)
-        m_timeZoneName = components.timeZone.name;
+        m_timeZoneName = RetainPtr { components.timeZone }.get().name;
 
     for (size_t i = 0; i < numberOfComponentIndexes; ++i)
         m_componentValues[i] = [components valueForComponent:calendarUnitForComponentIndex[i]];

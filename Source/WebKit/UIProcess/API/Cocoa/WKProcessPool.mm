@@ -210,7 +210,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 + (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL bundleIdentifierIfNotInContainer:(NSString *)bundleIdentifier
 {
-    NSURL *url = [containerURL URLByAppendingPathComponent:@"Library" isDirectory:YES];
+    RetainPtr url = [containerURL URLByAppendingPathComponent:@"Library" isDirectory:YES];
     url = [url URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
 
     if (!WebKit::processHasContainer() && bundleIdentifier)
@@ -269,8 +269,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     else
         [_processPool->ensureBundleParameters() removeObjectForKey:parameter];
 
-    auto data = keyedArchiver.get().encodedData;
-    _processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameter(parameter, span(data)));
+    auto data = retainPtr(keyedArchiver.get().encodedData);
+    _processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameter(parameter, span(data.get())));
 }
 
 - (void)_setObjectsForBundleParametersWithDictionary:(NSDictionary *)dictionary
@@ -287,8 +287,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     [_processPool->ensureBundleParameters() setValuesForKeysWithDictionary:copy.get()];
 
-    auto data = keyedArchiver.get().encodedData;
-    _processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameters(span(data)));
+    auto data = retainPtr(keyedArchiver.get().encodedData);
+    _processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameters(span(data.get())));
 }
 
 #if !TARGET_OS_IPHONE

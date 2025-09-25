@@ -97,7 +97,7 @@ NSString *NetworkTaskCocoa::lastRemoteIPAddress(NSURLSessionTask *task)
 {
     // FIXME (246428): In a future patch, this should adopt CFNetwork API that retrieves the original
     // IP address of the proxied response, rather than the proxy itself.
-    return task._incompleteTaskMetrics.transactionMetrics.lastObject.remoteAddress;
+    return RetainPtr { task._incompleteTaskMetrics }.get().transactionMetrics.lastObject.remoteAddress;
 }
 
 WebCore::RegistrableDomain NetworkTaskCocoa::lastCNAMEDomain(String cname)
@@ -227,7 +227,7 @@ void NetworkTaskCocoa::setCookieTransformForFirstPartyRequest(const WebCore::Res
             return cookiesSetInResponse;
 
         auto cnameDomain = [&task]() {
-            if (RetainPtr lastResolvedCNAMEInChain = [[task _resolvedCNAMEChain] lastObject])
+            if (RetainPtr lastResolvedCNAMEInChain = [retainPtr([task _resolvedCNAMEChain]) lastObject])
                 return lastCNAMEDomain(lastResolvedCNAMEInChain.get());
             return RegistrableDomain { };
         }();
@@ -346,7 +346,7 @@ void NetworkTaskCocoa::updateTaskWithFirstPartyForSameSiteCookies(NSURLSessionTa
     if (request.isSameSiteUnspecified())
         return;
 #if HAVE(FOUNDATION_WITH_SAME_SITE_COOKIE_SUPPORT)
-    task._siteForCookies = RetainPtr { request.isSameSite() ? task.currentRequest.URL : URL::emptyNSURL() }.get();
+    task._siteForCookies = RetainPtr { request.isSameSite() ? RetainPtr { task.currentRequest }.get().URL : URL::emptyNSURL() }.get();
     task._isTopLevelNavigation = request.isTopSite();
 #else
     UNUSED_PARAM(task);

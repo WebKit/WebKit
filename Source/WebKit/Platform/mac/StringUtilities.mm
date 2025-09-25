@@ -51,9 +51,9 @@ SOFT_LINK(PhoneNumbers, CFPhoneNumberCopyUnformattedRepresentation, CFStringRef,
 
 NSString *formattedPhoneNumberString(NSString *originalPhoneNumber)
 {
-    NSString *countryCode = [[[NSLocale currentLocale] objectForKey:NSLocaleCountryCode] lowercaseString];
+    RetainPtr countryCode = [retainPtr([[NSLocale currentLocale] objectForKey:NSLocaleCountryCode]) lowercaseString];
 
-    RetainPtr<CFPhoneNumberRef> phoneNumber = adoptCF(CFPhoneNumberCreate(kCFAllocatorDefault, (__bridge CFStringRef)originalPhoneNumber, (__bridge CFStringRef)countryCode));
+    RetainPtr<CFPhoneNumberRef> phoneNumber = adoptCF(CFPhoneNumberCreate(kCFAllocatorDefault, (__bridge CFStringRef)originalPhoneNumber, (__bridge CFStringRef)countryCode.get()));
     if (!phoneNumber)
         return originalPhoneNumber;
 

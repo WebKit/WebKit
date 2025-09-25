@@ -329,9 +329,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    WKWebViewConfiguration *configuration = [(WKWebViewConfiguration *)[[self class] allocWithZone:zone] init];
+    auto configuration = adoptNS([(WKWebViewConfiguration *)[[self class] allocWithZone:zone] init]);
     [configuration _protectedPageConfiguration]->copyDataFrom(self._protectedPageConfiguration);
-    return configuration;
+    return configuration.leakRef();
 }
 
 - (void)setValue:(id)value forKey:(NSString *)key

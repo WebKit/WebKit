@@ -40,7 +40,7 @@ WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(WKFrameInfo *frameInfo
     // which needs to be just one number and probably should only be generated in the UI process
     // to prevent collisions with numbers generated in different web content processes, especially with site isolation.
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    auto identifier = frameInfo._handle.frameID;
+    auto identifier = RetainPtr { frameInfo._handle }.get().frameID;
 ALLOW_DEPRECATED_DECLARATIONS_END
     if (!WebExtensionFrameIdentifier::isValidIdentifier(identifier)) {
         ASSERT_NOT_REACHED();

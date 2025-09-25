@@ -202,7 +202,7 @@ void MediaUsageManagerCocoa::updateMediaUsage(WebCore::MediaSessionIdentifier id
         session->mediaUsageInfo = mediaUsageInfo;
 
     } @catch(NSException *exception) {
-        WTFLogAlways("MediaUsageManagerCocoa::updateMediaUsage caught exception: %@", [exception reason]);
+        WTFLogAlways("MediaUsageManagerCocoa::updateMediaUsage caught exception: %@", RetainPtr { [exception reason] }.get());
     }
 }
 

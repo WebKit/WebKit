@@ -54,7 +54,7 @@ MediaPlaybackTargetContextSerialized::MediaPlaybackTargetContextSerialized(const
 #else
         auto archiver = adoptNS([WKKeyedCoder new]);
         [downcast<MediaPlaybackTargetContextCocoa>(context).outputContext() encodeWithCoder:archiver.get()];
-        auto dictionary = [archiver accumulatedDictionary];
+        RetainPtr dictionary = [archiver accumulatedDictionary];
         m_contextID = checked_objc_cast<NSString>([dictionary objectForKey:@"AVOutputContextSerializationKeyContextID"]);
         m_contextType = checked_objc_cast<NSString>([dictionary objectForKey:@"AVOutputContextSerializationKeyContextType"]);
 #endif
@@ -106,10 +106,10 @@ Variant<MediaPlaybackTargetContextCocoa, MediaPlaybackTargetContextMock> MediaPl
 #if HAVE(WK_SECURE_CODING_AVOUTPUTCONTEXT)
     return MediaPlaybackTargetContextCocoa(dynamic_objc_cast<AVOutputContext>(m_context.toID()));
 #else
-    auto propertyList = [NSMutableDictionary dictionaryWithCapacity:2];
-    propertyList[@"AVOutputContextSerializationKeyContextID"] = m_contextID.createNSString().get();
-    propertyList[@"AVOutputContextSerializationKeyContextType"] = m_contextType.createNSString().get();
-    auto unarchiver = adoptNS([[WKKeyedCoder alloc] initWithDictionary:propertyList]);
+    RetainPtr propertyList = [NSMutableDictionary dictionaryWithCapacity:2];
+    propertyList.get()[@"AVOutputContextSerializationKeyContextID"] = m_contextID.createNSString().get();
+    propertyList.get()[@"AVOutputContextSerializationKeyContextType"] = m_contextType.createNSString().get();
+    auto unarchiver = adoptNS([[WKKeyedCoder alloc] initWithDictionary:propertyList.get()]);
     auto outputContext = adoptNS([[PAL::getAVOutputContextClassSingleton() alloc] initWithCoder:unarchiver.get()]);
     // Variant construction in older clang gives either an error, a vtable linkage error unless we construct it this way.
     Variant<MediaPlaybackTargetContextCocoa, MediaPlaybackTargetContextMock> variant { WTF::InPlaceType<MediaPlaybackTargetContextCocoa>, WTFMove(outputContext) };

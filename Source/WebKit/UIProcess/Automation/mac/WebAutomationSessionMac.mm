@@ -858,9 +858,9 @@ void WebAutomationSession::platformSimulateWheelInteraction(WebPageProxy& page, 
     locationOnScreen = CGPointMake(locationOnScreen.x, NSScreen.screens.firstObject.frame.size.height - locationOnScreen.y);
     CGEventSetLocation(cgScrollEvent.get(), locationOnScreen);
 
-    NSEvent *scrollEvent = [[NSEvent eventWithCGEvent:cgScrollEvent.get()] _eventRelativeToWindow:window.get()];
+    RetainPtr scrollEvent = [[NSEvent eventWithCGEvent:cgScrollEvent.get()] _eventRelativeToWindow:window.get()];
 
-    sendSynthesizedEventsToPage(page, @[scrollEvent]);
+    sendSynthesizedEventsToPage(page, @[scrollEvent.get()]);
 }
 
 #endif // ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)

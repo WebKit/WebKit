@@ -148,7 +148,7 @@
     } else if (RetainPtr itemProvider = dynamic_objc_cast<NSItemProvider>(item.get())) {
         RefPtr menuProxy = _menuProxy.get();
         WeakPtr weakPage = menuProxy ? menuProxy->page() : nullptr;
-        RetainPtr<NSString> itemUTI = itemProvider.get().registeredTypeIdentifiers.firstObject;
+        RetainPtr<NSString> itemUTI = RetainPtr { itemProvider.get().registeredTypeIdentifiers }.get().firstObject;
         [itemProvider loadDataRepresentationForTypeIdentifier:itemUTI.get() completionHandler:[weakPage, attachmentID = _attachmentID, itemUTI](NSData *data, NSError *error) {
             ensureOnMainRunLoop([weakPage = WTFMove(weakPage), attachmentID, itemUTI, data = RetainPtr { data }, error = RetainPtr { error }] {
                 RefPtr webPage = weakPage.get();

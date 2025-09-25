@@ -113,7 +113,7 @@ static NSArray<NSString *> *controlArray()
     _page = page;
     _deviceScaleFactor = page.deviceScaleFactor();
     _visible = YES;
-    [self _setupLayer:self.layer];
+    [self _setupLayer:RetainPtr { self.layer }.get()];
     [self setFrame:frame];
 
     WeakObjCPtr<WKPDFHUDView> weakSelf = self;
@@ -231,8 +231,9 @@ static NSArray<NSString *> *controlArray()
     CGPoint initialPoint = NSPointToCGPoint(event.locationInWindow);
     initialPoint.x -= [_layer frame].origin.x;
     initialPoint.y -= [_layer frame].origin.y;
-    for (NSUInteger index = 0; index < [_layer sublayers].count; index++) {
-        RetainPtr<CALayer> subLayer = [_layer sublayers][index];
+    RetainPtr sublayers = [_layer sublayers];
+    for (NSUInteger index = 0; index < sublayers.get().count; index++) {
+        RetainPtr<CALayer> subLayer = sublayers.get()[index];
         NSRect windowSpaceRect = [self convertRect:[subLayer frame] toView:nil];
         if (CGRectContainsPoint(windowSpaceRect, initialPoint))
             return index;
@@ -252,7 +253,7 @@ static NSArray<NSString *> *controlArray()
 - (CALayer *)_layerForEvent:(NSEvent *)event
 {
     if (auto index = [self _controlIndexForEvent:event])
-        return [_layer sublayers][*index];
+        return RetainPtr { [_layer sublayers] }.get()[*index];
     return nil;
 }
 

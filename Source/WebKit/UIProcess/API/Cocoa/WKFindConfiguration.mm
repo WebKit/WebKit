@@ -45,13 +45,13 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    WKFindConfiguration *findConfiguration = [(WKFindConfiguration *)[[self class] allocWithZone:zone] init];
+    RetainPtr findConfiguration = adoptNS([(WKFindConfiguration *)[[self class] allocWithZone:zone] init]);
 
-    findConfiguration.backwards = _backwards;
-    findConfiguration.caseSensitive = _caseSensitive;
-    findConfiguration.wraps = _wraps;
+    findConfiguration.get().backwards = _backwards;
+    findConfiguration.get().caseSensitive = _caseSensitive;
+    findConfiguration.get().wraps = _wraps;
 
-    return findConfiguration;
+    return findConfiguration.leakRef();
 }
 
 @end
