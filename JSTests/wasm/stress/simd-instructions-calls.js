@@ -5,6 +5,11 @@ import * as assert from "../assert.js"
 
 const verbose = false;
 
+function logV(...args) {
+    if (verbose)
+        console.log(...args);
+}
+
 const testCases = [
     {
         name: "simple_swap_v128",
@@ -204,12 +209,9 @@ ${exports}
 
 async function runTests(callOp, testCases) {
     const wat = buildWAT(callOp, testCases);
-
-    if (verbose) {
-        console.log(`\n=== Generated WAT for ${callOp} ===`);
-        console.log(wat);
-        console.log('=== End WAT ===\n');
-    }
+    logV(`\n=== Generated WAT for ${callOp} ===`);
+    logV(wat);
+    logV('=== End WAT ===\n');
 
     const instance = await instantiate(wat, {}, { simd: true, tail_call: true });
     const { memory } = instance.exports;
@@ -231,12 +233,10 @@ async function runTests(callOp, testCases) {
         return i64View[byteOffset / 8];
     }
 
-    if (verbose)
-        console.log(`Testing with ${callOp}...`);
+    logV(`Testing with ${callOp}...`);
 
     for (const testCase of testCases) {
-        if (verbose)
-            console.log(`  Running ${testCase.name}...`);
+        logV(`  Running ${testCase.name}...`);
         const resultAddr = 0;
 
         // Clear memory
@@ -261,21 +261,18 @@ async function runTests(callOp, testCases) {
             if (type === 'f64') {
                 const actual = getF64(offset);
                 assert.eq(actual, expectedValue, `Result ${i} (f64) should be ${expectedValue}, got ${actual}`);
-                if (verbose)
-                    console.log(`    Result ${i} (f64): ${actual} ✓`);
+                logV(`    Result ${i} (f64): ${actual} ✓`);
             } else if (type === 'i64') {
                 const actual = getI64(offset);
                 const expectedBigInt = BigInt(expectedValue);
                 assert.eq(actual, expectedBigInt, `Result ${i} (i64) should be ${expectedBigInt}, got ${actual}`);
-                if (verbose)
-                    console.log(`    Result ${i} (i64): ${actual} ✓`);
+                logV(`    Result ${i} (i64): ${actual} ✓`);
             } else if (type === 'v128') {
                 const actual = getI32x4(offset);
                 for (let j = 0; j < 4; j++) {
                     assert.eq(actual[j], expectedValue[j], `Result ${i} (v128) lane ${j} should be 0x${expectedValue[j].toString(16)}, got 0x${actual[j].toString(16)}`);
                 }
-                if (verbose)
-                    console.log(`    Result ${i} (v128): [0x${actual.map(x => x.toString(16)).join(', 0x')}] ✓`);
+                logV(`    Result ${i} (v128): [0x${actual.map(x => x.toString(16)).join(', 0x')}] ✓`);
             }
         }
     }
