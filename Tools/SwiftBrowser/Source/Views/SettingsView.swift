@@ -155,6 +155,42 @@ private struct FeatureFlagToggle: View {
     }
 }
 
+private struct SearchField: NSViewRepresentable {
+    @Binding
+    var text: String
+
+    var placeholder: String = "Search"
+
+    func makeNSView(context: Context) -> NSSearchField {
+        let searchField = NSSearchField()
+        searchField.placeholderString = placeholder
+        searchField.delegate = context.coordinator
+        return searchField
+    }
+
+    func updateNSView(_ nsView: NSSearchField, context: Context) {
+        nsView.stringValue = text
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    class Coordinator: NSObject, NSSearchFieldDelegate {
+        let parent: SearchField
+
+        init(_ parent: SearchField) {
+            self.parent = parent
+        }
+
+        func controlTextDidChange(_ obj: Notification) {
+            if let searchField = obj.object as? NSSearchField {
+                parent.text = searchField.stringValue
+            }
+        }
+    }
+}
+
 private struct FeatureFlagsView: View {
     @Environment(FeatureFlagsModel.self)
     var model
@@ -168,20 +204,27 @@ private struct FeatureFlagsView: View {
         @Bindable
         var model = model
 
-        List {
-            ForEach(groupedFeatures, id: \.category.rawValue) { group in
-                Section(group.category.description) {
-                    ForEach(group.features) { feature in
-                        FeatureFlagToggle(
-                            value: $model.customizedFeatures[feature.key, default: feature.defaultValue],
-                            feature: feature
-                        )
+        // FIXME: This should use `.searchable()` once the placement options become flexible enough.
+        Group {
+            HStack {
+                Spacer()
+                SearchField(text: $model.searchQuery)
+            }
+            List {
+                ForEach(groupedFeatures, id: \.category.rawValue) { group in
+                    Section(group.category.description) {
+                        ForEach(group.features) { feature in
+                            FeatureFlagToggle(
+                                value: $model.customizedFeatures[feature.key, default: feature.defaultValue],
+                                feature: feature
+                            )
+                        }
                     }
                 }
             }
+            .listStyle(.inset)
+            .frame(height: 400)
         }
-        .listStyle(.inset)
-        .searchable(text: $model.searchQuery, placement: .sidebar, prompt: "Search")
     }
 
     var body: some View {
