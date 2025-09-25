@@ -4474,7 +4474,7 @@ mintAlign(_tail_call)
     jmp .ipint_perform_tail_call
 
 # CallArgumentBytecode::Call (0x1b)
-ign(_call)
+mintAlign(_call)
     pop wasmInstance, ws0
     # pop targetInstance, targetEntrypoint
 
