@@ -29,3 +29,7 @@ inspector/remote/RemoteInspector.cpp
 inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm
 inspector/remote/cocoa/RemoteInspectorCocoa.mm
 inspector/remote/cocoa/RemoteInspectorXPCConnection.mm
+
+inspector/protocol/RemoteInspectorCocoaProtocolContentsMac.mm
+inspector/protocol/RemoteInspectorCocoaProtocolContentsIOS.mm
+inspector/protocol/RemoteInspectorCocoaProtocolVersion.mm

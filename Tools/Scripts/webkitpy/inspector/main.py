@@ -38,7 +38,7 @@ class InspectorGeneratorTests:
         self.reset_results = reset_results
         self.executive = executive
 
-    def generate_from_json(self, json_file, output_directory):
+    def generate_from_json(self, json_file, output_directory, backend_commands_output_directory=None):
         cmd = [sys.executable,
                'JavaScriptCore/inspector/scripts/generate-inspector-protocol-bindings.py',
                '--outputDir', output_directory,
@@ -46,6 +46,9 @@ class InspectorGeneratorTests:
                '--framework', 'Test',
                '--test',
                json_file]
+        if backend_commands_output_directory:
+            cmd.extend(['--backendCommandsOutputDir', backend_commands_output_directory,
+                        '--backendCommandsPlatform', 'Mac'])
 
         exit_code = 0
         try:
@@ -64,7 +67,7 @@ class InspectorGeneratorTests:
             output_file.write(error_output)
 
     def detect_changes(self, work_directory, reference_directory):
-        changes_found = False
+        changes_found = {}
         for output_file in os.listdir(work_directory):
             cmd = ['diff',
                    '-u',
@@ -80,11 +83,8 @@ class InspectorGeneratorTests:
                 exit_code = e.exit_code
 
             if exit_code or output:
-                print('FAIL: %s' % output_file)
-                print(output)
-                changes_found = True
-            else:
-                print('PASS: %s' % output_file)
+                changes_found[output_file] = output
+
         return changes_found
 
     def run_tests(self, input_directory, reference_directory):
@@ -92,6 +92,8 @@ class InspectorGeneratorTests:
 
         passed = True
         for input_file in os.listdir(input_directory):
+            if os.path.isdir(input_file):
+                continue
             (name, extension) = os.path.splitext(input_file)
             if extension != '.json':
                 continue
@@ -107,10 +109,47 @@ class InspectorGeneratorTests:
                 print("Reset results for test: %s" % (input_file))
                 continue
 
-            # Detect changes
-            if self.detect_changes(work_directory, reference_directory):
+            changes_found = self.detect_changes(work_directory, reference_directory)
+            if changes_found:
+                print('FAIL: %s' % input_file)
+                print(changes_found[input_file])
                 passed = False
+            else:
+                print('PASS: %s' % input_file)
+
             shutil.rmtree(work_directory)
+
+        # Test the generator's the backend commands outputting (script outputting) functionality.
+        with_script_input_directory = os.path.join(input_directory, 'with-script')
+        with_script_reference_directory = os.path.join(reference_directory, 'with-script')
+        with_script_work_directory = with_script_reference_directory
+        for input_file in os.listdir(with_script_input_directory):
+            if os.path.isdir(input_file):
+                continue
+            (name, extension) = os.path.splitext(input_file)
+            if extension != '.json':
+                continue
+            if not self.reset_results:
+                with_script_work_directory = tempfile.mkdtemp()
+
+            shutil.copytree(os.path.join(with_script_input_directory, name + '-original'), with_script_work_directory, dirs_exist_ok=True)
+
+            if self.generate_from_json(os.path.join(with_script_input_directory, input_file), with_script_work_directory, with_script_work_directory):
+                passed = False
+
+            if self.reset_results:
+                print("Reset results for test: %s" % input_file)
+                continue
+
+            changes_found = self.detect_changes(with_script_work_directory, with_script_reference_directory)
+            if changes_found:
+                print('FAIL: %s' % input_file)
+                print(*changes_found.values(), sep="\n")
+                passed = False
+            else:
+                print('PASS: %s' % input_file)
+
+            shutil.rmtree(with_script_work_directory)
 
         return passed
 

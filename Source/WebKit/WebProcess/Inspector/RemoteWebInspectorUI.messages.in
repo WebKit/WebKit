@@ -25,7 +25,7 @@
     DispatchedTo=WebContent
 ]
 messages -> RemoteWebInspectorUI {
-    Initialize(struct WebKit::DebuggableInfoData debuggableInfo, String backendCommandsURL)
+    Initialize(struct WebKit::DebuggableInfoData debuggableInfo, String backendCommandsURL, String backendCommandsScript)
 
     UpdateFindString(String findString)
 

@@ -91,6 +91,12 @@
 #define WIRPingMessage                          @"WIRPingMessage"
 #define WIRPingSuccessMessage                   @"WIRPingSuccessMessage"
 
+#define WIRProtocolSharingRequestMessage        @"WIRProtocolSharingRequestMessage"
+#define WIRProtocolSharingResponseMessage       @"WIRProtocolSharingResponseMessage"
+#define WIRProtocolSharingDebuggerUUIDKey       @"WIRProtocolSharingDebuggerUUIDKey"
+#define WIRProtocolSharingResponseVersionKey    @"WIRProtocolSharingResponseVersionKey"
+#define WIRProtocolSharingResponseContentsKey   @"WIRProtocolSharingResponseContentsKey"
+
 #define WIRTargetAllowsAutomaticInspectionInSameProcessKey  @"WIRTargetAllowsAutomaticInspectionInSameProcess"
 
 // Allowed values for WIRMessageDataTypeKey.

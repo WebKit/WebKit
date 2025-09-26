@@ -27,6 +27,8 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
+#include "config.h"
+
 #include <JavaScriptCore/RemoteConnectionToTarget.h>
 #include <JavaScriptCore/RemoteControllableTarget.h>
 
@@ -123,6 +125,12 @@ public:
 
 #if PLATFORM(COCOA)
     JS_EXPORT_PRIVATE static void setNeedMachSandboxExtension(bool needExtension);
+
+#if ENABLE(REMOTE_INSPECTOR_PROTOCOL_SHARING)
+    JS_EXPORT_PRIVATE static const char* protocolVersion();
+    JS_EXPORT_PRIVATE static const char* protocolContentsMac();
+    JS_EXPORT_PRIVATE static const char* protocolContentsIOS();
+#endif
 #endif
 #if USE(GLIB)
     JS_EXPORT_PRIVATE static void setInspectorServerAddress(CString&&);
@@ -244,7 +252,10 @@ private:
     void receivedAutomaticInspectionRejectMessage(NSDictionary *userInfo) WTF_REQUIRES_LOCK(m_mutex);
     void receivedAutomationSessionRequestMessage(NSDictionary *userInfo) WTF_REQUIRES_LOCK(m_mutex);
     void receivedPingSuccessMessage() WTF_REQUIRES_LOCK(m_mutex);
+#if ENABLE(REMOTE_INSPECTOR_PROTOCOL_SHARING)
+    void receivedProtocolSharingRequestMessage(NSDictionary* userInfo) WTF_REQUIRES_LOCK(m_mutex);
 #endif
+#endif // PLATFORM(COCOA)
 #if USE(INSPECTOR_SOCKET_SERVER)
     HashMap<String, CallHandler>& dispatchMap() final;
     void didClose(RemoteInspectorSocketEndpoint&, ConnectionID) final;

@@ -36,6 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak, setter=_setDiagnosticLoggingDelegate:) id<_WKDiagnosticLoggingDelegate> _diagnosticLoggingDelegate;
 
+- (void)loadForDebuggable:(_WKInspectorDebuggableInfo *)debuggableInfo backendCommandsScript:(NSString *)backendCommandsScript;
+
 @end
 
 

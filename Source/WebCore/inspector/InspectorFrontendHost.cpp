@@ -74,8 +74,10 @@
 #include "SystemSoundManager.h"
 #include "UserGestureIndicator.h"
 #include "WebCorePersistentCoders.h"
+#include "wtf/Assertions.h"
 #include <JavaScriptCore/ScriptFunctionCall.h>
 #include <JavaScriptCore/Strong.h>
+#include <format>
 #include <pal/system/Sound.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/JSONValues.h>
@@ -367,6 +369,11 @@ String InspectorFrontendHost::localizedStringsURL() const
 String InspectorFrontendHost::backendCommandsURL() const
 {
     return m_client ? m_client->backendCommandsURL() : String();
+}
+
+String InspectorFrontendHost::backendCommandsScript() const
+{
+    return m_client ? m_client->backendCommandsScript() : String();
 }
 
 static String debuggableTypeToString(DebuggableType debuggableType)
