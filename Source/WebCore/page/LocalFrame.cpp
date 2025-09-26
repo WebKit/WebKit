@@ -238,6 +238,8 @@ LocalFrame::~LocalFrame()
 {
     setView(nullptr);
 
+    m_inspectorController->inspectedFrameDestroyed();
+
     Ref loader = this->loader();
     if (!loader->isComplete())
         loader->closeURL();
@@ -1642,7 +1644,7 @@ RefPtr<SecurityOrigin> LocalFrame::frameDocumentSecurityOrigin() const
     return nullptr;
 }
 
-Ref<FrameInspectorController> LocalFrame::protectedInspectorController()
+Ref<FrameInspectorController> LocalFrame::protectedInspectorController() const
 {
     return m_inspectorController.get();
 }

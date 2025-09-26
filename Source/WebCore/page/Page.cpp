@@ -2544,7 +2544,8 @@ void Page::didCompleteRenderingFrame()
 
     // FIXME: This is where we'd call requestPostAnimationFrame callbacks: webkit.org/b/249798.
     // FIXME: Run WindowEventLoop tasks from here: webkit.org/b/249684.
-    InspectorInstrumentation::didCompleteRenderingFrame(m_mainFrame);
+    if (RefPtr localMainFrame = this->localMainFrame())
+        InspectorInstrumentation::didCompleteRenderingFrame(*localMainFrame);
 }
 
 void Page::didUpdateRendering()

@@ -118,6 +118,8 @@ public:
     InspectorBackendClient* inspectorBackendClient() const { return m_inspectorBackendClient.get(); }
     InspectorFrontendClient* inspectorFrontendClient() const { return m_inspectorFrontendClient; }
 
+    InstrumentingAgents& instrumentingAgents() const { return m_instrumentingAgents.get(); }
+
     Inspector::InspectorAgent& ensureInspectorAgent();
     InspectorDOMAgent& ensureDOMAgent();
     WEBCORE_EXPORT InspectorPageAgent& ensurePageAgent();

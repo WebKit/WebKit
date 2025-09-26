@@ -39,6 +39,7 @@
 #include "DocumentLoader.h"
 #include "Event.h"
 #include "EventTargetInlines.h"
+#include "FrameInspectorController.h"
 #include "InspectorAnimationAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorCanvasAgent.h"
@@ -1292,7 +1293,7 @@ void InspectorInstrumentation::unregisterInstrumentingAgents(InstrumentingAgents
     }
 }
 
-InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(const RenderObject& renderer)
+InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(const RenderObject& renderer)
 {
     return instrumentingAgents(renderer.frame());
 }
@@ -1319,14 +1320,14 @@ InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(ServiceWorker
     return globalScope.inspectorController().m_instrumentingAgents;
 }
 
-InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(const LocalFrameView& frameView)
+InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(const LocalFrameView& frameView)
 {
     return instrumentingAgents(frameView.frame());
 }
 
-InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(const Frame& frame)
+InstrumentingAgents& InspectorInstrumentation::instrumentingAgents(const LocalFrame& frame)
 {
-    return instrumentingAgents(frame.page());
+    return frame.protectedInspectorController()->m_instrumentingAgents.get();
 }
 
 InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(Document& document)

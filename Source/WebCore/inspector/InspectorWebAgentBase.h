@@ -28,6 +28,7 @@
 
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <WebCore/InstrumentingAgents.h>
+#include <WebCore/LocalFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/WorkerOrWorkletGlobalScope.h>
 #include <wtf/WeakRef.h>
@@ -54,6 +55,16 @@ struct PageAgentContext : public WebAgentContext {
     }
 
     WeakRef<Page> inspectedPage;
+};
+
+struct FrameAgentContext : public WebAgentContext {
+    FrameAgentContext(WebAgentContext& context, LocalFrame& inspectedFrame)
+        : WebAgentContext(context)
+        , inspectedFrame(inspectedFrame)
+    {
+    }
+
+    WeakRef<LocalFrame> inspectedFrame;
 };
 
 struct WorkerAgentContext : public WebAgentContext {

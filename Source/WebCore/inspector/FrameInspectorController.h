@@ -53,6 +53,7 @@ class InspectorInstrumentation;
 class InstrumentingAgents;
 class LocalFrame;
 class WebInjectedScriptManager;
+struct FrameAgentContext;
 
 class FrameInspectorController final : public Inspector::InspectorEnvironment, public CanMakeWeakPtr<FrameInspectorController> {
     WTF_MAKE_NONCOPYABLE(FrameInspectorController);
@@ -68,6 +69,8 @@ public:
     WEBCORE_EXPORT void disconnectFrontend(Inspector::FrontendChannel&);
     WEBCORE_EXPORT void dispatchMessageFromFrontend(const String& message);
 
+    void inspectedFrameDestroyed();
+
     // InspectorEnvironment
     bool developerExtrasEnabled() const override;
     bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const override;
@@ -81,6 +84,7 @@ public:
 private:
     friend class InspectorInstrumentation;
 
+    FrameAgentContext frameAgentContext();
     void createLazyAgents();
 
     WeakRef<LocalFrame> m_frame;
