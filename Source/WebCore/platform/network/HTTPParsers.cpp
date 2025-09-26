@@ -962,6 +962,10 @@ bool isCrossOriginSafeRequestHeader(HTTPHeaderName name, const String& value)
             return false;
         break;
     }
+    case HTTPHeaderName::LastEventID:
+        if (containsCORSUnsafeRequestHeaderBytes(value))
+            return false;
+        break;
     case HTTPHeaderName::Range:
         long long start;
         long long end;
