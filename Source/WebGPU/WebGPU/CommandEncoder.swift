@@ -2093,8 +2093,8 @@ extension WebGPU.CommandEncoder {
         var counterSampleBuffer: MTLCounterSampleBuffer? = nil
         var counterSampleBufferOffset: UInt32 = 0
         if let wgpuTimestampWrites = wgpuGetComputePassDescriptorTimestampWrites(collection.span)?[0] {
-            counterSampleBuffer = WebGPU.fromAPI(wgpuTimestampWrites.querySet).counterSampleBufferWithOffset().first
-            counterSampleBufferOffset = WebGPU.fromAPI(wgpuTimestampWrites.querySet).counterSampleBufferWithOffset().second
+            counterSampleBuffer = unsafe WebGPU.fromAPI(wgpuTimestampWrites.querySet).counterSampleBufferWithOffset().first
+            counterSampleBufferOffset = unsafe WebGPU.fromAPI(wgpuTimestampWrites.querySet).counterSampleBufferWithOffset().second
         }
 
         if m_device.ptr().enableEncoderTimestamps() || counterSampleBuffer != nil {

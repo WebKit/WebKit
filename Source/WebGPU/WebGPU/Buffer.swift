@@ -44,7 +44,7 @@ public func Buffer_copyFrom_thunk(_ buffer: WebGPU.Buffer, from data: SpanConstU
 
 @_expose(Cxx)
 public func Buffer_getMappedRange_thunk(_ buffer: WebGPU.Buffer, offset: Int, size: Int) -> SpanUInt8 {
-    buffer.getMappedRange(offset: offset, size: size)
+    unsafe buffer.getMappedRange(offset: offset, size: size)
 }
 
 internal func computeRangeSize(size: Int, offset: Int) -> Int
