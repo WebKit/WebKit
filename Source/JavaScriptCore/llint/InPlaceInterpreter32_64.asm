@@ -415,7 +415,7 @@ end)
 .ipint_end_ret:
     loadp Wasm::IPIntCallee::m_uINTBytecode + VectorBufferOffset[ws0], MC
     ipintEpilogueOSR(10)
-    loadp Wasm::IPIntCallee::m_highestReturnStackOffset[ws0], sc0
+    loadp Wasm::IPIntCallee::m_topOfReturnStackFPOffset[ws0], sc0
     addp cfr, sc0
     uintEnter()
 
@@ -4420,36 +4420,60 @@ mintAlign(_fa7)
 # Regular calls have to save space for return values, while tail calls are reusing the stack frame
 # and thus do not have to care.
 
-mintAlign(_stackzero)
+# CallArgumentBytecode::CallArgDecSP (0x10)
+mintAlign(_call_argument_dec_sp)
+    subp 16, sc3
+
+# CallArgumentBytecode::CallArgStore0 (0x11)
+mintAlign(_call_argument_store_0)
     mintPop(argumINTTmp, lr)
     store2ia argumINTTmp, lr, [sc3]
     mintArgDispatch()
 
-mintAlign(_stackeight)
+# CallArgumentBytecode::CallArgDecSPStore8 (0x12)
+mintAlign(_call_argument_dec_sp_store_8)
     mintPop(argumINTTmp, lr)
     subp 16, sc3
     store2ia argumINTTmp, lr, 8[sc3]
     mintArgDispatch()
 
+# CallArgumentBytecode::CallArgDecSPStoreVector0 (0x13)
+mintAlign(_call_argument_dec_sp_store_vector_0)
+    break
+
+# CallArgumentBytecode::TailCallArgDecSPStoreVector8 (0x14)
+mintAlign(_call_argument_dec_sp_store_vector_8)
+    break
+
 # Since we're writing into the same frame, we're going to first push stack arguments onto the stack.
 # Once we're done, we'll copy them back down into the new frame, to avoid having to deal with writing over
 # arguments lower down on the stack.
 
-mintAlign(_tail_stackzero)
+# CallArgumentBytecode::TailCallArgDecSP (0x15)
+mintAlign(_tail_call_argument_dec_sp)
     break
 
-mintAlign(_tail_stackeight)
+# CallArgumentBytecode::TailCallArgStore0 (0x16)
+mintAlign(_tail_call_argument_store_0)
     break
 
-mintAlign(_gap)
+# CallArgumentBytecode::TailCallArgDecSPStore8 (0x17)
+mintAlign(_tail_call_argument_dec_sp_store_8)
     break
 
-mintAlign(_tail_gap)
+# CallArgumentBytecode::TailCallArgDecSPStoreVector0 (0x18)
+mintAlign(_tail_call_argument_dec_sp_store_vector_0)
     break
 
+# CallArgumentBytecode::TailCallArgDecSPStoreVector8 (0x19)
+mintAlign(_tail_call_argument_dec_sp_store_vector_8)
+    break
+
+# CallArgumentBytecode::TailCall (0x1a)
 mintAlign(_tail_call)
     jmp .ipint_perform_tail_call
 
+# CallArgumentBytecode::Call (0x1b)
 mintAlign(_call)
     pop wasmInstance, ws0
     # pop targetInstance, targetEntrypoint
@@ -4508,7 +4532,7 @@ _wasm_ipint_call_return_location_wide32:
     const mintRetSrc = sc1
     const mintRetDst = sc2
 
-    loadi IPInt::CallReturnMetadata::firstStackArgumentSPOffset[MC], mintRetSrc
+    loadi IPInt::CallReturnMetadata::firstStackResultSPOffset[MC], mintRetSrc
     advanceMC(IPInt::CallReturnMetadata::resultBytecode)
     leap [sp, mintRetSrc], mintRetSrc
 
@@ -4628,16 +4652,17 @@ mintAlign(_fr7)
     stored wfa7, [mintRetDst]
     mintRetDispatch()
 
-mintAlign(_stack)
+# CallResultBytecode::ResultStack (0x10)
+mintAlign(_result_stack)
     load2ia [mintRetSrc], sc0, sc1
     addp SlotSize, mintRetSrc
     subp StackValueSize, mintRetDst
     store2ia sc0, sc1, [mintRetDst]
     mintRetDispatch()
 
-mintAlign(_stack_gap)
-    addp SlotSize, mintRetSrc
-    mintRetDispatch()
+# CallResultBytecode::ResultStackVector (0x11)
+mintAlign(_result_stack_vector)
+    break
 
 mintAlign(_end)
 
@@ -4868,9 +4893,12 @@ uintAlign(_fr7)
 
 uintAlign(_stack)
     popInt64(argumINTTmp, lr)
-    store2ia argumINTTmp, lr, [sc0]
     subp 8, sc0
+    store2ia argumINTTmp, lr, [sc0]
     uintDispatch()
+
+uintAlign(_stack_vector)
+    break
 
 uintAlign(_ret)
     jmp .ipint_exit
@@ -4995,6 +5023,9 @@ argumINTAlign(_stack)
     store2ia argumINTTmp, lr, [argumINTDst]
     addp LocalSize, argumINTDst
     argumINTDispatch()
+
+argumINTAlign(_stack_vector)
+    break
 
 argumINTAlign(_end)
     jmp .ipint_entry_end_local

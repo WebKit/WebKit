@@ -128,11 +128,6 @@ void FunctionIPIntMetadataGenerator::addReturnData(const FunctionSignature& sig,
 {
     m_uINTBytecode.reserveInitialCapacity(sig.returnCount() + 1);
     // uINT: the interpreter smaller than mINT
-    // 0x00-0x07: r0 - r7
-    // 0x08-0x0f: f0 - f7
-    // 0x10: stack
-    // 0x11: return
-
     constexpr static int NUM_UINT_GPRS = 8;
     constexpr static int NUM_UINT_FPRS = 8;
     ASSERT_UNUSED(NUM_UINT_GPRS, wasmCallingConvention().jsrArgs.size() <= NUM_UINT_GPRS);
@@ -140,7 +135,9 @@ void FunctionIPIntMetadataGenerator::addReturnData(const FunctionSignature& sig,
 
     m_uINTBytecode.appendUsingFunctor(returnCC.results.size(),
         [&](unsigned index) -> uint8_t {
-            auto loc = returnCC.results[index].location;
+            const ArgumentLocation& argLoc = returnCC.results[index];
+            const ValueLocation& loc = argLoc.location;
+
             if (loc.isGPR()) {
 #if USE(JSVALUE64)
                 ASSERT_UNUSED(NUM_UINT_GPRS, GPRInfo::toArgumentIndex(loc.jsr().gpr()) < NUM_UINT_GPRS);
@@ -157,12 +154,16 @@ void FunctionIPIntMetadataGenerator::addReturnData(const FunctionSignature& sig,
                 return static_cast<uint8_t>(IPInt::UIntBytecode::RetFPR) + FPRInfo::toArgumentIndex(loc.fpr());
             }
 
-            if (loc.isStack()) {
-                m_highestReturnStackOffset = loc.offsetFromFP();
+            RELEASE_ASSERT(loc.isStack());
+            m_topOfReturnStackFPOffset = loc.offsetFromFP() + bytesForWidth(argLoc.width);
+            switch (argLoc.width) {
+            case Width::Width64:
                 return static_cast<uint8_t>(IPInt::UIntBytecode::Stack);
+            case Width::Width128:
+                return static_cast<uint8_t>(IPInt::UIntBytecode::StackVector);
+            default:
+                RELEASE_ASSERT_NOT_REACHED("No uINT bytecode for result width");
             }
-
-            return 0;
         });
 
     m_uINTBytecode.reverse();

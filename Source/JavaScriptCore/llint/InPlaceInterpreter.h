@@ -703,7 +703,8 @@ extern "C" void SYSV_ABI ipint_entry_simd();
     m(0x0e, argumINT_fa6) \
     m(0x0f, argumINT_fa7) \
     m(0x10, argumINT_stack) \
-    m(0x11, argumINT_end) \
+    m(0x11, argumINT_stack_vector) \
+    m(0x12, argumINT_end) \
 
 #define FOR_EACH_IPINT_SLOW_PATH(m) \
     m(0x00, local_get_slow_path) \
@@ -727,14 +728,18 @@ extern "C" void SYSV_ABI ipint_entry_simd();
     m(0x0d, mint_fa5) \
     m(0x0e, mint_fa6) \
     m(0x0f, mint_fa7) \
-    m(0x10, mint_stackzero) \
-    m(0x11, mint_stackeight) \
-    m(0x12, mint_tail_stackzero) \
-    m(0x13, mint_tail_stackeight) \
-    m(0x14, mint_gap) \
-    m(0x15, mint_tail_gap) \
-    m(0x16, mint_tail_call) \
-    m(0x17, mint_call) \
+    m(0x10, mint_call_argument_dec_sp) \
+    m(0x11, mint_call_argument_store_0) \
+    m(0x12, mint_call_argument_dec_sp_store_8) \
+    m(0x13, mint_call_argument_dec_sp_store_vector_0) \
+    m(0x14, mint_call_argument_dec_sp_store_vector_8) \
+    m(0x15, mint_tail_call_argument_dec_sp) \
+    m(0x16, mint_tail_call_argument_store_0) \
+    m(0x17, mint_tail_call_argument_dec_sp_store_8) \
+    m(0x18, mint_tail_call_argument_dec_sp_store_vector_0) \
+    m(0x19, mint_tail_call_argument_dec_sp_store_vector_8) \
+    m(0x1a, mint_tail_call) \
+    m(0x1b, mint_call) \
 
 #define FOR_EACH_IPINT_MINT_RETURN_OPCODE(m) \
     m(0x00, mint_r0) \
@@ -753,8 +758,8 @@ extern "C" void SYSV_ABI ipint_entry_simd();
     m(0x0d, mint_fr5) \
     m(0x0e, mint_fr6) \
     m(0x0f, mint_fr7) \
-    m(0x10, mint_stack) \
-    m(0x11, mint_stack_gap) \
+    m(0x10, mint_result_stack) \
+    m(0x11, mint_result_stack_vector) \
     m(0x12, mint_end) \
 
 #define FOR_EACH_IPINT_UINT_OPCODE(m) \
@@ -775,7 +780,8 @@ extern "C" void SYSV_ABI ipint_entry_simd();
     m(0x0e, uint_fr6) \
     m(0x0f, uint_fr7) \
     m(0x10, uint_stack) \
-    m(0x11, uint_ret) \
+    m(0x11, uint_stack_vector) \
+    m(0x12, uint_ret) \
 
 #if !ENABLE(C_LOOP) && (CPU(ADDRESS64) && (CPU(ARM64) || CPU(X86_64)) || (CPU(ADDRESS32) && CPU(ARM_THUMB2)))
 FOR_EACH_IPINT_OPCODE(IPINT_VALIDATE_DEFINE_FUNCTION);
