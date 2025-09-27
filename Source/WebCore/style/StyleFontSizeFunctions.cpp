@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "FontMetrics.h"
+#include "FontSizeAdjust.h"
 #include "FrameDestructionObserverInlines.h"
 #include "LocalFrame.h"
 #include "RenderStyleInlines.h"
@@ -192,20 +193,20 @@ static float adjustedFontSize(float size, float sizeAdjust, float metricValue)
     return size * (sizeAdjust / aspectValue);
 }
 
-float adjustedFontSize(float size, const FontSizeAdjust& sizeAdjust, const FontMetrics& metrics)
+float adjustedFontSize(float size, const WebCore::FontSizeAdjust& sizeAdjust, const FontMetrics& metrics)
 {
     // FIXME: The behavior for missing metrics has yet to be defined.
     // https://github.com/w3c/csswg-drafts/issues/6384
     switch (sizeAdjust.metric) {
-    case FontSizeAdjust::Metric::CapHeight:
+    case WebCore::FontSizeAdjust::Metric::CapHeight:
         return metrics.capHeight() ? adjustedFontSize(size, *sizeAdjust.value, *metrics.capHeight()) : size;
-    case FontSizeAdjust::Metric::ChWidth:
+    case WebCore::FontSizeAdjust::Metric::ChWidth:
         return metrics.zeroWidth() ? adjustedFontSize(size, *sizeAdjust.value, *metrics.zeroWidth()) : size;
     // FIXME: Are ic-height and ic-width the same? Gecko treats them the same.
-    case FontSizeAdjust::Metric::IcWidth:
-    case FontSizeAdjust::Metric::IcHeight:
+    case WebCore::FontSizeAdjust::Metric::IcWidth:
+    case WebCore::FontSizeAdjust::Metric::IcHeight:
         return metrics.ideogramWidth() ? adjustedFontSize(size, *sizeAdjust.value, *metrics.ideogramWidth()) : size;
-    case FontSizeAdjust::Metric::ExHeight:
+    case WebCore::FontSizeAdjust::Metric::ExHeight:
     default:
         return metrics.xHeight() ? adjustedFontSize(size, *sizeAdjust.value, *metrics.xHeight()) : size;
     }

@@ -169,23 +169,4 @@ inline FontVariationSettings blendFunc(const FontVariationSettings& from, const 
 
 #endif
 
-inline FontSelectionValue blendFunc(FontSelectionValue from, FontSelectionValue to, const Context& context)
-{
-    return FontSelectionValue(std::max(0.0f, blendFunc(static_cast<float>(from), static_cast<float>(to), context)));
-}
-
-inline std::optional<FontSelectionValue> blendFunc(std::optional<FontSelectionValue> from, std::optional<FontSelectionValue> to, const Context& context)
-{
-    if (!from && !to)
-        return std::nullopt;
-
-    auto valueOrDefault = [](std::optional<FontSelectionValue> fontSelectionValue) {
-        if (!fontSelectionValue)
-            return 0.0f;
-        return static_cast<float>(fontSelectionValue.value());
-    };
-
-    return normalizedFontItalicValue(blendFunc(valueOrDefault(from), valueOrDefault(to), context));
-}
-
 } // namespace WebCore::Style::Interpolation

@@ -116,7 +116,7 @@ inline void BuilderState::setFontDescriptionFeatureSettings(FontFeatureSettings&
     fontCascade.updateRequiresShaping();
 }
 
-inline void BuilderState::setFontDescriptionFontPalette(Style::FontPalette&& fontPalette)
+inline void BuilderState::setFontDescriptionFontPalette(FontPalette&& fontPalette)
 {
     if (m_style.fontDescription().fontPalette() == fontPalette.platform())
         return;
@@ -127,11 +127,11 @@ inline void BuilderState::setFontDescriptionFontPalette(Style::FontPalette&& fon
 
 inline void BuilderState::setFontDescriptionFontSizeAdjust(FontSizeAdjust fontSizeAdjust)
 {
-    if (m_style.fontDescription().fontSizeAdjust() == fontSizeAdjust)
+    if (m_style.fontDescription().fontSizeAdjust() == fontSizeAdjust.platform())
         return;
 
     m_fontDirty = true;
-    m_style.mutableFontDescriptionWithoutUpdate().setFontSizeAdjust(WTFMove(fontSizeAdjust));
+    m_style.mutableFontDescriptionWithoutUpdate().setFontSizeAdjust(fontSizeAdjust.platform());
 }
 
 inline void BuilderState::setFontDescriptionFontSmoothing(FontSmoothingMode fontSmoothing)
@@ -271,22 +271,22 @@ inline void BuilderState::setFontDescriptionVariationSettings(FontVariationSetti
     m_style.mutableFontDescriptionWithoutUpdate().setVariationSettings(WTFMove(variationSettings));
 }
 
-inline void BuilderState::setFontDescriptionWeight(FontSelectionValue weight)
+inline void BuilderState::setFontDescriptionWeight(FontWeight weight)
 {
-    if (m_style.fontDescription().weight() == weight)
+    if (m_style.fontDescription().weight() == weight.platform())
         return;
 
     m_fontDirty = true;
-    m_style.mutableFontDescriptionWithoutUpdate().setWeight(weight);
+    m_style.mutableFontDescriptionWithoutUpdate().setWeight(weight.platform());
 }
 
-inline void BuilderState::setFontDescriptionWidth(FontSelectionValue width)
+inline void BuilderState::setFontDescriptionWidth(FontWidth width)
 {
-    if (m_style.fontDescription().width() == width)
+    if (m_style.fontDescription().width() == width.platform())
         return;
 
     m_fontDirty = true;
-    m_style.mutableFontDescriptionWithoutUpdate().setWidth(width);
+    m_style.mutableFontDescriptionWithoutUpdate().setWidth(width.platform());
 }
 
 inline void BuilderState::setFontDescriptionVariantAlternates(const FontVariantAlternates& variantAlternates)

@@ -674,10 +674,10 @@
                 "from-font"
             ],
             "codegen-properties": {
-                "animation-wrapper": "FontSizeAdjustWrapper",
-                "animation-wrapper-requires-override-parameters": [],
-                "style-converter": "FontSizeAdjust",
-                "style-builder-custom": "Value",
+                "animation-wrapper": "StyleTypeWrapper",
+                "animation-wrapper-requires-render-style": true,
+                "style-converter": "StyleType<FontSizeAdjust>",
+                "font-property-uses-render-style-for-access": true,
                 "font-property": true,
                 "high-priority": true,
                 "separator": " ",
@@ -702,10 +702,11 @@
                 "oblique"
             ],
             "codegen-properties": {
-                "animation-wrapper": "FontStyleWrapper",
-                "animation-wrapper-requires-override-parameters": [],
+                "animation-wrapper": "StyleTypeWrapper",
+                "animation-wrapper-requires-render-style": true,
                 "style-builder-custom": "All",
-                "style-extractor-custom": true,
+                "style-converter": "StyleType<FontStyle>",
+                "font-property-uses-render-style-for-access": true,
                 "font-property": true,
                 "high-priority": true,
                 "parser-function": "consumeFontStyle",
@@ -728,12 +729,13 @@
                 "lighter"
             ],
             "codegen-properties": {
-                "animation-wrapper": "FontWeightWrapper",
-                "animation-wrapper-requires-override-parameters": [],
+                "animation-wrapper": "StyleTypeWrapper",
+                "animation-wrapper-requires-render-style": true,
                 "font-description-name-for-methods": "Weight",
+                "font-property-uses-render-style-for-access": true,
                 "font-property": true,
                 "high-priority": true,
-                "style-converter": "FontWeight",
+                "style-converter": "StyleType<FontWeight>",
                 "parser-grammar": "<font-weight-absolute> | bolder | lighter",
                 "parser-exported": true
             },
@@ -761,23 +763,25 @@
                 {
                     "enable-if": "ENABLE_VARIATION_FONTS",
                     "aliases": ["font-stretch"],
-                    "animation-wrapper": "Wrapper",
+                    "animation-wrapper": "StyleTypeWrapper",
                     "animation-wrapper-requires-render-style": true,
                     "font-description-name-for-methods": "Width",
+                    "font-property-uses-render-style-for-access": true,
                     "font-property": true,
                     "high-priority": true,
-                    "style-converter": "FontWidth",
+                    "style-converter": "StyleType<FontWidth>",
                     "parser-grammar": "<font-width-absolute> | <percentage [0,inf]>"
                 },
                 {
                     "enable-if": "!ENABLE_VARIATION_FONTS",
                     "aliases": ["font-stretch"],
-                    "animation-wrapper": "Wrapper",
+                    "animation-wrapper": "StyleTypeWrapper",
                     "animation-wrapper-requires-render-style": true,
                     "font-description-name-for-methods": "Width",
+                    "font-property-uses-render-style-for-access": true,
                     "font-property": true,
                     "high-priority": true,
-                    "style-converter": "FontWidth",
+                    "style-converter": "StyleType<FontWidth>",
                     "parser-grammar": "<font-width-absolute>"
                 }
             ],

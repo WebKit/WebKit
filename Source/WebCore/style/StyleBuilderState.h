@@ -49,8 +49,6 @@ class StyleResolver;
 class TextAutospace;
 class TextSpacingTrim;
 
-struct FontSizeAdjust;
-
 namespace CSSCalc {
 struct RandomCachingKey;
 }
@@ -65,6 +63,9 @@ namespace Style {
 class BuilderState;
 struct Color;
 struct FontPalette;
+struct FontSizeAdjust;
+struct FontWeight;
+struct FontWidth;
 
 void maybeUpdateFontForLetterSpacingOrWordSpacing(BuilderState&, CSSValue&);
 
@@ -160,7 +161,7 @@ public:
     void setFontDescriptionFamilies(Vector<AtomString>&);
     void setFontDescriptionIsSpecifiedFont(bool);
     void setFontDescriptionFeatureSettings(FontFeatureSettings&&);
-    void setFontDescriptionFontPalette(Style::FontPalette&&);
+    void setFontDescriptionFontPalette(FontPalette&&);
     void setFontDescriptionFontSizeAdjust(FontSizeAdjust);
     void setFontDescriptionFontSmoothing(FontSmoothingMode);
     void setFontDescriptionFontSynthesisSmallCaps(FontSynthesisLonghandValue);
@@ -176,8 +177,8 @@ public:
     void setFontDescriptionVariantEmoji(FontVariantEmoji);
     void setFontDescriptionVariantPosition(FontVariantPosition);
     void setFontDescriptionVariationSettings(FontVariationSettings&&);
-    void setFontDescriptionWeight(FontSelectionValue);
-    void setFontDescriptionWidth(FontSelectionValue);
+    void setFontDescriptionWeight(FontWeight);
+    void setFontDescriptionWidth(FontWidth);
     void setFontDescriptionVariantAlternates(const FontVariantAlternates&);
     void setFontDescriptionVariantEastAsianVariant(FontVariantEastAsianVariant);
     void setFontDescriptionVariantEastAsianWidth(FontVariantEastAsianWidth);

@@ -27,6 +27,7 @@
 
 #include "CSSURLValue.h"
 #include "Document.h"
+#include "StyleBuilderChecking.h"
 #include "StyleBuilderState.h"
 #include <wtf/text/TextStream.h>
 

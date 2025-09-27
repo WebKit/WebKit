@@ -1331,38 +1331,31 @@ inline float BuilderCustom::determineRubyTextSizeMultiplier(BuilderState& builde
     return 0.25f;
 }
 
-static inline void applyFontStyle(BuilderState& state, std::optional<FontSelectionValue> slope, FontStyleAxis axis)
+static inline void applyFontStyle(BuilderState& state, const FontStyle& style)
 {
     auto& description = state.fontDescription();
-    if (description.italic() == slope && description.fontStyleAxis() == axis)
+    if (description.italic() == style.slope() && description.fontStyleAxis() == style.axis())
         return;
 
     auto copy = description;
-    copy.setItalic(slope);
-    copy.setFontStyleAxis(axis);
+    copy.setItalic(style.slope());
+    copy.setFontStyleAxis(style.axis());
     state.setFontDescription(WTFMove(copy));
 }
 
 inline void BuilderCustom::applyInitialFontStyle(BuilderState& state)
 {
-    applyFontStyle(state, FontCascadeDescription::initialItalic(), FontCascadeDescription::initialFontStyleAxis());
+    applyFontStyle(state, RenderStyle::initialFontStyle());
 }
 
 inline void BuilderCustom::applyInheritFontStyle(BuilderState& state)
 {
-    applyFontStyle(state, state.parentFontDescription().italic(), state.parentFontDescription().fontStyleAxis());
+    applyFontStyle(state, state.parentStyle().fontStyle());
 }
 
 inline void BuilderCustom::applyValueFontStyle(BuilderState& state, CSSValue& value)
 {
-    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
-    auto keyword = primitiveValue ? primitiveValue->valueID() : CSSValueOblique;
-
-    std::optional<FontSelectionValue> slope;
-    if (!CSSPropertyParserHelpers::isSystemFontShorthand(keyword))
-        slope = BuilderConverter::convertFontStyleFromValue(state, value);
-
-    applyFontStyle(state, slope, keyword == CSSValueItalic ? FontStyleAxis::ital : FontStyleAxis::slnt);
+    applyFontStyle(state, toStyleFromCSSValue<FontStyle>(state, value));
 }
 
 inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSValue& value)
@@ -1425,11 +1418,6 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
         return;
 
     builderState.setFontDescriptionFontSize(std::min(maximumAllowedFontSize, size));
-}
-
-inline void BuilderCustom::applyValueFontSizeAdjust(BuilderState& builderState, CSSValue& value)
-{
-    builderState.setFontDescriptionFontSizeAdjust(BuilderConverter::convertFontSizeAdjust(builderState, value));
 }
 
 inline void BuilderCustom::applyValueStrokeWidth(BuilderState& builderState, CSSValue& value)

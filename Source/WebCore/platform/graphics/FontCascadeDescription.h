@@ -127,10 +127,7 @@ public:
     WEBCORE_EXPORT void resolveFontSizeAdjustFromFontIfNeeded(const Font&);
 
     // Initial values for font properties.
-    static std::optional<FontSelectionValue> initialItalic() { return std::nullopt; }
     static FontStyleAxis initialFontStyleAxis() { return FontStyleAxis::slnt; }
-    static FontSelectionValue initialWeight() { return normalWeightValue(); }
-    static FontSelectionValue initialWidth() { return normalWidthValue(); }
     static FontSmallCaps initialSmallCaps() { return FontSmallCaps::Off; }
     static Kerning initialKerning() { return Kerning::Auto; }
     static FontSmoothingMode initialFontSmoothing() { return FontSmoothingMode::AutoSmoothing; }
@@ -144,7 +141,6 @@ public:
     static FontVariantEmoji initialVariantEmoji() { return FontVariantEmoji::Normal; }
     static FontOpticalSizing initialOpticalSizing() { return FontOpticalSizing::Enabled; }
     static const AtomString& initialSpecifiedLocale() { return nullAtom(); }
-    static FontSizeAdjust initialFontSizeAdjust() { return { FontSizeAdjust::Metric::ExHeight }; }
     static TextSpacingTrim initialTextSpacingTrim() { return { }; }
     static TextAutospace initialTextAutospace() { return { }; }
     static FontFeatureSettings initialFeatureSettings() { return { }; }

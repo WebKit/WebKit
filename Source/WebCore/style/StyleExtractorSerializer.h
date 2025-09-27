@@ -114,10 +114,6 @@ public:
     // MARK: Font serializations
 
     static void serializeFontFamily(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const AtomString&);
-    static void serializeFontSizeAdjust(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const FontSizeAdjust&);
-    static void serializeFontPalette(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const FontPalette&);
-    static void serializeFontWeight(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, FontSelectionValue);
-    static void serializeFontWidth(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, FontSelectionValue);
     static void serializeFontFeatureSettings(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const FontFeatureSettings&);
     static void serializeFontVariationSettings(ExtractorState&, StringBuilder&, const CSS::SerializationContext&, const FontVariationSettings&);
 
@@ -996,41 +992,6 @@ inline void ExtractorSerializer::serializeFontFamily(ExtractorState&, StringBuil
         builder.append(nameLiteralForSerialization(familyIdentifier));
     else
         builder.append(WebCore::serializeFontFamily(family));
-}
-
-inline void ExtractorSerializer::serializeFontSizeAdjust(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const FontSizeAdjust& fontSizeAdjust)
-{
-    if (fontSizeAdjust.isNone()) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
-        return;
-    }
-
-    auto metric = fontSizeAdjust.metric;
-    auto value = fontSizeAdjust.shouldResolveFromFont() ? fontSizeAdjust.resolve(state.style.computedFontSize(), state.style.metricsOfPrimaryFont()) : fontSizeAdjust.value.asOptional();
-
-    if (!value) {
-        serializationForCSS(builder, context, state.style, CSS::Keyword::None { });
-        return;
-    }
-
-    if (metric == FontSizeAdjust::Metric::ExHeight) {
-        CSS::serializationForCSS(builder, context, CSS::NumberRaw<> { *value });
-        return;
-    }
-
-    serialize(state, builder, context, metric);
-    builder.append(' ');
-    CSS::serializationForCSS(builder, context, CSS::NumberRaw<> { *value });
-}
-
-inline void ExtractorSerializer::serializeFontWeight(ExtractorState&, StringBuilder& builder, const CSS::SerializationContext& context, FontSelectionValue fontWeight)
-{
-    CSS::serializationForCSS(builder, context, CSS::NumberRaw<> { static_cast<float>(fontWeight) });
-}
-
-inline void ExtractorSerializer::serializeFontWidth(ExtractorState&, StringBuilder& builder, const CSS::SerializationContext& context, FontSelectionValue fontWidth)
-{
-    CSS::serializationForCSS(builder, context, CSS::PercentageRaw<> { static_cast<float>(fontWidth) });
 }
 
 inline void ExtractorSerializer::serializeFontFeatureSettings(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const FontFeatureSettings& fontFeatureSettings)

@@ -2613,10 +2613,10 @@ void RenderStyle::setFontSize(float size)
     setFontDescription(WTFMove(description));
 }
 
-void RenderStyle::setFontSizeAdjust(FontSizeAdjust sizeAdjust)
+void RenderStyle::setFontSizeAdjust(Style::FontSizeAdjust sizeAdjust)
 {
     auto description = fontDescription();
-    description.setFontSizeAdjust(sizeAdjust);
+    description.setFontSizeAdjust(sizeAdjust.platform());
     setFontDescription(WTFMove(description));
 }
 
@@ -2634,32 +2634,32 @@ void RenderStyle::setFontVariationSettings(FontVariationSettings settings)
     setFontDescription(WTFMove(description));
 }
 
-void RenderStyle::setFontWeight(FontSelectionValue value)
-{
-    auto description = fontDescription();
-    description.setWeight(value);
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontWidth(FontSelectionValue value)
-{
-    auto description = fontDescription();
-    description.setWidth(value);
-
-    setFontDescription(WTFMove(description));
-}
-
-void RenderStyle::setFontItalic(std::optional<FontSelectionValue> value)
-{
-    auto description = fontDescription();
-    description.setItalic(value);
-    setFontDescription(WTFMove(description));
-}
-
 void RenderStyle::setFontPalette(Style::FontPalette&& value)
 {
     auto description = fontDescription();
     description.setFontPalette(value.platform());
+    setFontDescription(WTFMove(description));
+}
+
+void RenderStyle::setFontStyle(Style::FontStyle style)
+{
+    auto description = fontDescription();
+    description.setItalic(style.slope());
+    description.setFontStyleAxis(style.axis());
+    setFontDescription(WTFMove(description));
+}
+
+void RenderStyle::setFontWeight(Style::FontWeight value)
+{
+    auto description = fontDescription();
+    description.setWeight(value.platform());
+    setFontDescription(WTFMove(description));
+}
+
+void RenderStyle::setFontWidth(Style::FontWidth value)
+{
+    auto description = fontDescription();
+    description.setWidth(value.platform());
     setFontDescription(WTFMove(description));
 }
 

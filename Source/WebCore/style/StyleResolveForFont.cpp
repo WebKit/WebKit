@@ -85,38 +85,6 @@ FontSelectionValue fontWeightFromCSSValueDeprecated(const CSSValue& value)
     }
 }
 
-FontSelectionValue fontWeightFromCSSValue(BuilderState& builderState, const CSSValue& value)
-{
-    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    auto& conversionData = builderState.cssToLengthConversionData();
-
-    if (primitiveValue->isNumber())
-        return FontSelectionValue(clampTo<float>(primitiveValue->resolveAsNumber(conversionData), 1, 1000));
-
-    ASSERT(primitiveValue->isValueID());
-    auto valueID = primitiveValue->valueID();
-
-    if (CSSPropertyParserHelpers::isSystemFontShorthand(valueID))
-        return SystemFontDatabase::singleton().systemFontShorthandWeight(CSSPropertyParserHelpers::lowerFontShorthand(valueID));
-
-    switch (valueID) {
-    case CSSValueNormal:
-        return normalWeightValue();
-    case CSSValueBold:
-        return boldWeightValue();
-    case CSSValueBolder:
-        return FontCascadeDescription::bolderWeight(conversionData.parentStyle()->fontDescription().weight());
-    case CSSValueLighter:
-        return FontCascadeDescription::lighterWeight(conversionData.parentStyle()->fontDescription().weight());
-    default:
-        ASSERT_NOT_REACHED();
-        return normalWeightValue();
-    }
-}
-
 static FontSelectionValue fontWeightFromUnresolvedFontWeight(const CSSPropertyParserHelpers::UnresolvedFontWeight& unresolvedWeight, const FontCascadeDescription& fontDescription)
 {
     return WTF::switchOn(unresolvedWeight,
@@ -158,23 +126,6 @@ FontSelectionValue fontStretchFromCSSValueDeprecated(const CSSValue& value)
         return value.value();
 
     ASSERT(CSSPropertyParserHelpers::isSystemFontShorthand(primitiveValue.valueID()));
-    return normalWidthValue();
-}
-
-FontSelectionValue fontStretchFromCSSValue(BuilderState& builderState, const CSSValue& value)
-{
-    RefPtr primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    if (primitiveValue->isPercentage())
-        return FontSelectionValue::clampFloat(primitiveValue->resolveAsPercentage<float>(builderState.cssToLengthConversionData()));
-
-    ASSERT(primitiveValue->isValueID());
-    if (auto value = fontWidthValue(primitiveValue->valueID()))
-        return value.value();
-
-    ASSERT(CSSPropertyParserHelpers::isSystemFontShorthand(primitiveValue->valueID()));
     return normalWidthValue();
 }
 
@@ -456,38 +407,6 @@ FontVariationSettings fontVariationSettingsFromCSSValue(BuilderState& builderSta
     for (Ref feature : *list)
         settings.insert({ feature->tag(), feature->value().resolveAsNumber<float>(builderState.cssToLengthConversionData()) });
     return settings;
-}
-
-// MARK: 'font-size-adjust'
-
-FontSizeAdjust fontSizeAdjustFromCSSValue(BuilderState& builderState, const CSSValue& value)
-{
-    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
-        if (primitiveValue->valueID() == CSSValueNone
-            || CSSPropertyParserHelpers::isSystemFontShorthand(primitiveValue->valueID()))
-            return FontCascadeDescription::initialFontSizeAdjust();
-
-        auto defaultMetric = FontSizeAdjust::Metric::ExHeight;
-        if (primitiveValue->isNumber())
-            return { defaultMetric, FontSizeAdjust::ValueType::Number, primitiveValue->resolveAsNumber(builderState.cssToLengthConversionData()) };
-
-        ASSERT(primitiveValue->valueID() == CSSValueFromFont);
-        // We cannot determine the primary font here, so we defer resolving the
-        // aspect value for from-font to when the primary font is created.
-        // See FontCascadeFonts::primaryFont().
-        return { defaultMetric, FontSizeAdjust::ValueType::FromFont, std::nullopt };
-    }
-
-    auto pair = requiredPairDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!pair)
-        return { };
-
-    auto metric = fromCSSValueID<FontSizeAdjust::Metric>(pair->first->valueID());
-    if (pair->second->isNumber())
-        return { metric, FontSizeAdjust::ValueType::Number, pair->second->resolveAsNumber(builderState.cssToLengthConversionData()) };
-
-    ASSERT(pair->second->valueID() == CSSValueFromFont);
-    return { metric, FontSizeAdjust::ValueType::FromFont, std::nullopt };
 }
 
 
