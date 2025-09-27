@@ -199,6 +199,7 @@
 #include "JSWebAssemblyModule.h"
 #include "JSWebAssemblyRuntimeError.h"
 #include "JSWebAssemblyStruct.h"
+#include "JSWebAssemblySuspendingFunction.h"
 #include "JSWebAssemblyTable.h"
 #include "JSWebAssemblyTag.h"
 #include "JSWithScope.h"
@@ -226,6 +227,7 @@
 #include "ObjectPropertyChangeAdaptiveWatchpoint.h"
 #include "ObjectPropertyConditionSet.h"
 #include "ObjectPrototypeInlines.h"
+#include "PinballCompletion.h"
 #include "ProfilerSupport.h"
 #include "ProxyConstructorInlines.h"
 #include "ProxyObjectInlines.h"
@@ -308,6 +310,10 @@
 #include "WebAssemblyRuntimeErrorPrototype.h"
 #include "WebAssemblyStructConstructor.h"
 #include "WebAssemblyStructPrototype.h"
+#include "WebAssemblySuspendErrorConstructor.h"
+#include "WebAssemblySuspendErrorPrototype.h"
+#include "WebAssemblySuspendingConstructor.h"
+#include "WebAssemblySuspendingPrototype.h"
 #include "WebAssemblyTableConstructor.h"
 #include "WebAssemblyTablePrototype.h"
 #include "WebAssemblyTagConstructor.h"
@@ -2119,6 +2125,10 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
             [] (const Initializer<Structure>& init) {
                 init.set(WebAssemblyWrapperFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
             });
+        m_pinballHandlerStructure.initLater(
+            [] (const Initializer<Structure>& init) {
+                init.set(PinballHandler::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
+            });
         m_webAssemblyJSTag.initLater(
             [] (const Initializer<JSWebAssemblyTag>& init) {
                 init.set(JSWebAssemblyTag::create(init.vm, init.owner, init.owner->webAssemblyTagStructure(), Wasm::Tag::jsExceptionTag()));
@@ -2977,6 +2987,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     thisObject->m_webAssemblyModuleRecordStructure.visit(visitor);
     thisObject->m_webAssemblyFunctionStructure.visit(visitor);
     thisObject->m_webAssemblyWrapperFunctionStructure.visit(visitor);
+    thisObject->m_pinballHandlerStructure.visit(visitor);
     thisObject->m_webAssemblyJSTag.visit(visitor);
     FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(VISIT_LAZY_TYPE)
 #endif // ENABLE(WEBASSEMBLY)

@@ -198,6 +198,8 @@ constexpr bool typeExposedByDefault = true;
     macro(WebAssemblyMemory,       webAssemblyMemory,       webAssemblyMemory,       JSWebAssemblyMemory,       Memory,       object, typeExposedByDefault) \
     macro(WebAssemblyModule,       webAssemblyModule,       webAssemblyModule,       JSWebAssemblyModule,       Module,       object, typeExposedByDefault) \
     macro(WebAssemblyRuntimeError, webAssemblyRuntimeError, webAssemblyRuntimeError, ErrorInstance,             RuntimeError, error,  typeExposedByDefault) \
+    macro(WebAssemblySuspendError, webAssemblySuspendError, webAssemblySuspendError, ErrorInstance,             SuspendError, error,  typeExposedByDefault) \
+    macro(WebAssemblySuspending,   webAssemblySuspending,   webAssemblySuspending,   JSWebAssemblySuspendingFunction,   Suspending, object, typeExposedByDefault) \
     macro(WebAssemblyTable,        webAssemblyTable,        webAssemblyTable,        JSWebAssemblyTable,        Table,        object, typeExposedByDefault) \
     macro(WebAssemblyTag,          webAssemblyTag,          webAssemblyTag,          JSWebAssemblyTag,          Tag,          object, typeExposedByDefault) 
 #else
@@ -428,6 +430,7 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_webAssemblyModuleRecordStructure;
     LazyProperty<JSGlobalObject, Structure> m_webAssemblyFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_webAssemblyWrapperFunctionStructure;
+    LazyProperty<JSGlobalObject, Structure> m_pinballHandlerStructure;
     LazyProperty<JSGlobalObject, JSWebAssemblyTag> m_webAssemblyJSTag;
     FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(DEFINE_STORAGE_FOR_LAZY_TYPE)
 #endif // ENABLE(WEBASSEMBLY)
@@ -945,6 +948,7 @@ public:
     Structure* webAssemblyModuleRecordStructure() const { return m_webAssemblyModuleRecordStructure.get(this); }
     Structure* webAssemblyFunctionStructure() const { return m_webAssemblyFunctionStructure.get(this); }
     Structure* webAssemblyWrapperFunctionStructure() const { return m_webAssemblyWrapperFunctionStructure.get(this); }
+    Structure* pinballHandlerStructure() const { return m_pinballHandlerStructure.get(this); }
     JSWebAssemblyTag* webAssemblyJSTag() { return m_webAssemblyJSTag.get(this); }
 #endif // ENABLE(WEBASSEMBLY)
     Structure* collatorStructure() { return m_collatorStructure.get(this); }

@@ -1525,6 +1525,277 @@ defineWasmBuiltinTrampoline(jsstring, equals, a2)
 # (externref, externref, wasmInstance) -> i32
 defineWasmBuiltinTrampoline(jsstring, compare, a2)
 
+# Low-level logic for the handling of JSPI futures
+
+# void captureABICalleeSaves(CPURegister* buffer)
+global _captureABICalleeSaves
+_captureABICalleeSaves:
+    functionPrologue()
+    copyCalleeSavesToBuffer(a0)
+    functionEpilogue()
+    ret
+
+# void teleportForJSPI(CPURegister* calleeSaves, CallFrame* returnOutOfFrame, EncodedJSValue result)
+global _teleportForJSPI
+_teleportForJSPI:
+    restoreCalleeSavesFromBuffer(a0)
+    move a1, sp
+    move a2, r0
+    functionEpilogue()
+    ret
+
+# Move $sp down enough to contain an instance of the given struct, ensuring proper alignment.
+macro allocaStruct(structName, temp)
+    move constexpr(sizeof(PinballFulfillContext)), temp
+    addp StackAlignmentMask, temp
+    andp ~StackAlignmentMask, temp
+    subp temp, sp
+end
+
+# a0 = globalObject, a1 = callFrame
+global _enterWebAssemblySuspendingFunction
+_enterWebAssemblySuspendingFunction:
+    functionPrologue()
+    # allocate the callee saves buffer and save them
+    subp 40 * 8, sp # FIXME: use the actual platform number of callee saves
+    copyCalleeSavesToBuffer(sp)
+    move sp, a2
+
+    call _runWebAssemblySuspendingFunction
+
+    restoreCalleeSavesFromBuffer(sp)
+    addp 40 * 8, sp
+    functionEpilogue()
+    ret
+
+# a0 = globalObject, a1 = callFrame
+global  _pinballHandlerFulfillFunction
+_pinballHandlerFulfillFunction:
+    # This is the host function implementing the fulfilling PinballHandler.
+    # Because it needs to engage in invasive stack surgery and register juggling, the core logic is implemented
+    # here in assembly, with calls to C++ functions implementing higher-level "normal" logic.
+    # Execution state is kept on the stack as a struct PinballFulfillContext, and SP always points at it.
+    # Key invariant: SP is stable and not perturbed by any calls we make.
+    functionPrologue()
+    allocaStruct(PinballFulfillContext, t2)
+    # Save all callee saves - wasm will trample over them all
+    leap PinballFulfillContext::cppCalleeSaves[sp], t2
+    copyCalleeSavesToBuffer(t2)
+    move sp, a2 # additional arg to the init call: the context pointer
+    call _pinballHandlerFulfillFunctionInit
+    # Restore callee saves expected by Wasm
+    loadp PinballFulfillContext::evacuatedCalleeSaves[sp], t0
+    restoreCalleeSavesFromBuffer(t0)
+
+.execute:
+    move sp, a0
+    # Push two nulls above the future sentinel frame record in place of callee/codeBlock,
+    # so StackVisitor can enter the sentinel without choking. This avoids extra complexity in StackSlicer.
+    subp 16, sp
+    storep 0, [sp]
+    storep 0, 8[sp]
+    call .execute_evacuated_slice
+    addp 16, sp
+    # Capture all return registers to later pass them on to the next slice. For now we just save all argument registers.
+    forEachWasmArgumentGPR(macro(index, reg1, reg2)
+        if ARM64 or ARM64E
+            storepairq reg1, reg2, index * MachineRegisterSize + PinballFulfillContext::arguments[sp]
+        elsif JSVALUE64
+            storeq reg1, (index + 0) * MachineRegisterSize + PinballFulfillContext::arguments[sp]
+            storeq reg2, (index + 1) * MachineRegisterSize + PinballFulfillContext::arguments[sp]
+        else
+            store2ia reg1, reg2, index * MachineRegisterSize + PinballFulfillContext::arguments[sp]
+        end
+    end)
+    forEachWasmArgumentFPR(macro(index, reg1, reg2)
+        if ARM64 or ARM64E
+            storepaird reg1, reg2, NumberOfWasmArgumentGPRs * MachineRegisterSize + index * FPRRegisterSize + PinballFulfillContext::arguments[sp]
+        else
+            stored reg1, NumberOfWasmArgumentGPRs * MachineRegisterSize + (index + 0) * FPRRegisterSize + PinballFulfillContext::arguments[sp]
+            stored reg2, NumberOfWasmArgumentGPRs * MachineRegisterSize + (index + 1) * FPRRegisterSize + PinballFulfillContext::arguments[sp]
+        end
+    end)
+    # Examine the outcome of last slice execution and proceed accordingly
+    move sp, a0
+    call _pinballHandlerFulfillFunctionContinue
+    btinz r0, .execute
+
+    # Done. At this point the context destructor already executed, but it's still on the stack
+    # and plain old data in its callee saves array is okay to use.
+    leap PinballFulfillContext::cppCalleeSaves[sp], t5
+    restoreCalleeSavesFromBuffer(t5)
+    loadp PinballFulfillContext::arguments[sp], r0
+    move cfr, sp
+    functionEpilogue()
+    ret
+
+.execute_evacuated_slice:
+    # FIXME: sentinel frame should be enhanced to become a proper VM entry frame, registered with the VM as the top entry frame.
+    #
+    # Perform stack surgery to implant the frames from the slice currently in the context onto the execution stack
+    # and kick off their execution. The function sets up multiple frames on the stack (shown in square brackets):
+    #
+    #      ( caller )
+    #   [ sentinel     ]
+    #   [ Wasm Frame N ]
+    #         ...
+    #   [ Wasm Frame 0 ]
+    #   [ return frame ]
+    #
+    # The sentinel frame ensures that SP is reset to its original value when returning from the implanted Wasm frames.
+    # That is essential because the caller expects SP to be stable. Wasm slices include additional "headroom" slots
+    # above the topmost frame record and returning from them does not by itself reset SP to the bottom of the caller.
+    #
+    # After all the surgery, the 'ret' at the end of this function does not return to the caller, it returns to Wasm Frame 0.
+    # Prior to that return we must load argument registers with values expected by the slice.
+    # After all Wasm frame have executed, Wasm Frame N returns to the sentinel which then returns to
+    # the caller (pinballHandlerFulfillFunction).
+
+    # construct the sentinel frame
+    functionPrologue()
+    # Complete the initialization of the active JSPIContext by making the sentinel its limit.
+    leap PinballFulfillContext::jspiContext[a0], t5
+    storep cfr, JSPIContext::limitFrame[t5]
+    # Allocate stack space for the frames to implant and prepare the 4 arguments of the implant call.
+    # a0 = context, already in the register
+    loadp PinballFulfillContext::sliceByteSize[a0], t5
+    subp t5, sp # sliceByteSize is always stack-aligned by construction
+    move sp, a1 # a1 = implantation base
+    move cfr, a2 # a2 = returnFP (the sentinel frame)
+    if ARM64 or ARM64E
+        pcrtoaddr _exit_implanted_slice, a3 # a3 = returnPC
+    else
+        leap _exit_implanted_slice, a3
+    end
+    # Preserve on the stack the arguments buffer ptr (plus another value to pad it to 16 bytes)
+    leap PinballFulfillContext::arguments[a0], t5
+    push t5, a0
+    # Create the return frame
+    functionPrologue()
+    # Create the implanted Wasm frames in the allocated space.
+    call _pinballHandlerFulfillFunctionImplant
+    # The implant function returns the FP and the return PC of Wasm Frame 0 as r0 and r1.
+    # Use these values to link the return frame to return into Wasm Frame 0.
+    # r1 should be signed with the address of the slot just above the current frame record,
+    # which incidentally also holds the pointer to load argument registers from.
+    move cfr, t5
+    addp 2 * MachineRegisterSize, t5
+    tagCodePtr r1, t5
+    if ARM64 or ARM64E
+        storepairq r0, r1, [cfr]
+    else
+        storep r0, [cfr]
+        storep r1, MachineRegisterSize[cfr]
+    end
+    # Restore the arguments buffer ptr, load the return/argument registers and return into Wasm Frame 0.
+    loadp [t5], sc0 # sc0 = arguments buffer
+    forEachWasmArgumentGPR(macro(index, gpr1, gpr2)
+        if ARM64 or ARM64E
+            loadpairq index * MachineRegisterSize[sc0], gpr1, gpr2
+        elsif JSVALUE64
+            loadq (index + 0) * MachineRegisterSize[sc0], gpr1
+            loadq (index + 1) * MachineRegisterSize[sc0], gpr2
+        else
+            load2ia index * MachineRegisterSize[sc0], gpr1, gpr2
+        end
+    end)
+    forEachWasmArgumentFPR(macro(index, fpr1, fpr2)
+        if ARM64 or ARM64E
+            loadpaird NumberOfWasmArgumentGPRs * MachineRegisterSize + index * FPRRegisterSize[sc0], fpr1, fpr2
+        else
+            loadd NumberOfWasmArgumentGPRs * MachineRegisterSize + (index + 0) * FPRRegisterSize[sc0], fpr1
+            loadd NumberOfWasmArgumentGPRs * MachineRegisterSize + (index + 1) * FPRRegisterSize[sc0], fpr2
+        end
+    end)
+    functionEpilogue()
+    ret
+
+op(exit_implanted_slice, macro()
+    move cfr, sp
+    functionEpilogue()
+    ret
+end)
+
+# EncodedJSValue pinballHandlerPropagateException(JSGlobalObject*, PinballHandler*, JSWebAssemblyException*);
+global _pinballHandlerPropagateException
+_pinballHandlerPropagateException:
+    functionPrologue()
+    allocaStruct(PinballUnwindContext, t5)
+    # Save all callee saves - wasm will trample over them all
+    leap PinballUnwindContext::cppCalleeSaves[sp], t5
+    copyCalleeSavesToBuffer(t5)
+    move sp, a3 # additional arg to the init call: the context pointer
+    call _pinballHandlerUnwindInit
+    # Restore callee saves expected by Wasm
+    loadp PinballUnwindContext::evacuatedCalleeSaves[sp], t0
+    restoreCalleeSavesFromBuffer(t0)
+    # from this point on, wasmInstance is valid
+    move sp, a0
+    move wasmInstance, a1
+    call _pinballHandlerUnwindInitWasm
+
+    move sp, a0
+    loadp PinballUnwindContext::zombieFrameCallee[sp], sc0
+    subp 32, sp
+    storep 0, [sp]
+    storep sc0, 8[sp]
+    # preserve sc0 past this point until another store in .unwind_evacuated_slice
+    call .unwind_evacuated_slice
+    addp 32, sp
+
+    move cfr, sp
+    functionEpilogue()
+    ret
+
+.unwind_evacuated_slice:
+    functionPrologue()
+    # Allocate stack space for the frames to implant and prepare the 4 arguments of the implant call.
+    # a0 = context, already in the register
+    loadp PinballUnwindContext::sliceByteSize[a0], t5
+    subp t5, sp # sliceByteSize is always stack-aligned by construction
+    move sp, a1 # a1 = implantation base
+    move cfr, a2 # a2 = returnFP (the sentinel frame)
+    if ARM64 or ARM64E
+        pcrtoaddr _exit_implanted_slice, a3 # a3 = returnPC
+    else
+        leap _exit_implanted_slice, a3
+    end
+    # Create a fake throwing frame, with a zombie callee and a null codeblock
+    subp 32, sp
+    storep 0, [sp]
+    storep sc0, 8[sp]
+    functionPrologue()
+    push a0, a0 # we'll need the context again later
+    # Create the implanted Wasm frames in the allocated space.
+    call _pinballHandlerUnwindImplant
+
+    move cfr, t5
+    addp 2 * MachineRegisterSize, t5
+    tagCodePtr r1, t5
+    if ARM64 or ARM64E
+        storepairq r0, r1, [cfr]
+    else
+        storep r0, [cfr]
+        storep r1, MachineRegisterSize[cfr]
+    end
+
+    # CLARIFY: this makes it not collect the stack trace, but should we?
+    loadp JSWebAssemblyInstance::m_vm[wasmInstance], t5
+    storep 0, VM::topCallFrame[t5]
+
+    pop a0, a1 # a0 = context
+    # loadi PinballUnwindContext::exceptionIndex[a0], a3
+    # move wasmInstance, a0
+    # move cfr, a1
+    # move sp, a2
+
+    loadp PinballUnwindContext::exception[a0], t4
+    storep t4, VM::m_exception[t5]
+
+    jmp _wasm_unwind_from_slow_path_trampoline
+    # operationCall(macro() cCall4(_ipint_extern_throw_exception) end)
+    # jumpToException()
+
 
 #################################
 # 5. Instruction implementation #

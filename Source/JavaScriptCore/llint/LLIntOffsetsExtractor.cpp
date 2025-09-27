@@ -61,6 +61,7 @@
 #include "MarkedSpace.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "NativeExecutable.h"
+#include "PinballCompletion.h"
 #include "PrivateFieldPutKind.h"
 #include "ProtoCallFrame.h"
 #include "PutByIdFlags.h"

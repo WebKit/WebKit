@@ -646,6 +646,8 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useIteratorChunking, false, Normal, "Expose the Iterator.prototype.chunks and Iterator.prototype.windows methods."_s) \
     v(Bool, useIteratorSequencing, false, Normal, "Expose the Iterator.concat method."_s) \
     v(Bool, useJSONSourceTextAccess, true, Normal, "Expose JSON source text access feature."_s) \
+    v(Bool, useJSPI, true, Normal, "Enable the implementation of the JSPI proposal."_s) \
+    v(OptionString, useJSPISlicing, nullptr, Normal, nullptr /* For testing only; one of: slab, frag, mixed. Default: slab. */) \
     v(Bool, useMapGetOrInsert, true, Normal, "Expose the Map.prototype.getOrInsert family of methods."_s) \
     v(Bool, useMathSumPreciseMethod, true, Normal, "Expose the Math.sumPrecise() method."_s) \
     v(Bool, useMoreCurrencyDisplayChoices, false, Normal, "Enable more currencyDisplay choices for Intl.NumberFormat"_s) \

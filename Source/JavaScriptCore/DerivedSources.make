@@ -245,6 +245,8 @@ OBJECT_LUT_HEADERS = \
     WebAssemblyModulePrototype.lut.h \
     WebAssemblyRuntimeErrorConstructor.lut.h \
     WebAssemblyRuntimeErrorPrototype.lut.h \
+    WebAssemblySuspendErrorConstructor.lut.h \
+    WebAssemblySuspendErrorPrototype.lut.h \
     WebAssemblyStructConstructor.lut.h \
     WebAssemblyStructPrototype.lut.h \
     WebAssemblyTableConstructor.lut.h \
