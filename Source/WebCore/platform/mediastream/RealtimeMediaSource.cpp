@@ -1373,6 +1373,12 @@ void RealtimeMediaSource::setFrameRate(double rate)
     notifySettingsDidChangeObservers(RealtimeMediaSourceSettings::Flag::FrameRate);
 }
 
+void RealtimeMediaSource::initializeFrameRate(double rate)
+{
+    ASSERT(!isProducingData() && !m_hasStartedProducingData);
+    m_frameRate = rate;
+}
+
 void RealtimeMediaSource::setZoom(double zoom)
 {
     if (m_zoom == zoom)
@@ -1404,6 +1410,12 @@ void RealtimeMediaSource::setFacingMode(VideoFacingMode mode)
 
     m_facingMode = mode;
     notifySettingsDidChangeObservers(RealtimeMediaSourceSettings::Flag::FacingMode);
+}
+
+void RealtimeMediaSource::initializeFacingMode(VideoFacingMode facingMode)
+{
+    ASSERT(!isProducingData() && !m_hasStartedProducingData);
+    m_facingMode = facingMode;
 }
 
 void RealtimeMediaSource::setWhiteBalanceMode(MeteringMode mode)

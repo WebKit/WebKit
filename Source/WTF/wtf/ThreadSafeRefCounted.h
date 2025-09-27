@@ -107,12 +107,13 @@ private:
     // Match the layout of RefCounted, which has flag bits for threading checks.
     UNUSED_MEMBER_VARIABLE bool m_unused1;
     UNUSED_MEMBER_VARIABLE bool m_unused2;
+    UNUSED_MEMBER_VARIABLE bool m_unused3;
 #endif
 
 #if CHECK_THREAD_SAFE_REF_COUNTED_LIFECYCLE
     mutable std::atomic<bool> m_deletionHasBegun { false };
     // Match the layout of RefCounted.
-    UNUSED_MEMBER_VARIABLE bool m_unused3;
+    UNUSED_MEMBER_VARIABLE bool m_unused4;
 #endif
 };
 

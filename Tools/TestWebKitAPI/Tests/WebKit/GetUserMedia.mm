@@ -2057,28 +2057,43 @@ TEST(WebKit2, getUserMediaWithDeviceChangeWebPage)
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 TEST(WebKit, GetUserMediaWithWebThread)
 {
-#if defined(NDEBUG)
-    // We only enable web thread in release builds as our main thread assertions are not handling well web thread existence
-    [WebView enableWebThread];
-#endif
-
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     initializeMediaCaptureConfiguration(configuration.get());
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
     auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
 
+#if !defined(NDEBUG)
+    // FIXME: We should capture video as well once we resolve ScreenSleepDisabler assertion.
+    [delegate setVideoDecision:WKPermissionDecisionDeny];
+    [WebView enableWebThread];
+#endif
+
     [webView _setMediaCaptureReportingDelayForTesting:0];
 
     [webView loadTestPageNamed:@"getUserMedia"];
+    [delegate waitUntilPrompted];
+
+    [WebView enableWebThread];
+
+#if defined(NDEBUG)
     EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera));
+    [webView stringByEvaluatingJavaScript:@"stop()"];
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedNone));
+#endif
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"captureAudio(true)"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveMicrophone));
 
     [webView stringByEvaluatingJavaScript:@"stop()"];
     EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedNone));
-
-    [webView stringByEvaluatingJavaScript:@"captureAudio()"];
-    EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveMicrophone));
 }
 #endif // PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 

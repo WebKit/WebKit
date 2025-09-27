@@ -33,6 +33,13 @@ namespace WTF {
 
 class ThreadLikeAssertion;
 WTF_EXPORT_PRIVATE bool isMainThread();
+WTF_EXPORT_PRIVATE bool isMainRunLoop();
+
+struct MainRunLoopLike {
+    constexpr operator uint32_t() const { return -4; }
+};
+inline constexpr MainRunLoopLike mainRunLoopLike;
+
 
 struct MainThreadLike {
     constexpr operator uint32_t() const { return -3; }
@@ -92,6 +99,10 @@ public:
         : ThreadLikeAssertion(static_cast<uint32_t>(a))
     {
     }
+    constexpr ThreadLikeAssertion(MainRunLoopLike a)
+        : ThreadLikeAssertion(static_cast<uint32_t>(a))
+    {
+    }
     ThreadLikeAssertion(CurrentThreadLike = currentThreadLike);
     ThreadLikeAssertion(ThreadLikeAssertion&&);
     ~ThreadLikeAssertion() { assertIsCurrent(*this); }
@@ -113,7 +124,7 @@ private:
 inline ThreadLikeAssertion::ThreadLikeAssertion(CurrentThreadLike)
 {
 #if ASSERT_ENABLED
-    m_uid = isMainThread() ? mainThreadLike : ThreadLike::currentSequence();
+    m_uid = isMainRunLoop() ? mainRunLoopLike : (isMainThread() ? mainThreadLike : ThreadLike::currentSequence());
 #endif
 }
 
@@ -149,6 +160,8 @@ inline bool ThreadLikeAssertion::isCurrent() const
         return true;
     if (m_uid == mainThreadLike)
         return isMainThread();
+    if (m_uid == mainRunLoopLike)
+        return isMainRunLoop() || isMainThread();
     return ThreadLike::currentSequence() == m_uid;
 #else
     return true;

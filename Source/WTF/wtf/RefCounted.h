@@ -92,6 +92,7 @@ protected:
         : m_refCount(1)
 #if ASSERT_ENABLED
         , m_isOwnedByMainThread(isMainThread())
+        , m_isOwnedByMainRunLoop(isMainRunLoop())
 #endif
     {
     }
@@ -111,12 +112,13 @@ protected:
         if (m_refCount == 1) {
             // Likely an ownership transfer across threads that may be safe.
             m_isOwnedByMainThread = isMainThread();
+            m_isOwnedByMainRunLoop = isMainRunLoop();
         } else if (areThreadingChecksEnabledGlobally && m_areThreadingChecksEnabled) {
             // If you hit this assertion, it means that the RefCounted object was ref/deref'd
             // from both the main thread and another in a way that is likely concurrent and unsafe.
             // Derive from ThreadSafeRefCounted and make sure the destructor is safe on threads
             // that call deref, or ref/deref from a single thread.
-            ASSERT_WITH_MESSAGE(m_isOwnedByMainThread == isMainThread(), "Unsafe to ref/deref from different threads");
+            ASSERT_WITH_MESSAGE(m_isOwnedByMainThread == isMainThread() || m_isOwnedByMainRunLoop == isMainRunLoop(), "Unsafe to ref/deref from different threads");
         }
 #endif
     }
@@ -160,6 +162,7 @@ private:
     mutable unsigned m_refCount;
 #if ASSERT_ENABLED
     mutable bool m_isOwnedByMainThread;
+    mutable bool m_isOwnedByMainRunLoop;
     bool m_areThreadingChecksEnabled { true };
 #endif
     WTF_EXPORT_PRIVATE static bool areThreadingChecksEnabledGlobally;
