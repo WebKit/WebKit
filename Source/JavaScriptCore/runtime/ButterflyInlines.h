@@ -287,24 +287,26 @@ inline Butterfly* Butterfly::shift(Structure* structure, size_t numberOfSlots)
     return IndexingHeader::fromEndOf(propertyStorage() + numberOfSlots)->butterfly();
 }
 
-ALWAYS_INLINE void Butterfly::clearOptimalVectorLengthGap(IndexingType indexingType, Butterfly* butterfly, unsigned optimalVectorLength, unsigned vectorLength)
+ALWAYS_INLINE void Butterfly::clearRange(IndexingType indexingType, Butterfly* butterfly, unsigned start, unsigned end)
 {
-    ASSERT(optimalVectorLength >= vectorLength);
+    ASSERT(end >= start);
 
-    if (size_t remaining = optimalVectorLength - vectorLength; remaining) {
+    if (size_t remaining = end - start) {
+        // 32-bit, non-Darwin builds don't use `remaining`.
+        UNUSED_VARIABLE(remaining);
         if (hasDouble(indexingType)) {
 #if OS(DARWIN)
             constexpr double pattern = PNaN;
-            memset_pattern8(static_cast<void*>(butterfly->contiguous().data() + vectorLength), &pattern, sizeof(double) * remaining);
+            memset_pattern8(static_cast<void*>(butterfly->contiguous().data() + start), &pattern, sizeof(double) * remaining);
 #else
-            for (unsigned i = vectorLength; i < optimalVectorLength; ++i)
+            for (unsigned i = start; i < end; ++i)
                 butterfly->contiguousDouble().atUnsafe(i) = PNaN;
 #endif
         } else {
 #if USE(JSVALUE64)
-            memset(static_cast<void*>(butterfly->contiguous().data() + vectorLength), 0, sizeof(JSValue) * remaining);
+            memset(static_cast<void*>(butterfly->contiguous().data() + start), 0, sizeof(JSValue) * remaining);
 #else
-            for (unsigned i = vectorLength; i < optimalVectorLength; ++i)
+            for (unsigned i = start; i < end; ++i)
                 butterfly->contiguous().atUnsafe(i).clear();
 #endif
         }

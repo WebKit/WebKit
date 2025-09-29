@@ -173,6 +173,8 @@ public:
     static Butterfly* tryCreateUninitialized(VM&, JSObject* intendedOwner, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes, GCDeferralContext* = nullptr);
     static Butterfly* createUninitialized(VM&, JSObject* intendedOwner, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes);
 
+    // FIXME: These return uninitialized indexed storage. Either their names should be updated to reflect this
+    // and/or they should take some kind of initialization scope.
     static Butterfly* tryCreate(VM& vm, JSObject*, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, const IndexingHeader& indexingHeader, size_t indexingPayloadSizeInBytes);
     static Butterfly* create(VM&, JSObject* intendedOwner, size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, const IndexingHeader&, size_t indexingPayloadSizeInBytes);
     static Butterfly* create(VM&, JSObject* intendedOwner, Structure*);
@@ -220,6 +222,8 @@ public:
     void* base(size_t preCapacity, size_t propertyCapacity) { return propertyStorage() - propertyCapacity - preCapacity; }
     void* base(Structure*);
 
+    // FIXME: This returns uninitialized indexed storage. Either their names should be updated to reflect this
+    // and/or they should take some kind of initialization scope.
     static Butterfly* createOrGrowArrayRight(
         Butterfly*, VM&, JSObject* intendedOwner, Structure* oldStructure,
         size_t propertyCapacity, bool hadIndexingHeader,
@@ -230,6 +234,8 @@ public:
     // methods is not exhaustive and is not intended to encapsulate all possible allocation
     // modes of butterflies - there are code paths that allocate butterflies by calling
     // directly into Heap::tryAllocateStorage.
+    // FIXME: These return uninitialized indexed storage. Either their names should be updated to reflect this
+    // and/or they should take some kind of initialization scope.
     static Butterfly* createOrGrowPropertyStorage(Butterfly*, VM&, JSObject* intendedOwner, Structure*, size_t oldPropertyCapacity, size_t newPropertyCapacity);
     Butterfly* growArrayRight(VM&, JSObject* intendedOwner, Structure* oldStructure, size_t propertyCapacity, bool hadIndexingHeader, size_t oldIndexingPayloadSizeInBytes, size_t newIndexingPayloadSizeInBytes); // Assumes that preCapacity is zero, and asserts as much.
     Butterfly* growArrayRight(VM&, JSObject* intendedOwner, Structure*, size_t newIndexingPayloadSizeInBytes);
@@ -241,7 +247,8 @@ public:
     Butterfly* unshift(Structure*, size_t numberOfSlots);
     Butterfly* shift(Structure*, size_t numberOfSlots);
 
-    ALWAYS_INLINE static void clearOptimalVectorLengthGap(IndexingType, Butterfly*, unsigned optimalVectorLength, unsigned vectorLength);
+    // FIXME: This should either not be static or take a span.
+    ALWAYS_INLINE static void clearRange(IndexingType, Butterfly*, unsigned start, unsigned end);
 };
 
 } // namespace JSC

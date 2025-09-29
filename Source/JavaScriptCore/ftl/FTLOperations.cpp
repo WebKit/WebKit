@@ -255,6 +255,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
             throwOutOfMemoryError(globalObject, scope);
             OPERATION_RETURN(scope, nullptr);
         }
+        Butterfly::clearRange(materialization->indexingType(), result, 0, size);
 
         return std::bit_cast<HeapCell*>(result);
     }

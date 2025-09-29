@@ -1574,7 +1574,7 @@ static JSArray* concatAppendArray(JSGlobalObject* globalObject, VM& vm, JSArray*
         copyArrayElements<ArrayFillMode::Empty, NeedsGCSafeOps::No>(buffer, firstArraySize, secondButterfly->contiguous().data(), 0, secondArraySize, secondType);
     }
 
-    Butterfly::clearOptimalVectorLengthGap(type, butterfly, vectorLength, resultSize);
+    Butterfly::clearRange(type, butterfly, resultSize, vectorLength);
     return JSArray::createWithButterfly(vm, nullptr, resultStructure, butterfly);
 }
 

@@ -251,7 +251,7 @@ inline JSArray* JSArray::tryCreate(VM& vm, Structure* structure, unsigned initia
         butterfly = Butterfly::fromBase(temp, 0, outOfLineStorage);
         butterfly->setVectorLength(vectorLength);
         butterfly->setPublicLength(initialLength);
-        Butterfly::clearOptimalVectorLengthGap(indexingType, butterfly, vectorLength, 0);
+        Butterfly::clearRange(indexingType, butterfly, 0, vectorLength);
     } else {
         ASSERT(
             indexingType == ArrayWithSlowPutArrayStorage
