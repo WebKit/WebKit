@@ -61,6 +61,7 @@
 #include "CocoaWindow.h"
 #include "WKBrowserEngineDefinitions.h"
 #include "WKFoundation.h"
+#include <pal/cocoa/CALayerForward.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include <WebCore/InspectorOverlay.h>
@@ -75,7 +76,6 @@
 #endif
 
 OBJC_CLASS AVPlayerViewController;
-OBJC_CLASS CALayer;
 OBJC_CLASS NSFileWrapper;
 OBJC_CLASS NSMenu;
 OBJC_CLASS NSObject;

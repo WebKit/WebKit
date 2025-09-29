@@ -38,7 +38,10 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
-OBJC_CLASS CALayer;
+#if PLATFORM(COCOA)
+#include <pal/cocoa/CALayerForward.h>
+#endif
+
 OBJC_CLASS LegacyTileCacheTombstone;
 OBJC_CLASS LegacyTileLayer;
 OBJC_CLASS WAKWindow;

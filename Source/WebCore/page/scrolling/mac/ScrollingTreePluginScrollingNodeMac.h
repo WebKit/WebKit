@@ -30,7 +30,9 @@
 
 #include <WebCore/ScrollingTreePluginScrollingNode.h>
 
-OBJC_CLASS CALayer;
+#if PLATFORM(COCOA)
+#include <pal/cocoa/CALayerForward.h>
+#endif
 
 namespace WebCore {
 

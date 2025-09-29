@@ -39,7 +39,10 @@
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 
-OBJC_CLASS CALayer;
+#if PLATFORM(COCOA)
+#include <pal/cocoa/CALayerForward.h>
+#endif
+
 OBJC_CLASS NSArray;
 OBJC_CLASS NSAttributedString;
 OBJC_CLASS NSData;

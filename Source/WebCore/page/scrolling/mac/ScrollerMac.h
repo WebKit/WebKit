@@ -33,7 +33,10 @@
 #include <wtf/RecursiveLockAdapter.h>
 #include <wtf/RetainPtr.h>
 
-OBJC_CLASS CALayer;
+#if PLATFORM(COCOA)
+#include <pal/cocoa/CALayerForward.h>
+#endif
+
 OBJC_CLASS NSColor;
 OBJC_CLASS NSScrollerImp;
 OBJC_CLASS WebScrollerImpDelegateMac;

@@ -40,7 +40,10 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/WeakRef.h>
 
-OBJC_CLASS CALayer;
+#if PLATFORM(COCOA)
+#include <pal/cocoa/CALayerForward.h>
+#endif
+
 OBJC_CLASS UIView;
 
 // FIXME: Make PlatformCALayerRemote.cpp Objective-C so we can include WebLayer.h here and share the typedef.

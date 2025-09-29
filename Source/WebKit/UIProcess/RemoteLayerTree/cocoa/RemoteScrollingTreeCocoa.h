@@ -33,7 +33,9 @@ enum class EventListenerRegionType : uint32_t;
 class FloatPoint;
 }
 
-OBJC_CLASS CALayer;
+#if PLATFORM(COCOA)
+#include <pal/cocoa/CALayerForward.h>
+#endif
 
 namespace WebKit {
 

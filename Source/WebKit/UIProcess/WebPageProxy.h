@@ -39,6 +39,10 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashSet.h>
 
+#if PLATFORM(COCOA)
+#include <pal/cocoa/CALayerForward.h>
+#endif
+
 namespace API {
 class Attachment;
 class ContentWorld;
@@ -395,7 +399,6 @@ using UserMediaRequestIdentifier = ObjectIdentifier<UserMediaRequestIdentifierTy
 } // namespace WebCore
 
 OBJC_CLASS AMSUIEngagementTask;
-OBJC_CLASS CALayer;
 OBJC_CLASS NSArray;
 OBJC_CLASS NSData;
 OBJC_CLASS NSDictionary;

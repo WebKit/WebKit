@@ -30,7 +30,7 @@
 
 #if PLATFORM(MAC)
 
-OBJC_CLASS CALayer;
+#include <pal/cocoa/CALayerForward.h>
 
 namespace WebCore {
 

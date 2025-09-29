@@ -30,7 +30,7 @@
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(MAC)
-OBJC_CLASS CALayer;
+#include <pal/cocoa/CALayerForward.h>
 #include <wtf/RetainPtr.h>
 #endif
 

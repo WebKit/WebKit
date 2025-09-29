@@ -65,6 +65,7 @@
 		44B1A8682A7C5BAD00DC80A6 /* Device.h in Headers */ = {isa = PBXBuildFile; fileRef = 44B1A8622A7C334D00DC80A6 /* Device.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		44B1A8692A7C606000DC80A6 /* UserInterfaceIdiom.h in Headers */ = {isa = PBXBuildFile; fileRef = 44B1A8662A7C339300DC80A6 /* UserInterfaceIdiom.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		44E1A8B021FA54EB00C3048E /* LookupSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44E1A8AE21FA54DA00C3048E /* LookupSoftLink.mm */; };
+		4631825C2E8A1BCB00E0A31B /* CALayerForward.h in Headers */ = {isa = PBXBuildFile; fileRef = 4631825B2E8A1BCB00E0A31B /* CALayerForward.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46FF911929196C73006005B5 /* SleepDisablerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46FF911829196C73006005B5 /* SleepDisablerIOS.mm */; };
 		5157ADFD2B23B9F300C0E095 /* ContactsSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 5157ADFB2B23B9F300C0E095 /* ContactsSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5157ADFE2B23B9F300C0E095 /* ContactsSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5157ADFC2B23B9F300C0E095 /* ContactsSoftLink.mm */; };
@@ -627,6 +628,7 @@
 		44E1A8AD21FA54DA00C3048E /* LookupSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LookupSoftLink.h; sourceTree = "<group>"; };
 		44E1A8AE21FA54DA00C3048E /* LookupSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LookupSoftLink.mm; sourceTree = "<group>"; };
 		44EEA0FE2747438900594A83 /* NSServicesRolloverButtonCellSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSServicesRolloverButtonCellSPI.h; sourceTree = "<group>"; };
+		4631825B2E8A1BCB00E0A31B /* CALayerForward.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CALayerForward.h; sourceTree = "<group>"; };
 		46FF911829196C73006005B5 /* SleepDisablerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SleepDisablerIOS.mm; sourceTree = "<group>"; };
 		4996C0F22717642B002C125D /* TCCSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TCCSPI.h; sourceTree = "<group>"; };
 		5157ADFB2B23B9F300C0E095 /* ContactsSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactsSoftLink.h; sourceTree = "<group>"; };
@@ -1115,6 +1117,7 @@
 				41D99CC72C9C45580025844F /* AVFAudioSoftLink.mm */,
 				077E87B0226A460200A2AFF0 /* AVFoundationSoftLink.h */,
 				077E87AF226A460200A2AFF0 /* AVFoundationSoftLink.mm */,
+				4631825B2E8A1BCB00E0A31B /* CALayerForward.h */,
 				5157ADFB2B23B9F300C0E095 /* ContactsSoftLink.h */,
 				5157ADFC2B23B9F300C0E095 /* ContactsSoftLink.mm */,
 				E544F3902CEBD95D007E1413 /* CoreMaterialSoftLink.h */,
@@ -1404,6 +1407,7 @@
 				DD20DDDE27BC90D70093D175 /* AXSpeechManagerSPI.h in Headers */,
 				3CBEEDE928A1861D00221FAE /* BarcodeSupportSPI.h in Headers */,
 				F4F0A5502B634D88001A54E5 /* BrowserEngineKitSPI.h in Headers */,
+				4631825C2E8A1BCB00E0A31B /* CALayerForward.h in Headers */,
 				DD20DE0F27BC90D80093D175 /* CelestialSPI.h in Headers */,
 				DD20DDCA27BC90D70093D175 /* CFNetworkConnectionCacheSPI.h in Headers */,
 				DD20DDCB27BC90D70093D175 /* CFNetworkSPI.h in Headers */,

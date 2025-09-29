@@ -39,6 +39,7 @@
 #include <WebCore/VideoPresentationLayerProvider.h>
 #include <WebCore/VideoPresentationModel.h>
 #include <objc/objc.h>
+#include <pal/cocoa/CALayerForward.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/OptionSet.h>
@@ -52,7 +53,6 @@ OBJC_CLASS UIImage;
 OBJC_CLASS UIViewController;
 OBJC_CLASS UIWindow;
 OBJC_CLASS UIView;
-OBJC_CLASS CALayer;
 OBJC_CLASS NSError;
 OBJC_CLASS WKSPlayableViewControllerHost;
 OBJC_CLASS WebAVPlayerController;
