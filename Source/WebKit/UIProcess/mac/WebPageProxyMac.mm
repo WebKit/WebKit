@@ -554,7 +554,7 @@ int WebPageProxy::footerBannerHeight() const
 static NSString *temporaryPDFDirectoryPath()
 {
     static NeverDestroyed path = [] {
-        RetainPtr temporaryDirectoryTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitPDFs-XXXXXX"];
+        RetainPtr temporaryDirectoryTemplate = [retainPtr(NSTemporaryDirectory()).get() stringByAppendingPathComponent:@"WebKitPDFs-XXXXXX"];
         CString templateRepresentation = [temporaryDirectoryTemplate fileSystemRepresentation];
         if (mkdtemp(templateRepresentation.mutableSpanIncludingNullTerminator().data()))
             return adoptNS((NSString *)[[[NSFileManager defaultManager] stringWithFileSystemRepresentation:templateRepresentation.data() length:templateRepresentation.length()] copy]);

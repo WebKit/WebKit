@@ -81,7 +81,6 @@ UIProcess/Gamepad/mac/UIGamepadProviderMac.mm
 UIProcess/Inspector/Cocoa/InspectorExtensionDelegate.mm
 UIProcess/Inspector/mac/WKInspectorViewController.mm
 UIProcess/Inspector/mac/WKInspectorWKWebView.mm
-UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm
 UIProcess/mac/DisplayCaptureSessionManager.mm
 UIProcess/mac/PageClientImplMac.mm
 UIProcess/mac/SecItemShimProxy.cpp

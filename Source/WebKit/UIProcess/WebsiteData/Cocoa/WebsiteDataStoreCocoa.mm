@@ -562,7 +562,7 @@ String WebsiteDataStore::tempDirectoryFileSystemRepresentation(const String& dir
     static NeverDestroyed<RetainPtr<NSURL>> tempURL;
     
     dispatch_once(&onceToken, ^{
-        RetainPtr url = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
+        RetainPtr url = [NSURL fileURLWithPath:retainPtr(NSTemporaryDirectory()).get() isDirectory:YES];
         if (!url)
             RELEASE_ASSERT_NOT_REACHED();
         
@@ -802,9 +802,9 @@ static HashSet<WebCore::RegistrableDomain>& managedDomains()
     return managedDomains;
 }
 
-NSString *kManagedSitesIdentifier = @"com.apple.mail-shared";
-NSString *kCrossSiteTrackingPreventionRelaxedDomainsKey = @"CrossSiteTrackingPreventionRelaxedDomains";
-NSString *kCrossSiteTrackingPreventionRelaxedAppsKey = @"CrossSiteTrackingPreventionRelaxedApps";
+static NSString * const kManagedSitesIdentifier = @"com.apple.mail-shared";
+static NSString * const kCrossSiteTrackingPreventionRelaxedDomainsKey = @"CrossSiteTrackingPreventionRelaxedDomains";
+static NSString * const kCrossSiteTrackingPreventionRelaxedAppsKey = @"CrossSiteTrackingPreventionRelaxedApps";
 
 void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReinitialization)
 {
@@ -823,7 +823,7 @@ void WebsiteDataStore::initializeManagedDomains(ForceReinitialization forceReini
         bool isSafari = false;
 #if PLATFORM(MAC)
         isSafari = WTF::MacApplication::isSafari();
-        RetainPtr managedSitesPrefs = adoptNS([[NSDictionary alloc] initWithContentsOfFile:[adoptNS([[NSString alloc] initWithFormat:@"/Library/Managed Preferences/%@/%@.plist", NSUserName(), kManagedSitesIdentifier]) stringByStandardizingPath]]);
+        RetainPtr managedSitesPrefs = adoptNS([[NSDictionary alloc] initWithContentsOfFile:[adoptNS([[NSString alloc] initWithFormat:@"/Library/Managed Preferences/%@/%@.plist", retainPtr(NSUserName()).get(), kManagedSitesIdentifier]) stringByStandardizingPath]]);
         crossSiteTrackingPreventionRelaxedDomains = [managedSitesPrefs objectForKey:kCrossSiteTrackingPreventionRelaxedDomainsKey];
         crossSiteTrackingPreventionRelaxedApps = [managedSitesPrefs objectForKey:kCrossSiteTrackingPreventionRelaxedAppsKey];
 #elif !PLATFORM(MACCATALYST)
@@ -926,7 +926,7 @@ void WebsiteDataStore::reinitializeManagedDomains()
 
 bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String& entitlement)
 {
-    return WTF::hasEntitlement(networkProcess().connection().xpcConnection(), entitlement);
+    return WTF::hasEntitlement(retainPtr(networkProcess().connection().xpcConnection()).get(), entitlement);
 }
 
 std::optional<double> WebsiteDataStore::defaultOriginQuotaRatio()
