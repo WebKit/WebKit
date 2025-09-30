@@ -86,7 +86,6 @@ UIProcess/mac/DisplayCaptureSessionManager.mm
 UIProcess/mac/PageClientImplMac.mm
 UIProcess/mac/SecItemShimProxy.cpp
 UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm
-UIProcess/mac/ViewGestureControllerMac.mm
 UIProcess/mac/WKFullScreenWindowController.mm
 UIProcess/mac/WKImmediateActionController.mm
 UIProcess/mac/WKPrintingView.mm

@@ -385,12 +385,12 @@ void ViewGestureController::applyDebuggingPropertiesToSwipeViews()
 {
     RetainPtr filter = [CAFilter filterWithType:kCAFilterColorInvert];
     [m_swipeLayer setFilters:@[ filter.get() ]];
-    [m_swipeLayer setBackgroundColor:[NSColor blueColor].CGColor];
-    [m_swipeLayer setBorderColor:[NSColor yellowColor].CGColor];
+    [m_swipeLayer setBackgroundColor:RetainPtr { [NSColor blueColor].CGColor }.get()];
+    [m_swipeLayer setBorderColor:RetainPtr { [NSColor yellowColor].CGColor }.get()];
     [m_swipeLayer setBorderWidth:4];
 
-    [m_swipeSnapshotLayer setBackgroundColor:[NSColor greenColor].CGColor];
-    [m_swipeSnapshotLayer setBorderColor:[NSColor redColor].CGColor];
+    [m_swipeSnapshotLayer setBackgroundColor:RetainPtr { [NSColor greenColor].CGColor }.get()];
+    [m_swipeSnapshotLayer setBorderColor:RetainPtr { [NSColor redColor].CGColor }.get()];
     [m_swipeSnapshotLayer setBorderWidth:2];
 }
 
@@ -440,7 +440,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     RetainPtr backgroundColor = CGColorGetConstantColor(kCGColorWhite);
     if (RefPtr snapshot = targetItem->snapshot()) {
         if (shouldUseSnapshotForSize(*snapshot, swipeArea.size(), obscuredContentInsets))
-            [m_swipeSnapshotLayer setContents:snapshot->asLayerContents()];
+            [m_swipeSnapshotLayer setContents:snapshot->asProtectedLayerContents().get()];
 
         Color coreColor = snapshot->backgroundColor();
         if (coreColor.isValid())
@@ -488,7 +488,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
         FloatRect dimmingRect(FloatPoint(), page->viewSize());
         m_swipeDimmingLayer = adoptNS([[CALayer alloc] init]);
         [m_swipeDimmingLayer setName:@"Gesture Swipe Dimming Layer"];
-        [m_swipeDimmingLayer setBackgroundColor:[NSColor blackColor].CGColor];
+        [m_swipeDimmingLayer setBackgroundColor:RetainPtr { [NSColor blackColor].CGColor }.get()];
         [m_swipeDimmingLayer setOpacity:swipeOverlayDimmingOpacity];
         [m_swipeDimmingLayer setAnchorPoint:CGPointZero];
         [m_swipeDimmingLayer setFrame:dimmingRect];

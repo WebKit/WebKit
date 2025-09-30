@@ -73,6 +73,7 @@ public:
 
 #if HAVE(IOSURFACE)
     id asLayerContents();
+    RetainPtr<id> asProtectedLayerContents();
     RetainPtr<CGImageRef> asImageForTesting();
 #endif
 
