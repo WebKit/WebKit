@@ -1229,13 +1229,31 @@ ALWAYS_INLINE JSString* replaceAllWithStringUsingRegExpSearch(VM& vm, JSGlobalOb
     RELEASE_AND_RETURN(scope, jsSpliceSubstringsWithSeparators(globalObject, string, source, sourceRanges.span().data(), sourceRanges.size(), replacements.span().data(), replacements.size()));
 }
 
-ALWAYS_INLINE JSString* replaceOneWithStringUsingRegExpSearch(VM& vm, JSGlobalObject* globalObject, JSString* string, const String& source, RegExp* regExp, const String& replacementString)
+ALWAYS_INLINE JSString* replaceOneWithStringUsingRegExpSearch(VM& vm, JSGlobalObject* globalObject, JSString* string, const String& source, RegExpObject* regExpObject, const String& replacementString)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     int* ovector;
-    MatchResult result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, string, source, 0, &ovector);
+    RegExp* regExp = regExpObject->regExp();
+    bool sticky = regExp->sticky();
+
+    double lastIndex = regExpObject->getLastIndex().toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
+
+    if (sticky && std::signbit(lastIndex)) {
+        regExpObject->setLastIndex(globalObject, 0);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+    }
+
+    int startOffset = sticky ? static_cast<int>(regExpObject->getLastIndex().toIntegerOrInfinity(globalObject)) : 0;
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    MatchResult result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, string, source, startOffset, &ovector);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    if (sticky) {
+        regExpObject->setLastIndex(globalObject, result.end);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+    }
     if (!result)
         return string;
 
@@ -1306,7 +1324,7 @@ ALWAYS_INLINE JSString* replaceUsingRegExpSearch(VM& vm, JSGlobalObject* globalO
 
         if (global)
             RELEASE_AND_RETURN(scope, replaceAllWithStringUsingRegExpSearch(vm, globalObject, string, source, regExp, replacementString));
-        RELEASE_AND_RETURN(scope, replaceOneWithStringUsingRegExpSearch(vm, globalObject, string, source, regExp, replacementString));
+        RELEASE_AND_RETURN(scope, replaceOneWithStringUsingRegExpSearch(vm, globalObject, string, source, regExpObject, replacementString));
     }
 
     size_t lastIndex = 0;

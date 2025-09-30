@@ -3343,7 +3343,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringProtoFuncReplaceRegExpEmptyStr, JSCell*,
 
     CallData callData;
     String replacementString;
-    OPERATION_RETURN(scope, replaceOneWithStringUsingRegExpSearch(vm, globalObject, thisValue, source, regExp, replacementString));
+    OPERATION_RETURN(scope, replaceOneWithStringUsingRegExpSearch(vm, globalObject, thisValue, source, searchValue, replacementString));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringProtoFuncReplaceAllRegExpEmptyStr, JSCell*, (JSGlobalObject* globalObject, JSString* thisValue, RegExpObject* searchValue))

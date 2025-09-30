@@ -1322,10 +1322,6 @@ test/staging/sm/RegExp/match-local-tolength-recompilation.js:
   default: 'Test262Error: Expected SameValue(«false», «true») to be true'
 test/staging/sm/RegExp/replace-local-tolength-recompilation.js:
   default: 'Test262Error: Expected SameValue(«"b"», «"pass"») to be true'
-test/staging/sm/RegExp/replace-sticky-lastIndex.js:
-  default: 'Test262Error: Expected SameValue(«"b"», «"a"») to be true'
-test/staging/sm/RegExp/replace-sticky.js:
-  default: 'Test262Error: Expected SameValue(«"ABCDEabcdeabcdefghij"», «"abcdeABCDEabcdefghij"») to be true'
 test/staging/sm/RegExp/split-limit.js:
   default: 'Test262Error: Expected SameValue(«3», «1») to be true'
 test/staging/sm/RegExp/split-trace.js:
