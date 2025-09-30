@@ -475,7 +475,7 @@ std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(con
     return cookiesForSession(headerFieldProxy.firstParty, headerFieldProxy.sameSiteInfo, headerFieldProxy.url, headerFieldProxy.frameID, headerFieldProxy.pageID, CookiesFor::HTTP, headerFieldProxy.includeSecureCookies, ApplyTrackingPrevention::Yes, ShouldRelaxThirdPartyCookieBlocking::No, IsKnownCrossSiteTracker::No);
 }
 
-static RetainPtr<NSHTTPCookie> adjustScriptWrittenCookie(NSHTTPCookie *initialCookie, std::optional<Seconds> cappedLifetime)
+static RetainPtr<NSHTTPCookie> adjustScriptWrittenCookie(NSHTTPCookie *initialCookie, std::optional<Seconds> cappedLifetime, bool isOptInCookiePartitioningEnabled)
 {
     if (!initialCookie)
         return nil;
@@ -498,6 +498,13 @@ static RetainPtr<NSHTTPCookie> adjustScriptWrittenCookie(NSHTTPCookie *initialCo
     if ([cookie isHTTPOnly])
         return nil;
 
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
+    if (isOptInCookiePartitioningEnabled && !!cookie.get()._storagePartition)
+        return nil;
+#else
+    UNUSED_PARAM(isOptInCookiePartitioningEnabled);
+#endif
+
     // Cap lifetime of persistent, client-side cookies.
     if (cappedLifetime)
         return NetworkStorageSession::capExpiryOfPersistentCookie(cookie.get(), *cappedLifetime);
@@ -505,7 +512,7 @@ static RetainPtr<NSHTTPCookie> adjustScriptWrittenCookie(NSHTTPCookie *initialCo
     return cookie;
 }
 
-static RetainPtr<NSHTTPCookie> parseDOMCookie(String cookieString, NSURL* cookieURL, std::optional<Seconds> cappedLifetime, const String& partition)
+static RetainPtr<NSHTTPCookie> parseDOMCookie(String cookieString, NSURL* cookieURL, std::optional<Seconds> cappedLifetime, const String& partition, bool isOptInCookiePartitioningEnabled)
 {
     // <rdar://problem/5632883> On 10.5, NSHTTPCookieStorage would store an empty cookie,
     // which would be sent as "Cookie: =".
@@ -516,7 +523,7 @@ static RetainPtr<NSHTTPCookie> parseDOMCookie(String cookieString, NSURL* cookie
     // cookiesWithResponseHeaderFields doesn't parse cookies without a value
     cookieString = cookieString.contains('=') ? cookieString : makeString(cookieString, '=');
 
-    return adjustScriptWrittenCookie([NSHTTPCookie _cookieForSetCookieString:cookieString.createNSString().get() forURL:cookieURL partition:RetainPtr { nsStringNilIfEmpty(partition) }.get()], cappedLifetime);
+    return adjustScriptWrittenCookie([NSHTTPCookie _cookieForSetCookieString:cookieString.createNSString().get() forURL:cookieURL partition:RetainPtr { nsStringNilIfEmpty(partition) }.get()], cappedLifetime, isOptInCookiePartitioningEnabled);
 }
 
 void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, ApplyTrackingPrevention applyTrackingPrevention, RequiresScriptTrackingPrivacy requiresScriptTrackingPrivacy, const String& cookieString, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, IsKnownCrossSiteTracker isKnownCrossSiteTracker) const
@@ -535,11 +542,13 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
 
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
     String partitionKey = isOptInCookiePartitioningEnabled() ? cookiePartitionIdentifier(firstParty) : String { };
+    bool isCookiePartitioningEnabled = isOptInCookiePartitioningEnabled();
 #else
     String partitionKey;
+    bool isCookiePartitioningEnabled = false;
 #endif
 
-    RetainPtr cookie = parseDOMCookie(cookieString, cookieURL.get(), cookieCap, partitionKey);
+    RetainPtr cookie = parseDOMCookie(cookieString, cookieURL.get(), cookieCap, partitionKey, isCookiePartitioningEnabled);
     if (!cookie)
         return;
 
@@ -558,8 +567,14 @@ bool NetworkStorageSession::setCookieFromDOM(const URL& firstParty, const SameSi
     if (applyTrackingPrevention == ApplyTrackingPrevention::Yes && shouldBlockCookies(thirdPartyCookieBlockingDecision))
         return false;
 
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES) && defined(CFN_COOKIE_ACCEPTS_POLICY_PARTITION) && CFN_COOKIE_ACCEPTS_POLICY_PARTITION
+    bool isCookiePartitioningEnabled = isOptInCookiePartitioningEnabled();
+#else
+    bool isCookiePartitioningEnabled = false;
+#endif
+
     auto expiryCap = clientSideCookieCap(RegistrableDomain { firstParty }, requiresScriptTrackingPrivacy, pageID);
-    RetainPtr nshttpCookie = adjustScriptWrittenCookie(cookie.createNSHTTPCookie().get(), expiryCap);
+    RetainPtr nshttpCookie = adjustScriptWrittenCookie(cookie.createNSHTTPCookie().get(), expiryCap, isCookiePartitioningEnabled);
     if (!nshttpCookie)
         return false;
 

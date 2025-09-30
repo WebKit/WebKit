@@ -5,11 +5,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Check setting several cookies without clearing.
 PASS document.cookie is expectedCookies[0]
-PASS document.cookie is expectedCookies[1]
-FAIL document.cookie should be test=foobarPartitioned; test=foobarPath; test=foobar. Was test=foobarPartitioned; test=foobarPath.
+FAIL document.cookie should be test=foobarPartitioned. Was .
+FAIL document.cookie should be test=foobarPartitioned; test=foobarPath. Was test=foobarPath.
+FAIL document.cookie should be test=foobarPartitioned; test=foobarPath; test=foobar. Was test=foobar; test=foobarPath.
+FAIL cookie was 'test=foobarPartitioned'. Expected ''.
 PASS cookie is 'test=foobarPartitioned'.
 PASS cookie is 'test=foobarPartitioned; test=foobarPath'.
-FAIL cookie was 'test=foobarPartitioned; test=foobarPath'. Expected 'test=foobar; test=foobarPartitioned; test=foobarPath'.
 PASS successfullyParsed is true
 
 TEST COMPLETE

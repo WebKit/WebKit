@@ -269,53 +269,53 @@ PASS cookie is ''.
 PASS Do not have DOM cookie "__Host-test15.6".
 PASS cookie is ''.
 PASS Do not have DOM cookie "__Host-test15.7".
-FAIL cookie was '__Host-test15.8=foobar'. Expected ''.
-FAIL Should not have DOM cookie "__Host-test15.8". But do with value foobar.
-FAIL cookie was '__Host-test15.8=foobar; __Host-test15.9=foobar'. Expected '__Host-test15.9'.
+PASS cookie is ''.
+PASS Do not have DOM cookie "__Host-test15.8".
+PASS cookie is '__Host-test15.9=foobar'.
 PASS Has DOM cookie "__Host-test15.9" with value foobar.
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar'. Expected '__Host-test15.9'.
-FAIL Should not have DOM cookie "__Host-test15.10". But do with value foobar.
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar'. Expected '__Host-test15.9'.
-FAIL Should not have DOM cookie "__Host-test15.11". But do with value foobar.
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar'. Expected '__Host-test15.12; __Host-test15.9'.
-PASS Has DOM cookie "__Host-test15.12" with value foobar.
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.13=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar'. Expected '__Host-test15.12; __Host-test15.13; __Host-test15.9'.
-PASS Has DOM cookie "__Host-test15.13" with value foobar.
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.13=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar'. Expected '__Host-test15.12; __Host-test15.13; __Host-test15.9'.
+PASS cookie is '__Host-test15.9=foobar'.
+PASS Do not have DOM cookie "__Host-test15.10".
+PASS cookie is '__Host-test15.9=foobar'.
+PASS Do not have DOM cookie "__Host-test15.11".
+PASS cookie is '__Host-test15.9=foobar'.
+PASS Do not have DOM cookie "__Host-test15.12".
+PASS cookie is '__Host-test15.9=foobar'.
+PASS Do not have DOM cookie "__Host-test15.13".
+PASS cookie is '__Host-test15.9=foobar'.
 PASS Do not have DOM cookie "__Host-test15.14".
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.13=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar'. Expected '__Host-test15.12; __Host-test15.13; __Host-test15.9'.
+PASS cookie is '__Host-test15.9=foobar'.
 PASS Do not have DOM cookie "__Host-test15.15".
 
 Tests 16: Set partitioned and unpartitioned cookies with multiple partitioned attributes; different order, Path after Secure; from JavaScript.
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.13=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar; test16.1=foobar'. Expected ''.
-FAIL Should not have DOM cookie "test16.1". But do with value foobar.
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.13=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar; test16.1=foobar; test16.2=foobar'. Expected 'test16.2'.
+PASS cookie is ''.
+PASS Do not have DOM cookie "".
+PASS cookie is 'test16.2=foobar'.
 PASS Has DOM cookie "test16.2" with value foobar.
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.13=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar; test16.1=foobar; test16.2=foobar; test16.3=foobar'. Expected 'test16.2'.
-FAIL Should not have DOM cookie "test16.3". But do with value foobar.
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.13=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar; test16.1=foobar; test16.2=foobar; test16.3=foobar; test16.4=foobar'. Expected 'test16.2'.
-FAIL Should not have DOM cookie "test16.4". But do with value foobar.
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.13=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar; test16.1=foobar; test16.2=foobar; test16.3=foobar; test16.4=foobar; test16.5=foobar'. Expected 'test16.2; test16.5'.
-PASS Has DOM cookie "test16.5" with value foobar.
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.13=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar; test16.1=foobar; test16.2=foobar; test16.3=foobar; test16.4=foobar; test16.5=foobar; test16.6=foobar'. Expected 'test16.2; test16.5; test16.6'.
-PASS Has DOM cookie "test16.6" with value foobar.
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.13=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar; test16.1=foobar; test16.2=foobar; test16.3=foobar; test16.4=foobar; test16.5=foobar; test16.6=foobar'. Expected 'test16.2; test16.5; test16.6'.
+PASS cookie is 'test16.2=foobar'.
+PASS Do not have DOM cookie "test16.3".
+PASS cookie is 'test16.2=foobar'.
+PASS Do not have DOM cookie "test16.4".
+PASS cookie is 'test16.2=foobar'.
+PASS Do not have DOM cookie "test16.5".
+PASS cookie is 'test16.2=foobar'.
+PASS Do not have DOM cookie "test16.6".
+PASS cookie is 'test16.2=foobar'.
 PASS Do not have DOM cookie "test16.7".
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.13=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar; test16.1=foobar; test16.2=foobar; test16.3=foobar; test16.4=foobar; test16.5=foobar; test16.6=foobar; test16.8=foobar'. Expected 'test16.2; test16.5; test16.6'.
-FAIL Should not have DOM cookie "test16.8". But do with value foobar.
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.13=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar; test16.1=foobar; test16.2=foobar; test16.3=foobar; test16.4=foobar; test16.5=foobar; test16.6=foobar; test16.8=foobar; test16.9=foobar'. Expected 'test16.2; test16.5; test16.6; test16.9'.
+PASS cookie is 'test16.2=foobar'.
+PASS Do not have DOM cookie "test16.8".
+PASS cookie is 'test16.2=foobar; test16.9=foobar'.
 PASS Has DOM cookie "test16.9" with value foobar.
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.13=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar; test16.10=foobar; test16.1=foobar; test16.2=foobar; test16.3=foobar; test16.4=foobar; test16.5=foobar; test16.6=foobar; test16.8=foobar; test16.9=foobar'. Expected 'test16.2; test16.5; test16.6; test16.9'.
-FAIL Should not have DOM cookie "test16.10". But do with value foobar.
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.13=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar; test16.10=foobar; test16.11=foobar; test16.1=foobar; test16.2=foobar; test16.3=foobar; test16.4=foobar; test16.5=foobar; test16.6=foobar; test16.8=foobar; test16.9=foobar'. Expected 'test16.2; test16.5; test16.6; test16.9'.
-FAIL Should not have DOM cookie "test16.11". But do with value foobar.
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.13=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar; test16.10=foobar; test16.11=foobar; test16.12=foobar; test16.1=foobar; test16.2=foobar; test16.3=foobar; test16.4=foobar; test16.5=foobar; test16.6=foobar; test16.8=foobar; test16.9=foobar'. Expected 'test16.12; test16.2; test16.5; test16.6; test16.9'.
-PASS Has DOM cookie "test16.12" with value foobar.
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.13=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar; test16.10=foobar; test16.11=foobar; test16.12=foobar; test16.13=foobar; test16.1=foobar; test16.2=foobar; test16.3=foobar; test16.4=foobar; test16.5=foobar; test16.6=foobar; test16.8=foobar; test16.9=foobar'. Expected 'test16.12; test16.13; test16.2; test16.5; test16.6; test16.9'.
-PASS Has DOM cookie "test16.13" with value foobar.
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.13=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar; test16.10=foobar; test16.11=foobar; test16.12=foobar; test16.13=foobar; test16.1=foobar; test16.2=foobar; test16.3=foobar; test16.4=foobar; test16.5=foobar; test16.6=foobar; test16.8=foobar; test16.9=foobar'. Expected 'test16.12; test16.13; test16.2; test16.5; test16.6; test16.9'.
+PASS cookie is 'test16.2=foobar; test16.9=foobar'.
+PASS Do not have DOM cookie "test16.10".
+PASS cookie is 'test16.2=foobar; test16.9=foobar'.
+PASS Do not have DOM cookie "test16.11".
+PASS cookie is 'test16.2=foobar; test16.9=foobar'.
+PASS Do not have DOM cookie "test16.12".
+PASS cookie is 'test16.2=foobar; test16.9=foobar'.
+PASS Do not have DOM cookie "test16.13".
+PASS cookie is 'test16.2=foobar; test16.9=foobar'.
 PASS Do not have DOM cookie "test16.14".
-FAIL cookie was '__Host-test15.10=foobar; __Host-test15.11=foobar; __Host-test15.12=foobar; __Host-test15.13=foobar; __Host-test15.8=foobar; __Host-test15.9=foobar; test16.10=foobar; test16.11=foobar; test16.12=foobar; test16.13=foobar; test16.1=foobar; test16.2=foobar; test16.3=foobar; test16.4=foobar; test16.5=foobar; test16.6=foobar; test16.8=foobar; test16.9=foobar'. Expected 'test16.12; test16.13; test16.2; test16.5; test16.6; test16.9'.
+PASS cookie is 'test16.2=foobar; test16.9=foobar'.
 PASS Do not have DOM cookie "test16.15".
 
 PASS successfullyParsed is true
