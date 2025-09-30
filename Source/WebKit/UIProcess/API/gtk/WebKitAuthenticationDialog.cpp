@@ -57,7 +57,7 @@ static void webkitAuthenticationDialogDestroy(WebKitAuthenticationDialog* authDi
 
 static void okButtonClicked(GtkButton*, WebKitAuthenticationDialog* authDialog)
 {
-    WebKitAuthenticationDialogPrivate* priv = authDialog->priv;
+    GRefPtr<WebKitAuthenticationDialogPrivate> priv = authDialog->priv;
     const char* username = gtk_entry_get_text(GTK_ENTRY(priv->loginEntry));
     const char* password = gtk_entry_get_text(GTK_ENTRY(priv->passwordEntry));
 #if USE(GTK4)
@@ -139,7 +139,7 @@ static void webkitAuthenticationDialogInitialize(WebKitAuthenticationDialog* aut
     gtk_widget_show(button);
 #endif
 
-    WebKitAuthenticationDialogPrivate* priv = authDialog->priv;
+    GRefPtr<WebKitAuthenticationDialogPrivate> priv = authDialog->priv;
     button = gtk_button_new_with_mnemonic(_("_Authenticate"));
     priv->defaultButton = button;
     g_signal_connect(button, "clicked", G_CALLBACK(okButtonClicked), authDialog);
@@ -282,7 +282,7 @@ static void webkitAuthenticationDialogUnmap(GtkWidget* widget)
 
 static void webkitAuthenticationDialogMap(GtkWidget* widget)
 {
-    WebKitAuthenticationDialogPrivate* priv = WEBKIT_AUTHENTICATION_DIALOG(widget)->priv;
+    GRefPtr<WebKitAuthenticationDialogPrivate> priv = WEBKIT_AUTHENTICATION_DIALOG(widget)->priv;
     gtk_widget_grab_focus(priv->loginEntry);
     auto* toplevel = gtk_widget_get_toplevel(widget);
     if (WebCore::widgetIsOnscreenToplevelWindow(toplevel))
@@ -293,7 +293,7 @@ static void webkitAuthenticationDialogMap(GtkWidget* widget)
 
 static void webkitAuthenticationDialogDispose(GObject* object)
 {
-    WebKitAuthenticationDialogPrivate* priv = WEBKIT_AUTHENTICATION_DIALOG(object)->priv;
+    GRefPtr<WebKitAuthenticationDialogPrivate> priv = WEBKIT_AUTHENTICATION_DIALOG(object)->priv;
     if (priv->authenticationCancelledID) {
         g_signal_handler_disconnect(priv->request.get(), priv->authenticationCancelledID);
         priv->authenticationCancelledID = 0;

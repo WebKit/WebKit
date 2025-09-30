@@ -70,7 +70,7 @@ enum {
 };
 
 struct _WebKitColorChooserRequestPrivate {
-    WebKitColorChooser* colorChooser;
+    GRefPtr<WebKitColorChooser> colorChooser;
     GdkRGBA rgba;
     bool handled;
 };

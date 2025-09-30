@@ -21,7 +21,9 @@
 
 #include "WebKitAuthenticationRequest.h"
 #include "WebKitWebViewDialog.h"
+#include <wtf/glib/GRefPtr.h>
 #include <gtk/gtk.h>
+
 
 enum CredentialStorageMode {
     AllowPersistentStorage, // The user is asked whether to store credential information.
@@ -45,7 +47,7 @@ struct _WebKitAuthenticationDialog {
     WebKitWebViewDialog parent;
 
     /*< private >*/
-    WebKitAuthenticationDialogPrivate* priv;
+    GRefPtr<WebKitAuthenticationDialogPrivate> priv;
 };
 
 struct _WebKitAuthenticationDialogClass {

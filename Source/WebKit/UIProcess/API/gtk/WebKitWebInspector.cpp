@@ -286,7 +286,7 @@ class WebKitInspectorClient final : public WebInspectorUIProxyClient {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(WebKitInspectorClient);
 public:
     explicit WebKitInspectorClient(WebKitWebInspector* inspector)
-        : m_inspector(inspector)
+        : m_inspector(adoptGRef(inspector))
     {
     }
 
@@ -294,19 +294,19 @@ private:
     bool openWindow(WebInspectorUIProxy&) override
     {
         gboolean returnValue;
-        g_signal_emit(m_inspector, signals[OPEN_WINDOW], 0, &returnValue);
+        g_signal_emit(m_inspector.get(), signals[OPEN_WINDOW], 0, &returnValue);
         return returnValue;
     }
 
     void didClose(WebInspectorUIProxy&) override
     {
-        g_signal_emit(m_inspector, signals[CLOSED], 0);
+        g_signal_emit(m_inspector.get(), signals[CLOSED], 0);
     }
 
     bool bringToFront(WebInspectorUIProxy&) override
     {
         gboolean returnValue;
-        g_signal_emit(m_inspector, signals[BRING_TO_FRONT], 0, &returnValue);
+        g_signal_emit(m_inspector.get(), signals[BRING_TO_FRONT], 0, &returnValue);
         return returnValue;
     }
 
@@ -316,20 +316,20 @@ private:
         if (uri == m_inspector->priv->inspectedURI)
             return;
         m_inspector->priv->inspectedURI = uri;
-        g_object_notify_by_pspec(G_OBJECT(m_inspector), sObjProperties[PROP_INSPECTED_URI]);
+        g_object_notify_by_pspec(G_OBJECT(m_inspector.get()), sObjProperties[PROP_INSPECTED_URI]);
     }
 
     bool attach(WebInspectorUIProxy&) override
     {
         gboolean returnValue;
-        g_signal_emit(m_inspector, signals[ATTACH], 0, &returnValue);
+        g_signal_emit(m_inspector.get(), signals[ATTACH], 0, &returnValue);
         return returnValue;
     }
 
     bool detach(WebInspectorUIProxy&) override
     {
         gboolean returnValue;
-        g_signal_emit(m_inspector, signals[DETACH], 0, &returnValue);
+        g_signal_emit(m_inspector.get(), signals[DETACH], 0, &returnValue);
         return returnValue;
     }
 
@@ -338,7 +338,7 @@ private:
         if (m_inspector->priv->attachedHeight == height)
             return;
         m_inspector->priv->attachedHeight = height;
-        g_object_notify_by_pspec(G_OBJECT(m_inspector), sObjProperties[PROP_ATTACHED_HEIGHT]);
+        g_object_notify_by_pspec(G_OBJECT(m_inspector.get()), sObjProperties[PROP_ATTACHED_HEIGHT]);
     }
 
     void didChangeAttachedWidth(WebInspectorUIProxy&, unsigned width) override
@@ -350,10 +350,10 @@ private:
         if (m_inspector->priv->canAttach == available)
             return;
         m_inspector->priv->canAttach = available;
-        g_object_notify_by_pspec(G_OBJECT(m_inspector), sObjProperties[PROP_CAN_ATTACH]);
+        g_object_notify_by_pspec(G_OBJECT(m_inspector.get()), sObjProperties[PROP_CAN_ATTACH]);
     }
 
-    WebKitWebInspector* m_inspector;
+    GRefPtr<WebKitWebInspector> m_inspector;
 };
 
 WebKitWebInspector* webkitWebInspectorCreate(WebInspectorUIProxy* webInspector)
