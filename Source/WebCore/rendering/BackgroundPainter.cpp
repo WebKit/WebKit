@@ -162,13 +162,13 @@ template<typename Layers> void BackgroundPainter::paintFillLayersImpl(const Colo
     auto baseBgColorUsage = BaseBackgroundColorUse;
 
     if (shouldDrawBackgroundInSeparateBuffer) {
-        paintFillLayerImpl(color, FillLayerToPaint<typename Layers::Layer> { .layer = fillLayers.last(), .isLast = true }, rect, bleedAvoidance, { }, { }, op, backgroundObject, BaseBackgroundColorOnly);
+        paintFillLayerImpl(color, FillLayerToPaint<typename Layers::Layer> { .layer = fillLayers.last(), .isLast = true }, rect, bleedAvoidance, { }, op, backgroundObject, BaseBackgroundColorOnly);
         baseBgColorUsage = BaseBackgroundColorSkip;
         context.beginTransparencyLayer(1);
     }
 
     for (auto& layer : makeReversedRange(fillLayers))
-        paintFillLayerImpl(color, FillLayerToPaint<typename Layers::Layer> { .layer = layer, .isLast = &layer == &fillLayers.last() }, rect, bleedAvoidance, { }, { }, op, backgroundObject, baseBgColorUsage);
+        paintFillLayerImpl(color, FillLayerToPaint<typename Layers::Layer> { .layer = layer, .isLast = &layer == &fillLayers.last() }, rect, bleedAvoidance, { }, op, backgroundObject, baseBgColorUsage);
 
     if (shouldDrawBackgroundInSeparateBuffer)
         context.endTransparencyLayer();
@@ -186,17 +186,17 @@ static void applyBoxShadowForBackground(GraphicsContext& context, const RenderSt
     }
 }
 
-void BackgroundPainter::paintFillLayer(const Color& color, const FillLayerToPaint<Style::BackgroundLayer>& layer, const LayoutRect& rect, BleedAvoidance bleedAvoidance, const InlineIterator::InlineBoxIterator& inlineBoxIterator, const LayoutRect& backgroundImageStrip, CompositeOperator op, RenderElement* backgroundObject, BaseBackgroundColorUsage baseBgColorUsage) const
+void BackgroundPainter::paintFillLayer(const Color& color, const FillLayerToPaint<Style::BackgroundLayer>& layer, const LayoutRect& rect, BleedAvoidance bleedAvoidance, const InlineIterator::InlineBoxIterator& inlineBoxIterator, CompositeOperator op, RenderElement* backgroundObject, BaseBackgroundColorUsage baseBgColorUsage) const
 {
-    paintFillLayerImpl(color, layer, rect, bleedAvoidance, inlineBoxIterator, backgroundImageStrip, op, backgroundObject, baseBgColorUsage);
+    paintFillLayerImpl(color, layer, rect, bleedAvoidance, inlineBoxIterator, op, backgroundObject, baseBgColorUsage);
 }
 
-void BackgroundPainter::paintFillLayer(const Color& color, const FillLayerToPaint<Style::MaskLayer>& layer, const LayoutRect& rect, BleedAvoidance bleedAvoidance, const InlineIterator::InlineBoxIterator& inlineBoxIterator, const LayoutRect& backgroundImageStrip, CompositeOperator op, RenderElement* backgroundObject, BaseBackgroundColorUsage baseBgColorUsage) const
+void BackgroundPainter::paintFillLayer(const Color& color, const FillLayerToPaint<Style::MaskLayer>& layer, const LayoutRect& rect, BleedAvoidance bleedAvoidance, const InlineIterator::InlineBoxIterator& inlineBoxIterator, const CompositeOperator op, RenderElement* backgroundObject, BaseBackgroundColorUsage baseBgColorUsage) const
 {
-    paintFillLayerImpl(color, layer, rect, bleedAvoidance, inlineBoxIterator, backgroundImageStrip, op, backgroundObject, baseBgColorUsage);
+    paintFillLayerImpl(color, layer, rect, bleedAvoidance, inlineBoxIterator, op, backgroundObject, baseBgColorUsage);
 }
 
-template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color& color, const FillLayerToPaint<Layer>& layer, const LayoutRect& rect, BleedAvoidance bleedAvoidance, const InlineIterator::InlineBoxIterator& inlineBoxIterator, const LayoutRect& backgroundImageStrip, CompositeOperator op, RenderElement* backgroundObject, BaseBackgroundColorUsage baseBgColorUsage) const
+template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color& color, const FillLayerToPaint<Layer>& layer, const LayoutRect& rect, BleedAvoidance bleedAvoidance, const InlineIterator::InlineBoxIterator& inlineBoxIterator, CompositeOperator op, RenderElement* backgroundObject, BaseBackgroundColorUsage baseBgColorUsage) const
 {
     GraphicsContext& context = m_paintInfo.context();
 
@@ -212,7 +212,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
 
     bool hasRoundedBorder = style.hasBorderRadius()
         && (closedEdges.start(style.writingMode()) || closedEdges.end(style.writingMode()));
-    bool clippedWithLocalScrolling = m_renderer.hasNonVisibleOverflow() && layer.layer.attachment() == FillAttachment::LocalBackground;
+    bool clippedWithLocalScrolling = m_renderer.hasNonVisibleOverflow() && layer.layer.attachment() == FillAttachment::LocalBackground && !m_imageRect;
     bool isBorderFill = layerClip == FillBox::BorderBox;
     bool isRoot = m_renderer.isDocumentElementRenderer();
 
@@ -500,15 +500,20 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
 
     // no progressive loading of the background image
     if (!baseBgColorOnly && shouldPaintBackgroundImage) {
-        // Multiline inline boxes paint like the image was one long strip spanning lines. The backgroundImageStrip is this fictional rectangle.
-        auto imageRect = backgroundImageStrip.isEmpty() ? scrolledPaintRect : backgroundImageStrip;
-        auto paintOffset = backgroundImageStrip.isEmpty() ? rect.location() : backgroundImageStrip.location();
-        auto geometry = calculateFillLayerImageGeometry(m_renderer, m_paintInfo.paintContainer, layer.layer, paintOffset, imageRect, m_overrideOrigin);
+        auto paintOffset = m_imageRect ? m_imageRect->location() : rect.location();
+        auto geometry = calculateFillLayerImageGeometry(m_renderer, m_paintInfo.paintContainer, layer.layer, paintOffset, scrolledPaintRect, m_imageRect);
 
         auto& clientForBackgroundImage = backgroundObject ? *backgroundObject : m_renderer;
         bgImage->setContainerContextForRenderer(clientForBackgroundImage, geometry.tileSizeWithoutPixelSnapping, m_renderer.style().usedZoom());
 
-        geometry.clip(LayoutRect(pixelSnappedRect));
+        LayoutRect clipRect(pixelSnappedRect);
+        if (m_imageRect) {
+            backgroundClipStateSaver.ensureSave();
+            context.clip(clipRect);
+            clipRect.inflate(1_lu);
+        }
+        geometry.clip(clipRect);
+
         RefPtr<Image> image;
         bool isFirstLine = inlineBoxIterator && inlineBoxIterator->lineBox()->isFirst();
         if (!geometry.destinationRect.isEmpty() && (image = bgImage->image(backgroundObject ? backgroundObject : &m_renderer, geometry.tileSize, context, isFirstLine))) {
@@ -572,17 +577,17 @@ static void pixelSnapBackgroundImageGeometryForPainting(LayoutRect& destinationR
     destinationRect = LayoutRect(snapRectToDevicePixels(destinationRect, scaleFactor));
 }
 
-BackgroundImageGeometry BackgroundPainter::calculateFillLayerImageGeometry(const RenderBoxModelObject& renderer, const RenderLayerModelObject* paintContainer, const Style::BackgroundLayer& fillLayer, const LayoutPoint& paintOffset, const LayoutRect& borderBoxRect, std::optional<FillBox> overrideOrigin)
+BackgroundImageGeometry BackgroundPainter::calculateFillLayerImageGeometry(const RenderBoxModelObject& renderer, const RenderLayerModelObject* paintContainer, const Style::BackgroundLayer& fillLayer, const LayoutPoint& paintOffset, const LayoutRect& borderBoxRect, const std::optional<LayoutRect>& imageRect)
 {
-    return calculateFillLayerImageGeometryImpl(renderer, paintContainer, fillLayer, paintOffset, borderBoxRect, overrideOrigin);
+    return calculateFillLayerImageGeometryImpl(renderer, paintContainer, fillLayer, paintOffset, borderBoxRect, imageRect);
 }
 
-BackgroundImageGeometry BackgroundPainter::calculateFillLayerImageGeometry(const RenderBoxModelObject& renderer, const RenderLayerModelObject* paintContainer, const Style::MaskLayer& fillLayer, const LayoutPoint& paintOffset, const LayoutRect& borderBoxRect, std::optional<FillBox> overrideOrigin)
+BackgroundImageGeometry BackgroundPainter::calculateFillLayerImageGeometry(const RenderBoxModelObject& renderer, const RenderLayerModelObject* paintContainer, const Style::MaskLayer& fillLayer, const LayoutPoint& paintOffset, const LayoutRect& borderBoxRect, const std::optional<LayoutRect>& imageRect)
 {
-    return calculateFillLayerImageGeometryImpl(renderer, paintContainer, fillLayer, paintOffset, borderBoxRect, overrideOrigin);
+    return calculateFillLayerImageGeometryImpl(renderer, paintContainer, fillLayer, paintOffset, borderBoxRect, imageRect);
 }
 
-template<typename Layer> BackgroundImageGeometry BackgroundPainter::calculateFillLayerImageGeometryImpl(const RenderBoxModelObject& renderer, const RenderLayerModelObject* paintContainer, const Layer& fillLayer, const LayoutPoint& paintOffset, const LayoutRect& borderBoxRect, std::optional<FillBox> overrideOrigin)
+template<typename Layer> BackgroundImageGeometry BackgroundPainter::calculateFillLayerImageGeometryImpl(const RenderBoxModelObject& renderer, const RenderLayerModelObject* paintContainer, const Layer& fillLayer, const LayoutPoint& paintOffset, const LayoutRect& borderBoxRect, const std::optional<LayoutRect>& imageRect)
 {
     auto& view = renderer.view();
 
@@ -595,19 +600,18 @@ template<typename Layer> BackgroundImageGeometry BackgroundPainter::calculateFil
     bool isTransformed = renderer.isTransformed() || (enclosingLayer && enclosingLayer->hasTransformedAncestor());
     bool fixedAttachment = fillLayer.attachment() == FillAttachment::FixedBackground && !isTransformed;
 
-    LayoutRect destinationRect(borderBoxRect);
+    LayoutRect destinationRect(imageRect.value_or(borderBoxRect));
     float deviceScaleFactor = renderer.document().deviceScaleFactor();
     if (!fixedAttachment) {
         LayoutUnit right;
         LayoutUnit bottom;
         // Scroll and Local.
-        auto fillLayerOrigin = overrideOrigin.value_or(fillLayer.origin());
-        if (fillLayerOrigin != FillBox::BorderBox) {
+        if (fillLayer.origin() != FillBox::BorderBox && !imageRect) {
             left = renderer.borderLeft();
             right = renderer.borderRight();
             top = renderer.borderTop();
             bottom = renderer.borderBottom();
-            if (fillLayerOrigin == FillBox::ContentBox) {
+            if (fillLayer.origin() == FillBox::ContentBox) {
                 left += renderer.paddingLeft();
                 right += renderer.paddingRight();
                 top += renderer.paddingTop();
@@ -627,7 +631,7 @@ template<typename Layer> BackgroundImageGeometry BackgroundPainter::calculateFil
                 top += (renderer.marginTop() - extendedBackgroundRect.y());
             }
         } else {
-            positioningAreaSize = borderBoxRect.size() - LayoutSize(left + right, top + bottom);
+            positioningAreaSize = destinationRect.size() - LayoutSize(left + right, top + bottom);
             positioningAreaSize = LayoutSize(snapRectToDevicePixels(LayoutRect(paintOffset, positioningAreaSize), deviceScaleFactor).size());
         }
     } else {
@@ -754,11 +758,11 @@ template<typename Layer> BackgroundImageGeometry BackgroundPainter::calculateFil
     }
 
     if (fixedAttachment) {
-        LayoutPoint attachmentPoint = borderBoxRect.location();
+        LayoutPoint attachmentPoint = imageRect.value_or(borderBoxRect).location();
         phase.expand(std::max<LayoutUnit>(attachmentPoint.x() - destinationRect.x(), 0), std::max<LayoutUnit>(attachmentPoint.y() - destinationRect.y(), 0));
     }
 
-    destinationRect.intersect(borderBoxRect);
+    destinationRect.intersect(imageRect.value_or(borderBoxRect));
 
     auto tileSizeWithoutPixelSnapping = tileSize;
     pixelSnapBackgroundImageGeometryForPainting(destinationRect, tileSize, phase, spaceSize, deviceScaleFactor);

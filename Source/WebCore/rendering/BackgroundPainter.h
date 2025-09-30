@@ -73,21 +73,21 @@ public:
     BackgroundPainter(RenderBoxModelObject&, const PaintInfo&);
 
     void setOverrideClip(FillBox overrideClip) { m_overrideClip = overrideClip; }
-    void setOverrideOrigin(FillBox overrideOrigin) { m_overrideOrigin = overrideOrigin; }
+    void setImageRect(const LayoutRect& imageRect) { m_imageRect = imageRect; }
 
     void paintBackground(const LayoutRect&, BleedAvoidance) const;
 
     void paintFillLayers(const Color&, const Style::BackgroundLayers&, const LayoutRect&, BleedAvoidance, CompositeOperator, RenderElement* backgroundObject = nullptr) const;
-    void paintFillLayer(const Color&, const FillLayerToPaint<Style::BackgroundLayer>&, const LayoutRect&, BleedAvoidance, const InlineIterator::InlineBoxIterator&, const LayoutRect& backgroundImageStrip = { }, CompositeOperator = CompositeOperator::SourceOver, RenderElement* backgroundObject = nullptr, BaseBackgroundColorUsage = BaseBackgroundColorUse) const;
+    void paintFillLayer(const Color&, const FillLayerToPaint<Style::BackgroundLayer>&, const LayoutRect&, BleedAvoidance, const InlineIterator::InlineBoxIterator&, CompositeOperator = CompositeOperator::SourceOver, RenderElement* backgroundObject = nullptr, BaseBackgroundColorUsage = BaseBackgroundColorUse) const;
 
     void paintFillLayers(const Color&, const Style::MaskLayers&, const LayoutRect&, BleedAvoidance, CompositeOperator, RenderElement* backgroundObject = nullptr) const;
-    void paintFillLayer(const Color&, const FillLayerToPaint<Style::MaskLayer>&, const LayoutRect&, BleedAvoidance, const InlineIterator::InlineBoxIterator&, const LayoutRect& backgroundImageStrip = { }, CompositeOperator = CompositeOperator::SourceOver, RenderElement* backgroundObject = nullptr, BaseBackgroundColorUsage = BaseBackgroundColorUse) const;
+    void paintFillLayer(const Color&, const FillLayerToPaint<Style::MaskLayer>&, const LayoutRect&, BleedAvoidance, const InlineIterator::InlineBoxIterator&, CompositeOperator = CompositeOperator::SourceOver, RenderElement* backgroundObject = nullptr, BaseBackgroundColorUsage = BaseBackgroundColorUse) const;
 
     void paintBoxShadow(const LayoutRect&, const RenderStyle&, Style::ShadowStyle, RectEdges<bool> closedEdges = { true, true, true, true }) const;
 
     static bool paintsOwnBackground(const RenderBoxModelObject&);
-    static BackgroundImageGeometry calculateFillLayerImageGeometry(const RenderBoxModelObject&, const RenderLayerModelObject* paintContainer, const Style::BackgroundLayer&, const LayoutPoint& paintOffset, const LayoutRect& borderBoxRect, std::optional<FillBox> overrideOrigin = std::nullopt);
-    static BackgroundImageGeometry calculateFillLayerImageGeometry(const RenderBoxModelObject&, const RenderLayerModelObject* paintContainer, const Style::MaskLayer&, const LayoutPoint& paintOffset, const LayoutRect& borderBoxRect, std::optional<FillBox> overrideOrigin = std::nullopt);
+    static BackgroundImageGeometry calculateFillLayerImageGeometry(const RenderBoxModelObject&, const RenderLayerModelObject* paintContainer, const Style::BackgroundLayer&, const LayoutPoint& paintOffset, const LayoutRect& borderBoxRect, const std::optional<LayoutRect>& imageRect = std::nullopt);
+    static BackgroundImageGeometry calculateFillLayerImageGeometry(const RenderBoxModelObject&, const RenderLayerModelObject* paintContainer, const Style::MaskLayer&, const LayoutPoint& paintOffset, const LayoutRect& borderBoxRect, const std::optional<LayoutRect>& imageRect = std::nullopt);
     static void clipRoundedInnerRect(GraphicsContext&, const FloatRoundedRect& clipRect);
     static bool boxShadowShouldBeAppliedToBackground(const RenderBoxModelObject&, const LayoutPoint& paintOffset, BleedAvoidance, const InlineIterator::InlineBoxIterator&);
 
@@ -95,8 +95,8 @@ private:
     void paintRootBoxFillLayers() const;
 
     template<typename LayerList> void paintFillLayersImpl(const Color&, const LayerList&, const LayoutRect&, BleedAvoidance, CompositeOperator, RenderElement* backgroundObject = nullptr) const;
-    template<typename Layer> void paintFillLayerImpl(const Color&, const FillLayerToPaint<Layer>&, const LayoutRect&, BleedAvoidance, const InlineIterator::InlineBoxIterator&, const LayoutRect& backgroundImageStrip = { }, CompositeOperator = CompositeOperator::SourceOver, RenderElement* backgroundObject = nullptr, BaseBackgroundColorUsage = BaseBackgroundColorUse) const;
-    template<typename Layer> static BackgroundImageGeometry calculateFillLayerImageGeometryImpl(const RenderBoxModelObject&, const RenderLayerModelObject* paintContainer, const Layer&, const LayoutPoint& paintOffset, const LayoutRect& borderBoxRect, std::optional<FillBox> overrideOrigin = std::nullopt);
+    template<typename Layer> void paintFillLayerImpl(const Color&, const FillLayerToPaint<Layer>&, const LayoutRect&, BleedAvoidance, const InlineIterator::InlineBoxIterator&, CompositeOperator = CompositeOperator::SourceOver, RenderElement* backgroundObject = nullptr, BaseBackgroundColorUsage = BaseBackgroundColorUse) const;
+    template<typename Layer> static BackgroundImageGeometry calculateFillLayerImageGeometryImpl(const RenderBoxModelObject&, const RenderLayerModelObject* paintContainer, const Layer&, const LayoutPoint& paintOffset, const LayoutRect& borderBoxRect, const std::optional<LayoutRect>& imageRect = std::nullopt);
     template<typename Layer> static LayoutSize calculateFillTileSize(const RenderBoxModelObject&, const Layer&, const LayoutSize& positioningAreaSize);
 
     const Document& document() const;
@@ -105,7 +105,7 @@ private:
     RenderBoxModelObject& m_renderer;
     const PaintInfo& m_paintInfo;
     std::optional<FillBox> m_overrideClip;
-    std::optional<FillBox> m_overrideOrigin;
+    std::optional<LayoutRect> m_imageRect; // Can override image size. Set for table rows and for inline boxes (multiline inline boxes paint like the image was one long strip spanning lines).
 };
 
 }
