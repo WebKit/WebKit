@@ -28,13 +28,14 @@
 
 #include "EventNames.h"
 #include "Performance.h"
+#include "ScriptWrappable.h"
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
 
 class DOMMapAdapter;
 
-class EventCounts final {
+class EventCounts final : public ScriptWrappable {
 WTF_DEPRECATED_MAKE_FAST_ALLOCATED(EventCounts);
 public:
     EventCounts(Performance*);
@@ -42,10 +43,11 @@ public:
     void deref() { m_performance->deref(); }
 
     void initializeMapLike(DOMMapAdapter&);
-    // Trait that causes the wrapper's backing map to be initialized again before every access:
-    using shouldAlwaysInitializeMapLikeMarker = void;
+    // Reload the backing maps on the main JSWrapper:
+    void reloadCounts();
 
     void add(EventType);
+    void updateWrapper() const;
 
 private:
     WeakRef<Performance, Performance::WeakPtrImplType> m_performance;

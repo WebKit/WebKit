@@ -28,6 +28,8 @@
 
 #include "IDLTypes.h"
 #include "JSDOMMapLike.h"
+#include "ScriptWrappableInlines.h"
+#include "WebCoreJSClientData.h"
 #include <algorithm>
 
 namespace WebCore {
@@ -49,6 +51,22 @@ void EventCounts::initializeMapLike(DOMMapAdapter& map)
     for (size_t index = 0; index < EventNames::timedEvents.size(); ++index) {
         auto type = EventNames::timedEvents[index];
         map.set<IDLDOMString, IDLUnsignedLongLong>(eventNamesObject.eventNameFromEventType(type), m_counts[index]);
+    }
+}
+
+void EventCounts::reloadCounts()
+{
+    if (auto w = wrapper()) {
+        auto& vm = w->vm();
+        JSC::JSGlobalObject& globalObject(*w->globalObject());
+        JSC::JSObject& object(*w);
+        auto backingMap = object.getDirect(vm, builtinNames(vm).backingMapPrivateName());
+        if (!backingMap)
+            return;
+
+        auto& backingMapObject(*JSC::asObject(backingMap));
+        DOMMapAdapter mapAdapter(globalObject, backingMapObject);
+        initializeMapLike(mapAdapter);
     }
 }
 

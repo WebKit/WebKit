@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<meta charset=utf-8 />
+<title>Event Timing eventCount iterators always updated.</title>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script src=/resources/testdriver.js></script>
+<script src=/resources/testdriver-actions.js></script>
+<script src=/resources/testdriver-vendor.js></script>
+<script src=resources/event-timing-test-utils.js></script>
+
+<body>
+<div>Outside target!</div>
+<iframe id='same-origin-iframe' srcdoc="
+    <div id='target'>Click me</div>
+">
+</iframe>
+<script>
+  promise_test(async t => {
+    await new Promise( async resolve => {
+      if (document.readyState === 'complete')
+        resolve()
+      else
+        window.addEventListener('load', async (e) => resolve())
+    })
+    const target = document.getElementById('same-origin-iframe').contentDocument.getElementById('target');
+    let entriesIterator = document.getElementById('same-origin-iframe').contentWindow.performance.eventCounts.entries()
+    const nClicksStart = document.getElementById('same-origin-iframe').contentWindow.performance.eventCounts.get('click')
+    await test_driver.click(target);
+    await afterNextPaint();
+    assert_equals(document.getElementById('same-origin-iframe').contentWindow.performance.eventCounts.get('click'), nClicksStart + 1, "Click inside iframe must be counted")
+    entriesIterator.forEach( pair => {
+      let [key1, value1] = [...pair]
+      if (key1 != 'click')
+        return;
+      assert_equals(value1, nClicksStart + 1, "Iterator from inside iframe must always be up-to-date")
+    })
+  })
+</script>
+
+</body>
+</html>
