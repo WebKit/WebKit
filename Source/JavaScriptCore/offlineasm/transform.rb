@@ -810,8 +810,18 @@ def lowerJSRUse(instruction)
         operandMappings[operand.dump.to_sym] = { gpr: availableRegisters.pop, gpr2: availableRegisters.pop, fpr: mapping[:fpr] }
     end
 
-    $stderr.puts "(ARMv7-compat) Cannot spill jsr registers for branch instruction at #{origin}" if instruction.opcode.start_with?('b') and operandMappings.any?
-    
+    if instruction.opcode.start_with?('b') or instruction.opcode.start_with?('j') or instruction.opcode.start_with?('call')
+        raise if operandDefs.any?
+        $stderr.puts "(ARMv7-compat) Cannot spill jsr registers for branch instruction at #{origin}" if operandMappings.size > 1
+    end
+
+    # Avoid needing to fill again after
+    if operandMappings.size == 1 and not operandDefs.any?
+        operand = operandMappings.keys.first
+        operandMappings[operand][:gpr] = GPR_TMP0
+        operandMappings[operand][:gpr2] = GPR_TMP1
+    end
+
     usedJSRs.filter { |operand| JSR_MAPPING[operand.dump.to_sym][:gpr] != :spill }.each do |operand|
         mapping = JSR_MAPPING[operand.dump.to_sym]
         operandMappings[operand.dump.to_sym] = { gpr: mapping[:gpr], gpr2: nil, fpr: mapping[:fpr] }
@@ -843,6 +853,8 @@ def lowerJSRUse(instruction)
                 FPRegisterID.new(origin, fpr),
                 RegisterID.new(origin, GPR_TMP0),
                 RegisterID.new(origin, GPR_TMP1)])
+            next if gpr1 == GPR_TMP0 && gpr2 == GPR_TMP1
+            raise if [gpr1, gpr2].any? { | o | [GPR_TMP1, GPR_TMP2].contains(o) }
             result << Instruction.new(origin, "fii2d", [
                 FPRegisterID.new(origin, fpr),
                 RegisterID.new(origin, gpr),
