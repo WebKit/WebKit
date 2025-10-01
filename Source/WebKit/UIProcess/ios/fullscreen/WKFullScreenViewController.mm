@@ -151,7 +151,7 @@ private:
     WeakObjCPtr<id<WKFullScreenViewControllerDelegate>> _delegate;
     RetainPtr<UILongPressGestureRecognizer> _touchGestureRecognizer;
     RetainPtr<UIView> _animatingView;
-    RetainPtr<UIStackView> _stackView;
+    RetainPtr<UIView> _stackView;
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
     RetainPtr<UIStackView> _banner;
     RetainPtr<_WKInsetLabel> _bannerLabel;
@@ -186,6 +186,10 @@ private:
     };
     OptionSet<ButtonState> _buttonState;
     BOOL _viewDidAppear;
+#endif
+#if HAVE(UI_GLASS_EFFECT)
+    RetainPtr<UIVisualEffectView> _glassEffectView;
+    RetainPtr<UIStackView> _buttonStackView;
 #endif
 }
 
@@ -519,7 +523,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     if (_environmentPickerButtonViewController == environmentPickerButtonViewController) {
-        ASSERT(!environmentPickerButtonViewController || [[_stackView arrangedSubviews] containsObject:environmentPickerButtonViewController.view]);
+        ASSERT(!environmentPickerButtonViewController || [self _stackViewContainsView:environmentPickerButtonViewController.view]);
         return;
     }
 
@@ -528,7 +532,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     [self addChildViewController:environmentPickerButtonViewController];
-    [_stackView insertArrangedSubview:environmentPickerButtonViewController.view atIndex:1];
+    [self _insertArrangedSubviewInStackView:environmentPickerButtonViewController.view atIndex:1];
     [environmentPickerButtonViewController didMoveToParentViewController:self];
     _environmentPickerButtonViewController = environmentPickerButtonViewController;
     _buttonState.add(EnvironmentPicker);
@@ -542,7 +546,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     UIView *environmentPickerButtonView = [_environmentPickerButtonViewController view];
 
     [_environmentPickerButtonViewController willMoveToParentViewController:nil];
-    [_stackView removeArrangedSubview:environmentPickerButtonView];
+    [self _removeArrangedSubviewFromStackView:environmentPickerButtonView];
     [environmentPickerButtonView removeFromSuperview];
     [self removeChildViewController:_environmentPickerButtonViewController.get()];
 
@@ -795,14 +799,45 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [_centeredStackView setSpacing:24.0];
 #endif
 
-        _stackView = adoptNS([[UIStackView alloc] init]);
-        [_stackView addArrangedSubview:_cancelButton.get()];
-        [_stackView addArrangedSubview:_pipButton.get()];
+        RetainPtr stackView = adoptNS([[UIStackView alloc] init]);
+        [stackView addArrangedSubview:_cancelButton.get()];
+        [stackView addArrangedSubview:_pipButton.get()];
 #if PLATFORM(VISION)
-        [_stackView addArrangedSubview:_moreActionsButton.get()];
+        [stackView addArrangedSubview:_moreActionsButton.get()];
 #endif
-        [_stackView setSpacing:24.0];
+        [stackView setSpacing:24.0];
+        _stackView = stackView.get();
     } else {
+#if HAVE(UI_GLASS_EFFECT)
+        static constexpr CGFloat buttonSpacing = 24.0;
+        static constexpr CGFloat padding = 16.0;
+        static constexpr CGFloat cornerRadius = 24.0;
+
+        _buttonStackView = adoptNS([[UIStackView alloc] init]);
+        [_buttonStackView setSpacing:buttonSpacing];
+        [_buttonStackView addArrangedSubview:_cancelButton.get()];
+        [_buttonStackView addArrangedSubview:_pipButton.get()];
+        [_buttonStackView setTranslatesAutoresizingMaskIntoConstraints:NO];
+
+        RetainPtr glassEffect = adoptNS([[UIGlassEffect alloc] init]);
+
+        _glassEffectView = adoptNS([[UIVisualEffectView alloc] initWithEffect:glassEffect.get()]);
+        [_glassEffectView setClipsToBounds:YES];
+
+        [[_glassEffectView contentView] addSubview:_buttonStackView.get()];
+
+        [NSLayoutConstraint activateConstraints:@[
+            [[_buttonStackView centerXAnchor] constraintEqualToAnchor:[[_glassEffectView contentView] centerXAnchor]],
+            [[_buttonStackView centerYAnchor] constraintEqualToAnchor:[[_glassEffectView contentView] centerYAnchor]],
+            [[_buttonStackView leadingAnchor] constraintGreaterThanOrEqualToAnchor:[[_glassEffectView contentView] leadingAnchor] constant:padding],
+            [[_buttonStackView trailingAnchor] constraintLessThanOrEqualToAnchor:[[_glassEffectView contentView] trailingAnchor] constant:-padding],
+            [[_buttonStackView topAnchor] constraintGreaterThanOrEqualToAnchor:[[_glassEffectView contentView] topAnchor] constant:padding],
+            [[_buttonStackView bottomAnchor] constraintLessThanOrEqualToAnchor:[[_glassEffectView contentView] bottomAnchor] constant:-padding]
+        ]];
+
+        [[_glassEffectView layer] setCornerRadius:cornerRadius];
+        _stackView = _glassEffectView.get();
+#else
         RetainPtr<WKFullscreenStackView> stackView = adoptNS([[WKFullscreenStackView alloc] init]);
 #if PLATFORM(APPLETV)
         [stackView addArrangedSubview:_cancelButton.get()];
@@ -811,6 +846,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [stackView addArrangedSubview:_pipButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStylePrimary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
 #endif
         _stackView = WTFMove(stackView);
+#endif
     }
 
     [_stackView setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -936,6 +972,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self._webView setFrame:[_animatingView bounds]];
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
     [_bannerLabel setPreferredMaxLayoutWidth:self.view.bounds.size.width];
+#endif
+
+#if HAVE(UI_GLASS_EFFECT)
+    if (self._webView._page && !self._webView._page->preferences().alternateFullScreenControlDesignEnabled()) {
+        if (_glassEffectView) {
+            CGFloat cornerRadius = [_glassEffectView bounds].size.height / 2;
+            [[_glassEffectView layer] setCornerRadius:cornerRadius];
+        }
+    }
 #endif
 }
 
@@ -1167,6 +1212,37 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [button setAdjustsImageWhenHighlighted:NO];
 ALLOW_DEPRECATED_DECLARATIONS_END
     [button setTintColor:[UIColor whiteColor]];
+}
+
+- (UIStackView *)_actualStackView
+{
+#if HAVE(UI_GLASS_EFFECT)
+    if (_buttonStackView)
+        return _buttonStackView.get();
+#endif
+    if (RetainPtr stackView = dynamic_objc_cast<UIStackView>(_stackView))
+        return stackView.autorelease();
+    return nil;
+}
+
+- (BOOL)_stackViewContainsView:(UIView *)view
+{
+    RetainPtr stackView = [self _actualStackView];
+    return stackView && [[stackView arrangedSubviews] containsObject:view];
+}
+
+- (void)_insertArrangedSubviewInStackView:(UIView *)view atIndex:(NSUInteger)index
+{
+    RetainPtr stackView = [self _actualStackView];
+    if (stackView)
+        [stackView insertArrangedSubview:view atIndex:index];
+}
+
+- (void)_removeArrangedSubviewFromStackView:(UIView *)view
+{
+    RetainPtr stackView = [self _actualStackView];
+    if (stackView)
+        [stackView removeArrangedSubview:view];
 }
 
 - (void)wkExtrinsicButtonWillDisplayMenu:(WKExtrinsicButton *)button
