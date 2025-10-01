@@ -263,8 +263,9 @@ InspectorAnimationAgent::~InspectorAnimationAgent() = default;
 
 void InspectorAnimationAgent::didCreateFrontendAndBackend()
 {
-    ASSERT(m_instrumentingAgents.persistentAnimationAgent() != this);
-    m_instrumentingAgents.setPersistentAnimationAgent(this);
+    Ref agents = m_instrumentingAgents.get();
+    ASSERT(agents->persistentAnimationAgent() != this);
+    agents->setPersistentAnimationAgent(this);
 }
 
 void InspectorAnimationAgent::willDestroyFrontendAndBackend(DisconnectReason)
@@ -272,16 +273,18 @@ void InspectorAnimationAgent::willDestroyFrontendAndBackend(DisconnectReason)
     stopTracking();
     disable();
 
-    ASSERT(m_instrumentingAgents.persistentAnimationAgent() == this);
-    m_instrumentingAgents.setPersistentAnimationAgent(nullptr);
+    Ref agents = m_instrumentingAgents.get();
+    ASSERT(agents->persistentAnimationAgent() == this);
+    agents->setPersistentAnimationAgent(nullptr);
 }
 
 Inspector::Protocol::ErrorStringOr<void> InspectorAnimationAgent::enable()
 {
-    if (m_instrumentingAgents.enabledAnimationAgent() == this)
+    Ref agents = m_instrumentingAgents.get();
+    if (agents->enabledAnimationAgent() == this)
         return makeUnexpected("Animation domain already enabled"_s);
 
-    m_instrumentingAgents.setEnabledAnimationAgent(this);
+    agents->setEnabledAnimationAgent(this);
 
     const auto existsInCurrentPage = [&] (ScriptExecutionContext* scriptExecutionContext) {
         // FIXME: <https://webkit.org/b/168475> Web Inspector: Correctly display iframe's WebSockets
@@ -301,7 +304,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorAnimationAgent::enable()
 
 Inspector::Protocol::ErrorStringOr<void> InspectorAnimationAgent::disable()
 {
-    m_instrumentingAgents.setEnabledAnimationAgent(nullptr);
+    Ref { m_instrumentingAgents.get() }->setEnabledAnimationAgent(nullptr);
 
     reset();
 
@@ -335,7 +338,8 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::Styleable>> Ins
 
     m_animationsIgnoringTargetChanges.remove(*animation);
 
-    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
+    Ref agents = m_instrumentingAgents.get();
+    auto* domAgent = agents->persistentDOMAgent();
     if (!domAgent)
         return makeUnexpected("DOM domain must be enabled"_s);
 
@@ -384,10 +388,11 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObjec
 
 Inspector::Protocol::ErrorStringOr<void> InspectorAnimationAgent::startTracking()
 {
-    if (m_instrumentingAgents.trackingAnimationAgent() == this)
+    Ref agents = m_instrumentingAgents.get();
+    if (agents->trackingAnimationAgent() == this)
         return { };
 
-    m_instrumentingAgents.setTrackingAnimationAgent(this);
+    agents->setTrackingAnimationAgent(this);
 
     ASSERT(m_trackedStyleOriginatedAnimationData.isEmpty());
 
@@ -398,10 +403,11 @@ Inspector::Protocol::ErrorStringOr<void> InspectorAnimationAgent::startTracking(
 
 Inspector::Protocol::ErrorStringOr<void> InspectorAnimationAgent::stopTracking()
 {
-    if (m_instrumentingAgents.trackingAnimationAgent() != this)
+    Ref agents = m_instrumentingAgents.get();
+    if (agents->trackingAnimationAgent() != this)
         return { };
 
-    m_instrumentingAgents.setTrackingAnimationAgent(nullptr);
+    agents->setTrackingAnimationAgent(nullptr);
 
     m_trackedStyleOriginatedAnimationData.clear();
 
@@ -467,7 +473,7 @@ void InspectorAnimationAgent::willApplyKeyframeEffect(const Styleable& target, K
         .release();
 
     if (ensureResult.isNewEntry) {
-        if (auto* domAgent = m_instrumentingAgents.persistentDOMAgent()) {
+        if (auto* domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent()) {
             if (auto nodeId = domAgent->pushStyleableElementToFrontend(target))
                 event->setNodeId(nodeId);
         }

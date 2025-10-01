@@ -62,7 +62,8 @@ PageNetworkAgent::~PageNetworkAgent() = default;
 Inspector::Protocol::Network::LoaderId PageNetworkAgent::loaderIdentifier(DocumentLoader* loader)
 {
     if (loader) {
-        if (auto* pageAgent = m_instrumentingAgents.enabledPageAgent())
+        Ref agents = m_instrumentingAgents.get();
+        if (auto* pageAgent = agents->enabledPageAgent())
             return pageAgent->loaderId(loader);
     }
     return { };
@@ -71,7 +72,8 @@ Inspector::Protocol::Network::LoaderId PageNetworkAgent::loaderIdentifier(Docume
 Inspector::Protocol::Network::FrameId PageNetworkAgent::frameIdentifier(DocumentLoader* loader)
 {
     if (loader) {
-        if (auto* pageAgent = m_instrumentingAgents.enabledPageAgent())
+        Ref agents = m_instrumentingAgents.get();
+        if (auto* pageAgent = agents->enabledPageAgent())
             return pageAgent->frameId(loader->frame());
     }
     return { };
@@ -119,7 +121,8 @@ bool PageNetworkAgent::setEmulatedConditionsInternal(std::optional<int>&& bytesP
 
 ScriptExecutionContext* PageNetworkAgent::scriptExecutionContext(Inspector::Protocol::ErrorString& errorString, const Inspector::Protocol::Network::FrameId& frameId)
 {
-    auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
+    Ref agents = m_instrumentingAgents.get();
+    auto* pageAgent = agents->enabledPageAgent();
     if (!pageAgent) {
         errorString = "Page domain must be enabled"_s;
         return nullptr;

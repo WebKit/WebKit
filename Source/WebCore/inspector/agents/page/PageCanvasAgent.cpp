@@ -68,19 +68,22 @@ PageCanvasAgent::~PageCanvasAgent() = default;
 
 bool PageCanvasAgent::enabled() const
 {
-    return m_instrumentingAgents.enabledPageCanvasAgent() == this && InspectorCanvasAgent::enabled();
+    Ref agents = m_instrumentingAgents.get();
+    return agents->enabledPageCanvasAgent() == this && InspectorCanvasAgent::enabled();
 }
 
 void PageCanvasAgent::internalEnable()
 {
-    m_instrumentingAgents.setEnabledPageCanvasAgent(this);
+    Ref agents = m_instrumentingAgents.get();
+    agents->setEnabledPageCanvasAgent(this);
 
     InspectorCanvasAgent::internalEnable();
 }
 
 void PageCanvasAgent::internalDisable()
 {
-    m_instrumentingAgents.setEnabledPageCanvasAgent(nullptr);
+    Ref agents = m_instrumentingAgents.get();
+    agents->setEnabledPageCanvasAgent(nullptr);
 
     InspectorCanvasAgent::internalDisable();
 }
@@ -98,18 +101,20 @@ Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> PageCanvasA
         return makeUnexpected("Missing element of canvas for given canvasId"_s);
 
     // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
-    int documentNodeId = m_instrumentingAgents.persistentDOMAgent()->boundNodeId(&node->document());
+    Ref agents = m_instrumentingAgents.get();
+    int documentNodeId = agents->persistentDOMAgent()->boundNodeId(&node->document());
     if (!documentNodeId)
         return makeUnexpected("Document must have been requested"_s);
 
-    return m_instrumentingAgents.persistentDOMAgent()->pushNodeToFrontend(errorString, documentNodeId, node);
+    return agents->persistentDOMAgent()->pushNodeToFrontend(errorString, documentNodeId, node);
 }
 
 Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> PageCanvasAgent::requestClientNodes(const Inspector::Protocol::Canvas::CanvasId& canvasId)
 {
     Inspector::Protocol::ErrorString errorString;
 
-    auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
+    Ref agents = m_instrumentingAgents.get();
+    auto* domAgent = agents->persistentDOMAgent();
     if (!domAgent)
         return makeUnexpected("DOM domain must be enabled"_s);
 

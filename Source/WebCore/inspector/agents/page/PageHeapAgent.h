@@ -29,6 +29,7 @@
 #include "InstrumentingAgents.h"
 #include "WebHeapAgent.h"
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -51,7 +52,7 @@ public:
     void mainFrameNavigated();
 
 private:
-    InstrumentingAgents& m_instrumentingAgents;
+    WeakRef<InstrumentingAgents> m_instrumentingAgents;
 };
 
 } // namespace WebCore

@@ -51,14 +51,14 @@ InspectorCPUProfilerAgent::~InspectorCPUProfilerAgent() = default;
 
 void InspectorCPUProfilerAgent::didCreateFrontendAndBackend()
 {
-    m_instrumentingAgents.setPersistentCPUProfilerAgent(this);
+    Ref { m_instrumentingAgents.get() }->setPersistentCPUProfilerAgent(this);
 }
 
 void InspectorCPUProfilerAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
     stopTracking();
 
-    m_instrumentingAgents.setPersistentCPUProfilerAgent(nullptr);
+    Ref { m_instrumentingAgents.get() }->setPersistentCPUProfilerAgent(nullptr);
 }
 
 Inspector::Protocol::ErrorStringOr<void> InspectorCPUProfilerAgent::startTracking()

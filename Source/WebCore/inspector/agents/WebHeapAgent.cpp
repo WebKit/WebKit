@@ -115,23 +115,26 @@ void WebHeapAgent::didCreateFrontendAndBackend()
 {
     InspectorHeapAgent::didCreateFrontendAndBackend();
 
-    ASSERT(m_instrumentingAgents.persistentWebHeapAgent() != this);
-    m_instrumentingAgents.setPersistentWebHeapAgent(this);
+    Ref agents = m_instrumentingAgents.get();
+    ASSERT(agents->persistentWebHeapAgent() != this);
+    agents->setPersistentWebHeapAgent(this);
 }
 
 void WebHeapAgent::willDestroyFrontendAndBackend(DisconnectReason reason)
 {
     InspectorHeapAgent::willDestroyFrontendAndBackend(reason);
 
-    ASSERT(m_instrumentingAgents.persistentWebHeapAgent() == this);
-    m_instrumentingAgents.setPersistentWebHeapAgent(nullptr);
+    Ref agents = m_instrumentingAgents.get();
+    ASSERT(agents->persistentWebHeapAgent() == this);
+    agents->setPersistentWebHeapAgent(nullptr);
 }
 
 Inspector::Protocol::ErrorStringOr<void> WebHeapAgent::enable()
 {
     auto result = InspectorHeapAgent::enable();
 
-    if (auto* consoleAgent = m_instrumentingAgents.webConsoleAgent())
+    Ref agents = m_instrumentingAgents.get();
+    if (auto* consoleAgent = agents->webConsoleAgent())
         consoleAgent->setHeapAgent(this);
 
     return result;
@@ -141,7 +144,8 @@ Inspector::Protocol::ErrorStringOr<void> WebHeapAgent::disable()
 {
     m_sendGarbageCollectionEventsTask->reset();
 
-    if (auto* consoleAgent = m_instrumentingAgents.webConsoleAgent())
+    Ref agents = m_instrumentingAgents.get();
+    if (auto* consoleAgent = agents->webConsoleAgent())
         consoleAgent->setHeapAgent(nullptr);
 
     return InspectorHeapAgent::disable();

@@ -50,14 +50,16 @@ Inspector::Protocol::ErrorStringOr<void> PageHeapAgent::enable()
 {
     auto result = WebHeapAgent::enable();
 
-    m_instrumentingAgents.setEnabledPageHeapAgent(this);
+    Ref agents = m_instrumentingAgents.get();
+    agents->setEnabledPageHeapAgent(this);
 
     return result;
 }
 
 Inspector::Protocol::ErrorStringOr<void> PageHeapAgent::disable()
 {
-    m_instrumentingAgents.setEnabledPageHeapAgent(nullptr);
+    Ref agents = m_instrumentingAgents.get();
+    agents->setEnabledPageHeapAgent(nullptr);
 
     return WebHeapAgent::disable();
 }

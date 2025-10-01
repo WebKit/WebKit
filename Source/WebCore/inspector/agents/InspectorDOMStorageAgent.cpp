@@ -79,20 +79,22 @@ void InspectorDOMStorageAgent::willDestroyFrontendAndBackend(Inspector::Disconne
 
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::enable()
 {
-    if (m_instrumentingAgents.enabledDOMStorageAgent() == this)
+    Ref agents = m_instrumentingAgents.get();
+    if (agents->enabledDOMStorageAgent() == this)
         return makeUnexpected("DOMStorage domain already enabled"_s);
 
-    m_instrumentingAgents.setEnabledDOMStorageAgent(this);
+    agents->setEnabledDOMStorageAgent(this);
 
     return { };
 }
 
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMStorageAgent::disable()
 {
-    if (m_instrumentingAgents.enabledDOMStorageAgent() != this)
+    Ref agents = m_instrumentingAgents.get();
+    if (agents->enabledDOMStorageAgent() != this)
         return makeUnexpected("DOMStorage domain already disabled"_s);
 
-    m_instrumentingAgents.setEnabledDOMStorageAgent(nullptr);
+    agents->setEnabledDOMStorageAgent(nullptr);
 
     return { };
 }

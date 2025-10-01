@@ -368,10 +368,11 @@ void InspectorPageAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReas
 
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::enable()
 {
-    if (m_instrumentingAgents.enabledPageAgent() == this)
+    Ref agents = m_instrumentingAgents.get();
+    if (agents->enabledPageAgent() == this)
         return makeUnexpected("Page domain already enabled"_s);
 
-    m_instrumentingAgents.setEnabledPageAgent(this);
+    agents->setEnabledPageAgent(this);
 
     auto& stopwatch = m_environment.executionStopwatch();
     stopwatch.reset();
@@ -384,7 +385,8 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::enable()
 
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
 {
-    m_instrumentingAgents.setEnabledPageAgent(nullptr);
+    Ref agents = m_instrumentingAgents.get();
+    agents->setEnabledPageAgent(nullptr);
 
     setShowPaintRects(false);
 #if !PLATFORM(IOS_FAMILY)
@@ -825,7 +827,8 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Generi
     Inspector::Protocol::ErrorString errorString;
 
     if (!!requestId) {
-        if (auto* networkAgent = m_instrumentingAgents.enabledNetworkAgent()) {
+        Ref agents = m_instrumentingAgents.get();
+        if (auto* networkAgent = agents->enabledNetworkAgent()) {
             RefPtr<JSON::ArrayOf<Inspector::Protocol::GenericTypes::SearchMatch>> result;
             networkAgent->searchInRequest(errorString, requestId, query, caseSensitive && *caseSensitive, isRegex && *isRegex, result);
             if (!result)
@@ -894,7 +897,8 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Page::
         }
     }
 
-    if (auto* networkAgent = m_instrumentingAgents.enabledNetworkAgent())
+    Ref agents = m_instrumentingAgents.get();
+    if (auto* networkAgent = agents->enabledNetworkAgent())
         networkAgent->searchOtherRequests(regex, result);
 
     return result;
@@ -1187,7 +1191,8 @@ Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotNode(Insp
 {
     Inspector::Protocol::ErrorString errorString;
 
-    InspectorDOMAgent* domAgent = m_instrumentingAgents.persistentDOMAgent();
+    Ref agents = m_instrumentingAgents.get();
+    InspectorDOMAgent* domAgent = agents->persistentDOMAgent();
     ASSERT(domAgent);
     Node* node = domAgent->assertNode(errorString, nodeId);
     if (!node)

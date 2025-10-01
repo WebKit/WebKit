@@ -28,6 +28,7 @@
 #include "InspectorWebAgentBase.h"
 #include <JavaScriptCore/InspectorDebuggerAgent.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -66,7 +67,7 @@ protected:
 
     void didClearAsyncStackTraceData() final;
 
-    InstrumentingAgents& m_instrumentingAgents;
+    WeakRef<InstrumentingAgents> m_instrumentingAgents;
 
 private:
     HashMap<const RegisteredEventListener*, int> m_registeredEventListeners;

@@ -29,6 +29,7 @@
 #include <JavaScriptCore/InspectorHeapAgent.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -55,7 +56,7 @@ protected:
     void dispatchGarbageCollectedEvent(Inspector::Protocol::Heap::GarbageCollection::Type, Seconds startTime, Seconds endTime) final;
     void dispatchGarbageCollectionEventsAfterDelay(Vector<GarbageCollectionData>&& collections);
 
-    InstrumentingAgents& m_instrumentingAgents;
+    WeakRef<InstrumentingAgents> m_instrumentingAgents;
 
     const UniqueRef<SendGarbageCollectionEventsTask> m_sendGarbageCollectionEventsTask;
 };

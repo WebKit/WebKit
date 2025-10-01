@@ -49,19 +49,22 @@ WebDebuggerAgent::~WebDebuggerAgent() = default;
 
 bool WebDebuggerAgent::enabled() const
 {
-    return m_instrumentingAgents.enabledWebDebuggerAgent() == this && InspectorDebuggerAgent::enabled();
+    Ref agents = m_instrumentingAgents.get();
+    return agents->enabledWebDebuggerAgent() == this && InspectorDebuggerAgent::enabled();
 }
 
 void WebDebuggerAgent::internalEnable()
 {
-    m_instrumentingAgents.setEnabledWebDebuggerAgent(this);
+    Ref agents = m_instrumentingAgents.get();
+    agents->setEnabledWebDebuggerAgent(this);
 
     InspectorDebuggerAgent::internalEnable();
 }
 
 void WebDebuggerAgent::internalDisable(bool isBeingDestroyed)
 {
-    m_instrumentingAgents.setEnabledWebDebuggerAgent(nullptr);
+    Ref agents = m_instrumentingAgents.get();
+    agents->setEnabledWebDebuggerAgent(nullptr);
 
     InspectorDebuggerAgent::internalDisable(isBeingDestroyed);
 }

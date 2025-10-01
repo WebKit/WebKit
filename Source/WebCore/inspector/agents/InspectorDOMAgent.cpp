@@ -329,7 +329,7 @@ void InspectorDOMAgent::didCreateFrontendAndBackend()
     m_history = makeUnique<InspectorHistory>();
     m_domEditor = makeUnique<DOMEditor>(*m_history);
 
-    m_instrumentingAgents.setPersistentDOMAgent(this);
+    Ref { m_instrumentingAgents.get() }->setPersistentDOMAgent(this);
     m_document = m_inspectedPage->localTopDocument();
 
     // Force a layout so that we can collect additional information from the layout process.
@@ -360,7 +360,7 @@ void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReaso
     overlay->clearAllGridOverlays();
     overlay->clearAllFlexOverlays();
 
-    m_instrumentingAgents.setPersistentDOMAgent(nullptr);
+    Ref { m_instrumentingAgents.get() }->setPersistentDOMAgent(nullptr);
     m_documentRequested = false;
     reset();
 }
@@ -457,7 +457,7 @@ void InspectorDOMAgent::unbind(Node& node)
             unbind(*afterElement);
     }
 
-    if (auto* cssAgent = m_instrumentingAgents.enabledCSSAgent())
+    if (auto* cssAgent = Ref { m_instrumentingAgents.get() }->enabledCSSAgent())
         cssAgent->didRemoveDOMNode(node, id);
 
     if (m_childrenRequested.remove(id)) {
@@ -1507,7 +1507,8 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(co
     RefPtr<Document> document;
 
     if (!!frameId) {
-        auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
+        Ref agents = m_instrumentingAgents.get();
+        auto* pageAgent = agents->enabledPageAgent();
         if (!pageAgent)
             return makeUnexpected("Page domain must be enabled"_s);
 
@@ -1681,7 +1682,8 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightFrame(const
 {
     Inspector::Protocol::ErrorString errorString;
 
-    auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
+    Ref agents = m_instrumentingAgents.get();
+    auto* pageAgent = agents->enabledPageAgent();
     if (!pageAgent)
         return makeUnexpected("Page domain must be enabled"_s);
 
@@ -2012,12 +2014,13 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
             value->setChildren(WTFMove(children));
     }
 
-    if (auto* cssAgent = m_instrumentingAgents.enabledCSSAgent()) {
+    Ref agents = m_instrumentingAgents.get();
+    if (auto* cssAgent = agents->enabledCSSAgent()) {
         if (auto layoutFlags = cssAgent->protocolLayoutFlagsForNode(*node))
             value->setLayoutFlags(layoutFlags.releaseNonNull());
     }
 
-    auto* pageAgent = m_instrumentingAgents.enabledPageAgent();
+    auto* pageAgent = agents->enabledPageAgent();
     if (pageAgent) {
         if (auto* frameView = node->document().view())
             value->setFrameId(pageAgent->frameId(&frameView->frame()));
@@ -2747,7 +2750,7 @@ void InspectorDOMAgent::willDestroyDOMNode(Node& node)
     m_idToNode.remove(nodeId);
     m_childrenRequested.remove(nodeId);
 
-    if (auto* cssAgent = m_instrumentingAgents.enabledCSSAgent())
+    if (auto* cssAgent = Ref { m_instrumentingAgents.get() }->enabledCSSAgent())
         cssAgent->didRemoveDOMNode(node, nodeId);
 
     // This can be called in response to GC. Due to the single-process model used in WebKit1, the
@@ -2795,7 +2798,7 @@ void InspectorDOMAgent::didModifyDOMAttr(Element& element, const AtomString& nam
     if (!id)
         return;
 
-    if (auto* cssAgent = m_instrumentingAgents.enabledCSSAgent())
+    if (auto* cssAgent = Ref { m_instrumentingAgents.get() }->enabledCSSAgent())
         cssAgent->didModifyDOMAttr(element);
 
     m_frontendDispatcher->attributeModified(id, name, value);
@@ -2807,7 +2810,7 @@ void InspectorDOMAgent::didRemoveDOMAttr(Element& element, const AtomString& nam
     if (!id)
         return;
 
-    if (auto* cssAgent = m_instrumentingAgents.enabledCSSAgent())
+    if (auto* cssAgent = Ref { m_instrumentingAgents.get() }->enabledCSSAgent())
         cssAgent->didModifyDOMAttr(element);
 
     m_frontendDispatcher->attributeRemoved(id, name);
@@ -2816,12 +2819,13 @@ void InspectorDOMAgent::didRemoveDOMAttr(Element& element, const AtomString& nam
 void InspectorDOMAgent::styleAttributeInvalidated(const Vector<Element*>& elements)
 {
     auto nodeIds = JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>::create();
+    Ref agents = m_instrumentingAgents.get();
     for (auto& element : elements) {
         auto id = boundNodeId(element);
         if (!id)
             continue;
 
-        if (auto* cssAgent = m_instrumentingAgents.enabledCSSAgent())
+        if (auto* cssAgent = agents->enabledCSSAgent())
             cssAgent->didModifyDOMAttr(*element);
 
         nodeIds->addItem(id);
