@@ -75,7 +75,7 @@ void assertInvariants()
 #elif USE(JSVALUE32_64)
         ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 1);
 #elif CPU(X86_64) || CPU(ARM64)
-        ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 4);
+        ASSERT(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters() == 4 + 8);
 #endif
 
         ASSERT(!(reinterpret_cast<ptrdiff_t>((reinterpret_cast<WriteBarrier<JSCell>*>(0x4000)->slot())) - 0x4000));

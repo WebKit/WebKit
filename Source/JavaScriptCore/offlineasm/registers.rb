@@ -62,22 +62,22 @@ GPRS =
 # For :spill, will use lr and csr2 to spill/fill the register
 
 JSR_MAPPING = {
-    't0': { gpr: 't0', fpr: 'ft0' },
-    't1': { gpr: 't1', fpr: 'ft1' },
-    't2': { gpr: 't2', fpr: 'ft2' },
-    't3': { gpr: 't3', fpr: 'ft3' },
-    't4': { gpr: 't4', fpr: 'ft4' },
-    't5': { gpr: 't5', fpr: 'ft5' },
-    't6': { gpr: 't6', fpr: 'ft6' },
-    't7': { gpr: 't7', fpr: 'ft7' },
+    #'t0': { gpr: 't0', fpr: 'ft0' },
+    #'t1': { gpr: 't1', fpr: 'ft1' },
+    #'t2': { gpr: 't2', fpr: 'ft2' },
+    #'t3': { gpr: 't3', fpr: 'ft3' },
+    #'t4': { gpr: 't4', fpr: 'ft4' },
+    #'t5': { gpr: 't5', fpr: 'ft5' },
+    #'t6': { gpr: 't6', fpr: 'ft6' },
+    #'t7': { gpr: 't7', fpr: 'ft7' },
     'csr0': { gpr: 'csr0', fpr: 'csfr0' },
     'csr1': { gpr: 'csr1', fpr: 'csfr1' },
-    'csr2': { gpr: :spill, fpr: 'csfr2' },
-    'csr3': { gpr: :spill, fpr: 'csfr3' },
-    'csr4': { gpr: :spill, fpr: 'csfr4' },
-    'csr5': { gpr: :spill, fpr: 'csfr5' },
-    'csr6': { gpr: :spill, fpr: 'csfr6' },
-    'csr7': { gpr: :spill, fpr: 'csfr7' },
+    # 'csr2': { gpr: :spill, fpr: 'csfr2' },
+    # 'csr3': { gpr: :spill, fpr: 'csfr3' },
+    # 'csr4': { gpr: :spill, fpr: 'csfr4' },
+    # 'csr5': { gpr: :spill, fpr: 'csfr5' },
+    # 'csr6': { gpr: :spill, fpr: 'csfr6' },
+    # 'csr7': { gpr: :spill, fpr: 'csfr7' },
 }
 
 def isJSR?(register)

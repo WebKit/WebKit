@@ -893,7 +893,6 @@ def emitARM64Compare(operands, kind, compareCode)
 end
 
 def emitARM64RegisterPairStitch(pair)
-    # $asm.puts "bfc #{pair.reg1.arm64Operand(:quad)}, \#32, \#32"
     if pair.reg2.is_a? RegisterID
         $asm.puts "orr #{pair.reg1.arm64Operand(:quad)}, #{pair.reg1.arm64Operand(:quad)}, #{pair.reg2.arm64Operand(:quad)}, lsl \#32"
     else
@@ -906,11 +905,10 @@ def emitARM64RegisterPairSplit(pair)
     if pair.reg2.is_a? RegisterID
         $asm.puts "orr #{pair.reg2.arm64Operand(:quad)}, xzr, #{pair.reg1.arm64Operand(:quad)}, lsr \#32"
     else
-        $asm.puts "mov x30, #{pair.reg1.arm64Operand(:quad)}"
-        $asm.puts "lsr x30, x30, \#32"
+        $asm.puts "orr x30, xzr, #{pair.reg1.arm64Operand(:quad)}, lsr \#32"
         $asm.puts "fmov #{pair.reg2.arm64Operand(:float)}, w30"
     end
-    # $asm.puts "bfc #{pair.reg1.arm64Operand(:quad)}, \#32, \#32"
+    $asm.puts "bfc #{pair.reg1.arm64Operand(:quad)}, \#32, \#32"
 end
 
 def emitARM64MoveImmediate(value, target)

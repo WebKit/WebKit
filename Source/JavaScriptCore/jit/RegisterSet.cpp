@@ -238,6 +238,14 @@ RegisterSet RegisterSetBuilder::llintBaselineCalleeSaveRegisters()
     result.add(GPRInfo::regCS7, IgnoreVectors);
     result.add(GPRInfo::regCS8, IgnoreVectors);
     result.add(GPRInfo::regCS9, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS0, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS1, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS2, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS3, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS4, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS5, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS6, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS7, IgnoreVectors);
 #else
     UNREACHABLE_FOR_PLATFORM();
 #endif
@@ -438,6 +446,17 @@ RegisterSet RegisterSetBuilder::ipintCalleeSaveRegisters()
 #elif CPU(ARM)
     registers.add(GPRInfo::regCS0, IgnoreVectors); // MC
     registers.add(GPRInfo::regCS1, IgnoreVectors); // PB
+    registers.add(GPRInfo::regCS7, IgnoreVectors);
+    registers.add(GPRInfo::regCS8, IgnoreVectors);
+    registers.add(GPRInfo::regCS9, IgnoreVectors);
+    registers.add(FPRInfo::fpRegCS0, IgnoreVectors);
+    registers.add(FPRInfo::fpRegCS1, IgnoreVectors);
+    registers.add(FPRInfo::fpRegCS2, IgnoreVectors);
+    registers.add(FPRInfo::fpRegCS3, IgnoreVectors);
+    registers.add(FPRInfo::fpRegCS4, IgnoreVectors);
+    registers.add(FPRInfo::fpRegCS5, IgnoreVectors);
+    registers.add(FPRInfo::fpRegCS6, IgnoreVectors);
+    registers.add(FPRInfo::fpRegCS7, IgnoreVectors);
 #else
 #error Unsupported architecture.
 #endif

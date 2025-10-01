@@ -40,7 +40,12 @@
 
 namespace JSC { namespace Wasm {
 
+#if ASSERT_ENABLED
+// We save all fprs when jsr mode is enabled.
+constexpr unsigned numberOfIPIntCalleeSaveRegisters = 2 + 8 * sizeof(double) / sizeof(CPURegister);
+#else
 constexpr unsigned numberOfIPIntCalleeSaveRegisters = 2;
+#endif
 constexpr unsigned numberOfIPIntInternalRegisters = 1; // UnboxedWasmCalleeStackSlot
 constexpr ptrdiff_t WasmToJSScratchSpaceSize = 0x8 * 1 + 0x8; // Needs to be aligned to 0x10.
 constexpr ptrdiff_t WasmToJSCallableFunctionSlot = -0x8;

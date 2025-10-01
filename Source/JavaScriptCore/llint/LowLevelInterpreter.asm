@@ -226,11 +226,15 @@ end
 const maxFrameExtentForSlowPathCall = constexpr maxFrameExtentForSlowPathCall
 
 if X86_64 or ARM64 or ARM64E or RISCV64
-    const CalleeSaveSpaceAsVirtualRegisters = 4
+    if ASSERT_ENABLED
+        const CalleeSaveSpaceAsVirtualRegisters = 4 + 8
+    else
+        const CalleeSaveSpaceAsVirtualRegisters = 4
+    end
 elsif C_LOOP
     const CalleeSaveSpaceAsVirtualRegisters = 1
 elsif ARMv7
-    const CalleeSaveSpaceAsVirtualRegisters = 1
+    const CalleeSaveSpaceAsVirtualRegisters = 1 + 8 * 2
 else
     const CalleeSaveSpaceAsVirtualRegisters = 0
 end
@@ -971,8 +975,8 @@ macro preserveCalleeSavesUsedByLLInt()
         storep PB, -4[cfr]
         storep metadataTable, -8[cfr]
     elsif ARM64 or ARM64E
-        storepairq csr8, csr9, -16[cfr]
-        storepairq csr6, csr7, -32[cfr]
+        storepairq csr8, csr9, -8 * 8 -16[cfr]
+        storepairq csr6, csr7, -8 * 8 -32[cfr]
     elsif X86_64
         storep csr4, -8[cfr]
         storep csr3, -16[cfr]
@@ -984,6 +988,33 @@ macro preserveCalleeSavesUsedByLLInt()
         storep csr7, -24[cfr]
         storep csr6, -32[cfr]
     end
+    if ASSERT_ENABLED
+        stored csfr7, -8 * 1[cfr]
+        stored csfr6, -8 * 2[cfr]
+        stored csfr5, -8 * 3[cfr]
+        stored csfr4, -8 * 4[cfr]
+        stored csfr3, -8 * 5[cfr]
+        stored csfr2, -8 * 6[cfr]
+        stored csfr1, -8 * 7[cfr]
+        stored csfr0, -8 * 8[cfr]
+        # This ensures that stitched jsrs have cleared upper bits on 32-bit, and use the full base register in 64-bit jsr validation mode
+        moved 0, ft0
+        moved 0, ft1
+        moved 0, ft2
+        moved 0, ft3
+        moved 0, ft4
+        moved 0, ft5
+        moved 0, ft6
+        moved 0, ft7
+        moved 0, csfr0
+        moved 0, csfr1
+        moved 0, csfr2
+        moved 0, csfr3
+        moved 0, csfr4
+        moved 0, csfr5
+        moved 0, csfr6
+        moved 0, csfr7
+    end
 end
 
 macro restoreCalleeSavesUsedByLLInt()
@@ -993,8 +1024,8 @@ macro restoreCalleeSavesUsedByLLInt()
         loadp -4[cfr], PB
         loadp -8[cfr], metadataTable
     elsif ARM64 or ARM64E
-        loadpairq -32[cfr], csr6, csr7
-        loadpairq -16[cfr], csr8, csr9
+        loadpairq -8 * 8 -32[cfr], csr6, csr7
+        loadpairq -8 * 8 -16[cfr], csr8, csr9
     elsif X86_64
         loadp -32[cfr], csr1
         loadp -24[cfr], csr2
@@ -1005,6 +1036,16 @@ macro restoreCalleeSavesUsedByLLInt()
         loadp -24[cfr], csr7
         loadp -16[cfr], csr8
         loadp -8[cfr], csr9
+    end
+    if ASSERT_ENABLED
+        loadd -8 * 1[cfr], csfr7
+        loadd -8 * 2[cfr], csfr6
+        loadd -8 * 3[cfr], csfr5
+        loadd -8 * 4[cfr], csfr4
+        loadd -8 * 5[cfr], csfr3
+        loadd -8 * 6[cfr], csfr2
+        loadd -8 * 7[cfr], csfr1
+        loadd -8 * 8[cfr], csfr0
     end
 end
 
