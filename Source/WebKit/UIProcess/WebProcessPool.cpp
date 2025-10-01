@@ -2326,9 +2326,9 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
     if (sourceURL.protocolIsAbout()) {
         if (sourceProcess->site() && sourceProcess->site()->domain().matches(targetURL))
             return { WTFMove(sourceProcess), nullptr, "Navigation is treated as same-site"_s };
-        // With site isolation enabled, this condition is not enough to indicate the web process can be reused;
-        // we may also need to consider whether the process is used or in use by other sites.
-        if (!siteIsolationEnabled && !sourceProcess->hasCommittedAnyMeaningfulProvisionalLoads())
+        // When the source process hasn't committed any meaningful provisional loads, we can reuse it.
+        // No other page should be using this process, since processes used to load about:blank, etc, are not added to the process cache.
+        if (!sourceProcess->hasCommittedAnyMeaningfulProvisionalLoads())
             return { WTFMove(sourceProcess), nullptr, "Navigation is treated as same-site"_s };
     }
 
