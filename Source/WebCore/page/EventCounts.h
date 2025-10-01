@@ -28,13 +28,14 @@
 
 #include "EventNames.h"
 #include "Performance.h"
+#include "ScriptWrappable.h"
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
 
 class DOMMapAdapter;
 
-class EventCounts final {
+class EventCounts final : public ScriptWrappable {
 WTF_DEPRECATED_MAKE_FAST_ALLOCATED(EventCounts);
 public:
     EventCounts(Performance*);
@@ -42,11 +43,11 @@ public:
     void deref() { m_performance->deref(); }
 
     void initializeMapLike(DOMMapAdapter&);
-    void add(EventType);
+    // Reload the backing maps on the main JSWrapper:
+    void reloadCounts();
 
-    // FIXME: get() and size() should be provided by the maplike interface
-    unsigned get(const String& type) const;
-    unsigned size() const { return m_counts.size(); };
+    void add(EventType);
+    void updateWrapper() const;
 
 private:
     WeakRef<Performance, Performance::WeakPtrImplType> m_performance;

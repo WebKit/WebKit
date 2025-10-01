@@ -2709,6 +2709,7 @@ void LocalDOMWindow::dispatchPendingEventTimingEntries()
         candidateEntry.duration = renderingTime - candidateEntry.startTime;
         performance().processEventEntry(candidateEntry);
     }
+    performance().eventCounts()->reloadCounts();
     m_performanceEventTimingCandidates.clear();
 }
 
