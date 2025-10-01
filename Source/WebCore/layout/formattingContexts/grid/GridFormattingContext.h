@@ -62,12 +62,14 @@ public:
 
     const IntegrationUtils& integrationUtils() const { return m_integrationUtils; }
 
-    const BoxGeometry geometryForGridItem(const ElementBox& gridItem) const;
+    const BoxGeometry geometryForGridItem(const Box& gridItem) const;
 
 private:
     UnplacedGridItems constructUnplacedGridItems() const;
 
     const LayoutState& layoutState() const { return m_globalLayoutState; }
+    BoxGeometry& geometryForGridItem(const Box& gridItem);
+    void setGridItemGeometries(const GridItemRects&);
 
     const CheckedRef<const ElementBox> m_gridBox;
     const CheckedRef<LayoutState> m_globalLayoutState;

@@ -72,9 +72,40 @@ static inline Layout::GridFormattingContext::GridLayoutConstraints constraintsFo
     };
 }
 
+void GridLayout::updateGridItemRenderers()
+{
+    for (auto& layoutBox : formattingContextBoxes(gridBox())) {
+        auto& renderer = downcast<RenderBox>(*layoutBox.rendererForIntegration());
+        auto& gridItemGeometry = layoutState().geometryForBox(layoutBox);
+        auto borderBoxRect = Layout::BoxGeometry::borderBoxRect(gridItemGeometry);
+
+        renderer.setLocation(borderBoxRect.topLeft());
+        renderer.setWidth(borderBoxRect.width());
+        renderer.setHeight(borderBoxRect.height());
+
+        renderer.setMarginBefore(gridItemGeometry.marginBefore());
+        renderer.setMarginAfter(gridItemGeometry.marginAfter());
+        renderer.setMarginStart(gridItemGeometry.marginStart());
+        renderer.setMarginAfter(gridItemGeometry.marginAfter());
+    }
+}
+
+void GridLayout::updateFormattingContextRootRenderer()
+{
+    auto& renderGrid = gridBoxRenderer();
+    auto& currentGrid = renderGrid.currentGrid();
+    currentGrid.setNeedsItemsPlacement(false);
+    OrderIteratorPopulator orderIteratorPopulator(currentGrid.orderIterator());
+
+    for (auto& layoutBox : formattingContextBoxes(gridBox()))
+        orderIteratorPopulator.collectChild(downcast<RenderBox>(*layoutBox.rendererForIntegration()));
+}
+
 void GridLayout::layout()
 {
     Layout::GridFormattingContext { gridBox(), layoutState() }.layout(constraintsForGridContent(gridBox()));
+    updateGridItemRenderers();
+    updateFormattingContextRootRenderer();
 }
 
 TextStream& operator<<(TextStream& stream, const GridLayout& layout)

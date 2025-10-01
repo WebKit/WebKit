@@ -53,6 +53,9 @@ public:
     friend WTF::TextStream& operator<<(WTF::TextStream&, const GridLayout&);
 
 private:
+    void updateGridItemRenderers();
+    void updateFormattingContextRootRenderer();
+
     const Layout::ElementBox& gridBox() const { return *m_gridBox; }
     Layout::ElementBox& gridBox() { return *m_gridBox; }
 

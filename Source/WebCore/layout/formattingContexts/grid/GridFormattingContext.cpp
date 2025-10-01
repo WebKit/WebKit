@@ -30,6 +30,7 @@
 #include "GridLayout.h"
 #include "LayoutBoxGeometry.h"
 #include "GridLayoutUtils.h"
+#include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
 #include "PlacedGridItem.h"
 #include "RenderStyleInlines.h"
@@ -121,6 +122,7 @@ void GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
         }
     };
     mapGridItemLocationsToGrid();
+    setGridItemGeometries(gridItemRects);
 }
 
 PlacedGridItems GridFormattingContext::constructPlacedGridItems(const GridAreas& gridAreas) const
@@ -166,10 +168,34 @@ PlacedGridItems GridFormattingContext::constructPlacedGridItems(const GridAreas&
     return placedGridItems;
 }
 
-const BoxGeometry GridFormattingContext::geometryForGridItem(const ElementBox& gridItem) const
+const BoxGeometry GridFormattingContext::geometryForGridItem(const Box& gridItem) const
 {
     ASSERT(gridItem.isGridItem());
     return layoutState().geometryForBox(gridItem);
+}
+
+BoxGeometry& GridFormattingContext::geometryForGridItem(const Box& gridItem)
+{
+    ASSERT(gridItem.isGridItem());
+    return m_globalLayoutState->ensureGeometryForBox(gridItem);
+}
+
+void GridFormattingContext::setGridItemGeometries(const GridItemRects& gridItemRects)
+{
+    for (auto& gridItemRect : gridItemRects) {
+        auto& boxGeometry = geometryForGridItem(gridItemRect.m_layoutBox);
+        auto& gridItemBorderBox = gridItemRect.m_borderBoxRect;
+
+        auto& margins = gridItemRect.m_margins;
+        boxGeometry.setHorizontalMargin({ margins.left(), margins.right() });
+        boxGeometry.setVerticalMargin({ margins.top(), margins.bottom() });
+
+        boxGeometry.setTopLeft(gridItemBorderBox.location());
+        auto contentBoxInlineSize = gridItemBorderBox.width() - boxGeometry.horizontalBorderAndPadding();
+        auto contentBoxBlockSize = gridItemBorderBox.height() - boxGeometry.verticalBorderAndPadding();
+
+        boxGeometry.setContentBoxSize({ contentBoxInlineSize, contentBoxBlockSize });
+    }
 }
 
 } // namespace Layout
