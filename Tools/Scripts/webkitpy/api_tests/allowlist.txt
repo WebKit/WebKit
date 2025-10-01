@@ -386,7 +386,6 @@ TestWebKitAPI.Path
 TestWebKitAPI.PermissionsAPI
 TestWebKitAPI.PlatformCAAnimation
 TestWebKitAPI.PlatformDynamicRangeLimit
-TestWebKitAPI.PreferredAudioBufferSize
 TestWebKitAPI.PreferredContentMode
 TestWebKitAPI.ProcessInfo
 TestWebKitAPI.ProcessSuspension
