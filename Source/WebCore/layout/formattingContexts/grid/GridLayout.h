@@ -62,7 +62,7 @@ class GridLayout {
 public:
     GridLayout(const GridFormattingContext&);
 
-    void layout(GridFormattingContext::GridLayoutConstraints, const UnplacedGridItems&);
+    std::pair<UsedTrackSizes, GridItemRects> layout(GridFormattingContext::GridLayoutConstraints, const UnplacedGridItems&);
 
 private:
 

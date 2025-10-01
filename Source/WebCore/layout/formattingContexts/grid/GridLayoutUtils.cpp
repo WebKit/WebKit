@@ -50,6 +50,13 @@ LayoutUnit usedBlockSizeForGridItem(const PlacedGridItem& placedGridItem)
     return { };
 }
 
+
+LayoutUnit computeTrackLocation(size_t trackIndex, const TrackSizes& trackSizes)
+{
+    auto trackSizesBefore = trackSizes.subspan(0, trackIndex);
+    return std::reduce(trackSizesBefore.begin(), trackSizesBefore.end());
+}
+
 }
 }
 }

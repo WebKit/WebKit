@@ -4331,6 +4331,8 @@
 		A5A9934C1E3809CF005B5E4D /* JSPerformanceObserverEntryList.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A993471E380999005B5E4D /* JSPerformanceObserverEntryList.h */; };
 		A5AE5E1A2DE0CCD80038B9AC /* GridSpan.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AE5E172DE0CCD80038B9AC /* GridSpan.h */; };
 		A5AFABC32E8C5D5000485152 /* GridLayoutUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFABC12E8C5D4900485152 /* GridLayoutUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5AFABD72E8D932300485152 /* GridItemRect.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFABD62E8D931F00485152 /* GridItemRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5AFABD92E8D97F600485152 /* UsedTrackSizes.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFABD82E8D97F100485152 /* UsedTrackSizes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5AFB350115151A700B045CB /* StepRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFB34E115151A700B045CB /* StepRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5AFB350115151A700B045CC /* SwitchTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFB34E115151A700B045CC /* SwitchTrigger.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5B342862E77F75A009BFF3F /* PlacedGridItem.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B342842E77F755009BFF3F /* PlacedGridItem.h */; };
@@ -16905,6 +16907,8 @@
 		A5AE5E172DE0CCD80038B9AC /* GridSpan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridSpan.h; sourceTree = "<group>"; };
 		A5AFABC12E8C5D4900485152 /* GridLayoutUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridLayoutUtils.h; sourceTree = "<group>"; };
 		A5AFABC22E8C5D4900485152 /* GridLayoutUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GridLayoutUtils.cpp; sourceTree = "<group>"; };
+		A5AFABD62E8D931F00485152 /* GridItemRect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridItemRect.h; sourceTree = "<group>"; };
+		A5AFABD82E8D97F100485152 /* UsedTrackSizes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsedTrackSizes.h; sourceTree = "<group>"; };
 		A5AFB34D115151A700B045CB /* StepRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StepRange.cpp; sourceTree = "<group>"; };
 		A5AFB34E115151A700B045CB /* StepRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StepRange.h; sourceTree = "<group>"; };
 		A5AFB34E115151A700B045CC /* SwitchTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwitchTrigger.h; sourceTree = "<group>"; };
@@ -32728,6 +32732,7 @@
 				A5FA57652E85F40600EF058F /* GridAreaLines.h */,
 				A585CC3E2E566A7800A69390 /* GridFormattingContext.cpp */,
 				A585CC3D2E566A7800A69390 /* GridFormattingContext.h */,
+				A5AFABD62E8D931F00485152 /* GridItemRect.h */,
 				A585CC402E566A7800A69390 /* GridLayout.cpp */,
 				A585CC3F2E566A7800A69390 /* GridLayout.h */,
 				A5AFABC22E8C5D4900485152 /* GridLayoutUtils.cpp */,
@@ -32742,6 +32747,7 @@
 				A5FA579D2E86FF5F00EF058F /* TrackSizingFunctions.h */,
 				A5582D612E72254700F97055 /* UnplacedGridItem.cpp */,
 				A5582D602E72254700F97055 /* UnplacedGridItem.h */,
+				A5AFABD82E8D97F100485152 /* UsedTrackSizes.h */,
 			);
 			path = grid;
 			sourceTree = "<group>";
@@ -43246,6 +43252,7 @@
 				CD3E251C18046B0600E27F56 /* GridArea.h in Headers */,
 				A5FA57662E85F40D00EF058F /* GridAreaLines.h in Headers */,
 				A585CC442E566A7800A69390 /* GridFormattingContext.h in Headers */,
+				A5AFABD72E8D932300485152 /* GridItemRect.h in Headers */,
 				A585CC452E566A7800A69390 /* GridLayout.h in Headers */,
 				A54CAA142C409C4500D6A999 /* GridLayoutState.h in Headers */,
 				A5AFABC32E8C5D5000485152 /* GridLayoutUtils.h in Headers */,
@@ -47068,6 +47075,7 @@
 				900C20872CAF8243002C79C5 /* URLPatternResult.h in Headers */,
 				903C7E222CC246DA00245C29 /* URLPatternTokenizer.h in Headers */,
 				7CC289DF1AA0FE5D009A9CE3 /* URLRegistry.h in Headers */,
+				A5AFABD92E8D97F600485152 /* UsedTrackSizes.h in Headers */,
 				A72763BF16689BFB002FCACB /* UserActionElementSet.h in Headers */,
 				868160D618766A130021E79D /* UserActivity.h in Headers */,
 				A3AF9D8620326861006CAD06 /* UserAgent.h in Headers */,

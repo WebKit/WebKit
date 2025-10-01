@@ -22,30 +22,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 #pragma once
 
+#include "GridTypeAliases.h"
+
 namespace WebCore {
-
-class LayoutUnit;
-
 namespace Layout {
+struct UsedTrackSizes {
+    TrackSizes columnSizes;
+    TrackSizes rowSizes;
+};
+}
+}
 
-class PlacedGridItem;
-class UnplacedGridItem;
-
-struct GridAreaLines;
-struct GridItemRect;
-struct TrackSizingFunctions;
-struct UnsizedTrack;
-
-using GridAreas = HashMap<UnplacedGridItem, GridAreaLines>;
-using GridCell = Vector<UnplacedGridItem, 1>;
-using GridItemRects = Vector<GridItemRect>;
-using GridMatrix = Vector<Vector<GridCell>>;
-using PlacedGridItems = Vector<PlacedGridItem>;
-using TrackSizes = Vector<LayoutUnit>;
-using TrackSizingFunctionsList = Vector<TrackSizingFunctions>;
-using UnsizedTracks = Vector<UnsizedTrack>;
-} // namespace Layout
-} // namespace WebCore

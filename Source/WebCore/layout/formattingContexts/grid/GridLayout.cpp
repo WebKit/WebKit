@@ -27,6 +27,7 @@
 #include "GridLayout.h"
 
 #include "GridAreaLines.h"
+#include "GridItemRect.h"
 #include "GridLayoutUtils.h"
 #include "ImplicitGrid.h"
 #include "RenderStyleInlines.h"
@@ -37,15 +38,11 @@
 #include "TrackSizingAlgorithm.h"
 #include "TrackSizingFunctions.h"
 #include "UnplacedGridItem.h"
+#include "UsedTrackSizes.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 namespace Layout {
-
-struct UsedTrackSizes {
-    TrackSizes columnSizes;
-    TrackSizes rowSizes;
-};
 
 struct UsedMargins {
     LayoutUnit marginStart;
@@ -96,7 +93,7 @@ auto GridLayout::placeGridItems(const UnplacedGridItems& unplacedGridItems, cons
 }
 
 // https://drafts.csswg.org/css-grid-1/#layout-algorithm
-void GridLayout::layout(GridFormattingContext::GridLayoutConstraints, const UnplacedGridItems& unplacedGridItems)
+std::pair<UsedTrackSizes, GridItemRects> GridLayout::layout(GridFormattingContext::GridLayoutConstraints, const UnplacedGridItems& unplacedGridItems)
 {
     CheckedRef gridContainerStyle = this->gridContainerStyle();
     auto& gridTemplateColumnsTrackSizes = gridContainerStyle->gridTemplateColumns().sizes;
@@ -132,8 +129,28 @@ void GridLayout::layout(GridFormattingContext::GridLayoutConstraints, const Unpl
     auto inlineAxisPositions = performInlineAxisSelfAlignment(placedGridItems, usedInlineMargins);
     auto blockAxisPositions = performBlockAxisSelfAlignment(placedGridItems, usedBlockMargins);
 
-    UNUSED_VARIABLE(inlineAxisPositions);
-    UNUSED_VARIABLE(blockAxisPositions);
+    GridItemRects gridItemRects;
+    gridItemRects.reserveInitialCapacity(placedGridItems.size());
+
+    for (size_t gridItemIndex = 0; gridItemIndex < placedGridItems.size(); ++gridItemIndex) {
+        auto borderBoxRect =  LayoutRect { inlineAxisPositions[gridItemIndex], blockAxisPositions[gridItemIndex],
+            usedInlineSizes[gridItemIndex], usedBlockSizes[gridItemIndex]
+        };
+
+        auto& gridItemInlineMargins = usedInlineMargins[gridItemIndex];
+        auto& gridItemBlockMargins = usedBlockMargins[gridItemIndex];
+        auto marginEdges = RectEdges<LayoutUnit> {
+            gridItemBlockMargins.marginStart,
+            gridItemInlineMargins.marginEnd,
+            gridItemBlockMargins.marginEnd,
+            gridItemInlineMargins.marginStart
+        };
+
+        auto& placedGridItem = placedGridItems[gridItemIndex];
+        gridItemRects.constructAndAppend(borderBoxRect, marginEdges, placedGridItem.gridAreaLines(), placedGridItem.layoutBox());
+    }
+
+    return { usedTrackSizes, gridItemRects };
 }
 
 GridLayout::BorderBoxPositions GridLayout::performInlineAxisSelfAlignment(const PlacedGridItems& placedGridItems, const Vector<UsedMargins>& inlineMargins)

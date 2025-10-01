@@ -26,13 +26,16 @@
 #include "config.h"
 #include "GridFormattingContext.h"
 
+#include "GridItemRect.h"
 #include "GridLayout.h"
 #include "LayoutBoxGeometry.h"
+#include "GridLayoutUtils.h"
 #include "LayoutChildIterator.h"
 #include "PlacedGridItem.h"
 #include "RenderStyleInlines.h"
 #include "StylePrimitiveNumeric.h"
 #include "UnplacedGridItem.h"
+#include "UsedTrackSizes.h"
 
 #include <wtf/Vector.h>
 
@@ -104,7 +107,20 @@ UnplacedGridItems GridFormattingContext::constructUnplacedGridItems() const
 void GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
 {
     auto unplacedGridItems = constructUnplacedGridItems();
-    GridLayout { *this }.layout(layoutConstraints, unplacedGridItems);
+    auto [ usedTrackSizes, gridItemRects ] = GridLayout { *this }.layout(layoutConstraints, unplacedGridItems);
+
+    // Grid layout positions each item within its containing block which is the grid area.
+    // Here we translate it to the coordinate space of the grid.
+    auto mapGridItemLocationsToGrid = [&] {
+        for (auto& gridItemRect : gridItemRects) {
+            auto& gridAreaLines = gridItemRect.gridAreaLines;
+            auto columnLocation = GridLayoutUtils::computeTrackLocation(gridAreaLines.columnStartLine, usedTrackSizes.columnSizes);
+            auto rowLocation = GridLayoutUtils::computeTrackLocation(gridAreaLines.rowStartLine, usedTrackSizes.rowSizes);
+
+            gridItemRect.m_borderBoxRect.moveBy({ columnLocation, rowLocation });
+        }
+    };
+    mapGridItemLocationsToGrid();
 }
 
 PlacedGridItems GridFormattingContext::constructPlacedGridItems(const GridAreas& gridAreas) const

@@ -38,6 +38,8 @@ namespace GridLayoutUtils {
 LayoutUnit usedInlineSizeForGridItem(const PlacedGridItem&);
 LayoutUnit usedBlockSizeForGridItem(const PlacedGridItem&);
 
+LayoutUnit computeTrackLocation(size_t trackIndex, const TrackSizes&);
+
 } // namespace GridLayoutUtils
 } // namespace Layout
 } // namespace WebCore

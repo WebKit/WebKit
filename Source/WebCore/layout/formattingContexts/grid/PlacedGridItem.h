@@ -63,6 +63,8 @@ public:
 
     const ElementBox& layoutBox() const { return m_layoutBox; }
 
+    const GridAreaLines& gridAreaLines() const { return m_gridAreaLines; }
+
     const StyleSelfAlignmentData& inlineAxisAlignment() const { return m_inlineAxisAlignment; }
     const StyleSelfAlignmentData& blockAxisAlignment() const { return m_blockAxisAlignment; }
 
