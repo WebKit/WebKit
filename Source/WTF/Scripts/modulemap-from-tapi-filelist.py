@@ -30,7 +30,6 @@ else:
 config.setdefault('attributes', [])
 config.setdefault('config-macros', [])
 config.setdefault('requirements', [])
-config.setdefault('textual-headers', [])
 config.setdefault('module', {})
 config.setdefault('default-module', '')
 
@@ -77,8 +76,6 @@ for module_name, paths in itertools.groupby(
         sys.stdout.write(f'{indent}requires {", ".join(reqs)}\n')
     for path in paths:
         sys.stdout.write(indent)
-        if path in config['textual-headers']:
-            sys.stdout.write('textual ')
         sys.stdout.write(f'header "{path}"\n')
     sys.stdout.write(f'{indent}export *\n')
     if in_submodule:

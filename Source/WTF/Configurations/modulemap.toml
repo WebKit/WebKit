@@ -1,7 +1,5 @@
 module-name = 'wtf'
 default-module = 'Cpp'
-# This header depends on surrounding preprocessor context.
-textual-headers = ['spi/mac/MetadataSPI.h']
 
 # Nearly all of WTF depends upon C++ and thus goes in this submodule.
 [module.Cpp]
