@@ -853,8 +853,8 @@ def lowerJSRUse(instruction)
                 FPRegisterID.new(origin, fpr),
                 RegisterID.new(origin, GPR_TMP0),
                 RegisterID.new(origin, GPR_TMP1)])
-            next if gpr1 == GPR_TMP0 && gpr2 == GPR_TMP1
-            raise if [gpr1, gpr2].any? { | o | [GPR_TMP1, GPR_TMP2].contains(o) }
+            next if gpr == GPR_TMP0 && gpr2 == GPR_TMP1
+            raise if [gpr, gpr2].any? { | o | [GPR_TMP0, GPR_TMP1].include? o }
             result << Instruction.new(origin, "fii2d", [
                 FPRegisterID.new(origin, fpr),
                 RegisterID.new(origin, gpr),
@@ -875,7 +875,7 @@ def lowerJSRUse(instruction)
         RegisterPair.new(RegisterID.new(origin, gpr), RegisterID.new(origin, gpr2))
     end
 
-    swap
+    swap[]
     result << instruction.to_enum(:mapChildren).with_index do |child, index| 
         child = child.mapChildren(&pairForReg)
         if operandSizes[index] == :quad
@@ -884,7 +884,7 @@ def lowerJSRUse(instruction)
             child
         end
     end
-    swap
+    swap[]
 
     result
 end
