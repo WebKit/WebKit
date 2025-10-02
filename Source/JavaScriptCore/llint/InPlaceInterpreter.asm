@@ -64,7 +64,7 @@ const alignUInt = constexpr JSC::IPInt::alignUInt
 const alignMInt = constexpr JSC::IPInt::alignMInt
 
 if ARM64 or ARM64E
-    const PC = csr1
+    const PC = csr7
     const MC = csr6
     const PL = t6
 

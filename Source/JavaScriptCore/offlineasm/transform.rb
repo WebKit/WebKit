@@ -753,8 +753,8 @@ class Skip
     end
 end
 
-GPR_TMP0 = 'lr'
-GPR_TMP1 = 'csr2'
+GPR_TMP0 = 'x15' # todo: lr
+GPR_TMP1 = 'x14' # todo: csr2
 
 def jsrClobbers(register)
     if JSR_MAPPING.include?(register.to_sym)

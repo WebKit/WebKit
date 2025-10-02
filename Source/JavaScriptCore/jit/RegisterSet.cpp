@@ -443,12 +443,17 @@ RegisterSet RegisterSetBuilder::ipintCalleeSaveRegisters()
 #elif CPU(ARM64) || CPU(RISCV64)
     registers.add(GPRInfo::regCS6, IgnoreVectors); // MC
     registers.add(GPRInfo::regCS7, IgnoreVectors); // PB
+    registers.add(FPRInfo::fpRegCS0, IgnoreVectors);
+    registers.add(FPRInfo::fpRegCS1, IgnoreVectors);
+    registers.add(FPRInfo::fpRegCS2, IgnoreVectors);
+    registers.add(FPRInfo::fpRegCS3, IgnoreVectors);
+    registers.add(FPRInfo::fpRegCS4, IgnoreVectors);
+    registers.add(FPRInfo::fpRegCS5, IgnoreVectors);
+    registers.add(FPRInfo::fpRegCS6, IgnoreVectors);
+    registers.add(FPRInfo::fpRegCS7, IgnoreVectors);
 #elif CPU(ARM)
     registers.add(GPRInfo::regCS0, IgnoreVectors); // MC
     registers.add(GPRInfo::regCS1, IgnoreVectors); // PB
-    registers.add(GPRInfo::regCS7, IgnoreVectors);
-    registers.add(GPRInfo::regCS8, IgnoreVectors);
-    registers.add(GPRInfo::regCS9, IgnoreVectors);
     registers.add(FPRInfo::fpRegCS0, IgnoreVectors);
     registers.add(FPRInfo::fpRegCS1, IgnoreVectors);
     registers.add(FPRInfo::fpRegCS2, IgnoreVectors);
