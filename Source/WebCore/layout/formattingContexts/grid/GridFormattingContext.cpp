@@ -114,6 +114,21 @@ PlacedGridItems GridFormattingContext::constructPlacedGridItems(const GridAreas&
     for (auto [ unplacedGridItem, gridAreaLines ] : gridAreas) {
 
         CheckedRef gridItemStyle = unplacedGridItem.m_layoutBox->style();
+
+        auto usedJustifySelf = [&] {
+            if (auto gridItemJustifySelf = gridItemStyle->justifySelf(); gridItemJustifySelf.position() != ItemPosition::Auto)
+                return gridItemJustifySelf;
+            auto& formattingContextRootStyle = root().style();
+            return formattingContextRootStyle.justifyItems();
+        };
+
+        auto usedAlignSelf = [&] {
+            if (auto gridItemAlignSelf = gridItemStyle->alignSelf(); gridItemAlignSelf.position() != ItemPosition::Auto)
+                return gridItemAlignSelf;
+            auto& formattingContextRootStyle = root().style();
+            return formattingContextRootStyle.alignItems();
+        };
+
         PlacedGridItem::ComputedSizes inlineAxisSizes {
             gridItemStyle->width(),
             gridItemStyle->minWidth(),
@@ -130,7 +145,7 @@ PlacedGridItems GridFormattingContext::constructPlacedGridItems(const GridAreas&
             gridItemStyle->marginBottom()
         };
 
-        placedGridItems.constructAndAppend(unplacedGridItem, gridAreaLines, inlineAxisSizes, blockAxisSizes);
+        placedGridItems.constructAndAppend(unplacedGridItem, gridAreaLines, inlineAxisSizes, blockAxisSizes, usedJustifySelf(), usedAlignSelf());
     }
     return placedGridItems;
 }

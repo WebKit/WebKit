@@ -79,6 +79,10 @@ private:
     static Vector<UsedMargins> computeInlineMargins(const PlacedGridItems&);
     static Vector<UsedMargins> computeBlockMargins(const PlacedGridItems&);
 
+    using BorderBoxPositions = Vector<LayoutUnit>;
+    static BorderBoxPositions performInlineAxisSelfAlignment(const PlacedGridItems&, const Vector<UsedMargins>&);
+    static BorderBoxPositions performBlockAxisSelfAlignment(const PlacedGridItems&, const Vector<UsedMargins>&);
+
     const GridFormattingContext& formattingContext() const { return m_gridFormattingContext.get(); }
 
     const ElementBox& gridContainer() const;

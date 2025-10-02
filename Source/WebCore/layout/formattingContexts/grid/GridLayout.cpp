@@ -125,6 +125,67 @@ void GridLayout::layout(GridFormattingContext::GridLayoutConstraints, const Unpl
     // https://drafts.csswg.org/css-grid-1/#alignment
     auto usedInlineMargins = computeInlineMargins(placedGridItems);
     auto usedBlockMargins = computeBlockMargins(placedGridItems);
+
+    // https://drafts.csswg.org/css-grid-1/#alignment
+    // After a grid container’s grid tracks have been sized, and the dimensions of all grid items
+    // are finalized, grid items can be aligned within their grid areas.
+    auto inlineAxisPositions = performInlineAxisSelfAlignment(placedGridItems, usedInlineMargins);
+    auto blockAxisPositions = performBlockAxisSelfAlignment(placedGridItems, usedBlockMargins);
+
+    UNUSED_VARIABLE(inlineAxisPositions);
+    UNUSED_VARIABLE(blockAxisPositions);
+}
+
+GridLayout::BorderBoxPositions GridLayout::performInlineAxisSelfAlignment(const PlacedGridItems& placedGridItems, const Vector<UsedMargins>& inlineMargins)
+{
+    BorderBoxPositions borderBoxPositions;
+    borderBoxPositions.reserveInitialCapacity(placedGridItems.size());
+
+    auto computeMarginBoxPosition = [](const PlacedGridItem& placedGridItem) -> LayoutUnit {
+        switch (placedGridItem.inlineAxisAlignment().position()) {
+        case ItemPosition::FlexStart:
+        case ItemPosition::SelfStart:
+        case ItemPosition::Start:
+            return { };
+        default:
+            ASSERT_NOT_IMPLEMENTED_YET();
+            return { };
+        }
+    };
+
+    for (size_t gridItemIndex = 0; gridItemIndex < placedGridItems.size(); ++gridItemIndex) {
+        auto& gridItem = placedGridItems[gridItemIndex];
+        auto marginBoxPosition = computeMarginBoxPosition(gridItem);
+        borderBoxPositions.append(marginBoxPosition + inlineMargins[gridItemIndex].marginStart);
+    }
+
+    return borderBoxPositions;
+}
+
+GridLayout::BorderBoxPositions GridLayout::performBlockAxisSelfAlignment(const PlacedGridItems& placedGridItems, const Vector<UsedMargins>& blockMargins)
+{
+    BorderBoxPositions borderBoxPositions;
+    borderBoxPositions.reserveInitialCapacity(placedGridItems.size());
+
+    auto computeMarginBoxPosition = [](const PlacedGridItem& placedGridItem) -> LayoutUnit {
+        switch (placedGridItem.blockAxisAlignment().position()) {
+        case ItemPosition::FlexStart:
+        case ItemPosition::SelfStart:
+        case ItemPosition::Start:
+            return { };
+        default:
+            ASSERT_NOT_IMPLEMENTED_YET();
+            return { };
+        }
+    };
+
+    for (size_t gridItemIndex = 0; gridItemIndex < placedGridItems.size(); ++gridItemIndex) {
+        auto& gridItem = placedGridItems[gridItemIndex];
+        auto marginBoxPosition = computeMarginBoxPosition(gridItem);
+        borderBoxPositions.append(marginBoxPosition + blockMargins[gridItemIndex].marginStart);
+    }
+
+    return borderBoxPositions;
 }
 
 TrackSizingFunctionsList GridLayout::trackSizingFunctions(size_t implicitGridTracksCount, const Vector<Style::GridTrackSize> gridTemplateTrackSizes)

@@ -31,6 +31,7 @@
 #include "StyleMaximumSize.h"
 #include "StyleMinimumSize.h"
 #include "StylePreferredSize.h"
+#include "StyleSelfAlignmentData.h"
 #include <wtf/HashTraits.h>
 
 namespace WebCore {
@@ -49,7 +50,8 @@ public:
         Style::MarginEdge marginEnd;
     };
 
-    PlacedGridItem(const UnplacedGridItem&, GridAreaLines, ComputedSizes inlineAxisSizes, ComputedSizes blockAxisSizes);
+    PlacedGridItem(const UnplacedGridItem&, GridAreaLines, const ComputedSizes& inlineAxisSizes, const ComputedSizes& blockAxisSizes,
+    const StyleSelfAlignmentData& inlineAxisAlignment, const StyleSelfAlignmentData& blockAxisAlignment);
 
     const ComputedSizes& inlineAxisSizes() const { return m_inlineAxisSizes; }
     const ComputedSizes& blockAxisSizes() const { return m_blockAxisSizes; }
@@ -61,11 +63,17 @@ public:
 
     const ElementBox& layoutBox() const { return m_layoutBox; }
 
+    const StyleSelfAlignmentData& inlineAxisAlignment() const { return m_inlineAxisAlignment; }
+    const StyleSelfAlignmentData& blockAxisAlignment() const { return m_blockAxisAlignment; }
+
 private:
     const CheckedRef<const ElementBox> m_layoutBox;
 
     const ComputedSizes m_inlineAxisSizes;
     const ComputedSizes m_blockAxisSizes;
+
+    const StyleSelfAlignmentData m_inlineAxisAlignment;
+    const StyleSelfAlignmentData m_blockAxisAlignment;
 
     GridAreaLines m_gridAreaLines;
 };
