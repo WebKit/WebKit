@@ -118,9 +118,7 @@ abbr[title], acronym[title] {
 dialog {
     position: absolute;
     inset-inline: 0;
-    width: fit-content;
-    height: fit-content;
-    margin: auto;
+    justify-self: dialog;
     border: solid;
     padding: 1em;
     background-color: Canvas;
@@ -134,8 +132,9 @@ dialog[open] {
 
 dialog:modal {
     position: fixed;
-    overflow: auto;
     inset-block: 0;
+    place-self: dialog;
+    overflow: auto;
     max-width: calc(100% - 6px - 2em);
     max-height: calc(100% - 6px - 2em);
     visibility: visible;

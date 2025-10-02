@@ -12,9 +12,7 @@ dialog:popover-open {
 [popover] {
     position: fixed;
     inset: 0;
-    width: fit-content;
-    height: fit-content;
-    margin: auto;
+    place-self: dialog;
     border: solid;
     padding: 0.25em;
     overflow: auto;
