@@ -3734,7 +3734,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case MaterializeNewArrayWithButterfly: {
         SpeculatedType validTypes = [&]() {
             switch (node->indexingType()) {
-            case ALL_INT32_INDEXING_TYPES: return SpecInt32Only;
+            // We can get JSValue() (aka SpecEmpty) when the property hasn't been initialized yet and is still a hole.
+            case ALL_INT32_INDEXING_TYPES: return SpecInt32Only | SpecEmpty;
             case ALL_DOUBLE_INDEXING_TYPES: return SpecBytecodeNumber;
             case ALL_CONTIGUOUS_INDEXING_TYPES: return SpecBytecodeTop;
             default: break;
@@ -3742,7 +3743,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             RELEASE_ASSERT_NOT_REACHED();
         }();
         for (unsigned i = 2; i < node->numChildren(); ++i)
-            RELEASE_ASSERT(isSubtypeSpeculation(forNode(m_graph.varArgChild(node, i)).m_type, validTypes));
+            DFG_ASSERT(m_graph, node, isSubtypeSpeculation(forNode(m_graph.varArgChild(node, i)).m_type, validTypes));
 
         [[fallthrough]];
     }

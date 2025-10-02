@@ -1965,8 +1965,27 @@ escapeChildren:
         // they are inserted only once and we don't clutter the graph
         // with useless constants everywhere
         UncheckedKeyHashMap<FrozenValue*, Node*> lazyMapping;
-        if (!m_bottom)
-            m_bottom = m_insertionSet.insertConstant(0, m_graph.block(0)->at(0)->origin, jsNumber(1927));
+        m_bottom = m_insertionSet.insertConstant(0, m_graph.block(0)->at(0)->origin, jsNumber(1927));
+
+        auto defaultFor = [&](PromotedHeapLocation location) -> Node* {
+            // For objects we track the transition state of the object (i.e. which properties are conditionally initialized).
+            // Arrays have no such mechanism however they do have a hole value which we can use instead. This is fine because
+            // if the hole conditionally makes it to a materialization it will be stored to the slot and it will appear as
+            // if the slot was never written to.
+            if (location.kind() == ArrayIndexedPropertyPLoc) {
+                ASSERT(location.base()->op() == NewArrayWithButterfly);
+                if (hasDouble(location.base()->indexingType())) {
+                    if (!m_PNaN)
+                        m_PNaN = m_insertionSet.insertConstant(0, m_graph.block(0)->at(0)->origin, jsNumber(PNaN), DoubleConstant);
+                    return m_PNaN;
+                }
+                if (!m_empty)
+                    m_empty = m_insertionSet.insertConstant(0, m_graph.block(0)->at(0)->origin, JSValue());
+                return m_empty;
+            }
+            return m_bottom;
+        };
+
 
         Vector<UncheckedKeyHashSet<PromotedHeapLocation>> hintsForPhi(m_sinkCandidates.size());
 
@@ -1983,7 +2002,7 @@ escapeChildren:
                         continue;
 
                     SSACalculator::Variable* variable = m_locationToVariable.get(location);
-                    m_pointerSSA.newDef(variable, block, m_bottom);
+                    m_pointerSSA.newDef(variable, block, defaultFor(location));
                 }
 
                 for (Node* materialization : m_materializationSiteToMaterializations.get(node)) {
@@ -2059,7 +2078,8 @@ escapeChildren:
                     return nullptr;
 
                 // Don't create Phi nodes once we are escaped
-                if (m_heapAtHead[block].getAllocation(location.base()).isEscapedAllocation())
+                auto& allocation = m_heapAtHead[block].getAllocation(location.base());
+                if (allocation.isEscapedAllocation())
                     return nullptr;
 
                 // If we point to a single dead allocation, we will directly use its materialization since it would be invalid to
@@ -2069,7 +2089,11 @@ escapeChildren:
                     return nullptr;
 
                 Node* phiNode = m_graph.addNode(SpecHeapTop, Phi, block->at(0)->origin.withInvalidExit());
-                phiNode->mergeFlags(NodeResultJS);
+                if (location.kind() == ArrayIndexedPropertyPLoc && hasDouble(allocation.indexingType())) {
+                    ASSERT(allocation.kind() == Allocation::Kind::Array);
+                    phiNode->mergeFlags(NodeResultDouble);
+                } else
+                    phiNode->mergeFlags(NodeResultJS);
                 return phiNode;
             });
 
@@ -2143,7 +2167,7 @@ escapeChildren:
             }
 
             dataLogLnIf(Options::verboseObjectAllocationSinking(),
-                "Local mapping at ", pointerDump(block), ": ", mapDump(m_localMapping),
+                "Local mapping at ", pointerDump(block), ": ", mapDump(m_localMapping), "\n",
                 "Local materializations at ", pointerDump(block), ": ", mapDump(m_escapeeToMaterialization));
 
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
@@ -2154,14 +2178,15 @@ escapeChildren:
                     if (location.kind() != NamedPropertyPLoc && location.kind() != ArrayIndexedPropertyPLoc)
                         continue;
 
-                    m_localMapping.set(location, m_bottom);
+                    Node* bottom = defaultFor(location);
+                    m_localMapping.set(location, bottom);
 
                     if (m_sinkCandidates.contains(node)) {
                         dataLogLnIf(Options::verboseObjectAllocationSinking(), "For sink candidate ", node, " found location ", location);
                         m_insertionSet.insert(
                             nodeIndex + 1,
                             location.createHint(
-                                m_graph, node->origin.takeValidExit(nextCanExit), m_bottom));
+                                m_graph, node->origin.takeValidExit(nextCanExit), bottom));
                     }
                 }
 
@@ -2472,9 +2497,11 @@ escapeChildren:
                 switch (node->indexingType()) {
                 case ALL_DOUBLE_INDEXING_TYPES:
                     // FIXME: There's no KnownDoubleRepRealUse
-                    return DoubleRepRealUse;
+                    // We'd like to use a DoubleRepRealUse but the value for this slot could flow in from an uninitialized value (PNaN), which is the hole value for DoubleShape.
+                    return DoubleRepUse;
                 case ALL_INT32_INDEXING_TYPES:
-                    return KnownInt32Use;
+                    // We'd like to use KnownInt32Use here but the value for this slot could flow in from an uninitialized value (JSValue()), which is the hole value for Int32Shape.
+                    [[fallthrough]];
                 default:
                     return UntypedUse;
                 }
@@ -2812,6 +2839,8 @@ escapeChildren:
             auto useKind = [&]() {
                 switch (base->indexingType()) {
                 case ALL_DOUBLE_INDEXING_TYPES:
+                    // Note: We can filter on the value being Real here (and we should) since this can't
+                    // have our bottom value flow into here.
                     // FIXME: There's no KnownDoubleRepRealUse
                     return DoubleRepRealUse;
                 case ALL_INT32_INDEXING_TYPES:
@@ -2894,6 +2923,8 @@ escapeChildren:
         }
     }
 
+    // FIXME: Is this needed? We generate the Phi for each value before adding Upsilons, so it seems like we could do this
+    // when inserting the Upsilons.
     void fixEdge()
     {
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
@@ -2908,9 +2939,10 @@ escapeChildren:
                     Edge& edge = node->child1();
                     if (node->phi()->hasJSResult()) {
                         Node* result = nullptr;
-                        if (edge->hasDoubleResult())
+                        if (edge->hasDoubleResult()) {
+                            // We'd like to use DoubleRepRealUse but we'll insert a bottom value for every local. Since the value could be conditionally set we default to the hole value so storing it becomes non-observable.
                             result = m_insertionSet.insertNode(indexInBlock, SpecBytecodeDouble, ValueRep, node->origin, Edge(edge.node(), DoubleRepUse));
-                        else if (edge->hasInt52Result())
+                        } else if (edge->hasInt52Result())
                             result = m_insertionSet.insertNode(indexInBlock, SpecInt32Only | SpecAnyIntAsDouble, ValueRep, node->origin, Edge(edge.node(), Int52RepUse));
 
                         if (result) {
@@ -2974,6 +3006,8 @@ escapeChildren:
     LocalHeap m_heap;
 
     Node* m_bottom { nullptr };
+    Node* m_empty { nullptr };
+    Node* m_PNaN { nullptr };
 };
 
 }
