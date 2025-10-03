@@ -293,7 +293,7 @@ function mac_process_webcontent_shared_entitlements()
 
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
         then
-            if (( "${PRODUCT_NAME}" != com.apple.WebKit.WebContent.EnhancedSecurity ))
+            if [[ "${PRODUCT_NAME}" != com.apple.WebKit.WebContent.EnhancedSecurity ]]
             then
                 plistbuddy Add :com.apple.private.verified-jit bool YES
                 plistbuddy Add :com.apple.security.cs.single-jit bool YES
