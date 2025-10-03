@@ -130,9 +130,6 @@ static void pas_mte_do_initialization(void)
             *lockdown_mode_byte = 1;
         } else {
             *lockdown_mode_byte = 0;
-
-            // FIXME: rdar://159974195
-            bmalloc_common_primitive_heap.is_non_compact_heap = false;
         }
 
 #ifndef NDEBUG
