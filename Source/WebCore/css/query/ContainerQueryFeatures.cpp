@@ -79,7 +79,7 @@ struct WidthFeatureSchema : public SizeFeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        return evaluateLengthFeature(feature, renderer.contentBoxWidth(), conversionData);
+        return evaluateLengthFeature(feature, LayoutUnit::fromFloatRound(renderer.contentBoxWidth().toFloat() / renderer.style().usedZoom()), conversionData);
     }
 };
 
@@ -93,7 +93,7 @@ struct HeightFeatureSchema : public SizeFeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        return evaluateLengthFeature(feature, renderer.contentBoxHeight(), conversionData);
+        return evaluateLengthFeature(feature, LayoutUnit::fromFloatRound(renderer.contentBoxHeight().toFloat() / renderer.style().usedZoom()), conversionData);
     }
 };
 
@@ -107,7 +107,7 @@ struct InlineSizeFeatureSchema : public SizeFeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        return evaluateLengthFeature(feature, renderer.contentBoxLogicalWidth(), conversionData);
+        return evaluateLengthFeature(feature, LayoutUnit::fromFloatRound(renderer.contentBoxLogicalWidth().toFloat() / renderer.style().usedZoom()), conversionData);
     }
 };
 
@@ -121,7 +121,7 @@ struct BlockSizeFeatureSchema : public SizeFeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        return evaluateLengthFeature(feature, renderer.contentBoxLogicalHeight(), conversionData);
+        return evaluateLengthFeature(feature, LayoutUnit::fromFloatRound(renderer.contentBoxLogicalHeight().toFloat() / renderer.style().usedZoom()), conversionData);
     }
 };
 
