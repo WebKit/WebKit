@@ -36,6 +36,8 @@ from twisted.web.client import Agent
 from twisted.web.http_headers import Headers
 from twisted.web import iweb, http, _newclient
 
+from .utils import load_password
+
 from zope.interface import implementer
 
 
@@ -169,6 +171,9 @@ class HTTPConnectSetup(http.HTTPClient):
 
 class TwistedAdditions(object):
     PROXY_RE = re.compile(r'https?://(?P<host>.+):(?P<port>\d+)')
+    HTTPS_PROXY = load_password('HTTP_PROXY', default="")
+    HTTPS_PROXY_PORT = load_password('HTTP_PROXY_PORT', default=0)
+    HOSTS = load_password('PROXY_HOSTS', default=[])
 
     class Response(object):
         def __init__(self, status_code, content=None, url=None, headers=None):
@@ -241,10 +246,8 @@ class TwistedAdditions(object):
             headers['Content-Type'] = ['application/json']
 
         try:
-            proxy = os.getenv('http_proxy') or os.getenv('https_proxy') or os.getenv('HTTP_PROXY') or os.getenv('HTTPS_PROXY')
-            match = cls.PROXY_RE.match(proxy) if proxy else None
-            if match:
-                proxy = HTTPProxyConnector(match.group('host'), int(match.group('port')))
+            if hostname in cls.HOSTS:
+                proxy = HTTPProxyConnector(cls.HTTPS_PROXY, cls.HTTPS_PROXY_PORT)
                 agent = Agent(proxy, connectTimeout=timeout)
             else:
                 agent = Agent(reactor, connectTimeout=timeout)
