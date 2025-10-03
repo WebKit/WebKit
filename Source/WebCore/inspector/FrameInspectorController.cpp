@@ -31,6 +31,7 @@
 #include "FrameInspectorController.h"
 
 #include "CommonVM.h"
+#include "FrameConsoleAgent.h"
 #include "FrameInlines.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
@@ -65,6 +66,11 @@ FrameInspectorController::FrameInspectorController(LocalFrame& frame)
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
     , m_executionStopwatch(Stopwatch::create())
 {
+    auto agentContext = frameAgentContext();
+
+    std::unique_ptr consoleAgent = makeUnique<FrameConsoleAgent>(agentContext);
+    m_instrumentingAgents->setWebConsoleAgent(consoleAgent.get());
+    m_agents.append(WTFMove(consoleAgent));
 }
 
 FrameInspectorController::~FrameInspectorController()

@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: Log message
+CONSOLE MESSAGE: Warn message
+CONSOLE MESSAGE: Error message
+CONSOLE MESSAGE: Info message
+CONSOLE MESSAGE: Debug message
+CONSOLE MESSAGE: Uncaught error
+
+== Running test suite: SiteIsolation.Console
+-- Running test case: SiteIsolation.Console.MessageAdded
+{"eventType":"console-manager-message-added","messageLevel":"log","messageText":"Log message"}
+{"eventType":"console-manager-message-added","messageLevel":"warning","messageText":"Warn message"}
+{"eventType":"console-manager-message-added","messageLevel":"error","messageText":"Error message"}
+{"eventType":"console-manager-message-added","messageLevel":"info","messageText":"Info message"}
+{"eventType":"console-manager-message-added","messageLevel":"debug","messageText":"Debug message"}
+Uncaught exception in test page: Uncaught error [:1]
+{"eventType":"console-manager-message-added","messageLevel":"error","messageText":"Uncaught error"}
+

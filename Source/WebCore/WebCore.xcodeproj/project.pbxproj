@@ -4331,7 +4331,7 @@
 		A5B81CB51FAA44620037D1E6 /* WebConsoleAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B81C8E1FAA44260037D1E6 /* WebConsoleAgent.h */; };
 		A5B81CB61FAA44620037D1E6 /* WebDebuggerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B81C9B1FAA44260037D1E6 /* WebDebuggerAgent.h */; };
 		A5B81CB71FAA44620037D1E6 /* WebHeapAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B81C9F1FAA44260037D1E6 /* WebHeapAgent.h */; };
-		A5B81CC21FAA44BC0037D1E6 /* PageConsoleAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B81CBB1FAA44B70037D1E6 /* PageConsoleAgent.h */; };
+		A5B81CC21FAA44BC0037D1E6 /* FrameConsoleAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B81CBB1FAA44B70037D1E6 /* FrameConsoleAgent.h */; };
 		A5B81CC31FAA44BC0037D1E6 /* PageDebuggerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B81CBE1FAA44B70037D1E6 /* PageDebuggerAgent.h */; };
 		A5B81CC41FAA44BC0037D1E6 /* PageHeapAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B81CBC1FAA44B70037D1E6 /* PageHeapAgent.h */; };
 		A5B81CC51FAA44BC0037D1E6 /* PageRuntimeAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B81CBF1FAA44B70037D1E6 /* PageRuntimeAgent.h */; };
@@ -16867,12 +16867,12 @@
 		A5B81CA41FAA44270037D1E6 /* InspectorLayerTreeAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InspectorLayerTreeAgent.cpp; path = inspector/agents/InspectorLayerTreeAgent.cpp; sourceTree = SOURCE_ROOT; };
 		A5B81CA61FAA44270037D1E6 /* InspectorTimelineAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InspectorTimelineAgent.cpp; path = inspector/agents/InspectorTimelineAgent.cpp; sourceTree = SOURCE_ROOT; };
 		A5B81CBA1FAA44B70037D1E6 /* PageHeapAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageHeapAgent.cpp; sourceTree = "<group>"; };
-		A5B81CBB1FAA44B70037D1E6 /* PageConsoleAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageConsoleAgent.h; sourceTree = "<group>"; };
+		A5B81CBB1FAA44B70037D1E6 /* FrameConsoleAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameConsoleAgent.h; sourceTree = "<group>"; };
 		A5B81CBC1FAA44B70037D1E6 /* PageHeapAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageHeapAgent.h; sourceTree = "<group>"; };
 		A5B81CBD1FAA44B70037D1E6 /* PageDebuggerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageDebuggerAgent.cpp; sourceTree = "<group>"; };
 		A5B81CBE1FAA44B70037D1E6 /* PageDebuggerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageDebuggerAgent.h; sourceTree = "<group>"; };
 		A5B81CBF1FAA44B70037D1E6 /* PageRuntimeAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageRuntimeAgent.h; sourceTree = "<group>"; };
-		A5B81CC01FAA44B70037D1E6 /* PageConsoleAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageConsoleAgent.cpp; sourceTree = "<group>"; };
+		A5B81CC01FAA44B70037D1E6 /* FrameConsoleAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameConsoleAgent.cpp; sourceTree = "<group>"; };
 		A5B81CC11FAA44B70037D1E6 /* PageRuntimeAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageRuntimeAgent.cpp; sourceTree = "<group>"; };
 		A5B81CC71FAA44DA0037D1E6 /* WorkerRuntimeAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerRuntimeAgent.cpp; sourceTree = "<group>"; };
 		A5B81CC81FAA44DA0037D1E6 /* WorkerDebuggerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerDebuggerAgent.cpp; sourceTree = "<group>"; };
@@ -32663,6 +32663,7 @@
 		A5B81C831FAA44060037D1E6 /* agents */ = {
 			isa = PBXGroup;
 			children = (
+				F35F82472E832AA300215E26 /* frame */,
 				A5B81CB91FAA44820037D1E6 /* page */,
 				A5B81CC61FAA44C30037D1E6 /* worker */,
 				913FE5982362799900F9446A /* InspectorAnimationAgent.cpp */,
@@ -32712,8 +32713,6 @@
 				91278D5C21DEDAD500B57184 /* PageAuditAgent.h */,
 				953C6E6B2A0E05F100ACABC4 /* PageCanvasAgent.cpp */,
 				953C6E6A2A0E05F100ACABC4 /* PageCanvasAgent.h */,
-				A5B81CC01FAA44B70037D1E6 /* PageConsoleAgent.cpp */,
-				A5B81CBB1FAA44B70037D1E6 /* PageConsoleAgent.h */,
 				A5B81CBD1FAA44B70037D1E6 /* PageDebuggerAgent.cpp */,
 				A5B81CBE1FAA44B70037D1E6 /* PageDebuggerAgent.h */,
 				91E0DDBD230B41E40019E1E3 /* PageDOMDebuggerAgent.cpp */,
@@ -39067,6 +39066,15 @@
 			path = mac;
 			sourceTree = "<group>";
 		};
+		F35F82472E832AA300215E26 /* frame */ = {
+			isa = PBXGroup;
+			children = (
+				A5B81CC01FAA44B70037D1E6 /* FrameConsoleAgent.cpp */,
+				A5B81CBB1FAA44B70037D1E6 /* FrameConsoleAgent.h */,
+			);
+			path = frame;
+			sourceTree = "<group>";
+		};
 		F4034F8B275C0867003A81F8 /* cookie-consent */ = {
 			isa = PBXGroup;
 			children = (
@@ -42893,6 +42901,7 @@
 				2D9153F028AE0E330073A385 /* FragmentDirectiveRangeFinder.h in Headers */,
 				2DDF3EE42C8D94B30047786D /* FragmentDirectiveUtilities.h in Headers */,
 				46B95196207D633A00A7D2DD /* Frame.h in Headers */,
+				A5B81CC21FAA44BC0037D1E6 /* FrameConsoleAgent.h in Headers */,
 				DAED203116F244480070EC0F /* FrameConsoleClient.h in Headers */,
 				974A862314B7ADBB003FDC76 /* FrameDestructionObserver.h in Headers */,
 				46014ACC28333F65004C0B84 /* FrameDestructionObserverInlines.h in Headers */,
@@ -44950,7 +44959,6 @@
 				953C6E6C2A0E05F100ACABC4 /* PageCanvasAgent.h in Headers */,
 				95F45D27264DFBF100D0B8B8 /* PageColorSampler.h in Headers */,
 				CD5E5B5F1A15CE54000C609E /* PageConfiguration.h in Headers */,
-				A5B81CC21FAA44BC0037D1E6 /* PageConsoleAgent.h in Headers */,
 				A5A2AF0C1829734300DE1729 /* PageDebuggable.h in Headers */,
 				A5F36D3B18F758720054C024 /* PageDebugger.h in Headers */,
 				A5B81CC31FAA44BC0037D1E6 /* PageDebuggerAgent.h in Headers */,

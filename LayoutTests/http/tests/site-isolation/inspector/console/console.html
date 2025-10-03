@@ -1,0 +1,46 @@
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+TestPage.allowUncaughtExceptions = true;
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Console");
+
+    // FIXME: <before landing> Add more tests involving (cross-origin) iframes.
+    suite.addTestCase({
+        name: "SiteIsolation.Console.MessageAdded",
+        description: "Test the Console.messageAdded event with site isolation.",
+        async test() {
+            function logEvent(event) {
+                let { message } = event.data;
+                InspectorTest.log({
+                    eventType: event.type,
+                    messageLevel: message.level,
+                    messageText: message.messageText,
+                });
+            };
+
+            InspectorTest.evaluateInPage(`console.log("Log message");`);
+            logEvent(await WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded));
+
+            InspectorTest.evaluateInPage(`console.warn("Warn message");`);
+            logEvent(await WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded));
+
+            InspectorTest.evaluateInPage(`console.error("Error message");`);
+            logEvent(await WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded));
+
+            InspectorTest.evaluateInPage(`console.info("Info message");`);
+            logEvent(await WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded));
+
+            InspectorTest.evaluateInPage(`console.debug("Debug message");`);
+            logEvent(await WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded));
+
+            InspectorTest.evaluateInPage(`setTimeout(() => { throw "Uncaught error"; }, 0);`);
+            logEvent(await WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded));
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()"></body>

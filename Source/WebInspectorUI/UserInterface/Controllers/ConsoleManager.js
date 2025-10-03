@@ -90,8 +90,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
 
     initializeTarget(target)
     {
-        // FIXME: <https://webkit.org/b/298911> Add Console support for FrameTarget.
-        if (target instanceof WI.FrameTarget)
+        if (!target.hasDomain("Console"))
             return;
 
         // Intentionally defer ConsoleAgent initialization to the end. We do this so that any
@@ -256,11 +255,8 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         this._clearMessagesRequested = true;
 
         for (let target of WI.targets) {
-            // FIXME: <https://webkit.org/b/298911> Add Console support for FrameTarget.
-            if (target instanceof WI.FrameTarget)
-                continue;
-
-            target.ConsoleAgent.clearMessages();
+            if (target.hasDomain("Console"))
+                target.ConsoleAgent.clearMessages();
         }
     }
 

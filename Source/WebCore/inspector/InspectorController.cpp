@@ -58,7 +58,6 @@
 #include "Page.h"
 #include "PageAuditAgent.h"
 #include "PageCanvasAgent.h"
-#include "PageConsoleAgent.h"
 #include "PageDOMDebuggerAgent.h"
 #include "PageDebugger.h"
 #include "PageDebuggerAgent.h"
@@ -104,12 +103,6 @@ InspectorController::InspectorController(Page& page, std::unique_ptr<InspectorBa
     , m_inspectorBackendClient(WTFMove(inspectorBackendClient))
 {
     ASSERT_ARG(inspectorBackendClient, m_inspectorBackendClient);
-
-    auto pageContext = pageAgentContext();
-
-    auto consoleAgent = makeUnique<PageConsoleAgent>(pageContext);
-    m_instrumentingAgents->setWebConsoleAgent(consoleAgent.get());
-    m_agents.append(WTFMove(consoleAgent));
 }
 
 InspectorController::~InspectorController()
@@ -152,6 +145,7 @@ PageAgentContext InspectorController::pageAgentContext()
 
 void InspectorController::createLazyAgents()
 {
+    WTFLogAlways("#=# InspectorController::createLazyAgents m_didCreateLazyAgents=%i", m_didCreateLazyAgents);
     if (m_didCreateLazyAgents)
         return;
 
