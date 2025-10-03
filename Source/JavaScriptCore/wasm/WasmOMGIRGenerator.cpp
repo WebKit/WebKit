@@ -94,8 +94,6 @@ void dumpProcedure(void* ptr)
     proc->dump(WTF::dataFile());
 }
 
-#if USE(JSVALUE64)
-
 namespace JSC { namespace Wasm {
 
 using namespace B3;
@@ -389,6 +387,7 @@ public:
 
     void computeStackCheckSize(bool& needsOverflowCheck, int32_t& checkSize);
 
+#if USE(JSVALUE64)
     Value* wasmRefOfCell(Value* cell)
     {
         return cell;
@@ -408,6 +407,27 @@ public:
     {
         return m_currentBlock->appendNew<Value>(m_proc, Trunc, origin(), value);
     }
+#else
+    Value* wasmRefOfCell(Value* cell)
+    {
+        return m_currentBlock->appendNew<Value>(m_proc, Stitch, origin(), cell, constant(Int32, JSValue::CellTag));
+    }
+
+    Value* pointerOfWasmRef(Value* ref)
+    {
+        return m_currentBlock->appendNew<Value>(m_proc, Trunc, origin(), ref);
+    }
+
+    Value* pointerOfInt32(Value* value)
+    {
+        return value;
+    }
+
+    Value* int32OfPointer(Value* value)
+    {
+        return value;
+    }
+#endif
 
     // SIMD
     bool usesSIMD() { return m_info.usesSIMD(m_functionIndex); }
@@ -838,7 +858,7 @@ private:
     Value* callWasmOperation(BasicBlock* block, B3::Type resultType, OperationType operation, Args&&... args)
     {
         emitPrepareWasmOperation(block);
-        static_assert(FunctionTraits<OperationType>::cCallArity() == sizeof...(Args), "Sanity check");
+        static_assert(is32Bit() || FunctionTraits<OperationType>::cCallArity() == sizeof...(Args), "Sanity check");
         Value* operationValue = block->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operation));
         return block->appendNew<CCallValue>(m_proc, resultType, origin(), operationValue, std::forward<Args>(args)...);
     }
@@ -897,7 +917,18 @@ private:
     void restoreWebAssemblyGlobalState(const MemoryInformation&, Value* instance, BasicBlock*);
     void reloadMemoryRegistersFromInstance(const MemoryInformation&, Value* instance, BasicBlock*);
 
+#if USE(JSVALUE64)
     Value* loadFromScratchBuffer(unsigned& indexInBuffer, Value* pointer, B3::Type);
+#else
+    enum OSRBufferMode {
+        LoadI64, // Load I64 values directly, and let later passes lower them; Needed for interacting with lower tiers.
+        SplitI64, // Split I64 values into two I32 values.
+    };
+
+    Value* loadFromScratchBuffer(OSRBufferMode, unsigned& indexInBuffer, Value* pointer, B3::Type);
+    void connectControlAtEntrypoint(OSRBufferMode, unsigned& indexInBuffer, Value* pointer, ControlData&, Stack& expressionStack, ControlData& currentData, bool fillLoopPhis = false);
+#endif
+
     void connectValuesAtEntrypoint(unsigned& indexInBuffer, Value* pointer, Stack& expressionStack, Variable* exceptionVariable);
     Value* emitCatchImpl(CatchKind, ControlType&, unsigned exceptionIndex = 0);
     void emitCatchTableImpl(ControlData& entryData, const ControlData::TryTableTarget&);
@@ -1070,6 +1101,7 @@ private:
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(OMGIRGenerator);
 
+#if USE(JSVALUE64)
 // Memory accesses in WebAssembly have unsigned 32-bit offsets, whereas they have signed 32-bit offsets in B3.
 int32_t OMGIRGenerator::fixupPointerPlusOffset(Value*& ptr, uint32_t offset)
 {
@@ -7248,11 +7280,13 @@ auto OMGIRGenerator::addI64TruncUF32(ExpressionType argVar, ExpressionType& resu
     return { };
 }
 
+#else // !USE(JSVALUE64)
+#include "WasmOMGIRGenerator32_64.cpp"
+#endif // USE(JSVALUE64)
 } } // namespace JSC::Wasm
 
 #include "WasmOMGIRGeneratorInlines.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // USE(JSVALUE64)
 #endif // ENABLE(WEBASSEMBLY_OMGJIT)
