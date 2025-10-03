@@ -23,56 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "GridTypeAliases.h"
-#include "LayoutIntegrationUtils.h"
-#include "LayoutState.h"
-#include "LayoutUnit.h"
-#include <wtf/CheckedRef.h>
+#include "config.h"
+#include "GridLayoutUtils.h"
 
 namespace WebCore {
 namespace Layout {
+namespace GridLayoutUtils {
 
-class ElementBox;
-class PlacedGridItem;
+LayoutUnit usedInlineSizeForGridItem(const PlacedGridItem& placedGridItem)
+{
+    auto& inlineAxisSizes = placedGridItem.inlineAxisSizes();
+    if (auto fixedInlineSize = inlineAxisSizes.preferredSize.tryFixed())
+        return LayoutUnit { fixedInlineSize->resolveZoom(Style::ZoomNeeded { }) };
 
-class UnplacedGridItem;
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return { };
+}
 
-struct GridAreaLines;
-struct UnplacedGridItems;
+LayoutUnit usedBlockSizeForGridItem(const PlacedGridItem& placedGridItem)
+{
+    auto& blockAxisSizes = placedGridItem.blockAxisSizes();
+    if (auto fixedBlockSize = blockAxisSizes.preferredSize.tryFixed())
+        return LayoutUnit { fixedBlockSize->resolveZoom(Style::ZoomNeeded { }) };
 
-class GridFormattingContext : public CanMakeCheckedPtr<GridFormattingContext> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(GridFormattingContext);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GridFormattingContext);
-public:
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return { };
+}
 
-    struct GridLayoutConstraints {
-        std::optional<LayoutUnit> inlineAxisAvailableSpace;
-        std::optional<LayoutUnit> blockAxisAvailableSpace;
-    };
-
-    GridFormattingContext(const ElementBox& gridBox, LayoutState&);
-
-    void layout(GridLayoutConstraints);
-
-    PlacedGridItems constructPlacedGridItems(const GridAreas&) const;
-
-    const ElementBox& root() const { return m_gridBox; }
-
-    const IntegrationUtils& integrationUtils() const { return m_integrationUtils; }
-
-    const BoxGeometry geometryForGridItem(const ElementBox& gridItem) const;
-
-private:
-    UnplacedGridItems constructUnplacedGridItems() const;
-
-    const LayoutState& layoutState() const { return m_globalLayoutState; }
-
-    const CheckedRef<const ElementBox> m_gridBox;
-    const CheckedRef<LayoutState> m_globalLayoutState;
-    const IntegrationUtils m_integrationUtils;
-};
-
-} // namespace Layout
-} // namespace WebCore
+}
+}
+}

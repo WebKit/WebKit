@@ -25,54 +25,19 @@
 
 #pragma once
 
-#include "GridTypeAliases.h"
-#include "LayoutIntegrationUtils.h"
-#include "LayoutState.h"
-#include "LayoutUnit.h"
-#include <wtf/CheckedRef.h>
-
 namespace WebCore {
+
+class LayoutUnit;
+
 namespace Layout {
 
-class ElementBox;
 class PlacedGridItem;
 
-class UnplacedGridItem;
+namespace GridLayoutUtils {
 
-struct GridAreaLines;
-struct UnplacedGridItems;
+LayoutUnit usedInlineSizeForGridItem(const PlacedGridItem&);
+LayoutUnit usedBlockSizeForGridItem(const PlacedGridItem&);
 
-class GridFormattingContext : public CanMakeCheckedPtr<GridFormattingContext> {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(GridFormattingContext);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(GridFormattingContext);
-public:
-
-    struct GridLayoutConstraints {
-        std::optional<LayoutUnit> inlineAxisAvailableSpace;
-        std::optional<LayoutUnit> blockAxisAvailableSpace;
-    };
-
-    GridFormattingContext(const ElementBox& gridBox, LayoutState&);
-
-    void layout(GridLayoutConstraints);
-
-    PlacedGridItems constructPlacedGridItems(const GridAreas&) const;
-
-    const ElementBox& root() const { return m_gridBox; }
-
-    const IntegrationUtils& integrationUtils() const { return m_integrationUtils; }
-
-    const BoxGeometry geometryForGridItem(const ElementBox& gridItem) const;
-
-private:
-    UnplacedGridItems constructUnplacedGridItems() const;
-
-    const LayoutState& layoutState() const { return m_globalLayoutState; }
-
-    const CheckedRef<const ElementBox> m_gridBox;
-    const CheckedRef<LayoutState> m_globalLayoutState;
-    const IntegrationUtils m_integrationUtils;
-};
-
+} // namespace GridLayoutUtils
 } // namespace Layout
 } // namespace WebCore

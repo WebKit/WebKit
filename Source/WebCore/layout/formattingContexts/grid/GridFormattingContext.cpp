@@ -27,6 +27,7 @@
 #include "GridFormattingContext.h"
 
 #include "GridLayout.h"
+#include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
 #include "PlacedGridItem.h"
 #include "RenderStyleInlines.h"
@@ -41,6 +42,7 @@ namespace Layout {
 GridFormattingContext::GridFormattingContext(const ElementBox& gridBox, LayoutState& layoutState)
     : m_gridBox(gridBox)
     , m_globalLayoutState(layoutState)
+    , m_integrationUtils(layoutState)
 {
 }
 
@@ -131,6 +133,12 @@ PlacedGridItems GridFormattingContext::constructPlacedGridItems(const GridAreas&
         placedGridItems.constructAndAppend(unplacedGridItem, gridAreaLines, inlineAxisSizes, blockAxisSizes);
     }
     return placedGridItems;
+}
+
+const BoxGeometry GridFormattingContext::geometryForGridItem(const ElementBox& gridItem) const
+{
+    ASSERT(gridItem.isGridItem());
+    return layoutState().geometryForBox(gridItem);
 }
 
 } // namespace Layout

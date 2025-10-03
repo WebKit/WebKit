@@ -27,8 +27,10 @@
 #include "GridLayout.h"
 
 #include "GridAreaLines.h"
+#include "GridLayoutUtils.h"
 #include "ImplicitGrid.h"
 #include "RenderStyleInlines.h"
+#include "LayoutBoxGeometry.h"
 #include "LayoutElementBox.h"
 #include "NotImplemented.h"
 #include "PlacedGridItem.h"
@@ -48,6 +50,11 @@ struct UsedTrackSizes {
 struct UsedMargins {
     LayoutUnit marginStart;
     LayoutUnit marginEnd;
+};
+
+struct UsedGridItemSizes {
+    LayoutUnit inlineAxisSize;
+    LayoutUnit blockAxisSize;
 };
 
 GridLayout::GridLayout(const GridFormattingContext& gridFormattingContext)
@@ -107,15 +114,17 @@ void GridLayout::layout(GridFormattingContext::GridLayoutConstraints, const Unpl
     auto rowTrackSizingFunctionsList = trackSizingFunctions(implicitGridRowsCount, gridTemplateRowsTrackSizes);
 
     // 3. Given the resulting grid container size, run the Grid Sizing Algorithm to size the grid.
-    auto [ usedColumnSizes, usedRowSizes ] = performGridSizingAlgorithm(placedGridItems, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList);
+    UsedTrackSizes usedTrackSizes = performGridSizingAlgorithm(placedGridItems, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList);
 
-    UNUSED_VARIABLE(usedColumnSizes);
-    UNUSED_VARIABLE(usedRowSizes);
+    // 4. Lay out the grid items into their respective containing blocks. Each grid area’s
+    // width and height are considered definite for this purpose.
+    auto [ usedInlineSizes, usedBlockSizes ] = layoutGridItems(placedGridItems, usedTrackSizes);
+    UNUSED_VARIABLE(usedInlineSizes);
+    UNUSED_VARIABLE(usedBlockSizes);
 
     // https://drafts.csswg.org/css-grid-1/#alignment
     auto usedInlineMargins = computeInlineMargins(placedGridItems);
     auto usedBlockMargins = computeBlockMargins(placedGridItems);
-
 }
 
 TrackSizingFunctionsList GridLayout::trackSizingFunctions(size_t implicitGridTracksCount, const Vector<Style::GridTrackSize> gridTemplateTrackSizes)
@@ -239,6 +248,32 @@ Vector<UsedMargins> GridLayout::computeBlockMargins(const PlacedGridItems& place
 
         return UsedMargins { marginStart(), marginEnd() };
     });
+}
+
+// https://drafts.csswg.org/css-grid-1/#grid-item-sizing
+std::pair<GridLayout::UsedInlineSizes, GridLayout::UsedBlockSizes> GridLayout::layoutGridItems(const PlacedGridItems& placedGridItems, const UsedTrackSizes&) const
+{
+    UsedInlineSizes usedInlineSizes;
+    UsedBlockSizes usedBlockSizes;
+    auto gridItemsCount = placedGridItems.size();
+    usedInlineSizes.reserveInitialCapacity(gridItemsCount);
+    usedBlockSizes.reserveInitialCapacity(gridItemsCount);
+
+    auto& formattingContext = this->formattingContext();
+    auto& integrationUtils = formattingContext.integrationUtils();
+    for (auto& gridItem : placedGridItems) {
+        auto& gridItemBoxGeometry = formattingContext.geometryForGridItem(gridItem.layoutBox());
+
+        auto usedInlineSizeForGridItem = GridLayoutUtils::usedInlineSizeForGridItem(gridItem) + gridItemBoxGeometry.horizontalBorderAndPadding();
+        usedInlineSizes.append(usedInlineSizeForGridItem);
+
+        auto usedBlockSizeForGridItem = GridLayoutUtils::usedBlockSizeForGridItem(gridItem) + gridItemBoxGeometry.verticalBorderAndPadding();
+        usedBlockSizes.append(usedBlockSizeForGridItem);
+
+        auto& layoutBox = gridItem.layoutBox();
+        integrationUtils.layoutWithFormattingContextForBox(layoutBox, usedInlineSizeForGridItem, usedBlockSizeForGridItem);
+    }
+    return { usedInlineSizes, usedBlockSizes };
 }
 
 const ElementBox& GridLayout::gridContainer() const

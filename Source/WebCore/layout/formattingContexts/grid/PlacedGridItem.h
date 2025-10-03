@@ -59,6 +59,8 @@ public:
     size_t rowStartLine() const { return m_gridAreaLines.rowStartLine; }
     size_t rowEndLine() const { return m_gridAreaLines.rowEndLine; }
 
+    const ElementBox& layoutBox() const { return m_layoutBox; }
+
 private:
     const CheckedRef<const ElementBox> m_layoutBox;
 
