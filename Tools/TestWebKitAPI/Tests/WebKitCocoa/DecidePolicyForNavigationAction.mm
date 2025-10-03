@@ -118,9 +118,13 @@ TEST(WebKit, DecidePolicyForNavigationActionReload)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:firstURL]]];
     TestWebKitAPI::Util::run(&finishedNavigation);
 
+    EXPECT_TRUE([action isRequestFromClientOrUserInput]);
+
     decidedPolicy = false;
     [webView reload];
     TestWebKitAPI::Util::run(&decidedPolicy);
+
+    EXPECT_TRUE([action isRequestFromClientOrUserInput]);
 
     EXPECT_EQ(WKNavigationTypeReload, [action navigationType]);
     EXPECT_EQ([action sourceFrame], [action targetFrame]);
@@ -416,9 +420,13 @@ TEST(WebKit, DecidePolicyForNavigationActionForTargetedHyperlink)
     [webView loadHTMLString:@"<a style=\"display: block; height: 100%\" href=\"https://webkit.org/destination2.html\" target=\"B\">" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
     TestWebKitAPI::Util::run(&finishedNavigation);
 
+    EXPECT_TRUE([action isRequestFromClientOrUserInput]);
+
     didCreateWebView = false;
     [webView evaluateJavaScript:@"window.open(\"https://webkit.org/destination1.html\", \"B\")" completionHandler:nil];
     TestWebKitAPI::Util::run(&didCreateWebView);
+
+    EXPECT_FALSE([action isRequestFromClientOrUserInput]);
 
     EXPECT_EQ(WKNavigationTypeOther, [action navigationType]);
     EXPECT_TRUE([action sourceFrame] != [action targetFrame]);
@@ -446,6 +454,7 @@ TEST(WebKit, DecidePolicyForNavigationActionForTargetedHyperlink)
     EXPECT_EQ(newWebView.get(), [[action targetFrame] webView]);
     EXPECT_WK_STREQ("http", [[[action sourceFrame] securityOrigin] protocol]);
     EXPECT_WK_STREQ("webkit.org", [[[action sourceFrame] securityOrigin] host]);
+    EXPECT_FALSE([action isRequestFromClientOrUserInput]);
 
     _WKHitTestResult *hitTestResult = [action _hitTestResult];
     EXPECT_NOT_NULL(hitTestResult);
@@ -625,6 +634,8 @@ static void runDecidePolicyForNavigationActionForHyperlinkThatRedirects(ShouldEn
     [webView loadHTMLString:@"<a style=\"display: block; height: 100%\" href=\"http://redirect/?result\">" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
     TestWebKitAPI::Util::run(&finishedNavigation);
 
+    EXPECT_TRUE([action isRequestFromClientOrUserInput]);
+
     decidedPolicy = false;
     [newWebView setNavigationDelegate:controller.get()];
     NSPoint clickPoint = NSMakePoint(100, 100);
@@ -659,6 +670,7 @@ static void runDecidePolicyForNavigationActionForHyperlinkThatRedirects(ShouldEn
     EXPECT_WK_STREQ("http", [[[action sourceFrame] securityOrigin] protocol]);
     EXPECT_WK_STREQ("webkit.org", [[[action sourceFrame] securityOrigin] host]);
     EXPECT_TRUE([action _isRedirect]);
+    EXPECT_FALSE([action isRequestFromClientOrUserInput]);
 
     [TestProtocol unregister];
     newWebView = nullptr;

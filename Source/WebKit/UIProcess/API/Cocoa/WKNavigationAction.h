@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,7 +73,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
  */
 @property (nonatomic, readonly) WKNavigationType navigationType;
 
-/*! @abstract The navigation's request. 
+/*! @abstract The navigation's request.
  */
 @property (nonatomic, readonly, copy) NSURLRequest *request;
 
@@ -106,6 +106,10 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic, readonly) NSInteger buttonNumber;
 
 #endif
+
+/*! @abstract Whether or not the current navigation was triggered through a WebKit Framework load request or through user input
+ */
+@property (nonatomic, readonly) BOOL isRequestFromClientOrUserInput WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @end
 

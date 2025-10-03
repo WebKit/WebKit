@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -288,6 +288,11 @@ static WKSyntheticClickType toWKSyntheticClickType(WebKit::WebMouseEventSyntheti
 - (BOOL)_hasOpener
 {
     return _navigationAction->hasOpener();
+}
+
+- (BOOL)isRequestFromClientOrUserInput
+{
+    return _navigationAction->isRequestFromClientOrUserInput();
 }
 
 @end
