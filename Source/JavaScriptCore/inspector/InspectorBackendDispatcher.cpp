@@ -95,7 +95,6 @@ bool BackendDispatcher::isActive() const
 
 void BackendDispatcher::registerDispatcherForDomain(const String& domain, SupplementalBackendDispatcher* dispatcher)
 {
-    WTFLogAlways("#=# BackendDispatcher::registerDispatcherForDomain this=%p domain=\"%s\" dispatcher=%p", this, domain.utf8().data(), dispatcher);
     ASSERT_ARG(dispatcher, dispatcher);
 
     // FIXME: <https://webkit.org/b/148492> Agents should only register with the backend once,

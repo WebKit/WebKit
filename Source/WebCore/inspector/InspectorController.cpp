@@ -145,7 +145,6 @@ PageAgentContext InspectorController::pageAgentContext()
 
 void InspectorController::createLazyAgents()
 {
-    WTFLogAlways("#=# InspectorController::createLazyAgents m_didCreateLazyAgents=%i", m_didCreateLazyAgents);
     if (m_didCreateLazyAgents)
         return;
 

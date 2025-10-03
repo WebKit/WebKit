@@ -96,6 +96,7 @@
 #include "FontCache.h"
 #include "FormController.h"
 #include "FragmentDirectiveGenerator.h"
+#include "FrameInspectorController.h"
 #include "FrameLoader.h"
 #include "FrameMemoryMonitor.h"
 #include "FrameSnapshotting.h"
@@ -280,6 +281,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URLHelpers.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -443,7 +445,7 @@ using namespace HTMLNames;
 class InspectorStubFrontend final : public InspectorFrontendClientLocal, public FrontendChannel {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(InspectorStubFrontend);
 public:
-    InspectorStubFrontend(Page& inspectedPage, RefPtr<LocalDOMWindow>&& frontendWindow);
+    InspectorStubFrontend(Page& inspectedPage, LocalFrame& mainFrame, RefPtr<LocalDOMWindow>&& frontendWindow);
     virtual ~InspectorStubFrontend();
 
 private:
@@ -466,20 +468,26 @@ private:
     void setAttachedWindowWidth(unsigned) final { }
     void setSheetRect(const FloatRect&) final { }
 
+    void sendMessageToBackend(const String& message) final;
+
     void sendMessageToFrontend(const String& message) final;
     ConnectionType connectionType() const final { return ConnectionType::Local; }
 
     RefPtr<LocalDOMWindow> m_frontendWindow;
+
+    WeakPtr<FrameInspectorController> m_mainFrameInspectorController;
 };
 
-InspectorStubFrontend::InspectorStubFrontend(Page& inspectedPage, RefPtr<LocalDOMWindow>&& frontendWindow)
+InspectorStubFrontend::InspectorStubFrontend(Page& inspectedPage, LocalFrame& mainFrame, RefPtr<LocalDOMWindow>&& frontendWindow)
     : InspectorFrontendClientLocal(&inspectedPage.inspectorController(), frontendWindow->document()->page(), makeUnique<InspectorFrontendClientLocal::Settings>())
     , m_frontendWindow(frontendWindow.copyRef())
+    , m_mainFrameInspectorController(mainFrame.inspectorController())
 {
     ASSERT_ARG(frontendWindow, frontendWindow);
 
     frontendPage()->inspectorController().setInspectorFrontendClient(this);
     inspectedPage.inspectorController().connectFrontend(*this);
+    mainFrame.protectedInspectorController()->connectFrontend(*this);
 }
 
 InspectorStubFrontend::~InspectorStubFrontend()
@@ -494,9 +502,26 @@ void InspectorStubFrontend::closeWindow()
 
     frontendPage()->inspectorController().setInspectorFrontendClient(nullptr);
     inspectedPage()->inspectorController().disconnectFrontend(*this);
+    if (RefPtr controller = m_mainFrameInspectorController.get())
+        controller->disconnectFrontend(*this);
 
     m_frontendWindow->close();
     m_frontendWindow = nullptr;
+}
+
+void InspectorStubFrontend::sendMessageToBackend(const String& message)
+{
+    // FIXME before landing: By sending the message to both the page and the frame like below,
+    // this was my attempt to deal with certain agents (like Console) is only present in the frame
+    // where others (the rest) only in the page. This attempt doesn't work because as soon as the
+    // page's version fails (like in the case of Console, that domain doesn't exist), the frontend
+    // will get a fail message already. We might need to somehow figure out which backend target
+    // to send this message to rather than broadcasting it.
+
+    inspectedPage()->inspectorController().dispatchMessageFromFrontend(message);
+
+    if (RefPtr controller = m_mainFrameInspectorController.get())
+        controller->dispatchMessageFromFrontend(message);
 }
 
 void InspectorStubFrontend::sendMessageToFrontend(const String& message)
@@ -3288,7 +3313,7 @@ RefPtr<WindowProxy> Internals::openDummyInspectorFrontend(const String& url)
 #endif
 
     auto frontendWindowProxy = window->open(*window, *window, url, emptyAtom(), emptyString()).releaseReturnValue();
-    m_inspectorFrontend = makeUnique<InspectorStubFrontend>(*inspectedPage, downcast<LocalDOMWindow>(frontendWindowProxy->window()));
+    m_inspectorFrontend = makeUnique<InspectorStubFrontend>(*inspectedPage, *localMainFrame, downcast<LocalDOMWindow>(frontendWindowProxy->window()));
     return frontendWindowProxy;
 }
 

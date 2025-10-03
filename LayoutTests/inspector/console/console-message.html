@@ -6,76 +6,93 @@
 <script>
 function test()
 {
-    let suite = ProtocolTest.createAsyncSuite("Console.MessagesFromCommandLineAPI");
-
-    ProtocolTest.Console.addTestCase(suite, {
-        name: "ConsoleLogString",
-        description: "Test `console.log(\"log\")`",
-        expression: 'console.log("log");',
-        expected: {
-            source: 'console-api',
-            level: 'log',
-            text: 'log',
-            parameters: ['string']
+    (async () => {
+        try {
+            await InspectorProtocol.awaitCommand({ method: "Runtime.enable" });
+            console.log(`runtime ok`);
+        } catch (e) {
+            console.log(`runtime bad: ${e} ${JSON.stringify(e)}`);
         }
-    });
-
-    ProtocolTest.Console.addTestCase(suite, {
-        name: "ConsoleInfoString",
-        description: "Test `console.info(\"info\")`",
-        expression: 'console.info("info");',
-        expected: {
-            source: 'console-api',
-            level: 'info',
-            text: 'info',
-            parameters: ['string']
+        try {
+            // This won't work because the message was still sent to the page first in Internals.cpp.
+            await InspectorProtocol.awaitCommand({ method: "Console.enable" });
+            console.log(`console ok`);
+        } catch (e) {
+            console.log(`console bad: ${e} ${JSON.stringify(e)}`);
         }
-    });
+        testRunner.notifyDone();
+    })();
 
-    ProtocolTest.Console.addTestCase(suite, {
-        name: "ConsoleWarnString",
-        description: "Test `console.warn(\"warn\")`",
-        expression: 'console.warn("warn");',
-        expected: {
-            source: 'console-api',
-            level: 'warning',
-            text: 'warn',
-            parameters: ['string']
-        }
-    });
+    // let suite = ProtocolTest.createAsyncSuite("Console.MessagesFromCommandLineAPI");
 
-    ProtocolTest.Console.addTestCase(suite, {
-        name: "ConsoleErrorString",
-        description: "Test `console.error(\"error\")`",
-        expression: 'console.error("error");',
-        expected: {
-            source: 'console-api',
-            level: 'error',
-            text: 'error',
-            parameters: ['string']
-        }
-    });
+    // ProtocolTest.Console.addTestCase(suite, {
+    //     name: "ConsoleLogString",
+    //     description: "Test `console.log(\"log\")`",
+    //     expression: 'console.log("log");',
+    //     expected: {
+    //         source: 'console-api',
+    //         level: 'log',
+    //         text: 'log',
+    //         parameters: ['string']
+    //     }
+    // });
 
-    ProtocolTest.Console.addTestCase(suite, {
-        name: "ConsoleDebugString",
-        description: "Test `console.debug(\"debug\")`",
-        expression: 'console.debug("debug");',
-        expected: {
-            source: 'console-api',
-            level: 'debug',
-            text: 'debug',
-            parameters: ['string']
-        }
-    });
+    // ProtocolTest.Console.addTestCase(suite, {
+    //     name: "ConsoleInfoString",
+    //     description: "Test `console.info(\"info\")`",
+    //     expression: 'console.info("info");',
+    //     expected: {
+    //         source: 'console-api',
+    //         level: 'info',
+    //         text: 'info',
+    //         parameters: ['string']
+    //     }
+    // });
 
-    InspectorProtocol.awaitCommand({method: "Console.enable", params: {}})
-        .then(() => { suite.runTestCasesAndFinish(); })
-        .catch(fatalError);
+    // ProtocolTest.Console.addTestCase(suite, {
+    //     name: "ConsoleWarnString",
+    //     description: "Test `console.warn(\"warn\")`",
+    //     expression: 'console.warn("warn");',
+    //     expected: {
+    //         source: 'console-api',
+    //         level: 'warning',
+    //         text: 'warn',
+    //         parameters: ['string']
+    //     }
+    // });
 
-    function fatalError(e) {
-        ProtocolTest.log("Test failed with fatal error: " + JSON.stringify(e));
-        ProtocolTest.completeTest();
-    }
+    // ProtocolTest.Console.addTestCase(suite, {
+    //     name: "ConsoleErrorString",
+    //     description: "Test `console.error(\"error\")`",
+    //     expression: 'console.error("error");',
+    //     expected: {
+    //         source: 'console-api',
+    //         level: 'error',
+    //         text: 'error',
+    //         parameters: ['string']
+    //     }
+    // });
+
+    // ProtocolTest.Console.addTestCase(suite, {
+    //     name: "ConsoleDebugString",
+    //     description: "Test `console.debug(\"debug\")`",
+    //     expression: 'console.debug("debug");',
+    //     expected: {
+    //         source: 'console-api',
+    //         level: 'debug',
+    //         text: 'debug',
+    //         parameters: ['string']
+    //     }
+    // });
+
+    // InspectorProtocol.awaitCommand({method: "Console.enable", params: {}})
+    //     .then(() => { suite.runTestCasesAndFinish(); })
+    //     .catch(fatalError);
+
+    // function fatalError(e) {
+    //     ProtocolTest.log("Test failed with fatal error: " + JSON.stringify(e));
+    //     ProtocolTest.completeTest();
+    // }
 }
 </script>
 </head>
