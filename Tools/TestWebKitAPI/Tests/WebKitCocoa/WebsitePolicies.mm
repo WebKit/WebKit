@@ -51,6 +51,7 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WKWebsitePolicies.h>
 #import <WebKit/_WKCustomHeaderFields.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/Function.h>
 #import <wtf/HashMap.h>
@@ -78,6 +79,19 @@ static std::optional<_WKAutoplayEvent> receivedAutoplayEvent;
 static std::optional<_WKAutoplayEventFlags> receivedAutoplayEventFlags;
 
 static size_t alertCount;
+
+static bool isSiteIsolationEnabled(WKWebView *webView)
+{
+    auto configuration = webView.configuration;
+    auto preferences = configuration.preferences;
+
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"SiteIsolationEnabled"])
+            return [preferences _isEnabledForFeature:(feature)];
+    }
+
+    return false;
+}
 
 @interface ContentBlockingWebsitePoliciesDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
 @end
@@ -2101,7 +2115,11 @@ TEST(WebpagePreferences, ExtensionPageAdvancedPrivacyProtectionsReferrer)
     NSArray<NSString *> *results = [webView objectByEvaluatingJavaScript:@"window.results"];
     EXPECT_EQ(2U, results.count);
     EXPECT_WK_STREQ("http://webkit.org/", results[0]);
-    EXPECT_WK_STREQ("", results[1]);
+    if (isSiteIsolationEnabled(webView.get())) {
+        auto result = [results[1] isEqualToString:[NSString stringWithFormat:@"http://localhost:%d/", port]];
+        EXPECT_TRUE(result);
+    } else
+        EXPECT_WK_STREQ("", results[1]);
 }
 
 @interface PushAndNotificationsEnabledPoliciesDelegate : TestNavigationDelegate <WKNavigationDelegate, WKUIDelegatePrivate>
