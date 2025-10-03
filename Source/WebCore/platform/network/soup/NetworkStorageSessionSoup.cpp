@@ -349,12 +349,8 @@ void NetworkStorageSession::setCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
         soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NEVER;
         break;
     case HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
-#if SOUP_CHECK_VERSION(2, 71, 0)
         soupPolicy = SOUP_COOKIE_JAR_ACCEPT_GRANDFATHERED_THIRD_PARTY;
         break;
-#else
-        [[fallthrough]];
-#endif
     case HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain:
         soupPolicy = SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY;
         break;
@@ -370,10 +366,8 @@ HTTPCookieAcceptPolicy NetworkStorageSession::cookieAcceptPolicy() const
         return HTTPCookieAcceptPolicy::AlwaysAccept;
     case SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY:
         return HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain;
-#if SOUP_CHECK_VERSION(2, 71, 0)
     case SOUP_COOKIE_JAR_ACCEPT_GRANDFATHERED_THIRD_PARTY:
         return HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
-#endif
     case SOUP_COOKIE_JAR_ACCEPT_NEVER:
         return HTTPCookieAcceptPolicy::Never;
     }
@@ -445,21 +439,13 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
         // Cap lifetime of persistent, client-side cookies to a week.
         if (cappedLifetime) {
             if (auto* expiresDate = soup_cookie_get_expires(cookie.get())) {
-#if USE(SOUP2)
-                auto timeIntervalSinceNow = Seconds(static_cast<double>(soup_date_to_time_t(expiresDate))) - WallTime::now().secondsSinceEpoch();
-#else
                 auto timeIntervalSinceNow = Seconds(static_cast<double>(g_date_time_to_unix(expiresDate))) - WallTime::now().secondsSinceEpoch();
-#endif
                 if (timeIntervalSinceNow > cappedLifetime.value())
                     soup_cookie_set_max_age(cookie.get(), cappedLifetime->secondsAs<int>());
             }
         }
 
-#if SOUP_CHECK_VERSION(2, 67, 1)
         soup_cookie_jar_add_cookie_full(jar, cookie.release(), origin.get(), firstPartyURI.get());
-#else
-        soup_cookie_jar_add_cookie_with_first_party(jar, firstPartyURI.get(), cookie.release());
-#endif
     }
 
     soup_cookies_free(existingCookies);
@@ -493,29 +479,16 @@ bool NetworkStorageSession::setCookieFromDOM(const URL& firstParty, const SameSi
     }
     soup_cookies_free(existingCookies);
 
-#if SOUP_CHECK_VERSION(2, 67, 1)
     soup_cookie_jar_add_cookie_full(cookieStorage(), soupCookie.release(), uri.get(), firstPartyURI.get());
-#else
-    soup_cookie_jar_add_cookie_with_first_party(cookieStorage(), firstPartyURI.get(), soupCookie.release());
-    UNUSED_PARAM(uri);
-#endif
-
     return true;
 }
 
 void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL& url, const URL& firstParty)
 {
     for (auto cookie : cookies) {
-#if SOUP_CHECK_VERSION(2, 67, 1)
         auto origin = urlToSoupURI(url);
         auto firstPartyURI = urlToSoupURI(firstParty);
-
         soup_cookie_jar_add_cookie_full(cookieStorage(), cookie.toSoupCookie(), origin.get(), firstPartyURI.get());
-#else
-        UNUSED_PARAM(url);
-        UNUSED_PARAM(firstParty);
-        soup_cookie_jar_add_cookie(cookieStorage(), cookie.toSoupCookie());
-#endif
     }
 }
 
@@ -691,7 +664,6 @@ static std::optional<CookieList> lookupCookies(const NetworkStorageSession& sess
     if (!uri)
         return std::nullopt;
 
-#if SOUP_CHECK_VERSION(2, 69, 90)
     auto firstPartyURI = urlToSoupURI(firstParty);
     if (!firstPartyURI)
         return std::nullopt;
@@ -699,9 +671,6 @@ static std::optional<CookieList> lookupCookies(const NetworkStorageSession& sess
     auto cookieURI = sameSiteInfo.isSameSite ? urlToSoupURI(url) : nullptr;
     CookieList cookies(soup_cookie_jar_get_cookie_list_with_same_site_info(session.cookieStorage(), uri.get(), firstPartyURI.get(), cookieURI.get(), forHTTPHeader == ForHTTPHeader::Yes,
         sameSiteInfo.isSafeHTTPMethod, sameSiteInfo.isTopSite));
-#else
-    CookieList cookies(soup_cookie_jar_get_cookie_list(session.cookieStorage(), uri.get(), forHTTPHeader == ForHTTPHeader::Yes));
-#endif
     if (!cookies)
         return nullptr;
 

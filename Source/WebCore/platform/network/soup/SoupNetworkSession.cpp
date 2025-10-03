@@ -32,7 +32,6 @@
 #include "AuthenticationChallenge.h"
 #include "GUniquePtrSoup.h"
 #include "Logging.h"
-#include "SoupVersioning.h"
 #include "WebKitAutoconfigProxyResolver.h"
 #include <glib/gstdio.h>
 #include <libsoup/soup.h>
@@ -112,12 +111,8 @@ SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID)
 
     soup_session_add_feature_by_type(m_soupSession.get(), SOUP_TYPE_CONTENT_SNIFFER);
     soup_session_add_feature_by_type(m_soupSession.get(), SOUP_TYPE_AUTH_NTLM);
-#if SOUP_CHECK_VERSION(2, 67, 1)
     soup_session_add_feature_by_type(m_soupSession.get(), SOUP_TYPE_HSTS_ENFORCER);
-#endif
-#if SOUP_CHECK_VERSION(2, 67, 90)
     soup_session_add_feature_by_type(m_soupSession.get(), SOUP_TYPE_WEBSOCKET_EXTENSION_MANAGER);
-#endif
 
     if (!initialAcceptLanguages().isNull())
         setAcceptLanguages(initialAcceptLanguages());
@@ -154,11 +149,7 @@ void SoupNetworkSession::setupLogger()
     if (LogNetwork.state != WTFLogChannelState::On || soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_LOGGER))
         return;
 
-#if USE(SOUP2)
-    GRefPtr<SoupLogger> logger = adoptGRef(soup_logger_new(SOUP_LOGGER_LOG_BODY, -1));
-#else
     GRefPtr<SoupLogger> logger = adoptGRef(soup_logger_new(SOUP_LOGGER_LOG_BODY));
-#endif
     soup_session_add_feature(m_soupSession.get(), SOUP_SESSION_FEATURE(logger.get()));
     soup_logger_set_printer(logger.get(), soupLogPrinter, nullptr, nullptr);
 #endif
@@ -181,7 +172,6 @@ void SoupNetworkSession::setHSTSPersistentStorage(const String& directory)
     if (m_sessionID.isEphemeral())
         return;
 
-#if SOUP_CHECK_VERSION(2, 67, 1)
     if (!FileSystem::makeAllDirectories(directory)) {
         RELEASE_LOG_ERROR(Network, "Unable to create the HSTS storage directory \"%s\". Using a memory enforcer instead.", directory.utf8().data());
         return;
@@ -192,14 +182,10 @@ void SoupNetworkSession::setHSTSPersistentStorage(const String& directory)
     GRefPtr<SoupHSTSEnforcer> enforcer = adoptGRef(soup_hsts_enforcer_db_new(dbFilename.get()));
     soup_session_remove_feature_by_type(m_soupSession.get(), SOUP_TYPE_HSTS_ENFORCER);
     soup_session_add_feature(m_soupSession.get(), SOUP_SESSION_FEATURE(enforcer.get()));
-#else
-    UNUSED_PARAM(directory);
-#endif
 }
 
 void SoupNetworkSession::getHostNamesWithHSTSCache(HashSet<String>& hostNames)
 {
-#if SOUP_CHECK_VERSION(2, 67, 91)
     auto* enforcer = SOUP_HSTS_ENFORCER(soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_HSTS_ENFORCER));
     ASSERT(enforcer);
 
@@ -208,14 +194,10 @@ void SoupNetworkSession::getHostNamesWithHSTSCache(HashSet<String>& hostNames)
         GUniquePtr<gchar> domain(static_cast<gchar*>(iter->data));
         hostNames.add(String::fromUTF8(domain.get()));
     }
-#else
-    UNUSED_PARAM(hostNames);
-#endif
 }
 
 void SoupNetworkSession::deleteHSTSCacheForHostNames(const Vector<String>& hostNames)
 {
-#if SOUP_CHECK_VERSION(2, 67, 1)
     auto* enforcer = SOUP_HSTS_ENFORCER(soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_HSTS_ENFORCER));
     ASSERT(enforcer);
 
@@ -223,33 +205,22 @@ void SoupNetworkSession::deleteHSTSCacheForHostNames(const Vector<String>& hostN
         GUniquePtr<SoupHSTSPolicy> policy(soup_hsts_policy_new(hostName.utf8().data(), SOUP_HSTS_POLICY_MAX_AGE_PAST, FALSE));
         soup_hsts_enforcer_set_policy(enforcer, policy.get());
     }
-#else
-    UNUSED_PARAM(hostNames);
-#endif
 }
 
 void SoupNetworkSession::clearHSTSCache(WallTime modifiedSince)
 {
-#if SOUP_CHECK_VERSION(2, 67, 91)
     auto* enforcer = SOUP_HSTS_ENFORCER(soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_HSTS_ENFORCER));
     ASSERT(enforcer);
 
     GUniquePtr<GList> policies(soup_hsts_enforcer_get_policies(enforcer, FALSE));
     for (GList* iter = policies.get(); iter != nullptr; iter = iter->next) {
         GUniquePtr<SoupHSTSPolicy> policy(static_cast<SoupHSTSPolicy*>(iter->data));
-#if USE(SOUP2)
-        auto modified = soup_date_to_time_t(policy.get()->expires) - policy.get()->max_age;
-#else
         auto modified = g_date_time_to_unix(soup_hsts_policy_get_expires(policy.get())) - soup_hsts_policy_get_max_age(policy.get());
-#endif
         if (modified >= modifiedSince.secondsSinceEpoch().seconds()) {
             GUniquePtr<SoupHSTSPolicy> newPolicy(soup_hsts_policy_new(soup_hsts_policy_get_domain(policy.get()), SOUP_HSTS_POLICY_MAX_AGE_PAST, FALSE));
             soup_hsts_enforcer_set_policy(enforcer, newPolicy.get());
         }
     }
-#else
-    UNUSED_PARAM(modifiedSince);
-#endif
 }
 
 static inline bool stringIsNumeric(const std::string_view& str)

@@ -60,25 +60,6 @@ bool HTTPServer::listen(const std::optional<String>& host, unsigned port)
         return false;
     }
 
-#if USE(SOUP2)
-    soup_server_add_handler(m_soupServer.get(), nullptr, [](SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer userData) {
-        auto* httpServer = static_cast<HTTPServer*>(userData);
-        GRefPtr<SoupMessage> protectedMessage = message;
-        soup_server_pause_message(server, message);
-        httpServer->m_requestHandler.handleRequest({ String::fromUTF8(message->method), String::fromUTF8(path), message->request_body->data, static_cast<size_t>(message->request_body->length) },
-            [server, message = WTFMove(protectedMessage)](HTTPRequestHandler::Response&& response) {
-                soup_message_set_status(message.get(), response.statusCode);
-                if (!response.data.isNull()) {
-                    // §6.3 Processing Model.
-                    // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-send-a-response
-                    soup_message_headers_append(message->response_headers, "Content-Type", response.contentType.utf8().data());
-                    soup_message_headers_append(message->response_headers, "Cache-Control", "no-cache");
-                    soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, response.data.data(), response.data.length());
-                }
-                soup_server_unpause_message(server, message.get());
-        });
-    }, this, nullptr);
-#else
     soup_server_add_handler(m_soupServer.get(), nullptr, [](SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer userData) {
         auto& httpServer = *static_cast<HTTPServer*>(userData);
         GRefPtr<SoupServerMessage> protectedMessage = message;
@@ -105,7 +86,6 @@ bool HTTPServer::listen(const std::optional<String>& host, unsigned port)
                 soup_server_unpause_message(server, message.get());
         });
     }, this, nullptr);
-#endif
 
     return true;
 }

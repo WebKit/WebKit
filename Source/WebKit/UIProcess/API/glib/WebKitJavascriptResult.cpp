@@ -89,46 +89,6 @@ void webkit_javascript_result_unref(WebKitJavascriptResult* javascriptResult)
     }
 }
 
-#if PLATFORM(GTK)
-/**
- * webkit_javascript_result_get_global_context: (skip)
- * @js_result: a #WebKitJavascriptResult
- *
- * Get the global Javascript context.
- *
- * Get the global Javascript context that should be used with the
- * <function>JSValueRef</function> returned by webkit_javascript_result_get_value().
- *
- * Returns: the <function>JSGlobalContextRef</function> for the #WebKitJavascriptResult
- *
- * Deprecated: 2.22: Use jsc_value_get_context() instead.
- */
-JSGlobalContextRef webkit_javascript_result_get_global_context(WebKitJavascriptResult* javascriptResult)
-{
-    g_return_val_if_fail(javascriptResult, nullptr);
-    return jscContextGetJSContext(jsc_value_get_context(javascriptResult->jsValue.get()));
-}
-
-/**
- * webkit_javascript_result_get_value: (skip)
- * @js_result: a #WebKitJavascriptResult
- *
- * Get the value of @js_result.
- *
- * You should use the <function>JSGlobalContextRef</function>
- * returned by webkit_javascript_result_get_global_context() to use the <function>JSValueRef</function>.
- *
- * Returns: the <function>JSValueRef</function> of the #WebKitJavascriptResult
- *
- * Deprecated: 2.22: Use webkit_javascript_result_get_js_value() instead.
- */
-JSValueRef webkit_javascript_result_get_value(WebKitJavascriptResult* javascriptResult)
-{
-    g_return_val_if_fail(javascriptResult, nullptr);
-    return jscValueGetJSValue(javascriptResult->jsValue.get());
-}
-#endif
-
 /**
  * webkit_javascript_result_get_js_value:
  * @js_result: a #WebKitJavascriptResult

@@ -28,7 +28,6 @@
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
-#include "SoupVersioning.h"
 #include "URLSoup.h"
 #include <unicode/uset.h>
 #include <wtf/text/CString.h>
@@ -47,11 +46,9 @@ ResourceResponse::ResourceResponse(SoupMessage* soupMessage, const CString& snif
     case SOUP_HTTP_1_1:
         m_httpVersion = "HTTP/1.1"_s;
         break;
-#if SOUP_CHECK_VERSION(2, 99, 3)
     case SOUP_HTTP_2_0:
         m_httpVersion = "HTTP/2"_s;
         break;
-#endif
     }
 
     m_httpStatusCode = soup_message_get_status(soupMessage);

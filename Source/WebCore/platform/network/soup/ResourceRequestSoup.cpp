@@ -29,7 +29,6 @@
 #include "MIMETypeRegistry.h"
 #include "RegistrableDomain.h"
 #include "SharedBuffer.h"
-#include "SoupVersioning.h"
 #include "URLSoup.h"
 #include "WebKitFormDataInputStream.h"
 #include <wtf/text/CString.h>
@@ -72,7 +71,6 @@ GRefPtr<SoupMessage> ResourceRequest::createSoupMessage(BlobRegistryImpl& blobRe
             soup_message_set_first_party(soupMessage.get(), firstParty.get());
     }
 
-#if SOUP_CHECK_VERSION(2, 69, 90)
     if (!isSameSiteUnspecified()) {
         if (isSameSite()) {
             auto siteForCookies = urlToSoupURI(m_requestData.m_url);
@@ -80,7 +78,6 @@ GRefPtr<SoupMessage> ResourceRequest::createSoupMessage(BlobRegistryImpl& blobRe
         }
         soup_message_set_is_top_level_navigation(soupMessage.get(), isTopSite());
     }
-#endif
 
     if (!acceptEncoding())
         soup_message_disable_feature(soupMessage.get(), SOUP_TYPE_CONTENT_DECODER);
@@ -102,12 +99,8 @@ void ResourceRequest::updateSoupMessageBody(SoupMessage* soupMessage, BlobRegist
     auto& elements = formData->elements();
     if (elements.size() == 1 && !formData->alwaysStream()) {
         if (auto* vector = std::get_if<Vector<uint8_t>>(&elements[0].data)) {
-#if USE(SOUP2)
-            soup_message_body_append(soupMessage->request_body, SOUP_MEMORY_TEMPORARY, vector->span().data(), vector->size());
-#else
             GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(vector->span().data(), vector->size()));
             soup_message_set_request_body_from_bytes(soupMessage, nullptr, bytes.get());
-#endif
             return;
         }
     }
@@ -125,18 +118,7 @@ void ResourceRequest::updateSoupMessageBody(SoupMessage* soupMessage, BlobRegist
         return;
 
     GRefPtr<GInputStream> stream = webkitFormDataInputStreamNew(WTFMove(resolvedFormData));
-#if USE(SOUP2)
-    if (GBytes* data = webkitFormDataInputStreamReadAll(WEBKIT_FORM_DATA_INPUT_STREAM(stream.get()))) {
-        soup_message_body_set_accumulate(soupMessage->request_body, FALSE);
-        auto* soupBuffer = soup_buffer_new_with_owner(g_bytes_get_data(data, nullptr),
-            g_bytes_get_size(data), data, reinterpret_cast<GDestroyNotify>(g_bytes_unref));
-        soup_message_body_append_buffer(soupMessage->request_body, soupBuffer);
-        soup_buffer_free(soupBuffer);
-    }
-    ASSERT(length == static_cast<uint64_t>(soupMessage->request_body->length));
-#else
     soup_message_set_request_body(soupMessage, nullptr, stream.get(), length);
-#endif
 
 }
 
@@ -183,39 +165,10 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
     return 10000;
 }
 
-#if USE(SOUP2)
-GUniquePtr<SoupURI> ResourceRequest::createSoupURI() const
-{
-    // WebKit does not support fragment identifiers in data URLs, but soup does.
-    // Before passing the URL to soup, we should make sure to urlencode any '#'
-    // characters, so that soup does not interpret them as fragment identifiers.
-    // See http://wkbug.com/68089
-    if (m_requestData.m_url.protocolIsData()) {
-        String urlString = makeStringByReplacingAll(m_requestData.m_url.string(), '#', "%23"_s);
-        return GUniquePtr<SoupURI>(soup_uri_new(urlString.utf8().data()));
-    }
-
-    GUniquePtr<SoupURI> soupURI = urlToSoupURI(m_requestData.m_url);
-
-    // Versions of libsoup prior to 2.42 have a soup_uri_new that will convert empty passwords that are not
-    // prefixed by a colon into null. Some parts of soup like the SoupAuthenticationManager will only be active
-    // when both the username and password are non-null. When we have credentials, empty usernames and passwords
-    // should be empty strings instead of null.
-    String urlUser = m_requestData.m_url.user();
-    String urlPass = m_requestData.m_url.password();
-    if (!urlUser.isEmpty() || !urlPass.isEmpty()) {
-        soup_uri_set_user(soupURI.get(), urlUser.utf8().data());
-        soup_uri_set_password(soupURI.get(), urlPass.utf8().data());
-    }
-
-    return soupURI;
-}
-#else
 GRefPtr<GUri> ResourceRequest::createSoupURI() const
 {
     return m_requestData.m_url.createGUri();
 }
-#endif
 
 void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRequest& delegateProvidedRequest)
 {

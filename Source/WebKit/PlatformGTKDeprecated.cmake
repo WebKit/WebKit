@@ -10,7 +10,6 @@ list(APPEND WebKitGTK_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitJavascriptResult.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitMimeInfo.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitPlugin.h.in
-    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPrintCustomWidget.h.in
 )
 
 set(WebKitDOM_INSTALLED_HEADERS

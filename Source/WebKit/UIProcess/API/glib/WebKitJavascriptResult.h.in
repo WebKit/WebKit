@@ -28,10 +28,6 @@
 #include <glib-object.h>
 #include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
 
-#if PLATFORM(GTK)
-#include <JavaScriptCore/JSBase.h>
-#endif
-
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_JAVASCRIPT_RESULT (webkit_javascript_result_get_type())
@@ -47,14 +43,6 @@ webkit_javascript_result_ref                (WebKitJavascriptResult *js_result);
 
 WEBKIT_API void
 webkit_javascript_result_unref              (WebKitJavascriptResult *js_result);
-
-#if PLATFORM(GTK)
-WEBKIT_DEPRECATED JSGlobalContextRef
-webkit_javascript_result_get_global_context (WebKitJavascriptResult *js_result);
-
-WEBKIT_DEPRECATED_FOR(webkit_javascript_result_get_js_value) JSValueRef
-webkit_javascript_result_get_value          (WebKitJavascriptResult *js_result);
-#endif
 
 WEBKIT_API JSCValue *
 webkit_javascript_result_get_js_value       (WebKitJavascriptResult *js_result);

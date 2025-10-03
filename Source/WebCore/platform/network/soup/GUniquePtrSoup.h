@@ -29,17 +29,8 @@
 namespace WTF {
 
 WTF_DEFINE_GPTR_DELETER(SoupCookie, soup_cookie_free)
-#if SOUP_CHECK_VERSION(2, 67, 1)
 WTF_DEFINE_GPTR_DELETER(SoupHSTSPolicy, soup_hsts_policy_free)
-#endif
-#if USE(SOUP2)
-WTF_DEFINE_GPTR_DELETER(SoupURI, soup_uri_free)
-#endif
-#if SOUP_CHECK_VERSION(2, 99, 3)
 WTF_DEFINE_GPTR_DELETER(SoupMessageHeaders, soup_message_headers_unref)
-#else
-WTF_DEFINE_GPTR_DELETER(SoupMessageHeaders, soup_message_headers_free)
-#endif
 
 } // namespace WTF
 

@@ -576,7 +576,6 @@ list(APPEND WebKit_DEPENDENCIES
 set(WEBKITGTK_SOURCES_FOR_INTROSPECTION
     UIProcess/API/gtk/WebKitColorChooserRequest.cpp
     UIProcess/API/gtk/WebKitInputMethodContextGtk.cpp
-    UIProcess/API/gtk/WebKitPrintCustomWidget.cpp
     UIProcess/API/gtk/WebKitPrintOperation.cpp
     UIProcess/API/gtk/WebKitWebInspector.cpp
     UIProcess/API/gtk/WebKitWebViewGtk.cpp

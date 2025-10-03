@@ -56,9 +56,6 @@ public:
     AuthenticationChallenge(SoupMessage*, GTlsClientConnection*);
     AuthenticationChallenge(SoupMessage*, GTlsPassword*);
     AuthenticationClient* authenticationClient() const { RELEASE_ASSERT_NOT_REACHED(); }
-#if USE(SOUP2)
-    SoupMessage* soupMessage() const { return m_soupMessage.get(); }
-#endif
     SoupAuth* soupAuth() const { return m_soupAuth.get(); }
     GTlsPassword* tlsPassword() const { return m_tlsPassword.get(); }
     void setProposedCredential(const Credential& credential) { m_proposedCredential = credential; }
@@ -73,9 +70,6 @@ private:
     friend class AuthenticationChallengeBase;
     static bool platformCompare(const AuthenticationChallenge&, const AuthenticationChallenge&);
 
-#if USE(SOUP2)
-    GRefPtr<SoupMessage> m_soupMessage;
-#endif
     GRefPtr<SoupAuth> m_soupAuth;
     GRefPtr<GTlsPassword> m_tlsPassword;
     uint32_t m_tlsPasswordFlags { 0 };

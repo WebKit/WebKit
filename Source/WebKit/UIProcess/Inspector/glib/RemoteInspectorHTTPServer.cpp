@@ -29,7 +29,6 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "RemoteInspectorClient.h"
-#include <WebCore/SoupVersioning.h>
 #include <wtf/FileSystem.h>
 #include <wtf/URL.h>
 #include <wtf/glib/GSpanExtras.h>
@@ -55,22 +54,14 @@ bool RemoteInspectorHTTPServer::start(GRefPtr<GSocketAddress>&& socketAddress, u
     }
 
     soup_server_add_handler(m_server.get(), nullptr,
-#if USE(SOUP2)
-        [](SoupServer*, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer userData) {
-#else
         [](SoupServer*, SoupServerMessage* message, const char* path, GHashTable*, gpointer userData) {
-#endif
             auto& httpServer = *static_cast<RemoteInspectorHTTPServer*>(userData);
             auto status = httpServer.handleRequest(path, soup_server_message_get_response_headers(message), soup_server_message_get_response_body(message));
             soup_server_message_set_status(message, status, nullptr);
         }, this, nullptr);
 
     soup_server_add_websocket_handler(m_server.get(), "/socket", nullptr, nullptr,
-#if USE(SOUP2)
-        [](SoupServer*, SoupWebsocketConnection* connection, const char* path, SoupClientContext*, gpointer userData) {
-#else
         [](SoupServer*, SoupServerMessage*, const char* path, SoupWebsocketConnection* connection, gpointer userData) {
-#endif
             auto& httpServer = *static_cast<RemoteInspectorHTTPServer*>(userData);
             httpServer.handleWebSocket(path, connection);
         }, this, nullptr);
@@ -153,12 +144,8 @@ void RemoteInspectorHTTPServer::sendMessageToFrontend(uint64_t connectionID, uin
 
     auto utf8 = message.utf8();
     // Soup is going to copy the data immediately, so we can use g_bytes_new_static() here to avoid more data copies.
-#if SOUP_CHECK_VERSION(2, 67, 3)
     GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(utf8.data(), utf8.length()));
     soup_websocket_connection_send_message(webSocketConnection, SOUP_WEBSOCKET_DATA_TEXT, bytes.get());
-#else
-    soup_websocket_connection_send_text(webSocketConnection, CString(utf8).data());
-#endif
 }
 
 void RemoteInspectorHTTPServer::targetDidClose(uint64_t connectionID, uint64_t targetID)

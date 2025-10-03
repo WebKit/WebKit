@@ -91,11 +91,7 @@ public:
     bool m_isExpectingPermissionRequest { false };
 };
 
-#if USE(SOUP2)
-static void serverCallback(SoupServer*, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
-#else
 static void serverCallback(SoupServer*, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
-#endif
 {
     g_assert(soup_server_message_get_method(message) == SOUP_METHOD_GET);
 

@@ -27,13 +27,8 @@
 #include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
 #include <@API_INCLUDE_PREFIX@/WebKitScriptWorld.h>
 
-#if !ENABLE(2022_GLIB_API)
-#if PLATFORM(GTK)
-#include <JavaScriptCore/JSBase.h>
-#include <webkitdom/webkitdom.h>
-#elif PLATFORM(WPE)
+#if PLATFORM(WPE) && !ENABLE(2022_GLIB_API)
 #include <wpe/webkitdom.h>
-#endif
 #endif
 
 G_BEGIN_DECLS

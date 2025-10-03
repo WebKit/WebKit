@@ -21,7 +21,6 @@
 #include "WebKitPrintOperation.h"
 
 #include "WebKitError.h"
-#include "WebKitPrintCustomWidgetPrivate.h"
 #include "WebKitPrintOperationPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebViewPrivate.h"
@@ -75,9 +74,6 @@ static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 enum {
     FINISHED,
     FAILED,
-#if !ENABLE(2022_GLIB_API)
-    CREATE_CUSTOM_WIDGET,
-#endif
 
     LAST_SIGNAL
 };
@@ -146,17 +142,6 @@ static void webkitPrintOperationSetProperty(GObject* object, guint propId, const
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
 }
-
-#if !ENABLE(2022_GLIB_API)
-static gboolean webkitPrintOperationAccumulatorObjectHandled(GSignalInvocationHint*, GValue* returnValue, const GValue* handlerReturn, gpointer)
-{
-    void* object = g_value_get_object(handlerReturn);
-    if (object)
-        g_value_set_object(returnValue, object);
-
-    return !object;
-}
-#endif
 
 static void webkit_print_operation_class_init(WebKitPrintOperationClass* printOperationClass)
 {
@@ -234,47 +219,9 @@ static void webkit_print_operation_class_init(WebKitPrintOperationClass* printOp
             g_cclosure_marshal_VOID__BOXED,
             G_TYPE_NONE, 1,
             G_TYPE_ERROR | G_SIGNAL_TYPE_STATIC_SCOPE);
-
-#if !ENABLE(2022_GLIB_API)
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-
-    /**
-     * WebKitPrintOperation::create-custom-widget:
-     * @print_operation: the #WebKitPrintOperation on which the signal was emitted
-     *
-     * Emitted when displaying the print dialog with webkit_print_operation_run_dialog().
-     * The returned #WebKitPrintCustomWidget will be added to the print dialog and
-     * it will be owned by the @print_operation. However, the object is guaranteed
-     * to be alive until the #WebKitPrintCustomWidget::apply is emitted.
-     *
-     * Returns: (transfer full): A #WebKitPrintCustomWidget that will be embedded in the dialog.
-     *
-     * Since: 2.16
-     *
-     * Deprecated: 2.40
-     */
-    signals[CREATE_CUSTOM_WIDGET] =
-        g_signal_new(
-            "create-custom-widget",
-            G_TYPE_FROM_CLASS(gObjectClass),
-            G_SIGNAL_RUN_LAST,
-            0,
-            webkitPrintOperationAccumulatorObjectHandled, 0,
-            g_cclosure_marshal_generic,
-            WEBKIT_TYPE_PRINT_CUSTOM_WIDGET, 0);
-
-    ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
 }
 
 #if HAVE(GTK_UNIX_PRINTING)
-#if !ENABLE(2022_GLIB_API)
-static void notifySelectedPrinterCallback(GtkPrintUnixDialog* dialog, GParamSpec*, WebKitPrintCustomWidget* printCustomWidget)
-{
-    webkitPrintCustomWidgetEmitUpdateCustomWidgetSignal(printCustomWidget, gtk_print_unix_dialog_get_page_setup(dialog), gtk_print_unix_dialog_get_settings(dialog));
-}
-#endif
-
 static WebKitPrintOperationResponse webkitPrintOperationRunDialog(WebKitPrintOperation* printOperation, GtkWindow* parent)
 {
     GtkPrintUnixDialog* printDialog = GTK_PRINT_UNIX_DIALOG(gtk_print_unix_dialog_new(0, parent));
@@ -299,30 +246,12 @@ static WebKitPrintOperationResponse webkitPrintOperationRunDialog(WebKitPrintOpe
 
     gtk_print_unix_dialog_set_embed_page_setup(printDialog, TRUE);
 
-#if !ENABLE(2022_GLIB_API)
-    GRefPtr<WebKitPrintCustomWidget> customWidget;
-    g_signal_emit(printOperation, signals[CREATE_CUSTOM_WIDGET], 0, &customWidget.outPtr());
-    if (customWidget) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        const gchar* widgetTitle = webkit_print_custom_widget_get_title(customWidget.get());
-        GtkWidget* widget = webkit_print_custom_widget_get_widget(customWidget.get());
-        ALLOW_DEPRECATED_DECLARATIONS_END
-
-        g_signal_connect(printDialog, "notify::selected-printer", G_CALLBACK(notifySelectedPrinterCallback), customWidget.get());
-        gtk_print_unix_dialog_add_custom_tab(printDialog, widget, gtk_label_new(widgetTitle));
-    }
-#endif
-
     WebKitPrintOperationResponse returnValue = WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL;
     if (gtk_dialog_run(GTK_DIALOG(printDialog)) == GTK_RESPONSE_OK) {
         priv->printSettings = adoptGRef(gtk_print_unix_dialog_get_settings(printDialog));
         priv->pageSetup = gtk_print_unix_dialog_get_page_setup(printDialog);
         priv->printer = gtk_print_unix_dialog_get_selected_printer(printDialog);
         returnValue = WEBKIT_PRINT_OPERATION_RESPONSE_PRINT;
-#if !ENABLE(2022_GLIB_API)
-        if (customWidget)
-            webkitPrintCustomWidgetEmitCustomWidgetApplySignal(customWidget.get());
-#endif
     }
 
     gtk_widget_destroy(GTK_WIDGET(printDialog));

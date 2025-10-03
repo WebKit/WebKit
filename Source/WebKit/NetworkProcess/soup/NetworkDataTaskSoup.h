@@ -79,15 +79,9 @@ private:
     void dispatchDidReceiveResponse();
     void dispatchDidCompleteWithError(const WebCore::ResourceError&);
 
-#if !USE(SOUP2)
     static void preconnectCallback(SoupSession*, GAsyncResult*, NetworkDataTaskSoup*);
-#endif
 
-#if USE(SOUP2)
-    static gboolean tlsConnectionAcceptCertificateCallback(GTlsConnection*, GTlsCertificate*, GTlsCertificateFlags, NetworkDataTaskSoup*);
-#else
     static gboolean acceptCertificateCallback(SoupMessage*, GTlsCertificate*, GTlsCertificateFlags, NetworkDataTaskSoup*);
-#endif
     bool acceptCertificate(GTlsCertificate*, GTlsCertificateFlags);
 
     static void didSniffContentCallback(SoupMessage*, const char* contentType, GHashTable* parameters, NetworkDataTaskSoup*);
@@ -95,11 +89,7 @@ private:
 
     bool persistentCredentialStorageEnabled() const;
     void applyAuthenticationToRequest(WebCore::ResourceRequest&);
-#if USE(SOUP2)
-    static void authenticateCallback(SoupSession*, SoupMessage*, SoupAuth*, gboolean retrying, NetworkDataTaskSoup*);
-#else
     static gboolean authenticateCallback(SoupMessage*, SoupAuth*, gboolean retrying, NetworkDataTaskSoup*);
-#endif
     void authenticate(WebCore::AuthenticationChallenge&&);
     void continueAuthenticate(WebCore::AuthenticationChallenge&&);
     void completeAuthentication(const WebCore::AuthenticationChallenge&, const WebCore::Credential&);
@@ -124,20 +114,14 @@ private:
     static void gotHeadersCallback(SoupMessage*, NetworkDataTaskSoup*);
     void didGetHeaders();
 
-#if USE(SOUP2)
-    static void wroteBodyDataCallback(SoupMessage*, SoupBuffer*, NetworkDataTaskSoup*);
-#else
     static void wroteBodyDataCallback(SoupMessage*, unsigned, NetworkDataTaskSoup*);
-#endif
     void didWriteBodyData(uint64_t bytesSent);
 
-#if !USE(SOUP2)
     static void wroteHeadersCallback(SoupMessage*, NetworkDataTaskSoup*);
     static void wroteBodyCallback(SoupMessage*, NetworkDataTaskSoup*);
     static void gotBodyCallback(SoupMessage*, NetworkDataTaskSoup*);
     static gboolean requestCertificateCallback(SoupMessage*, GTlsClientConnection*, NetworkDataTaskSoup*);
     static gboolean requestCertificatePasswordCallback(SoupMessage*, GTlsPassword*, NetworkDataTaskSoup*);
-#endif
 
     void download();
     static void writeDownloadCallback(GOutputStream*, GAsyncResult*, NetworkDataTaskSoup*);
@@ -149,26 +133,11 @@ private:
 
     void didFail(const WebCore::ResourceError&);
 
-#if USE(SOUP2)
-    static void networkEventCallback(SoupMessage*, GSocketClientEvent, GIOStream*, NetworkDataTaskSoup*);
-    void networkEvent(GSocketClientEvent, GIOStream*);
-#endif
-
-#if SOUP_CHECK_VERSION(2, 49, 91)
     static void startingCallback(SoupMessage*, NetworkDataTaskSoup*);
-#else
-    static void requestStartedCallback(SoupSession*, SoupMessage*, SoupSocket*, NetworkDataTaskSoup*);
-#endif
-#if SOUP_CHECK_VERSION(2, 67, 1)
     bool shouldAllowHSTSPolicySetting() const;
     bool shouldAllowHSTSProtocolUpgrade() const;
     void protocolUpgradedViaHSTS(SoupMessage*);
-#if USE(SOUP2)
-    static void hstsEnforced(SoupHSTSEnforcer*, SoupMessage*, NetworkDataTaskSoup*);
-#else
     static void hstsEnforced(SoupMessage*, NetworkDataTaskSoup*);
-#endif
-#endif
     void didStartRequest();
     static void restartedCallback(SoupMessage*, NetworkDataTaskSoup*);
     void didRestart();

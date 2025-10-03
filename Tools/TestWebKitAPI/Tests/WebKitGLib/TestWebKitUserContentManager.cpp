@@ -21,7 +21,6 @@
 
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
-#include <WebCore/SoupVersioning.h>
 #include <cstdarg>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -658,11 +657,7 @@ static void testUserContentManagerContentFilter(WebViewTest* test, gconstpointer
     webkit_user_content_filter_unref(filter);
 }
 
-#if USE(SOUP2)
-static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
-#else
 static void serverCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
-#endif
 {
     soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
     auto* responseBody = soup_server_message_get_response_body(message);

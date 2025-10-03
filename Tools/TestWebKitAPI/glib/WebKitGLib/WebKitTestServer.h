@@ -46,18 +46,14 @@ public:
     CString getURIForPath(const char* path) const;
     void run(SoupServerCallback);
 
-#if SOUP_CHECK_VERSION(2, 50, 0)
     void addWebSocketHandler(SoupServerWebsocketCallback, gpointer userData);
     void removeWebSocketHandler();
     const URL& baseWebSocketURL() const { return m_baseWebSocketURL; }
     CString getWebSocketURIForPath(const char* path) const;
-#endif
 
 private:
     GRefPtr<SoupServer> m_soupServer;
     URL m_baseURL;
-#if SOUP_CHECK_VERSION(2, 50, 0)
     URL m_baseWebSocketURL;
-#endif
     RefPtr<WorkQueue> m_queue;
 };

@@ -21,7 +21,6 @@
 
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
-#include <WebCore/SoupVersioning.h>
 #include <glib/gstdio.h>
 #include <libsoup/soup.h>
 #include <string.h>
@@ -402,21 +401,13 @@ static WebKitTestServer* kServer;
 static const char* kServerSuggestedFilename = "webkit-downloaded-file";
 static HashMap<CString, CString> s_userAgentMap;
 
-#if USE(SOUP2)
-static void addContentDispositionHTTPHeaderToResponse(SoupMessage* message)
-#else
 static void addContentDispositionHTTPHeaderToResponse(SoupServerMessage* message)
-#endif
 {
     GUniquePtr<char> contentDisposition(g_strdup_printf("attachment; filename=%s", kServerSuggestedFilename));
     soup_message_headers_append(soup_server_message_get_response_headers(message), "Content-Disposition", contentDisposition.get());
 }
 
-#if USE(SOUP2)
-static void writeNextChunk(SoupMessage* message)
-#else
 static void writeNextChunk(SoupServerMessage* message)
-#endif
 {
     /* We need a big enough chunk for the sniffer to not block the load */
     static const char* chunk = "Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
@@ -429,11 +420,7 @@ static void writeNextChunk(SoupServerMessage* message)
     soup_message_body_append(soup_server_message_get_response_body(message), SOUP_MEMORY_STATIC, chunk, strlen(chunk));
 }
 
-#if USE(SOUP2)
-static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
-#else
 static void serverCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
-#endif
 {
     if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
         soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);

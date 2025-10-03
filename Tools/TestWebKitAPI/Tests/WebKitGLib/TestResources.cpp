@@ -21,7 +21,6 @@
 
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
-#include <WebCore/SoupVersioning.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GMutexLocker.h>
 #include <wtf/glib/GRefPtr.h>
@@ -754,21 +753,6 @@ static void testWebViewSyncRequestOnMaxConns(SyncRequestOnMaxConnsTest* test, gc
         g_source_remove(context.unlockServerSourceID);
 }
 
-#if USE(SOUP2)
-static void addCacheHTTPHeadersToResponse(SoupMessage* message)
-{
-    // The actual date doesn't really matter.
-    SoupDate* soupDate = soup_date_new_from_now(0);
-    GUniquePtr<char> date(soup_date_to_string(soupDate, SOUP_DATE_HTTP));
-    soup_message_headers_append(message->response_headers, "Last-Modified", date.get());
-    soup_date_free(soupDate);
-    soup_message_headers_append(message->response_headers, "Cache-control", "public, max-age=31536000");
-    soupDate = soup_date_new_from_now(3600);
-    date.reset(soup_date_to_string(soupDate, SOUP_DATE_HTTP));
-    soup_message_headers_append(message->response_headers, "Expires", date.get());
-    soup_date_free(soupDate);
-}
-#else
 static void addCacheHTTPHeadersToResponse(SoupServerMessage* message)
 {
     // The actual date doesn't really matter.
@@ -781,13 +765,8 @@ static void addCacheHTTPHeadersToResponse(SoupServerMessage* message)
     date.reset(soup_date_time_to_string(dateTime.get(), SOUP_DATE_HTTP));
     soup_message_headers_append(responseHeaders, "Expires", date.get());
 }
-#endif
 
-#if USE(SOUP2)
-static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
-#else
 static void serverCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
-#endif
 {
     if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
         soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);

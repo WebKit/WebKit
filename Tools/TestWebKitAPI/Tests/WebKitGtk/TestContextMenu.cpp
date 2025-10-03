@@ -21,7 +21,6 @@
 
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
-#include <WebCore/SoupVersioning.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 
@@ -1098,11 +1097,7 @@ static void testContextMenuWebExtensionNode(ContextMenuWebExtensionNodeTest* tes
     g_assert_cmpstr(test->m_node.parentName.data(), ==, "A");
 }
 
-#if USE(SOUP2)
-static void writeNextChunk(SoupMessage* message)
-#else
 static void writeNextChunk(SoupServerMessage* message)
-#endif
 {
     auto* responseBody = soup_server_message_get_response_body(message);
     GUniquePtr<char> filePath(g_build_filename(Test::getResourcesDir().data(), "silence.webm", nullptr));
@@ -1118,11 +1113,7 @@ static void writeNextChunk(SoupServerMessage* message)
     soup_message_body_complete(responseBody);
 }
 
-#if USE(SOUP2)
-static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
-#else
 static void serverCallback(SoupServer* server, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
-#endif
 {
     if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
         soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);
