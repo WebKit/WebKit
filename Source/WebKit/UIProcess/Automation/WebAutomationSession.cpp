@@ -1620,6 +1620,30 @@ void WebAutomationSession::getComputedLabel(const Inspector::Protocol::Automatio
     page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::GetComputedLabel(page->webPageIDInMainFrameProcess(), frameID, nodeHandle), WTF::move(completionHandler));
 }
 
+void WebAutomationSession::getAccessibilityProperties(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const Inspector::Protocol::Automation::NodeHandle& nodeHandle, Inspector::CommandCallback<Ref<Inspector::Protocol::Automation::AccessibilityNode>>&& callback)
+{
+    auto page = webPageProxyForHandle(browsingContextHandle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(frameNotFound, FrameNotFound);
+
+    WTF::CompletionHandler<void(std::optional<String>&&, std::optional<String>&&, std::optional<String>&&)> completionHandler =
+        [callback = WTFMove(callback)](std::optional<String>&& label, std::optional<String>&& role, std::optional<String>&& optionalError) mutable {
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF_SET(optionalError);
+
+        auto node = Inspector::Protocol::Automation::AccessibilityNode::create()
+            .setLabel(*label)
+            .setRole(*role)
+            .release();
+
+            callback(WTFMove(node));
+    };
+
+    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::GetAccessibilityProperties(page->webPageIDInMainFrameProcess(), frameID, nodeHandle), WTFMove(completionHandler));
+}
+
 void WebAutomationSession::selectOptionElement(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const Inspector::Protocol::Automation::NodeHandle& nodeHandle, CommandCallback<void>&& callback)
 {
     auto page = webPageProxyForHandle(browsingContextHandle);

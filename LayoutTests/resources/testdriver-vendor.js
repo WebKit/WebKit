@@ -712,6 +712,19 @@ window.test_driver_internal.get_computed_role = async function (element, context
 
 /**
  *
+ * @param {Element} element
+ * @returns {Promise<Object>}
+ */
+window.test_driver_internal.get_accessibility_properties = async function (element, context=null) {
+    if (!element)
+        return {};
+    context = context ?? window;
+
+    return context.internals.getAccessibilityProperties(element);
+}
+
+/**
+ *
  * @param {string} origin
  * @param {string} embedding_origin
  * @param {boolean} blocked
