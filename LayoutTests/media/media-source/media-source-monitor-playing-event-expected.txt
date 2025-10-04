@@ -13,8 +13,8 @@ EVENT(canplay)
 EVENT(updateend)
 video.readyState : HAVE_FUTURE_DATA
 RUN(sourceBuffer.appendBuffer(sample))
-EVENT(canplaythrough)
 EVENT(playing)
+EVENT(canplaythrough)
 EVENT(updateend)
 EXPECTED (video.readyState >= readyStateString.indexOf("HAVE_CURRENT_DATA") == 'true') OK
 RUN(sourceBuffer.remove(0,10))

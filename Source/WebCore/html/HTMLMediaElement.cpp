@@ -3253,6 +3253,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         }
     }
 
+    auto canTransition = canTransitionFromAutoplayToPlay();
     // Apply the first applicable set of substeps from the following list:
     do {
         // FIXME: The specification seems to only say HAVE_METADATA
@@ -3343,16 +3344,15 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
                     scheduleNotifyAboutPlaying();
             }
 
-            // The user agent must queue a media element task given the media element to fire an event named canplaythrough at the element.
-            scheduleEvent(eventNames().canplaythroughEvent);
-
             // If the element is not eligible for autoplay, then the user agent must abort these substeps.
             // The user agent may run the following substeps:
             // Set the paused attribute to false.
             // If the element's show poster flag is true, set it to false and run the time marches on steps.
             // Queue a media element task given the element to fire an event named play at the element.
             // Notify about playing for the element.
-            auto canTransition = canTransitionFromAutoplayToPlay();
+            // To match spec ordering and Web Platform Test expectations, we evaluate
+            // autoplay eligibility first (canTransition) and then schedule 'play'/'playing'
+            // before 'canplaythrough' if autoplay is allowed.
             if (canTransition) {
                 setPaused(false);
                 setShowPosterFlag(false);
@@ -3361,9 +3361,15 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
                 m_playbackStartedTime = currentMediaTime().toDouble();
                 scheduleEvent(eventNames().playEvent);
                 scheduleNotifyAboutPlaying();
-            } else if (canTransition.error() == MediaPlaybackDenialReason::UserGestureRequired) {
-                ALWAYS_LOG(LOGIDENTIFIER, "Autoplay blocked, user gesture required");
-                setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
+                scheduleEvent(eventNames().canplaythroughEvent);
+            } else {
+                // The user agent must queue a media element task given the media element to fire an event named canplaythrough at the element.
+                scheduleEvent(eventNames().canplaythroughEvent);
+
+                if (canTransition.error() == MediaPlaybackDenialReason::UserGestureRequired) {
+                    ALWAYS_LOG(LOGIDENTIFIER, "Autoplay blocked, user gesture required");
+                    setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
+                }
             }
         }
     } while (false);
@@ -3371,7 +3377,6 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     // If we transition to the Future Data state and we're about to begin playing, ensure playback is actually permitted first,
     // honoring any playback denial reasons such as the requirement of a user gesture.
     if (m_readyState == HAVE_FUTURE_DATA && oldState < HAVE_FUTURE_DATA && potentiallyPlaying() && !mediaSession().playbackStateChangePermitted(MediaPlaybackState::Playing)) {
-        auto canTransition = canTransitionFromAutoplayToPlay();
         if (!canTransition && canTransition.error() == MediaPlaybackDenialReason::UserGestureRequired)
             ALWAYS_LOG(LOGIDENTIFIER, "Autoplay blocked, user gesture required");
 
