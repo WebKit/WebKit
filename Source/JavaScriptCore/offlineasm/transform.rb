@@ -781,19 +781,18 @@ def lowerJSRUse(instruction)
     return instruction if extraClobbers.empty?
 
     if instruction.opcode == 'move'
-        result = []
         src = JSR_MAPPING[instruction.children[0].dump.to_sym]
         dst = JSR_MAPPING[instruction.children[1].dump.to_sym]
-        return instruction if src.nil? or dst.nil?
-        result << Instruction.new(origin, "moved", [
-            FPRegisterID.new(origin, src[:fpr]),
-            FPRegisterID.new(origin, dst[:fpr])])
-        if src[:gpr] != :spill and dst[:grp] != :spill
-            result << instruction
-            return result
-        end
-        if src[:gpr] == :spill and dst[:grp] == :spill
-            return result
+        unless src.nil? or dst.nil?
+            result = []
+            result << Instruction.new(origin, "moved", [
+                FPRegisterID.new(origin, src[:fpr]),
+                FPRegisterID.new(origin, dst[:fpr])])
+            if src[:gpr] != :spill and dst[:grp] != :spill
+                result << instruction
+                return result
+            end
+            return result if src[:gpr] == :spill and dst[:grp] == :spill
         end
         # Let's just do it the long way then.
     end
@@ -845,26 +844,36 @@ def lowerJSRUse(instruction)
         end
     }
     
-    swap = lambda do
+    swap = lambda do |fill|
         for spill in operandMappings.values
             gpr, gpr2, fpr = spill.values_at(:gpr, :gpr2, :fpr)
             next if gpr2.nil?
-            result << Instruction.new(origin, "fd2ii", [
+            fillForbidden = gpr == GPR_TMP0 && gpr2 == GPR_TMP1
+            raise if !fillForbidden and [gpr, gpr2].any? { | o | [GPR_TMP0, GPR_TMP1].include? o }
+            next if fillForbidden and fill
+            # result << Instruction.new(origin, "fd2ii", [
+            #     FPRegisterID.new(origin, fpr),
+            #     RegisterID.new(origin, GPR_TMP0),
+            #     RegisterID.new(origin, GPR_TMP1)])
+            result << Instruction.new(origin, "fd2q", [
                 FPRegisterID.new(origin, fpr),
-                RegisterID.new(origin, GPR_TMP0),
-                RegisterID.new(origin, GPR_TMP1)])
-            next if gpr == GPR_TMP0 && gpr2 == GPR_TMP1
-            raise if [gpr, gpr2].any? { | o | [GPR_TMP0, GPR_TMP1].include? o }
-            result << Instruction.new(origin, "fii2d", [
-                FPRegisterID.new(origin, fpr),
+                RegisterID.new(origin, GPR_TMP0)])
+            result << Instruction.new(origin, "emit", [StringLiteral.new(origin, "\"orr #{RegisterID.new(origin, gpr).arm64Operand(:quad)}, #{RegisterID.new(origin, gpr).arm64Operand(:quad)}, #{RegisterID.new(origin, gpr2).arm64Operand(:quad)}, lsl \#32\"")]) unless fillForbidden
+            result << Instruction.new(origin, "emit", [StringLiteral.new(origin, "\"orr #{RegisterID.new(origin, gpr2).arm64Operand(:quad)}, xzr, #{GPR_TMP0}, lsr \#32\"")])
+            # result << Instruction.new(origin, "fii2d", [
+            #     FPRegisterID.new(origin, fpr),
+            #     RegisterID.new(origin, gpr),
+            #     RegisterID.new(origin, gpr2)])
+            result << Instruction.new(origin, "fq2d", [
                 RegisterID.new(origin, gpr),
-                RegisterID.new(origin, gpr2)])
-            result << Instruction.new(origin, "move", [
-                RegisterID.new(origin, GPR_TMP0),
-                RegisterID.new(origin, gpr)])
-            result << Instruction.new(origin, "move", [
-                RegisterID.new(origin, GPR_TMP1),
-                RegisterID.new(origin, gpr2)])
+                FPRegisterID.new(origin, fpr)]) unless fillForbidden
+            result << Instruction.new(origin, "emit", [StringLiteral.new(origin, "\"ubfm #{RegisterID.new(origin, gpr).arm64Operand(:quad)}, #{RegisterID.new(origin, GPR_TMP0).arm64Operand(:quad)}, \#0, \#32\"")])
+            # result << Instruction.new(origin, "move", [
+            #     RegisterID.new(origin, GPR_TMP0),
+            #     RegisterID.new(origin, gpr)])
+            # result << Instruction.new(origin, "move", [
+            #     RegisterID.new(origin, GPR_TMP1),
+            #     RegisterID.new(origin, gpr2)])
         end
     end
 
@@ -875,7 +884,7 @@ def lowerJSRUse(instruction)
         RegisterPair.new(RegisterID.new(origin, gpr), RegisterID.new(origin, gpr2))
     end
 
-    swap[]
+    swap[false]
     result << instruction.to_enum(:mapChildren).with_index do |child, index| 
         child = child.mapChildren(&pairForReg)
         if operandSizes[index] == :quad
@@ -884,7 +893,7 @@ def lowerJSRUse(instruction)
             child
         end
     end
-    swap[]
+    swap[true]
 
     result
 end

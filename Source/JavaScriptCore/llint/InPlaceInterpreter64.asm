@@ -43,23 +43,6 @@ macro saveIPIntRegisters()
         stored csfr2, - 8 * 6[cfr]
         stored csfr1, - 8 * 7[cfr]
         stored csfr0, - 8 * 8[cfr]
-        # This ensures that stitched jsrs have cleared upper bits on 32-bit, and use the full base register in 64-bit jsr validation mode
-        moved 0, ft0
-        moved 0, ft1
-        moved 0, ft2
-        moved 0, ft3
-        moved 0, ft4
-        moved 0, ft5
-        moved 0, ft6
-        moved 0, ft7
-        moved 0, csfr0
-        moved 0, csfr1
-        moved 0, csfr2
-        moved 0, csfr3
-        moved 0, csfr4
-        moved 0, csfr5
-        moved 0, csfr6
-        moved 0, csfr7
     end
 
 end

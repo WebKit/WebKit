@@ -1442,7 +1442,8 @@ class Instruction
         when "bfiq"
             $asm.puts "bfi #{operands[3].arm64Operand(:quad)}, #{operands[0].arm64Operand(:quad)}, #{operands[1].value}, #{operands[2].value}"
         when "pcrtoaddr"
-            $asm.puts "adr #{operands[1].arm64Operand(:quad)}, #{operands[0].value}"
+            $asm.puts "adrp #{operands[1].arm64Operand(:quad)}, #{operands[0].value}"
+            $asm.puts "add #{operands[1].arm64Operand(:quad)}, #{operands[1].arm64Operand(:quad)}, :lo12:#{operands[0].value}"
         when "globaladdr"
             uid = $asm.newUID
 

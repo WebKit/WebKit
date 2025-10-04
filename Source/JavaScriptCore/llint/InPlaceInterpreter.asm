@@ -64,12 +64,12 @@ const alignUInt = constexpr JSC::IPInt::alignUInt
 const alignMInt = constexpr JSC::IPInt::alignMInt
 
 if ARM64 or ARM64E
-    const PC = csr7
-    const MC = csr6
+    const PC = csr1
+    const MC = csr0
     const PL = t6
 
     # Wasm Pinned Registers
-    const WI = csr0
+    const WI = csr6
     const MB = csr3
     const BC = csr4
 
