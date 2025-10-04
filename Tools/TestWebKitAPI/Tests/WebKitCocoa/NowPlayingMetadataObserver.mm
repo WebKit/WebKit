@@ -27,6 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WebKit.h>
 
@@ -36,6 +37,7 @@ TEST(NowPlayingMetadataObserver, VideoTitle)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
+    [configuration _setAllowTestOnlyIPC:YES];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration.get()]);
     [webView loadTestPageNamed:@"large-video-test-now-playing"];
@@ -60,6 +62,7 @@ TEST(NowPlayingMetadataObserver, VideoTitleUpdatedByMediaSession)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
+    [configuration _setAllowTestOnlyIPC:YES];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration.get()]);
     [webView loadTestPageNamed:@"large-video-test-now-playing"];

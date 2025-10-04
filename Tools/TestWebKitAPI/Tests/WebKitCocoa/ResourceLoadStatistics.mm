@@ -215,6 +215,7 @@ TEST(ResourceLoadStatistics, IPCAfterStoreDestruction)
     [[WKWebsiteDataStore defaultDataStore] _setResourceLoadStatisticsEnabled:YES];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowTestOnlyIPC:YES];
 
     // Test page requires window.internals.
 #if WK_HAVE_C_SPI

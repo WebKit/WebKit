@@ -399,6 +399,7 @@ TEST(DragAndDropTests, DragElementWithImageOverlay)
 {
     auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES]);
     [[configuration preferences] _setLargeImageAsyncDecodingEnabled:NO];
+    [configuration _setAllowTestOnlyIPC:YES];
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     [[simulator webView] synchronouslyLoadTestPageNamed:@"simple-image-overlay"];
@@ -414,6 +415,7 @@ TEST(DragAndDropTests, DragSelectedTextInImageOverlay)
 {
     auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES]);
     [[configuration preferences] _setLargeImageAsyncDecodingEnabled:NO];
+    [configuration _setAllowTestOnlyIPC:YES];
 
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
     [[simulator webView] synchronouslyLoadTestPageNamed:@"simple-image-overlay"];

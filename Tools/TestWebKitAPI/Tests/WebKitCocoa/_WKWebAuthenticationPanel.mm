@@ -417,7 +417,6 @@ void cleanUpKeychain()
 static RetainPtr<TestWKWebView> setUpTestWebViewForTestAuthenticationPanel()
 {
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-    [configuration _setAllowTestOnlyIPC:YES];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
     return webView;

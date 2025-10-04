@@ -38,6 +38,7 @@ namespace TestWebKitAPI {
 RetainPtr<WKWebView> createWebViewForFragmentDirectiveGenerationWithHTML(NSString *HTMLString, NSString *javaScript)
 {
     RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration _setAllowTestOnlyIPC:YES];
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
     [webView synchronouslyLoadHTMLString:HTMLString];
     [webView stringByEvaluatingJavaScript:javaScript];

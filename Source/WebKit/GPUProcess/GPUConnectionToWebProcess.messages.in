@@ -48,7 +48,7 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     CreateVisibilityPropagationContextForPage(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID, bool canShowWhileLocked);
     DestroyVisibilityPropagationContextForPage(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID);
 #endif
-    SetMediaOverridesForTesting(struct WebKit::MediaOverridesForTesting configuration)
+    [EnabledBy=AllowTestOnlyIPC] SetMediaOverridesForTesting(struct WebKit::MediaOverridesForTesting configuration)
     CreateAudioHardwareListener(WebKit::RemoteAudioHardwareListenerIdentifier identifier)
     ReleaseAudioHardwareListener(WebKit::RemoteAudioHardwareListenerIdentifier identifier)
     CreateRemoteCommandListener(WebKit::RemoteRemoteCommandListenerIdentifier identifier)
@@ -59,7 +59,7 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     ReleaseWCLayerTreeHost(WebKit::WCLayerTreeHostIdentifier identifier) AllowedWhenWaitingForSyncReply
 #endif
 #if ENABLE(MEDIA_SOURCE)
-    [EnabledBy=MediaSourceEnabled || ManagedMediaSourceEnabled] EnableMockMediaSource();
+    [EnabledBy=AllowTestOnlyIPC] EnableMockMediaSource();
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)

@@ -28,6 +28,7 @@
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
 
@@ -59,6 +60,7 @@ static bool fullscreenStateChanged;
 TEST(Fullscreen, AudioLifecycle)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowTestOnlyIPC:YES];
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
     [configuration preferences].elementFullscreenEnabled = YES;
 
@@ -132,6 +134,7 @@ static void runTest(WKWebViewConfiguration *configuration)
 TEST(Fullscreen, VideoLifecycle)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowTestOnlyIPC:YES];
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
     [configuration preferences].elementFullscreenEnabled = YES;
 
@@ -146,6 +149,7 @@ TEST(Fullscreen, VideoLifecycleElementFullscreenDisabled)
 #endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAllowTestOnlyIPC:YES];
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
     [configuration preferences]._videoFullscreenRequiresElementFullscreen = YES;
 

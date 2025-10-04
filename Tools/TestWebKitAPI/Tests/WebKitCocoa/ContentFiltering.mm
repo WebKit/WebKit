@@ -189,6 +189,7 @@ static void downloadTest(Decision decision, DecisionPoint decisionPoint)
         [TestProtocol registerWithScheme:@"https"];
 
         auto configuration = configurationWithContentFilterSettings(decision, decisionPoint);
+        [configuration _setAllowTestOnlyIPC:YES];
         auto downloadDelegate = adoptNS([[ContentFilteringDownloadDelegate alloc] init]);
         [[configuration processPool] _setDownloadDelegate:downloadDelegate.get()];
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
@@ -304,6 +305,7 @@ static void loadAlternateTest(Decision decision, DecisionPoint decisionPoint)
         [TestProtocol registerWithScheme:@"https"];
 
         auto configuration = configurationWithContentFilterSettings(decision, decisionPoint);
+        [configuration _setAllowTestOnlyIPC:YES];
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
         auto navigationDelegate = adoptNS([[LoadAlternateNavigationDelegate alloc] init]);
         [webView setNavigationDelegate:navigationDelegate.get()];
@@ -529,6 +531,7 @@ TEST(ContentFiltering, URLAfterServerRedirectBlocked)
         });
 
         auto configuration = configurationWithContentFilterSettings(Decision::Block, DecisionPoint::AfterAddData);
+        [configuration _setAllowTestOnlyIPC:YES];
         auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
         auto navigationDelegate = adoptNS([[LoadAlternateNavigationDelegate alloc] init]);
         [webView setNavigationDelegate:navigationDelegate.get()];

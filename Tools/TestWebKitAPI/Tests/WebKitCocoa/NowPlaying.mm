@@ -90,6 +90,7 @@ public:
         addObserver(*this);
 
         _configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [_configuration _setAllowTestOnlyIPC:YES];
         [_configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeAudio];
 #if PLATFORM(IOS_FAMILY)
         [_configuration setAllowsInlineMediaPlayback:YES];

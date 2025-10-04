@@ -41,6 +41,7 @@ TEST(Fullscreen, ScrollAndResize)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration preferences].elementFullscreenEnabled = YES;
+    [configuration _setAllowTestOnlyIPC:YES];
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get() addToWindow:YES]);
 
     [webView synchronouslyLoadHTMLString:
