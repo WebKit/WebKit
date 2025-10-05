@@ -8053,6 +8053,8 @@
 		CD20CE7525CC999F0069B542 /* RemoteAudioHardwareListenerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioHardwareListenerProxy.cpp; sourceTree = "<group>"; };
 		CD20CE7725CD2B9D0069B542 /* RemoteAudioHardwareListenerMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioHardwareListenerMessageReceiver.cpp; sourceTree = "<group>"; };
 		CD20CE7925CD2B9E0069B542 /* RemoteAudioHardwareListenerMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioHardwareListenerMessages.h; sourceTree = "<group>"; };
+		CD3480952E8F23FD0040CEF9 /* WebCoreLogClientDeclarations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCoreLogClientDeclarations.h; sourceTree = "<group>"; };
+		CD3480962E8F23FD0040CEF9 /* WebKitLogClientDeclarations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitLogClientDeclarations.h; sourceTree = "<group>"; };
 		CD36C16C260A6EBE00C8C529 /* LocalAudioSessionRoutingArbitrator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalAudioSessionRoutingArbitrator.h; sourceTree = "<group>"; };
 		CD36C16D260A6EBE00C8C529 /* LocalAudioSessionRoutingArbitrator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LocalAudioSessionRoutingArbitrator.cpp; sourceTree = "<group>"; };
 		CD3EEF3125799618006563BB /* RemoteMediaEngineConfigurationFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaEngineConfigurationFactory.h; sourceTree = "<group>"; };
@@ -16561,6 +16563,7 @@
 				1C0A195B1C916E1B00FE0EBB /* WebAutomationSessionProxyScriptSource.h */,
 				330934431315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp */,
 				330934441315B9220097A7BC /* WebCookieManagerMessages.h */,
+				CD3480952E8F23FD0040CEF9 /* WebCoreLogClientDeclarations.h */,
 				E3866B062399979C00F88FE9 /* WebDeviceOrientationUpdateProviderMessageReceiver.cpp */,
 				E3866B072399979D00F88FE9 /* WebDeviceOrientationUpdateProviderMessages.h */,
 				E3866B042399979C00F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp */,
@@ -16601,6 +16604,7 @@
 				996B2B9625E2448200719379 /* WebInspectorUIExtensionControllerProxyMessages.h */,
 				1CBBE49E19B66C53006B7D81 /* WebInspectorUIMessageReceiver.cpp */,
 				1CBBE49F19B66C53006B7D81 /* WebInspectorUIMessages.h */,
+				CD3480962E8F23FD0040CEF9 /* WebKitLogClientDeclarations.h */,
 				5C9E0F972A577EC400FC2664 /* WebKitPlatformGeneratedSerializers.mm */,
 				31BA9248148830810062EDB5 /* WebNotificationManagerMessageReceiver.cpp */,
 				31BA9249148830810062EDB5 /* WebNotificationManagerMessages.h */,

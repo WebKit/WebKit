@@ -26,6 +26,13 @@
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 
+#include "Connection.h"
+#include "LogStreamMessages.h"
+#include "StreamClientConnection.h"
+#include "WebKitLogDefinitions.h"
+#include <WebCore/WebCoreLogDefinitions.h>
+#include <wtf/Locker.h>
+
 namespace WebKit {
 
 LogClient::LogClient(Ref<ConnectionType>&& connection)
@@ -36,6 +43,26 @@ LogClient::LogClient(Ref<ConnectionType>&& connection)
 void LogClient::log(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, os_log_type_t type)
 {
     send(Messages::LogStream::LogOnBehalfOfWebContent(logChannel, logCategory, logString, type));
+}
+
+
+#undef DEFINE_LOG_MESSAGE
+#define DEFINE_LOG_MESSAGE(messageName, argumentDeclarations, arguments) \
+void LogClient::messageName argumentDeclarations \
+{ \
+    send(Messages::LogStream::messageName arguments); \
+}
+WEBCORE_LOG_CLIENT_MESSAGES(DEFINE_LOG_MESSAGE);
+WEBKIT2_LOG_CLIENT_MESSAGES(DEFINE_LOG_MESSAGE);
+#undef DEFINE_LOG_MESSAGE
+
+template<typename T>
+void LogClient::send(T&& message)
+{
+#if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
+    Locker locker { m_lock };
+#endif
+    m_connection->send(WTFMove(message), identifier());
 }
 
 }
