@@ -32,20 +32,18 @@ def generate_messages_file(log_messages, log_messages_receiver_input_file, strea
     return
 
 
-def generate_log_client_declarations_file(log_messages, log_client_declarations_file):
+def generate_log_client_declarations_file(prefix, log_messages, log_client_declarations_file):
     with open(log_client_declarations_file, 'w') as file:
-
+        file.write("#pragma once\n")
+        file.write("\n")
+        file.write("#define " + prefix + "_LOG_CLIENT_MESSAGES(M) \\\n")
         for log_message in log_messages:
             function_name = log_message[0]
             parameters = log_message[2]
-            arguments_string = log_declarations_module.get_arguments_string(parameters, log_declarations_module.PARAMETER_LIST_INCLUDE_TYPE | log_declarations_module.PARAMETER_LIST_INCLUDE_NAME | log_declarations_module.PARAMETER_LIST_MODIFY_CSTRING)
-            file.write("    void " + function_name + "(" + arguments_string + ")\n")
-            file.write("    {\n")
-            parameters_string = log_declarations_module.get_arguments_string(parameters, log_declarations_module.PARAMETER_LIST_INCLUDE_NAME)
-            file.write("        send(Messages::LogStream::" + function_name + "(" + parameters_string + "));\n")
-            file.write("    }\n")
+            arguments_declarations = log_declarations_module.get_arguments_string(parameters, log_declarations_module.PARAMETER_LIST_INCLUDE_TYPE | log_declarations_module.PARAMETER_LIST_INCLUDE_NAME | log_declarations_module.PARAMETER_LIST_MODIFY_CSTRING)
+            arguments = ', '.join("arg" + str(i) for i in range(0, len(log_declarations_module.get_argument_list(parameters))))
+            file.write("    M(" + function_name + ", (" + arguments_declarations + "), (" + arguments + ")) \\\n")
         file.close()
-
     return
 
 
@@ -133,8 +131,8 @@ def main(argv):
     generate_message_receiver_declarations_file(log_messages, message_receiver_declarations_file)
     generate_message_receiver_implementations_file(log_messages, message_receiver_implementations_file)
 
-    generate_log_client_declarations_file(webkit_log_messages, webkit_log_client_declarations_file)
-    generate_log_client_declarations_file(webcore_log_messages, webcore_log_client_declarations_file)
+    generate_log_client_declarations_file("WEBKIT2", webkit_log_messages, webkit_log_client_declarations_file)
+    generate_log_client_declarations_file("WEBCORE", webcore_log_messages, webcore_log_client_declarations_file)
 
     return 0
 
