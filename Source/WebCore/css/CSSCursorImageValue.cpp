@@ -81,10 +81,9 @@ RefPtr<StyleCursorImage> CSSCursorImageValue::createStyleImage(const Style::Buil
 
     std::optional<IntPoint> hotSpot;
     if (m_hotSpot) {
-        // FIXME: Should we clamp or round instead of just casting from double to int?
         hotSpot = IntPoint {
-            static_cast<int>(downcast<CSSPrimitiveValue>(m_hotSpot->first()).resolveAsNumber(state.cssToLengthConversionData())),
-            static_cast<int>(downcast<CSSPrimitiveValue>(m_hotSpot->second()).resolveAsNumber(state.cssToLengthConversionData()))
+            downcast<CSSPrimitiveValue>(m_hotSpot->first()).resolveAsNumber<int>(state.cssToLengthConversionData()),
+            downcast<CSSPrimitiveValue>(m_hotSpot->second()).resolveAsNumber<int>(state.cssToLengthConversionData())
         };
     }
     return StyleCursorImage::create(styleImage.releaseNonNull(), hotSpot, Style::toStyle(m_originalURL, state));
