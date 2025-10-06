@@ -65,6 +65,7 @@
 static const NSTimeInterval showHideAnimationDuration = 0.1;
 static const NSTimeInterval pipHideAnimationDuration = 0.2;
 static const NSTimeInterval autoHideDelay = 4.0;
+static constexpr CGFloat buttonContentInset = 8.0;
 
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
 static const Seconds bannerMinimumHideDelay = 1_s;
@@ -162,6 +163,10 @@ private:
     RetainPtr<WKExtrinsicButton> _pipButton;
     RetainPtr<UIButton> _locationButton;
     RetainPtr<UILayoutGuide> _topGuide;
+#if !PLATFORM(VISION)
+    RetainPtr<WKFullscreenStackView> _closeStack;
+    RetainPtr<WKFullscreenStackView> _controlsStack;
+#endif
     RetainPtr<NSLayoutConstraint> _topConstraint;
     String _location;
     WebKit::FullscreenTouchSecheuristic _secheuristic;
@@ -300,8 +305,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
     [UIView animateWithDuration:showHideAnimationDuration animations:^{
         [[self delegate] showUI];
+#if PLATFORM(VISION)
         [_stackView setHidden:NO];
         [_stackView setAlpha:1];
+#else
+        [_closeStack setHidden:NO];
+        [_closeStack setAlpha:1];
+        [_controlsStack setHidden:!_controlsStack.get().arrangedSubviews.count];
+        if (![_controlsStack isHidden])
+            [_controlsStack setAlpha:1];
+#endif
         self.prefersStatusBarHidden = NO;
         self.prefersHomeIndicatorAutoHidden = NO;
         if (_topConstraint)
@@ -334,7 +347,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             [NSLayoutConstraint deactivateConstraints:@[_topConstraint.get()]];
         _topConstraint = [[_topGuide topAnchor] constraintEqualToAnchor:self.view.topAnchor constant:self.view.safeAreaInsets.top];
         [_topConstraint setActive:YES];
+#if PLATFORM(VISION)
         [_stackView setAlpha:0];
+#else
+        [_closeStack setAlpha:0];
+        [_controlsStack setAlpha:0];
+#endif
         self.prefersStatusBarHidden = YES;
         self.prefersHomeIndicatorAutoHidden = YES;
 #if ENABLE(LINEAR_MEDIA_PLAYER)
@@ -344,7 +362,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         if (!finished)
             return;
 
+#if PLATFORM(VISION)
         [_stackView setHidden:YES];
+#else
+        [_closeStack setHidden:YES];
+        [_controlsStack setHidden:YES];
+#endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
         [_centeredStackView setHidden:YES];
 #endif
@@ -519,7 +542,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     if (_environmentPickerButtonViewController == environmentPickerButtonViewController) {
+#if PLATFORM(VISION)
         ASSERT(!environmentPickerButtonViewController || [[_stackView arrangedSubviews] containsObject:environmentPickerButtonViewController.view]);
+#else
+        ASSERT(!environmentPickerButtonViewController || [[_controlsStack arrangedSubviews] containsObject:environmentPickerButtonViewController.view]);
+#endif
         return;
     }
 
@@ -528,7 +555,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
 
     [self addChildViewController:environmentPickerButtonViewController];
+#if PLATFORM(VISION)
     [_stackView insertArrangedSubview:environmentPickerButtonViewController.view atIndex:1];
+#else
+    [_controlsStack insertArrangedSubview:environmentPickerButtonViewController.view atIndex:0];
+#endif
     [environmentPickerButtonViewController didMoveToParentViewController:self];
     _environmentPickerButtonViewController = environmentPickerButtonViewController;
     _buttonState.add(EnvironmentPicker);
@@ -542,7 +573,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     UIView *environmentPickerButtonView = [_environmentPickerButtonViewController view];
 
     [_environmentPickerButtonViewController willMoveToParentViewController:nil];
+#if PLATFORM(VISION)
     [_stackView removeArrangedSubview:environmentPickerButtonView];
+#else
+    [_controlsStack removeArrangedSubview:environmentPickerButtonView];
+#endif
     [environmentPickerButtonView removeFromSuperview];
     [self removeChildViewController:_environmentPickerButtonViewController.get()];
 
@@ -761,6 +796,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_cancelButton setImage:[doneImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
     [_cancelButton sizeToFit];
     [_cancelButton addTarget:self action:@selector(_cancelAction:) forControlEvents:UIControlEventTouchUpInside];
+    [[_cancelButton layer] setCornerRadius:buttonSize.width / 2.0];
+    [[_cancelButton layer] setMasksToBounds:1];
 #if PLATFORM(APPLETV)
     [_cancelButton setConfiguration:UIButtonConfiguration.filledButtonConfiguration];
 #endif
@@ -770,9 +807,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [_pipButton setImage:[UIImage systemImageNamed:@"pip.exit"] forState:UIControlStateSelected];
     [_pipButton sizeToFit];
     [_pipButton addTarget:self action:@selector(_togglePiPAction:) forControlEvents:UIControlEventTouchUpInside];
+    [[_pipButton layer] setCornerRadius:buttonSize.width / 2.0];
+    [[_pipButton layer] setMasksToBounds:1];
 
     if (alternateFullScreenControlDesignEnabled) {
         UIButtonConfiguration *buttonConfiguration = [UIButtonConfiguration filledButtonConfiguration];
+        buttonConfiguration.cornerStyle = UIButtonConfigurationCornerStyleCapsule;
+        buttonConfiguration.contentInsets = NSDirectionalEdgeInsetsMake(buttonContentInset, buttonContentInset, buttonContentInset, buttonContentInset);
         [_cancelButton setConfiguration:buttonConfiguration];
         [_pipButton setConfiguration:buttonConfiguration];
 
@@ -783,6 +824,43 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [_moreActionsButton setMenu:self._webView.fullScreenWindowSceneDimmingAction];
         [_moreActionsButton setShowsMenuAsPrimaryAction:YES];
         [_moreActionsButton setImage:[[UIImage systemImageNamed:@"ellipsis"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+        [[_moreActionsButton layer] setCornerRadius:buttonSize.width / 2.0];
+        [[_moreActionsButton layer] setMasksToBounds:1];
+
+        _stackView = adoptNS([[UIStackView alloc] init]);
+        [_stackView addArrangedSubview:_cancelButton.get()];
+        [_stackView addArrangedSubview:_pipButton.get()];
+        [_stackView addArrangedSubview:_moreActionsButton.get()];
+        [_stackView setSpacing:24.0];
+#else
+        _closeStack = adoptNS([[WKFullscreenStackView alloc] init]);
+        [_closeStack setAxis:UILayoutConstraintAxisHorizontal];
+        [_closeStack setAlignment:UIStackViewAlignmentCenter];
+        [_closeStack setTranslatesAutoresizingMaskIntoConstraints:NO];
+#if PLATFORM(APPLETV)
+        [_closeStack addArrangedSubview:_cancelButton.get()];
+#else
+        [_closeStack addArrangedSubview:_cancelButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStyleSecondary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
+#endif
+        [_animatingView addSubview:_closeStack.get()];
+
+        [[_closeStack widthAnchor] constraintEqualToConstant:buttonSize.width].active = YES;
+        [[_closeStack heightAnchor] constraintEqualToConstant:buttonSize.width].active = YES;
+
+        _controlsStack = adoptNS([[WKFullscreenStackView alloc] init]);
+        [_controlsStack setAxis:UILayoutConstraintAxisHorizontal];
+        [_controlsStack setAlignment:UIStackViewAlignmentCenter];
+        [_controlsStack setSpacing:16.0];
+        [_controlsStack setTranslatesAutoresizingMaskIntoConstraints:NO];
+#if PLATFORM(APPLETV)
+        [_controlsStack addArrangedSubview:_pipButton.get()];
+#else
+        [_controlsStack addArrangedSubview:_pipButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStylePrimary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
+#endif
+        [_animatingView addSubview:_controlsStack.get()];
+
+        [[_controlsStack widthAnchor] constraintEqualToConstant:buttonSize.width].active = YES;
+        [[_controlsStack heightAnchor] constraintEqualToConstant:buttonSize.width].active = YES;
 #endif
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
@@ -794,27 +872,44 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _centeredStackView = adoptNS([[UIStackView alloc] init]);
         [_centeredStackView setSpacing:24.0];
 #endif
-
-        _stackView = adoptNS([[UIStackView alloc] init]);
-        [_stackView addArrangedSubview:_cancelButton.get()];
-        [_stackView addArrangedSubview:_pipButton.get()];
-#if PLATFORM(VISION)
-        [_stackView addArrangedSubview:_moreActionsButton.get()];
-#endif
-        [_stackView setSpacing:24.0];
     } else {
         RetainPtr<WKFullscreenStackView> stackView = adoptNS([[WKFullscreenStackView alloc] init]);
-#if PLATFORM(APPLETV)
-        [stackView addArrangedSubview:_cancelButton.get()];
-#else
+#if PLATFORM(VISION)
         [stackView addArrangedSubview:_cancelButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStyleSecondary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
         [stackView addArrangedSubview:_pipButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStylePrimary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
-#endif
         _stackView = WTFMove(stackView);
+#else
+        _closeStack = adoptNS([[WKFullscreenStackView alloc] init]);
+        [_closeStack setTranslatesAutoresizingMaskIntoConstraints:NO];
+#if PLATFORM(APPLETV)
+        [_closeStack addArrangedSubview:_cancelButton.get()];
+#else
+        [_closeStack addArrangedSubview:_cancelButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStyleSecondary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
+#endif
+        [_animatingView addSubview:_closeStack.get()];
+
+        [[_closeStack widthAnchor] constraintEqualToConstant:buttonSize.width].active = YES;
+        [[_closeStack heightAnchor] constraintEqualToConstant:buttonSize.width].active = YES;
+
+        _controlsStack = WTFMove(stackView);
+        [_controlsStack setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [_controlsStack setAlignment:UIStackViewAlignmentCenter];
+#if PLATFORM(APPLETV)
+        [_controlsStack addArrangedSubview:_pipButton.get()];
+#else
+        [_controlsStack addArrangedSubview:_pipButton.get() applyingMaterialStyle:AVBackgroundViewMaterialStylePrimary tintEffectStyle:AVBackgroundViewTintEffectStyleSecondary];
+#endif
+        [_animatingView addSubview:_controlsStack.get()];
+
+        [[_controlsStack widthAnchor] constraintEqualToConstant:buttonSize.width].active = YES;
+        [[_controlsStack heightAnchor] constraintEqualToConstant:buttonSize.width].active = YES;
+#endif
     }
 
+#if PLATFORM(VISION)
     [_stackView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [_animatingView addSubview:_stackView.get()];
+#endif
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     [_centeredStackView setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -849,12 +944,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _topGuide = adoptNS([[UILayoutGuide alloc] init]);
     [self.view addLayoutGuide:_topGuide.get()];
     NSLayoutYAxisAnchor *topAnchor = [_topGuide topAnchor];
+    _topConstraint = [topAnchor constraintEqualToAnchor:safeArea.topAnchor];
+#if PLATFORM(VISION)
     NSLayoutConstraint *stackViewToTopGuideConstraint;
     if (alternateFullScreenControlDesignEnabled)
         stackViewToTopGuideConstraint = [[_stackView topAnchor] constraintEqualToSystemSpacingBelowAnchor:topAnchor multiplier:3];
     else
         stackViewToTopGuideConstraint = [[_stackView topAnchor] constraintEqualToAnchor:topAnchor];
-    _topConstraint = [topAnchor constraintEqualToAnchor:safeArea.topAnchor];
     [NSLayoutConstraint activateConstraints:@[
         _topConstraint.get(),
         stackViewToTopGuideConstraint,
@@ -869,9 +965,33 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [[_centeredStackView centerXAnchor] constraintEqualToAnchor:[_animatingView centerXAnchor]],
 #endif
     ]];
+#else
+    [NSLayoutConstraint activateConstraints:@[
+        _topConstraint.get(),
+        [[_closeStack topAnchor] constraintEqualToAnchor:topAnchor],
+        [[_controlsStack topAnchor] constraintEqualToAnchor:topAnchor],
+        [[_closeStack leadingAnchor] constraintEqualToAnchor:margins.leadingAnchor],
+        [[_controlsStack leadingAnchor] constraintEqualToSystemSpacingAfterAnchor:_closeStack.get().trailingAnchor multiplier:1.0],
+#if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
+        [[_banner topAnchor] constraintEqualToSystemSpacingBelowAnchor:[_controlsStack bottomAnchor] multiplier:3],
+        [[_banner centerXAnchor] constraintEqualToAnchor:self.view.centerXAnchor],
+#endif
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+        [[_centeredStackView topAnchor] constraintEqualToAnchor:[_closeStack topAnchor]],
+        [[_centeredStackView centerXAnchor] constraintEqualToAnchor:[_animatingView centerXAnchor]],
+#endif
+    ]];
+#endif
 
+#if PLATFORM(VISION)
     [_stackView setAlpha:0];
     [_stackView setHidden:YES];
+#else
+    [_closeStack setAlpha:0];
+    [_closeStack setHidden:YES];
+    [_controlsStack setAlpha:0];
+    [_controlsStack setHidden:YES];
+#endif
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     [_centeredStackView setAlpha:0];
     [_centeredStackView setHidden:YES];
@@ -936,6 +1056,20 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self._webView setFrame:[_animatingView bounds]];
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
     [_bannerLabel setPreferredMaxLayoutWidth:self.view.bounds.size.width];
+#endif
+#if !PLATFORM(VISION)
+    auto alternateFullScreenControlDesignEnabled = self._webView._page->preferences().alternateFullScreenControlDesignEnabled();
+    CGFloat buttonDimension = alternateFullScreenControlDesignEnabled ? 44.0 : 60.0;
+
+    if (_closeStack) {
+        [[_closeStack layer] setCornerRadius:buttonDimension / 2.0];
+        [[_closeStack layer] setMasksToBounds:1];
+    }
+
+    if (_controlsStack) {
+        [[_controlsStack layer] setCornerRadius:buttonDimension / 2.0];
+        [[_controlsStack layer] setMasksToBounds:1];
+    }
 #endif
 }
 
@@ -1004,7 +1138,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     CGRect cancelFrame = _cancelButton.get().frame;
     CGPoint maxXY = CGPointMake(CGRectGetMaxX(cancelFrame), CGRectGetMaxY(cancelFrame));
-    insets.setTop([_cancelButton convertPoint:maxXY toView:self.view].y);
+    CGFloat topY = [_cancelButton convertPoint:maxXY toView:self.view].y;
+
+#if !PLATFORM(VISION)
+    if (_controlsStack) {
+        CGRect controlsFrame = _controlsStack.get().frame;
+        CGPoint controlsMax = CGPointMake(CGRectGetMaxX(controlsFrame), CGRectGetMaxY(controlsFrame));
+        topY =  std::max(topY, [_controlsStack convertPoint:controlsMax toView:self.view].y);
+    }
+#endif
+
+    insets.setTop(topY);
     return insets;
 }
 
