@@ -5357,7 +5357,7 @@ MediaSourcePrefersDecompressionSession:
 
 MediaSourceUseRemoteAudioVideoRenderer:
   type: bool
-  status: unstable
+  status: testable
   category: media
   humanReadableName: "MSE player uses GPU renderer"
   humanReadableDescription: "MSE player uses GPU renderer"
