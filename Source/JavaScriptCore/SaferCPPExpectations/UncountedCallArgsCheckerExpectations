@@ -36,7 +36,6 @@ bytecode/SetPrivateBrandStatus.cpp
 bytecode/SharedJITStubSet.h
 bytecode/StructureStubInfo.cpp
 bytecode/UnlinkedFunctionExecutable.cpp
-bytecode/Watchpoint.h
 bytecompiler/BytecodeGenerator.cpp
 bytecompiler/BytecodeGenerator.h
 bytecompiler/NodesCodegen.cpp
