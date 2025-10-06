@@ -20,7 +20,7 @@ if (WTF_CPU_ARM)
     int main() {}
     ")
 
-    if (COMPILER_IS_CLANG AND NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin"))
+    if (COMPILER_IS_GCC_OR_CLANG AND NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin"))
         set(CLANG_EXTRA_ARM_ARGS " -mthumb")
     endif ()
 
