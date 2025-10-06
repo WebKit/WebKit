@@ -34,6 +34,7 @@
 #import "CookieStorageUtilsCF.h"
 #import "DefaultWebBrowserChecks.h"
 #import "ExtensionCapabilityGranter.h"
+#import "IPCSystemTracingSupport.h"
 #import "LegacyCustomProtocolManagerClient.h"
 #import "LockdownModeObserver.h"
 #import "Logging.h"
@@ -371,6 +372,8 @@ void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization needsGlo
     });
 #endif
 
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitEnableIPCSignposts"])
+        IPC::setSignpostsEnabled(true);
 }
 
 void WebProcessPool::platformResolvePathsForSandboxExtensions()

@@ -49,12 +49,15 @@
 
 #if PLATFORM(COCOA)
 #include "MachMessage.h"
-#include <CoreFoundation/CoreFoundation.h>
 #endif
 
 #if USE(UNIX_DOMAIN_SOCKETS)
 #include "ArgumentCodersUnix.h"
 #include "UnixMessage.h"
+#endif
+
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+#include "IPCSystemTracingSupport.h"
 #endif
 
 namespace IPC {
@@ -557,42 +560,13 @@ auto Connection::createSyncMessageEncoder(MessageName messageName, uint64_t dest
     return { WTFMove(encoder), syncRequestID };
 }
 
-#if ENABLE(CORE_IPC_SIGNPOSTS)
-
-static bool ipcSignpostsEnabled = false;
-
-void Connection::forceEnableSignposts()
-{
-    ipcSignpostsEnabled = true;
-}
-
-bool Connection::signpostsEnabled()
-{
-    static bool hasReadPreferences = false;
-    if (!hasReadPreferences) [[unlikely]] {
-        if (!isInAuxiliaryProcess() && CFPreferencesGetAppBooleanValue(CFSTR("WebKitDebugIPCSignposts"), kCFPreferencesCurrentApplication, nullptr))
-            ipcSignpostsEnabled = true;
-        hasReadPreferences = true;
-    }
-
-    return ipcSignpostsEnabled;
-}
-
-static uintptr_t generateSignpostIdentifier()
-{
-    static std::atomic<uintptr_t> identifier;
-    return ++identifier;
-}
-
-#endif
-
 Error Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> qos)
 {
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     // Signposts can turn in to log message IPCs when emitted from WebContent. Don't emit a signpost
     // for log messages to avoid an infinite number of signposts.
     if (signpostsEnabled() && receiverName(encoder->messageName()) != IPC::ReceiverName::LogStream) [[unlikely]]
-        WTFEmitSignpost(generateSignpostIdentifier(), IPCConnection, "sendMessage: %" PUBLIC_LOG_STRING, description(encoder->messageName()).characters());
+        WTFEmitSignpost(generateSignpostIdentifier(), IPCMessage, "sendMessage: %" PUBLIC_LOG_STRING, description(encoder->messageName()).characters());
 #endif
 
     return sendMessageImpl(WTFMove(encoder), sendOptions, qos);
@@ -705,10 +679,10 @@ Error Connection::sendMessageWithAsyncReply(UniqueRef<Encoder>&& encoder, AsyncR
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     if (signpostsEnabled()) [[unlikely]] {
         auto signpostIdentifier = generateSignpostIdentifier();
-        WTFBeginSignpost(signpostIdentifier, IPCConnection, "sendMessageWithAsyncReply: %" PUBLIC_LOG_STRING, description(encoder->messageName()).characters());
+        WTFBeginSignpost(signpostIdentifier, IPCMessage, "sendMessageWithAsyncReply: %" PUBLIC_LOG_STRING, description(encoder->messageName()).characters());
 
         replyHandler.completionHandler = CompletionHandler<void(Connection*, Decoder*)>([signpostIdentifier, handler = WTFMove(replyHandler.completionHandler)](Connection* connection, Decoder *decoder) mutable {
-            WTFEndSignpost(signpostIdentifier, IPCConnection);
+            WTFEndSignpost(signpostIdentifier, IPCMessage);
             handler(connection, decoder);
         });
     }
@@ -766,12 +740,12 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
     uintptr_t signpostIdentifier = 0;
     if (signpostsEnabled()) [[unlikely]] {
         signpostIdentifier = generateSignpostIdentifier();
-        WTFBeginSignpost(signpostIdentifier, IPCConnection, "waitForMessage: %" PUBLIC_LOG_STRING, description(messageName).characters());
+        WTFBeginSignpost(signpostIdentifier, IPCMessage, "waitForMessage: %" PUBLIC_LOG_STRING, description(messageName).characters());
     }
 
     auto endSignpost = makeScopeExit([signpostIdentifier] {
         if (signpostIdentifier) [[unlikely]]
-            WTFEndSignpost(signpostIdentifier, IPCConnection);
+            WTFEndSignpost(signpostIdentifier, IPCMessage);
     });
 #endif
 
@@ -916,7 +890,7 @@ auto Connection::sendSyncMessage(SyncRequestID syncRequestID, UniqueRef<Encoder>
     uintptr_t signpostIdentifier = 0;
     if (signpostsEnabled()) [[unlikely]] {
         signpostIdentifier = generateSignpostIdentifier();
-        WTFBeginSignpost(signpostIdentifier, IPCConnection, "sendSyncMessage: %" PUBLIC_LOG_STRING, description(messageName).characters());
+        WTFBeginSignpost(signpostIdentifier, IPCMessage, "sendSyncMessage: %" PUBLIC_LOG_STRING, description(messageName).characters());
     }
 #endif
 
@@ -931,7 +905,7 @@ auto Connection::sendSyncMessage(SyncRequestID syncRequestID, UniqueRef<Encoder>
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     if (signpostIdentifier) [[unlikely]]
-        WTFEndSignpost(signpostIdentifier, IPCConnection);
+        WTFEndSignpost(signpostIdentifier, IPCMessage);
 #endif
 
     popPendingSyncRequestID(syncRequestID);

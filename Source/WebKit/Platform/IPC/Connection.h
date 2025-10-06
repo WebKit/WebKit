@@ -543,11 +543,6 @@ public:
 
     void markCurrentlyDispatchedMessageAsInvalid();
 
-#if ENABLE(CORE_IPC_SIGNPOSTS)
-    static bool signpostsEnabled();
-    static void forceEnableSignposts();
-#endif
-
     static bool shouldCrashOnMessageCheckFailure();
     static void setShouldCrashOnMessageCheckFailure(bool);
 

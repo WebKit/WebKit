@@ -176,37 +176,24 @@ void StreamClientConnection::removeWorkQueueMessageReceiver(ReceiverName name, u
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
 
-static bool streamingIPCSignpostsEnabled = false;
-
-void StreamClientConnection::forceEnableSignposts()
-{
-    streamingIPCSignpostsEnabled = true;
-}
-
-bool StreamClientConnection::signpostsEnabled()
-{
-    static bool hasReadPreferences = false;
-    if (!hasReadPreferences) [[unlikely]] {
-        if (!isInAuxiliaryProcess() && CFPreferencesGetAppBooleanValue(CFSTR("WebKitDebugStreamingIPCSignposts"), kCFPreferencesCurrentApplication, nullptr))
-            streamingIPCSignpostsEnabled = true;
-        hasReadPreferences = true;
-    }
-
-    return streamingIPCSignpostsEnabled;
-}
-
-uintptr_t StreamClientConnection::generateSignpostIdentifier()
-{
-    static std::atomic<uintptr_t> identifier;
-    return ++identifier;
-}
-
-void StreamClientConnection::emitSendSignpost(MessageName messageName)
+void StreamClientConnection::emitSignpost(MessageName messageName)
 {
     // Signposts can turn in to log message IPCs when emitted from WebContent. Don't emit a signpost
     // for log messages to avoid an infinite number of signposts.
-    if (signpostsEnabled() && receiverName(messageName) != IPC::ReceiverName::LogStream) [[unlikely]]
-        WTFEmitSignpost(generateSignpostIdentifier(), StreamClientConnection, "send: %" PUBLIC_LOG_STRING, description(messageName).characters());
+    if (receiverName(messageName) == IPC::ReceiverName::LogStream) [[unlikely]]
+        return;
+    WTFEmitSignpost(generateSignpostIdentifier(), IPCStreamMessage, "send: %" PUBLIC_LOG_STRING, description(messageName).characters());
+}
+
+uintptr_t StreamClientConnection::beginSignpost(IntervalSignpostOperation operation, MessageName messageName)
+{
+    ASSERT(receiverName(messageName) != IPC::ReceiverName::LogStream);
+    auto signpostIdentifier = generateSignpostIdentifier();
+    if (operation == IntervalSignpostOperation::SendWithAsyncReply)
+        WTFBeginSignpost(signpostIdentifier, IPCStreamMessage, "sendWithAsyncReply: %" PUBLIC_LOG_STRING, description(messageName).characters());
+    else
+        WTFBeginSignpost(signpostIdentifier, IPCStreamMessage, "sendSync: %" PUBLIC_LOG_STRING, description(messageName).characters());
+    return signpostIdentifier;
 }
 
 #endif

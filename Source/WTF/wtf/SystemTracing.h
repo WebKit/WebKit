@@ -275,8 +275,8 @@ WTF_EXTERN_C_END
     M(JSCJITPlanQueued) \
     M(JSCJITPlanReady) \
     M(JSCJSGlobalObject) \
-    M(IPCConnection) \
-    M(StreamClientConnection) \
+    M(IPCMessage) \
+    M(IPCStreamMessage) \
     M(ScrollingPerformanceTestFingerDownInterval) \
     M(ScrollingPerformanceTestMomentumInterval) \
     M(UpdateAccessibilityIsolatedTree) \

@@ -1593,6 +1593,7 @@
 		7B483F1F25CDDA9C00120486 /* MessageReceiveQueueMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B483F1B25CDDA9B00120486 /* MessageReceiveQueueMap.h */; };
 		7B483F2025CDDA9C00120486 /* MessageReceiveQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B483F1C25CDDA9B00120486 /* MessageReceiveQueue.h */; };
 		7B483F2225CDDA9C00120486 /* MessageReceiveQueues.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B483F1E25CDDA9B00120486 /* MessageReceiveQueues.h */; };
+		7B5C14892E93D0A500D1EC07 /* IPCSystemTracingSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B5C14882E93D0A500D1EC07 /* IPCSystemTracingSupport.h */; };
 		7B73123A25CC8525003B2796 /* StreamConnectionBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B73123125CC8523003B2796 /* StreamConnectionBuffer.h */; };
 		7B73123C25CC8525003B2796 /* StreamClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B73123325CC8523003B2796 /* StreamClientConnection.h */; };
 		7B73123E25CC8525003B2796 /* StreamConnectionWorkQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B73123525CC8524003B2796 /* StreamConnectionWorkQueue.h */; };
@@ -6784,6 +6785,8 @@
 		7B5A3DA727A7DCBC006C6F97 /* RemoteVideoFrameObjectHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteVideoFrameObjectHeap.h; sourceTree = "<group>"; };
 		7B5A3DA827A7DCBC006C6F97 /* RemoteVideoFrameObjectHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteVideoFrameObjectHeap.cpp; sourceTree = "<group>"; };
 		7B5A3DC527AE501A006C6F97 /* ObjectIdentifierReferenceTracker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectIdentifierReferenceTracker.h; sourceTree = "<group>"; };
+		7B5C14882E93D0A500D1EC07 /* IPCSystemTracingSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCSystemTracingSupport.h; sourceTree = "<group>"; };
+		7B5C148A2E93DC1F00D1EC07 /* IPCSystemTracingSupportCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IPCSystemTracingSupportCocoa.cpp; sourceTree = "<group>"; };
 		7B64C0B6254C5C250006B4AF /* RemoteGraphicsContextGLIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLIdentifier.h; sourceTree = "<group>"; };
 		7B72BB642E57405300D48E7D /* RemoteDisplayListIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDisplayListIdentifier.h; sourceTree = "<group>"; };
 		7B72BB652E57419400D48E7D /* RemoteDisplayListRecorderIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteDisplayListRecorderIdentifier.h; sourceTree = "<group>"; };
@@ -10512,6 +10515,7 @@
 				46BB389C2B69764600F02BE0 /* IPCEvent.serialization.in */,
 				A31F60A225CC7DB800AF14F4 /* IPCSemaphore.h */,
 				46CD8C442B059FF500360248 /* IPCSemaphore.serialization.in */,
+				7B5C14882E93D0A500D1EC07 /* IPCSystemTracingSupport.h */,
 				7B9FC5AC28A3B440007570E7 /* IPCUtilities.cpp */,
 				7B9FC5AB28A3B440007570E7 /* IPCUtilities.h */,
 				9BF5EC6325410E9900984E77 /* JSIPCBinding.cpp */,
@@ -16054,6 +16058,7 @@
 				1A30EAC5115D7DA30053E937 /* ConnectionCocoa.mm */,
 				5C1579E627172A5100ED5280 /* DaemonConnectionCocoa.mm */,
 				1A1EC69D1872092100B951F0 /* ImportanceAssertion.h */,
+				7B5C148A2E93DC1F00D1EC07 /* IPCSystemTracingSupportCocoa.cpp */,
 				1A6D86BF1DF75265007745E8 /* MachMessage.cpp */,
 				1A6D86C01DF75265007745E8 /* MachMessage.h */,
 				93468E6C2714AF88009983E3 /* SharedFileHandleCocoa.cpp */,
@@ -17166,6 +17171,7 @@
 			files = (
 				561A54612B6438C000073A72 /* CoreIPCSecKeychainItem.h in Headers */,
 				562674F52B69B4C8008BB425 /* CoreIPCSecTrust.h in Headers */,
+				7B5C14892E93D0A500D1EC07 /* IPCSystemTracingSupport.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

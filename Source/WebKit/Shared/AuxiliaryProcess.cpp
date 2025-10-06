@@ -55,6 +55,10 @@
 #include "CoreIPCSecureCoding.h"
 #endif
 
+#if ENABLE(CORE_IPC_SIGNPOSTS)
+#include "IPCSystemTracingSupport.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -259,10 +263,8 @@ void AuxiliaryProcess::applyProcessCreationParameters(AuxiliaryProcessCreationPa
     SecureCoding::applyProcessCreationParameters(WTFMove(parameters));
 #endif
 #if ENABLE(CORE_IPC_SIGNPOSTS)
-    if (parameters.shouldEnableIPCSignposts)
-        IPC::Connection::forceEnableSignposts();
-    if (parameters.shouldEnableStreamingIPCSignposts)
-        IPC::StreamClientConnection::forceEnableSignposts();
+    // Note: some messages have already been sent at this point.
+    IPC::setSignpostsEnabled(parameters.shouldEnableIPCSignposts);
 #endif
 }
 
