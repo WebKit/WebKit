@@ -226,11 +226,11 @@ end
 const maxFrameExtentForSlowPathCall = constexpr maxFrameExtentForSlowPathCall
 
 if X86_64 or ARM64 or ARM64E or RISCV64
-    const CalleeSaveSpaceAsVirtualRegisters = 4
+    const CalleeSaveSpaceAsVirtualRegisters = 4 + 8
 elsif C_LOOP
     const CalleeSaveSpaceAsVirtualRegisters = 1
 elsif ARMv7
-    const CalleeSaveSpaceAsVirtualRegisters = 1
+    const CalleeSaveSpaceAsVirtualRegisters = 1 + 8 * 2
 else
     const CalleeSaveSpaceAsVirtualRegisters = 0
 end
@@ -968,11 +968,29 @@ macro preserveCalleeSavesUsedByLLInt()
     if C_LOOP
         storep metadataTable, -PtrSize[cfr]
     elsif ARMv7
-        storep PB, -4[cfr]
-        storep metadataTable, -8[cfr]
+        storep PB, - 8 * 8 - 4[cfr]
+        storep metadataTable, - 8 * 8 - 8[cfr]
+        stored csfr7, - 8 * 1[cfr]
+        stored csfr6, - 8 * 2[cfr]
+        stored csfr5, - 8 * 3[cfr]
+        stored csfr4, - 8 * 4[cfr]
+        stored csfr3, - 8 * 5[cfr]
+        stored csfr2, - 8 * 6[cfr]
+        stored csfr1, - 8 * 7[cfr]
+        stored csfr0, - 8 * 8[cfr]
+
     elsif ARM64 or ARM64E
-        storepairq csr8, csr9, -16[cfr]
-        storepairq csr6, csr7, -32[cfr]
+        storepairq csr8, csr9, - 8 * 8 - 16[cfr]
+        storepairq csr6, csr7, - 8 * 8 - 32[cfr]
+        stored csfr7, - 8 * 1[cfr]
+        stored csfr6, - 8 * 2[cfr]
+        stored csfr5, - 8 * 3[cfr]
+        stored csfr4, - 8 * 4[cfr]
+        stored csfr3, - 8 * 5[cfr]
+        stored csfr2, - 8 * 6[cfr]
+        stored csfr1, - 8 * 7[cfr]
+        stored csfr0, - 8 * 8[cfr]
+
     elsif X86_64
         storep csr4, -8[cfr]
         storep csr3, -16[cfr]
@@ -990,11 +1008,27 @@ macro restoreCalleeSavesUsedByLLInt()
     if C_LOOP
         loadp -PtrSize[cfr], metadataTable
     elsif ARMv7
-        loadp -4[cfr], PB
-        loadp -8[cfr], metadataTable
+        loadp - 8 * 8 - 4[cfr], PB
+        loadp - 8 * 8 - 8[cfr], metadataTable
+        stored csfr7, - 8 * 1[cfr]
+        stored csfr6, - 8 * 2[cfr]
+        stored csfr5, - 8 * 3[cfr]
+        stored csfr4, - 8 * 4[cfr]
+        stored csfr3, - 8 * 5[cfr]
+        stored csfr2, - 8 * 6[cfr]
+        stored csfr1, - 8 * 7[cfr]
+        stored csfr0, - 8 * 8[cfr]
     elsif ARM64 or ARM64E
-        loadpairq -32[cfr], csr6, csr7
-        loadpairq -16[cfr], csr8, csr9
+        loadpairq - 8 * 8 - 32[cfr], csr6, csr7
+        loadpairq - 8 * 8 - 16[cfr], csr8, csr9
+        loadd -8 * 1[cfr], csfr7
+        loadd -8 * 2[cfr], csfr6
+        loadd -8 * 3[cfr], csfr5
+        loadd -8 * 4[cfr], csfr4
+        loadd -8 * 5[cfr], csfr3
+        loadd -8 * 6[cfr], csfr2
+        loadd -8 * 7[cfr], csfr1
+        loadd -8 * 8[cfr], csfr0
     elsif X86_64
         loadp -32[cfr], csr1
         loadp -24[cfr], csr2

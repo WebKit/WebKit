@@ -229,7 +229,15 @@ RegisterSet RegisterSetBuilder::llintBaselineCalleeSaveRegisters()
     result.add(GPRInfo::regCS4, IgnoreVectors);
 #elif CPU(ARM_THUMB2)
     result.add(GPRInfo::regCS0, IgnoreVectors);
-    result.add(GPRInfo::regCS1, IgnoreVectors);
+    result.add(GPRInfo::regCS1, IgnoreVectors);i
+    result.add(FPRInfo::fpRegCS0, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS1, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS2, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS3, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS4, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS5, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS6, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS7, IgnoreVectors);
 #elif CPU(ARM64) || CPU(RISCV64)
     result.add(GPRInfo::regCS6, IgnoreVectors);
     static_assert(GPRInfo::regCS7 == GPRInfo::jitDataRegister);
@@ -238,6 +246,14 @@ RegisterSet RegisterSetBuilder::llintBaselineCalleeSaveRegisters()
     result.add(GPRInfo::regCS7, IgnoreVectors);
     result.add(GPRInfo::regCS8, IgnoreVectors);
     result.add(GPRInfo::regCS9, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS0, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS1, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS2, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS3, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS4, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS5, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS6, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS7, IgnoreVectors);
 #else
     UNREACHABLE_FOR_PLATFORM();
 #endif
@@ -428,20 +444,36 @@ RegisterSet RegisterSetBuilder::wasmPinnedRegisters()
 
 RegisterSet RegisterSetBuilder::ipintCalleeSaveRegisters()
 {
-    RegisterSet registers;
+    RegisterSet result;
 #if CPU(X86_64)
-    registers.add(GPRInfo::regCS1, IgnoreVectors); // MC (pointer to metadata)
-    registers.add(GPRInfo::regCS2, IgnoreVectors); // PB
+    result.add(GPRInfo::regCS1, IgnoreVectors); // MC (pointer to metadata)
+    result.add(GPRInfo::regCS2, IgnoreVectors); // PB
 #elif CPU(ARM64) || CPU(RISCV64)
-    registers.add(GPRInfo::regCS6, IgnoreVectors); // MC
-    registers.add(GPRInfo::regCS7, IgnoreVectors); // PB
+    result.add(GPRInfo::regCS6, IgnoreVectors); // MC
+    result.add(GPRInfo::regCS7, IgnoreVectors); // PB
+    result.add(FPRInfo::fpRegCS0, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS1, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS2, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS3, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS4, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS5, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS6, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS7, IgnoreVectors);
 #elif CPU(ARM)
-    registers.add(GPRInfo::regCS0, IgnoreVectors); // MC
-    registers.add(GPRInfo::regCS1, IgnoreVectors); // PB
+    result.add(GPRInfo::regCS0, IgnoreVectors); // MC
+    result.add(GPRInfo::regCS1, IgnoreVectors); // PB
+    result.add(FPRInfo::fpRegCS0, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS1, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS2, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS3, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS4, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS5, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS6, IgnoreVectors);
+    result.add(FPRInfo::fpRegCS7, IgnoreVectors);
 #else
 #error Unsupported architecture.
 #endif
-    return registers;
+    return result;
 }
 
 RegisterSet RegisterSetBuilder::bbqCalleeSaveRegisters()
