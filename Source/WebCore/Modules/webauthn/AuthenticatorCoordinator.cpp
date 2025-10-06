@@ -119,9 +119,22 @@ static ScopeAndCrossOriginParent scopeAndCrossOriginParent(const Document& docum
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AuthenticatorCoordinator);
 
-AuthenticatorCoordinator::AuthenticatorCoordinator(std::unique_ptr<AuthenticatorCoordinatorClient>&& client)
-    : m_client(WTFMove(client))
+AuthenticatorCoordinator::AuthenticatorCoordinator(Page& page, std::unique_ptr<AuthenticatorCoordinatorClient>&& client)
+    : m_page(page)
+    , m_client(WTFMove(client))
 {
+}
+
+AuthenticatorCoordinator::~AuthenticatorCoordinator() = default;
+
+void AuthenticatorCoordinator::ref() const
+{
+    m_page->ref();
+}
+
+void AuthenticatorCoordinator::deref() const
+{
+    m_page->deref();
 }
 
 void AuthenticatorCoordinator::setClient(std::unique_ptr<AuthenticatorCoordinatorClient>&& client)

@@ -37,11 +37,6 @@ namespace WebCore {
 class AuthenticatorCoordinatorClient;
 }
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::AuthenticatorCoordinatorClient> : std::true_type { };
-}
-
 namespace WebAuthn {
 enum class Scope;
 }
@@ -64,7 +59,7 @@ using CapabilitiesCompletionHandler = CompletionHandler<void(Vector<KeyValuePair
 using RequestCompletionHandler = CompletionHandler<void(WebCore::AuthenticatorResponseData&&, WebCore::AuthenticatorAttachment, WebCore::ExceptionData&&)>;
 using QueryCompletionHandler = CompletionHandler<void(bool)>;
 
-class AuthenticatorCoordinatorClient : public CanMakeWeakPtr<AuthenticatorCoordinatorClient> {
+class AuthenticatorCoordinatorClient {
     WTF_MAKE_TZONE_ALLOCATED(AuthenticatorCoordinatorClient);
     WTF_MAKE_NONCOPYABLE(AuthenticatorCoordinatorClient);
 public:
