@@ -934,6 +934,10 @@ void testRotateFringeClobber()
             continue;
         if (RegisterSetBuilder::specialRegisters().contains(reg, IgnoreVectors))
             continue;
+        // Skip registers that aren't allocatable. This can be the case for e.g.
+        // one of the macroClobberedGPRs() on ARMv7.
+        if (!code.regsInPriorityOrder(GP).contains(reg))
+            continue;
         code.pinRegister(reg);
     }
 
