@@ -118,6 +118,7 @@ RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned 
     , m_selectorListIndex(selectorListIndex)
     , m_matchBasedOnRuleHash(enumToUnderlyingType(computeMatchBasedOnRuleHash(selector())))
     , m_canMatchPseudoElement(complexSelectorCanMatchPseudoElement(selector()))
+    , m_matchesOnlyPseudoElement(complexSelectorMatchesOnlyPseudoElement(selector()))
     , m_propertyAllowlist(enumToUnderlyingType(determinePropertyAllowlist(selector())))
     , m_isStartingStyle(enumToUnderlyingType(isStartingStyle))
     , m_isEnabled(true)

@@ -222,6 +222,7 @@ struct AlignItems;
 struct AlignSelf;
 struct Animation;
 struct AnchorNames;
+struct MatchedRule;
 struct AppleColorFilter;
 struct AspectRatio;
 struct BackgroundLayer;
@@ -591,6 +592,9 @@ public:
 
     bool hasCachedPseudoStyles() const { return !m_cachedPseudoStyles.isEmpty(); }
     const PseudoStyleCache& cachedPseudoStyles() const { return m_cachedPseudoStyles; }
+
+    const Vector<MatchedRule>* elementMatchedRules() const;
+    void setElementMatchedRules(std::unique_ptr<Vector<MatchedRule>>&&);
 
     // MARK: - Custom properties
 

@@ -43,6 +43,7 @@
 #include "CSSViewTransitionRule.h"
 #include "CompositeOperation.h"
 #include "CustomFunctionRegistry.h"
+#include "DeclarationOrigin.h"
 #include "DocumentInlines.h"
 #include "DocumentResourceLoader.h"
 #include "DocumentView.h"
@@ -97,6 +98,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomStringHash.h>
+
+#include <wtf/TimingScope.h>
 
 namespace WTF {
 
@@ -342,15 +345,24 @@ UnadjustedStyle Resolver::unadjustedStyleForElement(Element& element, const Reso
 
     applyMatchedProperties(state, collector.matchResult(), PropertyCascade::normalProperties());
 
+    // Store matched rules for lazy pseudo-element processing.
+    // This avoids building declarations for all pseudo-elements eagerly.
+    std::unique_ptr<Vector<MatchedRule>> elementMatchedRules;
+
+    if (!collector.pseudoElementMatchedRules().isEmpty())
+        elementMatchedRules = makeUnique<Vector<MatchedRule>>(collector.pseudoElementMatchedRules());
+
     return {
         .style = state.takeStyle(),
         .relations = WTF::move(elementStyleRelations),
-        .matchResult = collector.releaseMatchResult()
+        .matchResult = collector.releaseMatchResult(),
+        .elementMatchedRules = WTF::move(elementMatchedRules)
     };
 }
 
 ResolvedStyle Resolver::styleForElement(Element& element, const ResolutionContext& context, RuleMatchingBehavior matchingBehavior)
 {
+    // WTF::TimingScope scope("styleForElement", 1'000);
     auto unadjustedStyle = unadjustedStyleForElement(element, context, matchingBehavior);
     auto& parentStyle = context.parentStyle ? *context.parentStyle : RenderStyle::defaultStyleSingleton();
 
@@ -362,7 +374,8 @@ ResolvedStyle Resolver::styleForElement(Element& element, const ResolutionContex
     return {
         .style = WTF::move(style),
         .relations = WTF::move(unadjustedStyle.relations),
-        .matchResult = WTF::move(unadjustedStyle.matchResult)
+        .matchResult = WTF::move(unadjustedStyle.matchResult),
+        .elementMatchedRules = WTF::move(unadjustedStyle.elementMatchedRules)
     };
 }
 
@@ -575,6 +588,7 @@ bool Resolver::keyframeStylesForAnimation(Element& element, const RenderStyle& e
 
 std::optional<ResolvedStyle> Resolver::styleForPseudoElement(Element& element, const PseudoElementRequest& pseudoElementRequest, const ResolutionContext& context)
 {
+    WTF::TimingScope scope("ppppseudoElement", 10'000);
     auto state = State(element, context.parentStyle, context.documentElementStyle, context.treeResolutionState.get());
 
     if (state.parentStyle()) {
@@ -585,31 +599,247 @@ std::optional<ResolvedStyle> Resolver::styleForPseudoElement(Element& element, c
         state.setParentStyle(RenderStyle::clonePtr(*state.style()));
     }
 
-    ElementRuleCollector collector(element, m_ruleSets, context.selectorMatchingState);
-    collector.setPseudoElementRequest(pseudoElementRequest);
-    collector.setMedium(m_mediaQueryEvaluator);
-    collector.matchUARules();
+    auto matchResultFromCollectingRulesForPseudoElement = [&] {
+        // WTF::TimingScope scope("collecting", 1'000);
+        ElementRuleCollector collector(element, m_ruleSets, context.selectorMatchingState);
+        collector.setPseudoElementRequest(pseudoElementRequest);
+        collector.setMedium(m_mediaQueryEvaluator);
+        collector.matchUARules();
 
-    if (m_matchAuthorAndUserStyles) {
-        collector.matchUserRules();
-        collector.matchAuthorRules();
-    }
+        if (m_matchAuthorAndUserStyles) {
+            collector.matchUserRules();
+            collector.matchAuthorRules();
+        }
+        ASSERT(!collector.matchedPseudoElements());
+        auto result = collector.releaseMatchResult();
 
-    ASSERT(!collector.matchedPseudoElements());
+        return result;
+    };
+    
+    auto matchResultFromElementMatchedRules = [&] {
+        // WTF::TimingScope scope("caching", 10'000);
+        auto type = pseudoElementRequest.type();
+        auto matchResult = MatchResult::create(element.isLink());
 
-    if (collector.matchResult().isEmpty())
+        // Use pre-matched universal pseudo-element UA rules for fast matching
+        // These are pure pseudo-element selectors (e.g., ::marker { unicode-bidi: isolate })
+        // that have no element constraints and are pre-cached in the RuleSet
+        auto addUniversalPseudoElementRules = [&](const RuleSet& ruleSet) {
+            auto* rules = ruleSet.universalPseudoElementUARules(type);
+            if (!rules)
+                return;
+
+            auto cascadeLayerPriority = RuleSet::cascadeLayerPriorityForUnlayered;
+            for (auto& ruleData : *rules) {
+                matchResult->userAgentDeclarations.append({
+                    ruleData.styleRule().properties(),
+                    static_cast<uint8_t>(ruleData.linkMatchType()),
+                    ruleData.propertyAllowlist(),
+                    ScopeOrdinal::Element,
+                    FromStyleAttribute::No,
+                    cascadeLayerPriority,
+                    ruleData.isStartingStyle()
+                });
+            }
+        };
+
+        // Add UA rules from all UA RuleSets
+        auto* userAgentStyleSheet = m_mediaQueryEvaluator.isPrintMedia()
+            ? UserAgentStyle::defaultPrintStyle : UserAgentStyle::defaultStyle;
+        addUniversalPseudoElementRules(*userAgentStyleSheet);
+
+        if (element.document().inQuirksMode())
+            addUniversalPseudoElementRules(*UserAgentStyle::defaultQuirksStyle);
+
+        if (auto* mediaQueryStyle = m_ruleSets.userAgentMediaQueryStyle())
+            addUniversalPseudoElementRules(*mediaQueryStyle);
+
+        if (auto* viewTransitionsStyle = m_ruleSets.dynamicViewTransitionsStyle())
+            addUniversalPseudoElementRules(*viewTransitionsStyle);
+
+        // Add universal pseudo-element rules from author rulesets (e.g., ::highlight(...))
+        auto addUniversalPseudoElementAuthorRules = [&](const RuleSet& ruleSet) {
+            auto* rules = ruleSet.universalPseudoElementUARules(type);
+            if (!rules)
+                return;
+
+            auto cascadeLayerPriority = RuleSet::cascadeLayerPriorityForUnlayered;
+            for (auto& ruleData : *rules) {
+                // For functional pseudo-elements like ::highlight(name), filter by name
+                auto& selector = ruleData.selector();
+                if (auto* stringList = selector.stringList()) {
+                    if (stringList->first() != pseudoElementRequest.nameArgument())
+                        continue;
+                }
+
+                matchResult->authorDeclarations.append({
+                    ruleData.styleRule().properties(),
+                    static_cast<uint8_t>(ruleData.linkMatchType()),
+                    ruleData.propertyAllowlist(),
+                    ScopeOrdinal::Element,
+                    FromStyleAttribute::No,
+                    cascadeLayerPriority,
+                    ruleData.isStartingStyle()
+                });
+            }
+        };
+
+        if (m_matchAuthorAndUserStyles)
+            addUniversalPseudoElementAuthorRules(m_ruleSets.authorStyle());
+
+        // Add named pseudo-element rules (e.g., ::highlight(name)) from author rulesets
+        // These are bucketed by name, not in universalPseudoElementUARules
+        if (m_matchAuthorAndUserStyles && pseudoElementRequest.nameArgument() != nullAtom()) {
+            auto* namedRules = m_ruleSets.authorStyle().namedPseudoElementRules(pseudoElementRequest.nameArgument());
+            if (namedRules) {
+                auto cascadeLayerPriority = RuleSet::cascadeLayerPriorityForUnlayered;
+                for (auto& ruleData : *namedRules) {
+                    matchResult->authorDeclarations.append({
+                        ruleData.styleRule().properties(),
+                        static_cast<uint8_t>(ruleData.linkMatchType()),
+                        ruleData.propertyAllowlist(),
+                        ScopeOrdinal::Element,
+                        FromStyleAttribute::No,
+                        cascadeLayerPriority,
+                        ruleData.isStartingStyle()
+                    });
+                }
+            }
+        }
+
+        // Filter cached element matched rules that apply to this pseudo-element.
+        // This includes user and author rules from element matching.
+        // We need to collect them first, then sort them by cascade order before appending.
+
+        // Comparison function for sorting rules by cascade order
+        // This matches the logic in ElementRuleCollector::compareRules
+        auto compareRules = [](const MatchedRule& r1, const MatchedRule& r2) {
+            // For normal properties the earlier scope wins
+            if (r1.styleScopeOrdinal != r2.styleScopeOrdinal)
+                return r1.styleScopeOrdinal > r2.styleScopeOrdinal;
+
+            if (r1.cascadeLayerPriority != r2.cascadeLayerPriority)
+                return r1.cascadeLayerPriority < r2.cascadeLayerPriority;
+
+            if (r1.specificity != r2.specificity)
+                return r1.specificity < r2.specificity;
+
+            // Rule with the smallest distance has priority
+            if (r1.scopingRootDistance != r2.scopingRootDistance)
+                return r2.scopingRootDistance < r1.scopingRootDistance;
+
+            return r1.ruleData->position() < r2.ruleData->position();
+        };
+
+        // Collect filtered rules by origin
+        Vector<MatchedRule> userAgentRules;
+        Vector<MatchedRule> userRules;
+        Vector<MatchedRule> authorRules;
+
+        for (const auto& matchedRule : *context.elementMatchedRules) {
+            if (!matchedRule.pseudoIdSet.contains(type))
+                continue;
+
+            // Skip pure pseudo-element rules (e.g., ::highlight(name), ::marker)
+            // These are handled by addUniversalPseudoElementRules/addUniversalPseudoElementAuthorRules
+            // which properly filter by name for functional pseudo-elements like ::highlight(name)
+            if (matchedRule.ruleData->matchesOnlyPseudoElement())
+                continue;
+
+            switch (matchedRule.declarationOrigin) {
+            case DeclarationOrigin::UserAgent:
+                // Element-specific UA rules (e.g., dialog::backdrop) need to be collected
+                // Universal UA rules are already handled above via universalPseudoElementUARules
+                userAgentRules.append(matchedRule);
+                break;
+            case DeclarationOrigin::User:
+                userRules.append(matchedRule);
+                break;
+            case DeclarationOrigin::Author:
+                authorRules.append(matchedRule);
+                break;
+            }
+        }
+
+        // Sort rules by cascade order
+        std::ranges::sort(userAgentRules, compareRules);
+        std::ranges::sort(userRules, compareRules);
+        std::ranges::sort(authorRules, compareRules);
+
+        // Helper to convert MatchedRule to MatchedProperties and append
+        auto appendSortedRules = [&](const Vector<MatchedRule>& rules, Vector<MatchedProperties>& declarations) {
+            for (const auto& matchedRule : rules) {
+                auto matchedProperties = MatchedProperties {
+                    matchedRule.ruleData->styleRule().properties(),
+                    static_cast<uint8_t>(matchedRule.ruleData->linkMatchType()),
+                    matchedRule.ruleData->propertyAllowlist(),
+                    matchedRule.styleScopeOrdinal,
+                    FromStyleAttribute::No,
+                    matchedRule.cascadeLayerPriority,
+                    matchedRule.ruleData->isStartingStyle()
+                };
+
+                // Set hasStartingStyle flag if this is a starting-style rule
+                if (matchedProperties.isStartingStyle == IsStartingStyle::Yes)
+                    matchResult->hasStartingStyle = true;
+
+                // Handle cacheability flags
+                if (matchedProperties.isCacheable == IsCacheable::Partially && !matchResult->isCompletelyNonCacheable) {
+                    for (auto property : matchedProperties.properties.get())
+                        matchResult->nonCacheablePropertyIds.append(property.id());
+                }
+                if (matchedProperties.isCacheable == IsCacheable::No) {
+                    matchResult->isCompletelyNonCacheable = true;
+                    matchResult->nonCacheablePropertyIds.clear();
+                }
+
+                declarations.append(WTF::move(matchedProperties));
+            }
+        };
+
+        // Append sorted rules to their respective declaration lists
+        appendSortedRules(userAgentRules, matchResult->userAgentDeclarations);
+        appendSortedRules(userRules, matchResult->userDeclarations);
+        appendSortedRules(authorRules, matchResult->authorDeclarations);
+        return matchResult;
+    };
+    
+    // Use cached path only when elementMatchedRules is available
+    // For FirstLine and FirstLetter, always use the slow path as they have complex
+    // inheritance relationships and the cached path may not handle them correctly.
+    // View transition pseudo-elements also need the slow path as they have special
+    // matching requirements.
+    auto type = pseudoElementRequest.type();
+    auto needsSlowPath = [&] {
+        switch (type) {
+        case PseudoElementType::FirstLine:
+        case PseudoElementType::FirstLetter:
+        case PseudoElementType::ViewTransition:
+        case PseudoElementType::ViewTransitionGroup:
+        case PseudoElementType::ViewTransitionImagePair:
+        case PseudoElementType::ViewTransitionOld:
+        case PseudoElementType::ViewTransitionNew:
+            return true;
+        default:
+            return false;
+        }
+    }();
+    bool useCached = context.elementMatchedRules != nullptr && !needsSlowPath;
+    auto matchResult = useCached ? matchResultFromElementMatchedRules() : matchResultFromCollectingRulesForPseudoElement();
+
+    if (matchResult->isEmpty())
         return { };
 
     state.style()->setPseudoElementIdentifier(pseudoElementRequest.identifier());
 
-    applyMatchedProperties(state, collector.matchResult(), PropertyCascade::normalProperties());
+    applyMatchedProperties(state, matchResult.get(), PropertyCascade::normalProperties());
 
     Adjuster adjuster(document(), *state.parentStyle(), context.parentBoxStyle, nullptr);
     adjuster.adjust(*state.style());
 
     Adjuster::adjustVisibilityForPseudoElement(*state.style(), element);
 
-    return ResolvedStyle { state.takeStyle(), nullptr, collector.releaseMatchResult() };
+    return ResolvedStyle { state.takeStyle(), nullptr, WTF::move(matchResult) };
 }
 
 std::unique_ptr<RenderStyle> Resolver::styleForPage(int pageIndex)

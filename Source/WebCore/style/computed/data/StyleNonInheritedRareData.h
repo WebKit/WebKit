@@ -96,6 +96,7 @@ class GridData;
 class GridItemData;
 class MarqueeData;
 class MaskBorderData;
+struct MatchedRule;
 
 // This class is for rarely used non-inherited property data. By grouping them
 // together, we save space, and only allocate this object when someone actually
@@ -255,6 +256,9 @@ public:
     PREFERRED_TYPE(Contain) unsigned contain : 5;
     PREFERRED_TYPE(OverflowContinue) unsigned overflowContinue : 1;
     PREFERRED_TYPE(ScrollSnapStop) unsigned scrollSnapStop : 1;
+
+    // Cached rules from element matching for reuse during pseudo-element matching
+    std::unique_ptr<Vector<MatchedRule>> elementMatchedRules;
 
 private:
     NonInheritedRareData();

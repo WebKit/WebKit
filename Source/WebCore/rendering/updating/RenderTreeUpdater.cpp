@@ -440,6 +440,10 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
 
     auto elementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*elementUpdate.style);
 
+    // Transfer elementMatchedRules from ElementUpdate to the cloned style for reuse during pseudo-element resolution
+    if (elementUpdate.elementMatchedRules)
+        elementUpdateStyle.setElementMatchedRules(makeUnique<Vector<Style::MatchedRule>>(*elementUpdate.elementMatchedRules));
+
     bool shouldTearDownRenderers = [&]() {
         if (element.isInTopLayer() && elementUpdate.changes.contains(Style::Change::Inherited) && elementUpdate.style->isSkippedRootOrSkippedContent())
             return true;

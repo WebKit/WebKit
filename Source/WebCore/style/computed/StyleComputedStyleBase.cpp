@@ -27,6 +27,7 @@
 #include "StyleComputedStyleBase+SettersInlines.h"
 
 #include "AutosizeStatus.h"
+#include "ElementRuleCollector.h"
 #include "FontCascade.h"
 #include "FontSelector.h"
 #include "Logging.h"
@@ -115,6 +116,16 @@ RenderStyle* ComputedStyleBase::addCachedPseudoStyle(std::unique_ptr<RenderStyle
     auto* result = pseudo.get();
     m_cachedPseudoStyles.add(*result->pseudoElementIdentifier(), WTF::move(pseudo));
     return result;
+}
+
+const Vector<MatchedRule>* ComputedStyleBase::elementMatchedRules() const
+{
+    return m_nonInheritedData->rareData->elementMatchedRules.get();
+}
+
+void ComputedStyleBase::setElementMatchedRules(std::unique_ptr<Vector<MatchedRule>>&& rules)
+{
+    m_nonInheritedData.access().rareData.access().elementMatchedRules = WTF::move(rules);
 }
 
 // MARK: - Custom properties

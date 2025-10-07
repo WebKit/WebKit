@@ -22,6 +22,7 @@
 #include "config.h"
 #include "StyleNonInheritedRareData.h"
 
+#include "ElementRuleCollector.h"
 #include "StyleComputedStyle+DifferenceLogging.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StylePrimitiveKeyword+Logging.h"
@@ -250,6 +251,7 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , contain(o.contain)
     , overflowContinue(o.overflowContinue)
     , scrollSnapStop(o.scrollSnapStop)
+    , elementMatchedRules(o.elementMatchedRules ? makeUnique<Vector<MatchedRule>>(*o.elementMatchedRules) : nullptr)
 {
 }
 

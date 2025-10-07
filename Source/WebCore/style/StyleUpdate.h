@@ -43,11 +43,14 @@ class Text;
 
 namespace Style {
 
+struct MatchedRule;
+
 struct ElementUpdate {
     std::unique_ptr<RenderStyle> style;
     OptionSet<Change> changes { };
     bool recompositeLayer { false };
     bool mayNeedRebuildRoot { false };
+    std::unique_ptr<Vector<MatchedRule>> elementMatchedRules { nullptr };
 };
 
 struct TextUpdate {

@@ -412,6 +412,13 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
 
     // If we didn't find a specialized map to stick it in, file under universal rules.
     m_universalRules.append(ruleData);
+
+    // Also check if this is a pure pseudo-element selector (no element constraints)
+    // These can be pre-cached for fast pseudo-element matching
+    if (ruleData.matchesOnlyPseudoElement()) {
+        if (auto pseudoType = CSSSelector::stylePseudoElementTypeFor(ruleData.selector().pseudoElement()))
+            m_universalPseudoElementUARules.ensure(enumToUnderlyingType(*pseudoType), [] { return RuleDataVector { }; }).iterator->value.append(ruleData);
+    }
 }
 
 void RuleSet::addPageRule(StyleRulePage& rule)
