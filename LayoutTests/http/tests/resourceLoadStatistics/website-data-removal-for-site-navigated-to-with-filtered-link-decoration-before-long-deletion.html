@@ -5,6 +5,7 @@
     <script src="resources/util.js"></script>
 </head>
 <body onload="setTimeout('runTest()', 0)">
+<div id="description">Check that script-writeable website data does not get removed after a navigation with filtered link decoration from a prevalent resource but before the Long data removal period.</div>
 <br>
 <div id="output"></div>
 <br>
@@ -15,6 +16,10 @@
     const httpOnlyCookieName = "http-only-cookie";
     const serverSideCookieName = "server-side-cookie";
     const clientSideCookieName = "client-side-cookie";
+    const clientSidePersistentCookieName = "client-side-persistent-cookie";
+    const targetOperationalDays = 399;
+
+    let currentOperationalDays = 1;
 
     function sortStringArray(a, b) {
         a = a.toLowerCase();
@@ -34,24 +39,57 @@
         output.appendChild(element);
     }
 
-    function checkCookies(isAfterDeletion) {
+    function checkCookies() {
         let unsortedTestPassedMessages = [];
         let cookies = internals.getCookies();
-        if (!cookies.length && isAfterDeletion)
-        unsortedTestPassedMessages.push((isAfterDeletion ? "After" : "Before") + " statistics processing: No cookies found.");
+        let potentialCookies = { "http-only-cookie": 1, "server-side-cookie": 1, "client-side-cookie": 1, "client-side-persistent-cookie": 1 };
+        if (!cookies.length)
+            addOutput(`${currentOperationalDays} day(s): script-accessible deletion: No cookies found.`);
+
         for (let cookie of cookies) {
+            let cookieType;
             switch (cookie.name) {
                 case httpOnlyCookieName:
-                    unsortedTestPassedMessages.push((isAfterDeletion ? "After" : "Before") + " statistics processing: " + (isAfterDeletion ? " " : "") + "HttpOnly cookie exists.");
+                    delete potentialCookies[httpOnlyCookieName];
+                    cookieType = "HttpOnly";
                     break;
                 case serverSideCookieName:
-                    unsortedTestPassedMessages.push((isAfterDeletion ? "After" : "Before") + " statistics processing: Regular server-side cookie exists.");
+                    delete potentialCookies[serverSideCookieName];
+                    cookieType = "Regular server-side";
                     break;
                 case clientSideCookieName:
-                    unsortedTestPassedMessages.push((isAfterDeletion ? "After" : "Before") + " statistics processing: Client-side cookie exists.");
+                    delete potentialCookies[clientSideCookieName];
+                    cookieType = "Client-side";
+                    break;
+                case clientSidePersistentCookieName:
+                    delete potentialCookies[clientSidePersistentCookieName];
+                    cookieType = "Client-side persistent";
                     break;
             }
+            if (cookieType)
+                unsortedTestPassedMessages.push(`${currentOperationalDays} day(s): ${cookieType} cookie exists.`);
         }
+
+        for (let missingCookie in potentialCookies) {
+            let cookieType;
+            switch (missingCookie) {
+                case httpOnlyCookieName:
+                    cookieType = "HttpOnly";
+                    break;
+                case serverSideCookieName:
+                    cookieType = "Regular server-side";
+                    break;
+                case clientSideCookieName:
+                    cookieType = "Client-side";
+                    break;
+                case clientSidePersistentCookieName:
+                    cookieType = "Client-side persistent";
+                    break;
+            }
+            if (cookieType)
+                unsortedTestPassedMessages.push(`${currentOperationalDays} day(s): ${cookieType} cookie does not exist.`);
+        }
+
         let sortedTestPassedMessages = unsortedTestPassedMessages.sort(sortStringArray);
         for (let testPassedMessage of sortedTestPassedMessages) {
             addOutput(testPassedMessage);
@@ -80,11 +118,11 @@
     let checkIDBCallback;
     let checkIDBIntervalID;
     let semaphoreIDBCheck = false;
-    function checkIDBDataStoreExists(isAfterDeletion, callback) {
+    function checkIDBDataStoreExists(shouldBeDeleted, callback) {
         let request;
         intervalCounterIDB = 0;
         checkIDBCallback = callback;
-        if (!isAfterDeletion) {
+        if (!shouldBeDeleted) {
             // Check until there is a IDB.
             checkIDBIntervalID = setInterval(function() {
                 if (semaphoreIDBCheck)
@@ -93,7 +131,7 @@
 
                 if (++intervalCounterIDB >= maxIntervals) {
                     clearInterval(checkIDBIntervalID);
-                    addOutput("Before statistics processing: IDB entry does not exist.");
+                    addOutput(`${currentOperationalDays} day(s): IDB entry does not exist (expected created).`);
                     semaphoreIDBCheck = false;
                     checkIDBCallback();
                 } else {
@@ -110,7 +148,7 @@
                     };
                     request.onsuccess = function () {
                         clearInterval(checkIDBIntervalID);
-                        addOutput("Before statistics processing: IDB entry does exist.");
+                        addOutput(`${currentOperationalDays} day(s): IDB entry does exist.`);
                         semaphoreIDBCheck = false;
                         checkIDBCallback();
                     };
@@ -125,7 +163,7 @@
 
                 if (++intervalCounterIDB >= maxIntervals) {
                     clearInterval(checkIDBIntervalID);
-                    addOutput("After statistics processing: IDB entry does exist.");
+                    addOutput(`${currentOperationalDays} day(s): IDB entry checks exhausted (expected deleted).`);
                     semaphoreIDBCheck = false;
                     checkIDBCallback();
                 } else {
@@ -138,12 +176,12 @@
                     };
                     request.onupgradeneeded = function () {
                         clearInterval(checkIDBIntervalID);
-                        addOutput("After statistics processing: IDB entry does not exist.");
+                        addOutput(`${currentOperationalDays} day(s): IDB entry does not exist.`);
                         semaphoreIDBCheck = false;
-                        finishTest();
+                        checkIDBCallback();
                     };
                     request.onsuccess = function () {
-                        // Let the next interval check again because deletion might be delayed.
+                        // Let the next interval check again.
                         semaphoreIDBCheck = false;
                     };
                 }
@@ -156,21 +194,21 @@
     let checkLocalStorageIntervalID;
     const localStorageName = "test";
     const localStorageValue = "value";
-    function checkLocalStorageExists(isAfterDeletion, callback) {
+    function checkLocalStorageExists(shouldBeDeleted, callback) {
         intervalCounterLocalStorage = 0;
         checkLocalStorageCallback = callback;
-        if (!isAfterDeletion) {
+        if (!shouldBeDeleted) {
             // Check until there is LocalStorage.
             checkLocalStorageIntervalID = setInterval(function() {
                 if (++intervalCounterLocalStorage >= maxIntervals) {
                     clearInterval(checkLocalStorageIntervalID);
                     let value = localStorage.getItem(localStorageName);
-                    addOutput("Before statistics processing: LocalStorage entry " + (value === localStorageValue ? "does" : "does not") + " exist.");
+                    addOutput(`${currentOperationalDays} day(s): LocalStorage entry ${value === localStorageValue ? "does" : "does not"} exist (timed out).`);
                     checkLocalStorageCallback();
-                } else if (testRunner.isStatisticsHasLocalStorage(originUnderTest)) {
+                } else if (testRunner.isStatisticsHasLocalStorage(destinationOrigin)) {
                     clearInterval(checkLocalStorageIntervalID);
                     let value = localStorage.getItem(localStorageName);
-                    addOutput("Before statistics processing: LocalStorage entry " + (value === localStorageValue ? "does" : "does not") + " exist.");
+                    addOutput(`${currentOperationalDays} day(s): LocalStorage entry ${value === localStorageValue ? "does" : "does not"} exist.`);
                     checkLocalStorageCallback();
                 }
             }, 100);
@@ -180,12 +218,12 @@
                 if (++intervalCounterLocalStorage >= maxIntervals) {
                     clearInterval(checkLocalStorageIntervalID);
                     let value = localStorage.getItem(localStorageName);
-                    addOutput("After statistics processing: LocalStorage entry " + (value === localStorageValue ? "does" : "does not") + " exist.");
+                    addOutput(`${currentOperationalDays} day(s): LocalStorage entry ${value === localStorageValue ? "does" : "does not"} exist (timed out).`);
                     checkLocalStorageCallback();
-                } else if (!testRunner.isStatisticsHasLocalStorage(originUnderTest)) {
+                } else if (!testRunner.isStatisticsHasLocalStorage(destinationOrigin)) {
                     clearInterval(checkLocalStorageIntervalID);
                     let value = localStorage.getItem(localStorageName);
-                    addOutput("After statistics processing: LocalStorage entry " + (value === localStorageValue ? "does" : "does not") + " exist.");
+                    addOutput(`${currentOperationalDays} day(s): LocalStorage entry ${value === localStorageValue ? "does" : "does not"} exist.`);
                     checkLocalStorageCallback();
                 }
             }, 100);
@@ -197,56 +235,64 @@
         await fetch("/cookies/resources/set-http-only-cookie.py?cookieName=" + httpOnlyCookieName, { credentials: "same-origin" });
         await fetch("/cookies/resources/setCookies.cgi", { headers: { "X-Set-Cookie": serverSideCookieName + "=1; path=/;" }, credentials: "same-origin" });
         document.cookie = clientSideCookieName + "=1";
-
-        checkCookies(false);
+        document.cookie = clientSidePersistentCookieName + "=1; max-age=18000";
 
         // Write LocalStorage
         localStorage.setItem(localStorageName, localStorageValue);
-        checkLocalStorageExists(false, function() {
 
-            // Write IndexedDB.
-            createIDBDataStore(function () {
-                checkIDBDataStoreExists(false, function() {
-                    addLinebreakToOutput();
-                    processWebsiteDataAndContinue();
-                });
-            });
+        // Write IndexedDB.
+        createIDBDataStore(function () {
+            processWebsiteDataAndContinue();
         });
     }
+
 
     async function processWebsiteDataAndContinue() {
         await testRunner.statisticsProcessStatisticsAndDataRecords();
         checkWebsiteDataAndContinue();
     }
 
+    function setStatisticsForDomain(callback) {
+       testRunner.setStatisticsPrevalentResource(prevalentResourceOrigin, true, function() {
+           testRunner.setStatisticsCrossSiteLoadWithLinkDecoration(prevalentResourceOrigin, destinationOrigin, /* wasFiltered */ true);
+           callback();
+       });
+    }
+
+    let shouldBeDeleted = false;
     function checkWebsiteDataAndContinue() {
-        checkCookies(true);
-        checkLocalStorageExists(true, function () {
-            checkIDBDataStoreExists(true, finishTest);
+        checkCookies();
+        checkLocalStorageExists(shouldBeDeleted, function () {
+            checkIDBDataStoreExists(shouldBeDeleted, () => {
+                if (currentOperationalDays != targetOperationalDays) {
+                    testRunner.clearStatisticsDataForDomain("127.0.0.1");
+                    addLinebreakToOutput();
+                    currentOperationalDays = targetOperationalDays;
+                    testRunner.setStatisticsExpiredStatistic(destinationOrigin, currentOperationalDays, true, false, false, () => {
+                        setStatisticsForDomain(() => {
+                           processWebsiteDataAndContinue();
+                        });
+                    });
+                } else
+                    finishTest();
+            });
         });
     }
 
-    const originUnderTest  = "http://127.0.0.1:8000";
     async function finishTest() {
-        if (testRunner.isStatisticsHasHadUserInteraction(originUnderTest))
-            addOutput("FAIL: " + originUnderTest + " still has user interaction after processing.");
         await resetCookiesITP();
+        testRunner.dumpResourceLoadStatistics();
         setEnableFeature(false, function() {
             testRunner.notifyDone();
         });
     }
 
+    const prevalentResourceOrigin = "http://localhost:8000";
+    const destinationOrigin  = "http://127.0.0.1:8000";
     function runTest() {
         setEnableFeature(true, function () {
-            testRunner.setStatisticsExpiredStatistic(originUnderTest,
-                400,   // numberOfOperatingDaysPassed
-                true,  // hasUserInteraction
-                false, // isScheduledForAllButCookieDataRemoval,
-                true,  // isPrevalent
-                function() {
-                if (!testRunner.isStatisticsPrevalentResource(originUnderTest))
-                    addOutput("FAIL: " + originUnderTest + " did not get inserted into database.");
-                writeWebsiteDataAndContinue();
+            testRunner.setStatisticsHasHadUserInteraction(destinationOrigin, true, function() {
+                setStatisticsForDomain(writeWebsiteDataAndContinue);
             });
         });
     }

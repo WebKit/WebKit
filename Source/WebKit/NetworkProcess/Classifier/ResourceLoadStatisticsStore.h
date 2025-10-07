@@ -80,7 +80,7 @@ private:
     int m_monthDay { 0 }; // [1, 31].
 };
 
-enum class OperatingDatesWindow : uint8_t { Long, Short, ForLiveOnTesting, ForReproTesting };
+enum class OperatingDatesWindow : uint8_t { LongPrevalent, ShortScriptWritten, LongScriptWritten, ForLiveOnTesting, ForReproTesting };
 enum class CookieAccess : uint8_t { CannotRequest, BasedOnCookiePolicy, OnlyIfGranted };
 enum class CanRequestStorageAccessWithoutUserInteraction : bool { No, Yes };
 enum class DataRemovalFrequency : uint8_t { Never, Short, Long };
@@ -113,7 +113,7 @@ public:
     bool isEmpty() const;
     Vector<ITPThirdPartyData> aggregatedThirdPartyData() const;
     void updateCookieBlocking(CompletionHandler<void()>&&);
-    void processStatisticsAndDataRecords();
+    void processStatisticsAndDataRecords(CompletionHandler<void()>&&);
     void cancelPendingStatisticsProcessingRequest();
     void mergeStatistics(Vector<ResourceLoadStatistics>&&);
     void runIncrementalVacuumCommand();
@@ -417,8 +417,9 @@ private:
 
     PAL::SessionID m_sessionID;
     unsigned m_operatingDatesSize { 0 };
-    std::optional<OperatingDate> m_longWindowOperatingDate;
-    std::optional<OperatingDate> m_shortWindowOperatingDate;
+    std::optional<OperatingDate> m_longWindowOperatingDatePrevalentDomain;
+    std::optional<OperatingDate> m_shortWindowOperatingDateScriptWritten;
+    std::optional<OperatingDate> m_longWindowOperatingDateScriptWritten;
     OperatingDate m_mostRecentOperatingDate;
     WebCore::ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
     WebCore::SameSiteStrictEnforcementEnabled m_sameSiteStrictEnforcementEnabled { WebCore::SameSiteStrictEnforcementEnabled::No };

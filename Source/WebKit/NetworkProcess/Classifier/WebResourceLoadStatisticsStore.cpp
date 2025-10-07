@@ -282,9 +282,14 @@ void WebResourceLoadStatisticsStore::scheduleStatisticsAndDataRecordsProcessing(
     ASSERT(RunLoop::isMain());
     
     postTask([completionHandler = WTFMove(completionHandler)](auto& store) mutable {
-        if (RefPtr statisticsStore = store.m_statisticsStore)
-            statisticsStore->processStatisticsAndDataRecords();
-        postTaskReply(WTFMove(completionHandler));
+        if (RefPtr statisticsStore = store.m_statisticsStore) {
+            statisticsStore->processStatisticsAndDataRecords([weakStore = ThreadSafeWeakPtr { store }, completionHandler = WTFMove(completionHandler)] () mutable {
+                if (RefPtr store = weakStore.get())
+                    store->postTaskReply(WTFMove(completionHandler));
+                else
+                    completionHandler();
+            });
+        }
     });
 }
 
@@ -331,7 +336,7 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<Resour
                 protectedThis->logTestingEvent("Statistics Updated"_s);
             });
         });
-        statisticsStore->processStatisticsAndDataRecords();
+        statisticsStore->processStatisticsAndDataRecords([] { });
     });
 }
 
@@ -958,7 +963,7 @@ void WebResourceLoadStatisticsStore::hasHadUserInteraction(RegistrableDomain&& d
         return hasHadUserInteractionEphemeral(domain, WTFMove(completionHandler));
 
     postTask([domain = WTFMove(domain).isolatedCopy(), completionHandler = WTFMove(completionHandler)](auto& store) mutable {
-        bool hadUserInteraction = store.m_statisticsStore ? RefPtr { store.m_statisticsStore }->hasHadUserInteraction(domain, OperatingDatesWindow::Long) : false;
+        bool hadUserInteraction = store.m_statisticsStore ? RefPtr { store.m_statisticsStore }->hasHadUserInteraction(domain, OperatingDatesWindow::LongScriptWritten) : false;
         postTaskReply([hadUserInteraction, completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(hadUserInteraction);
         });

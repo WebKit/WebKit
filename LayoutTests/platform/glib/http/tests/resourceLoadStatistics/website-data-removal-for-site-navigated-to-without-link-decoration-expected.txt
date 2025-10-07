@@ -7,12 +7,12 @@ Check that script-writeable website data gets removed after a navigation without
 1 day(s): LocalStorage entry does exist.
 1 day(s): IDB entry does exist.
 
-30 day(s): Client-side cookie exists.
-30 day(s): Client-side persistent cookie exists.
-30 day(s): HttpOnly cookie exists.
-30 day(s): Regular server-side cookie exists.
-30 day(s): LocalStorage entry does not exist.
-30 day(s): IDB entry does not exist.
+400 day(s): Client-side cookie exists.
+400 day(s): Client-side persistent cookie exists.
+400 day(s): HttpOnly cookie exists.
+400 day(s): Regular server-side cookie exists.
+400 day(s): LocalStorage entry does not exist.
+400 day(s): IDB entry does not exist.
 
 
 Resource load statistics:

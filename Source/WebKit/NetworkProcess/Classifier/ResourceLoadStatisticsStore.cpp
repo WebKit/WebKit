@@ -70,8 +70,10 @@ using namespace WebCore;
 #define ITP_RELEASE_LOG_DATABASE_ERROR(fmt, ...) RELEASE_LOG_ERROR(ResourceLoadStatistics, "%p - [sessionID=%" PRIu64 ", error=%d, message=%" PRIVATE_LOG_STRING "] - ResourceLoadStatisticsStore::" fmt, this, m_sessionID.toUInt64(), m_database.lastError(), m_database.lastErrorMsg(), ##__VA_ARGS__)
 
 
-constexpr unsigned operatingDatesWindowLong { 30 }; // days
-constexpr unsigned operatingDatesWindowShort { 7 }; // days
+constexpr unsigned operatingDatesWindowPrevalentDomain { 30 }; // days
+
+constexpr unsigned operatingDatesWindowScriptWrittenStorageShort { 7 }; // days
+constexpr unsigned operatingDatesWindowScriptWrittenStorageLong { 400 }; // days
 
 constexpr Seconds operatingTimeWindowForLiveOnTesting { 1_h };
 constexpr Seconds minimumStatisticsProcessingInterval { 5_s };
@@ -442,22 +444,25 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
     });
 }
 
-void ResourceLoadStatisticsStore::processStatisticsAndDataRecords()
+void ResourceLoadStatisticsStore::processStatisticsAndDataRecords(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
     if (m_parameters.shouldClassifyResourcesBeforeDataRecordsRemoval)
         classifyPrevalentResources();
     
-    removeDataRecords([weakThis = WeakPtr { *this }] () mutable {
+    removeDataRecords([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] () mutable {
         ASSERT(!RunLoop::isMain());
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
+        if (!protectedThis) {
+            completionHandler();
             return;
+        }
 
         protectedThis->pruneStatisticsIfNeeded();
 
         protectedThis->logTestingEvent("Storage Synced"_s);
+        completionHandler();
     });
 }
 
@@ -556,7 +561,7 @@ void ResourceLoadStatisticsStore::scheduleStatisticsProcessingRequestIfNecessary
         }
 
         protectedThis->updateCookieBlocking([]() { });
-        protectedThis->processStatisticsAndDataRecords();
+        protectedThis->processStatisticsAndDataRecords([]() { });
     });
 }
 
@@ -689,8 +694,9 @@ void ResourceLoadStatisticsStore::resetParametersToDefaultValues()
     m_appBoundDomains.clear();
     m_timeAdvanceForTesting = { };
     m_operatingDatesSize = 0;
-    m_shortWindowOperatingDate = std::nullopt;
-    m_longWindowOperatingDate = std::nullopt;
+    m_longWindowOperatingDatePrevalentDomain = std::nullopt;
+    m_shortWindowOperatingDateScriptWritten = std::nullopt;
+    m_longWindowOperatingDateScriptWritten = std::nullopt;
 }
 
 void ResourceLoadStatisticsStore::logTestingEvent(String&& event)
@@ -1840,7 +1846,7 @@ void ResourceLoadStatisticsStore::grantStorageAccess(SubFrameDomain&& subFrameDo
             ASSERT(subFrameStatus.first == AddedRecord::No);
 #if ASSERT_ENABLED
             if (canRequestStorageAccessWithoutUserInteraction == CanRequestStorageAccessWithoutUserInteraction::No)
-                ASSERT(protectedThis->hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
+                ASSERT(protectedThis->hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::LongScriptWritten));
 #endif
         }
 
@@ -1896,7 +1902,7 @@ void ResourceLoadStatisticsStore::grantStorageAccessInternal(SubFrameDomain&& su
         ASSERT(subFrameStatus.first == AddedRecord::No);
 #if ASSERT_ENABLED
         if (canRequestStorageAccessWithoutUserInteraction == CanRequestStorageAccessWithoutUserInteraction::No)
-            ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
+            ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::LongScriptWritten));
 #endif
         ASSERT(hasUserGrantedStorageAccessThroughPrompt(*subFrameStatus.second, topFrameDomain) == StorageAccessPromptWasShown::Yes);
 #endif
@@ -2087,7 +2093,7 @@ void ResourceLoadStatisticsStore::logUserInteraction(const TopFrameDomain& domai
     if (!ensureResourceStatisticsForRegistrableDomain(domain, "logUserInteraction"_s).second)
         return completionHandler();
 
-    bool didHavePreviousUserInteraction = hasHadUserInteraction(domain, OperatingDatesWindow::Long);
+    bool didHavePreviousUserInteraction = hasHadUserInteraction(domain, OperatingDatesWindow::LongScriptWritten);
     setUserInteraction(domain, true, nowTime(m_timeAdvanceForTesting));
 
     if (didHavePreviousUserInteraction) {
@@ -2600,7 +2606,8 @@ bool ResourceLoadStatisticsStore::areAllUnpartitionedThirdPartyCookiesBlockedUnd
 #endif
         return true;
 
-    if (thirdPartyCookieBlockingMode() == ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction && !hasHadUserInteraction(topFrameDomain, OperatingDatesWindow::Long))
+    auto window = isPrevalentResource(topFrameDomain) ? OperatingDatesWindow::LongPrevalent : OperatingDatesWindow::LongScriptWritten;
+    if (thirdPartyCookieBlockingMode() == ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction && !hasHadUserInteraction(topFrameDomain, window))
         return true;
 
     return false;
@@ -2788,7 +2795,7 @@ void ResourceLoadStatisticsStore::clearGrandfathering(Vector<unsigned>&& domainI
 
 bool ResourceLoadStatisticsStore::hasHadRecentWebPushInteraction(const DomainData& resourceStatistic) const
 {
-    return resourceStatistic.mostRecentWebPushInteractionTime && !hasStatisticsExpired(resourceStatistic.mostRecentWebPushInteractionTime, OperatingDatesWindow::Long);
+    return resourceStatistic.mostRecentWebPushInteractionTime && !hasStatisticsExpired(resourceStatistic.mostRecentWebPushInteractionTime, OperatingDatesWindow::LongScriptWritten);
 }
 
 bool ResourceLoadStatisticsStore::hasHadUnexpiredRecentUserInteraction(const DomainData& resourceStatistic, OperatingDatesWindow operatingDatesWindow)
@@ -2796,7 +2803,7 @@ bool ResourceLoadStatisticsStore::hasHadUnexpiredRecentUserInteraction(const Dom
     if (resourceStatistic.hadUserInteraction && hasStatisticsExpired(resourceStatistic.mostRecentUserInteractionTime, operatingDatesWindow)) {
 
         // Drop privacy sensitive data if we no longer need it.
-        if (operatingDatesWindow == OperatingDatesWindow::Long)
+        if (operatingDatesWindow == OperatingDatesWindow::LongScriptWritten)
             clearUserInteraction(resourceStatistic.registrableDomain, [] { });
 
         return false;
@@ -2807,7 +2814,7 @@ bool ResourceLoadStatisticsStore::hasHadUnexpiredRecentUserInteraction(const Dom
 
 bool ResourceLoadStatisticsStore::shouldRemoveAllWebsiteDataFor(const DomainData& resourceStatistic, bool shouldCheckForGrandfathering)
 {
-    return isPrevalentResource(resourceStatistic.registrableDomain) && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Long) && (!shouldCheckForGrandfathering || !resourceStatistic.grandfathered);
+    return isPrevalentResource(resourceStatistic.registrableDomain) && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::LongPrevalent) && (!shouldCheckForGrandfathering || !resourceStatistic.grandfathered);
 }
 
 bool ResourceLoadStatisticsStore::shouldRemoveAllButCookiesFor(const DomainData& resourceStatistic, bool shouldCheckForGrandfathering)
@@ -2820,7 +2827,7 @@ bool ResourceLoadStatisticsStore::shouldRemoveAllButCookiesFor(const DomainData&
     case FirstPartyWebsiteDataRemovalMode::AllButCookies:
         [[fallthrough]];
     case FirstPartyWebsiteDataRemovalMode::None:
-        window = resourceStatistic.dataRemovalFrequency == DataRemovalFrequency::Short ? OperatingDatesWindow::Short : OperatingDatesWindow::Long;
+        window = resourceStatistic.dataRemovalFrequency == DataRemovalFrequency::Short ? OperatingDatesWindow::ShortScriptWritten : OperatingDatesWindow::LongScriptWritten;
         break;
     case FirstPartyWebsiteDataRemovalMode::AllButCookiesLiveOnTestingTimeout:
         window = OperatingDatesWindow::ForLiveOnTesting;
@@ -3273,8 +3280,9 @@ void ResourceLoadStatisticsStore::updateOperatingDatesParameters()
         }
     };
 
-    updateWindowOperatingDate(m_shortWindowOperatingDate, operatingDatesWindowShort);
-    updateWindowOperatingDate(m_longWindowOperatingDate, operatingDatesWindowLong);
+    updateWindowOperatingDate(m_shortWindowOperatingDateScriptWritten, operatingDatesWindowScriptWrittenStorageShort);
+    updateWindowOperatingDate(m_longWindowOperatingDateScriptWritten, operatingDatesWindowScriptWrittenStorageLong);
+    updateWindowOperatingDate(m_longWindowOperatingDatePrevalentDomain, operatingDatesWindowPrevalentDomain);
 }
 
 void ResourceLoadStatisticsStore::includeTodayAsOperatingDateIfNecessary()
@@ -3290,7 +3298,7 @@ void ResourceLoadStatisticsStore::includeTodayAsOperatingDateIfNecessary()
 
     auto transactionScope = beginTransactionIfNecessary();
 
-    int rowsToPrune = m_operatingDatesSize - operatingDatesWindowLong + 1;
+    int rowsToPrune = m_operatingDatesSize - operatingDatesWindowPrevalentDomain + 1;
     if (rowsToPrune > 0) {
         auto deleteLeastRecentOperatingDateStatement = m_database.prepareStatement("DELETE FROM OperatingDates ORDER BY year, month, monthDay LIMIT ?;"_s);
         if (!deleteLeastRecentOperatingDateStatement
@@ -3319,12 +3327,16 @@ bool ResourceLoadStatisticsStore::hasStatisticsExpired(WallTime mostRecentUserIn
     ASSERT(!RunLoop::isMain());
 
     switch (operatingDatesWindow) {
-    case OperatingDatesWindow::Long:
-        if (m_longWindowOperatingDate && OperatingDate::fromWallTime(mostRecentUserInteractionTime) < *m_longWindowOperatingDate)
+    case OperatingDatesWindow::LongPrevalent:
+        if (m_longWindowOperatingDatePrevalentDomain && OperatingDate::fromWallTime(mostRecentUserInteractionTime) < *m_longWindowOperatingDatePrevalentDomain)
             return true;
         break;
-    case OperatingDatesWindow::Short:
-        if (m_shortWindowOperatingDate && OperatingDate::fromWallTime(mostRecentUserInteractionTime) < *m_shortWindowOperatingDate)
+    case OperatingDatesWindow::LongScriptWritten:
+        if (m_longWindowOperatingDateScriptWritten && OperatingDate::fromWallTime(mostRecentUserInteractionTime) < *m_longWindowOperatingDateScriptWritten)
+            return true;
+        break;
+    case OperatingDatesWindow::ShortScriptWritten:
+        if (m_shortWindowOperatingDateScriptWritten && OperatingDate::fromWallTime(mostRecentUserInteractionTime) < *m_shortWindowOperatingDateScriptWritten)
             return true;
         break;
     case OperatingDatesWindow::ForLiveOnTesting:

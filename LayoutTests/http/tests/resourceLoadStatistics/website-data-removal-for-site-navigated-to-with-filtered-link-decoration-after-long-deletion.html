@@ -17,7 +17,7 @@
     const serverSideCookieName = "server-side-cookie";
     const clientSideCookieName = "client-side-cookie";
     const clientSidePersistentCookieName = "client-side-persistent-cookie";
-    const targetOperationalDays = 30;
+    const targetOperationalDays = 400;
 
     let currentOperationalDays = 1;
 
@@ -44,7 +44,7 @@
         let cookies = internals.getCookies();
         let potentialCookies = { "http-only-cookie": 1, "server-side-cookie": 1, "client-side-cookie": 1, "client-side-persistent-cookie": 1 };
         if (!cookies.length)
-            testFailed(`${currentOperationalDays} day(s): script-accessible deletion: No cookies found.`);
+            addOutput(`${currentOperationalDays} day(s): script-accessible deletion: No cookies found.`);
 
         for (let cookie of cookies) {
             let cookieType;
