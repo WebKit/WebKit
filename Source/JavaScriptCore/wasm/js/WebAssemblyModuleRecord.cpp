@@ -179,19 +179,24 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             defineImportedStringConstant(vm, m_instance, import);
             continue;
         }
+        JSValue value;
         const WebAssemblyBuiltinSet* builtinSet = findEnabledBuiltinSet(moduleNameString, moduleInformation);
         if (builtinSet) {
             String fieldName = makeString(import.field);
             auto* builtin = builtinSet->findBuiltin(fieldName);
             if (!builtin)
                 return exception(createTypeError(globalObject, importFailMessage(import, "import"_s, "is not a valid builtin reference"_s)));
-            initializeBuiltinImport(vm, m_instance, import, builtin);
-            continue;
+
+            if constexpr (is64Bit()) {
+                initializeBuiltinImport(vm, m_instance, import, builtin);
+                continue;
+            }
+
+            value = builtin->jsWrapper(globalObject);
         }
 
         Identifier fieldName = Identifier::fromString(vm, makeAtomString(import.field));
-        JSValue value;
-        if (creationMode == Wasm::CreationMode::FromJS) {
+        if (!value && creationMode == Wasm::CreationMode::FromJS) {
             // 1. Let o be the resultant value of performing Get(importObject, i.module_name).
             JSValue importModuleValue = importObject->get(globalObject, moduleName);
             RETURN_IF_EXCEPTION(scope, void());
@@ -203,7 +208,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             JSObject* object = jsCast<JSObject*>(importModuleValue);
             value = object->get(globalObject, fieldName);
             RETURN_IF_EXCEPTION(scope, void());
-        } else {
+        } else if (!value) {
             AbstractModuleRecord* importedModule = hostResolveImportedModule(globalObject, moduleName);
             RETURN_IF_EXCEPTION(scope, void());
             Resolution resolution = importedModule->resolveExport(globalObject, fieldName);
