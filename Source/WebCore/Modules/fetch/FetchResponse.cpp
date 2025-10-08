@@ -51,7 +51,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FetchResponseBodyLoader);
 // https://fetch.spec.whatwg.org/#null-body-status
 static inline bool isNullBodyStatus(int status)
 {
-    return status == 101 || status == 204 || status == 205 || status == 304;
+    return status == 101 || status == 103 || status == 204 || status == 205 || status == 304;
 }
 
 FetchResponse::~FetchResponse() = default;
@@ -265,6 +265,9 @@ Ref<FetchResponse> FetchResponse::createFetchResponse(ScriptExecutionContext& co
     auto response = adoptRef(*new FetchResponse(&context, FetchBody { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
     response->suspendIfNeeded();
 
+    if (request.internalRequest().httpMethod() == "HEAD"_s)
+        response->setBodyAsNull();
+
     response->body().checkedConsumer()->setAsLoading();
 
     response->addAbortSteps(request.signal());
@@ -371,6 +374,9 @@ void FetchResponse::setReceivedInternalResponse(const ResourceResponse& resource
         m_opaqueLoadIdentifier = ++nextOpaqueLoadIdentifier;
         setBodyAsOpaque();
     }
+
+    if (isNullBodyStatus(resourceResponse.httpStatusCode()))
+        setBodyAsNull();
 
     m_headers->filterAndFill(m_filteredResponse->httpHeaderFields(), FetchHeaders::Guard::Response);
 }

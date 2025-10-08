@@ -1325,10 +1325,6 @@ imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaEleme
 imported/w3c/web-platform-tests/mediacapture-streams/MediaDevices-enumerateDevices-per-origin-ids.sub.https.html [ Skip ]
 
 # These fetch tests are flaky or fail.
-webkit.org/b/247290 imported/w3c/web-platform-tests/fetch/api/basic/response-null-body.any.html [ Pass Failure ]
-webkit.org/b/247290 imported/w3c/web-platform-tests/fetch/api/basic/response-null-body.any.worker.html [ Pass Failure ]
-webkit.org/b/247290 imported/w3c/web-platform-tests/fetch/api/basic/response-null-body.any.sharedworker.html [ Pass Failure ]
-webkit.org/b/247290 imported/w3c/web-platform-tests/fetch/api/basic/response-null-body.any.serviceworker.html [ Pass Failure ]
 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.html [ Pass Failure ]
 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.any.worker.html [ Pass Failure ]
 imported/w3c/web-platform-tests/fetch/content-encoding/bad-gzip-body.any.html [ Pass Failure ]
