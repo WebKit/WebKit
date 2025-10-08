@@ -193,8 +193,12 @@ void Navigator::share(Document& document, const ShareData& data, Ref<DeferredPro
         if (m_loader)
             m_loader->cancel();
 
-        m_loader = ShareDataReader::create([this, promise = WTFMove(promise)](ExceptionOr<ShareDataWithParsedURL&> readData) mutable {
-            showShareData(readData, WTFMove(promise));
+        m_loader = ShareDataReader::create([weakThis = WeakPtr { *this }, promise = WTFMove(promise)](ExceptionOr<ShareDataWithParsedURL&> readData) mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+
+            protectedThis->showShareData(readData, WTFMove(promise));
         });
         m_loader->start(&document, WTFMove(shareData));
         return;
