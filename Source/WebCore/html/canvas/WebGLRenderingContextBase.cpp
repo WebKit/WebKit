@@ -3347,7 +3347,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     // Otherwise, it will fall back to the normal SW path.
     // FIXME: The current restrictions require that format shoud be RGB or RGBA,
     // type should be UNSIGNED_BYTE and level should be 0. It may be lifted in the future.
-    if (functionID == TexImageFunctionID::TexImage2D && sourceImageRectIsDefault && texture
+    if (sourceImageRectIsDefault && texture
         && (format == GraphicsContextGL::RGB || format == GraphicsContextGL::RGBA)
         && type == GraphicsContextGL::UNSIGNED_BYTE
         && !level) {
@@ -3418,7 +3418,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     // type should be UNSIGNED_BYTE and level should be 0. It may be lifted in the future.
     bool sourceImageRectIsDefault = inputSourceImageRect == sentinelEmptyRect() || inputSourceImageRect == IntRect(0, 0, static_cast<int>(internalFrame->presentationSize().width()), static_cast<int>(internalFrame->presentationSize().height()));
     RefPtr context = m_context;
-    if (isVideoFrameFormatEligibleToCopy(source) && functionID == TexImageFunctionID::TexImage2D && texture && (format == GraphicsContextGL::RGB || format == GraphicsContextGL::RGBA) && sourceImageRectIsDefault && type == GraphicsContextGL::UNSIGNED_BYTE && !level) {
+    if (isVideoFrameFormatEligibleToCopy(source) && texture && (format == GraphicsContextGL::RGB || format == GraphicsContextGL::RGBA) && sourceImageRectIsDefault && type == GraphicsContextGL::UNSIGNED_BYTE && !level) {
         if (context->copyTextureFromVideoFrame(*internalFrame, texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY))
             return { };
     }
