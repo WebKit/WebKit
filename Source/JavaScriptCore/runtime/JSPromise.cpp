@@ -292,7 +292,11 @@ void JSPromise::performPromiseThen(JSGlobalObject* globalObject, JSValue onFulfi
             globalObject->queueMicrotask(InternalMicrotask::PromiseReactionJobWithoutPromise, onRejected, reactionsOrResult, context, jsUndefined());
             break;
         }
-        globalObject->queueMicrotask(InternalMicrotask::PromiseReactionJob, promiseOrCapability, onRejected, reactionsOrResult, context);
+        if (promiseOrCapability.inherits<JSPromise>()) {
+            globalObject->queueMicrotask(InternalMicrotask::PromiseReactionJobWithPromise, promiseOrCapability, onRejected, reactionsOrResult, context);
+            break;
+        }
+        globalObject->queueMicrotask(InternalMicrotask::PromiseReactionJobWithPromiseCapability, promiseOrCapability, onRejected, reactionsOrResult, context);
         break;
     }
     case JSPromise::Status::Fulfilled: {
@@ -301,7 +305,11 @@ void JSPromise::performPromiseThen(JSGlobalObject* globalObject, JSValue onFulfi
             globalObject->queueMicrotask(InternalMicrotask::PromiseReactionJobWithoutPromise, onFulfilled, reactionsOrResult, context, jsUndefined());
             break;
         }
-        globalObject->queueMicrotask(InternalMicrotask::PromiseReactionJob, promiseOrCapability, onFulfilled, reactionsOrResult, context);
+        if (promiseOrCapability.inherits<JSPromise>()) {
+            globalObject->queueMicrotask(InternalMicrotask::PromiseReactionJobWithPromise, promiseOrCapability, onFulfilled, reactionsOrResult, context);
+            break;
+        }
+        globalObject->queueMicrotask(InternalMicrotask::PromiseReactionJobWithPromiseCapability, promiseOrCapability, onFulfilled, reactionsOrResult, context);
         break;
     }
     }
@@ -566,6 +574,7 @@ void JSPromise::triggerPromiseReactions(JSGlobalObject* globalObject, Status sta
     head = jsCast<JSPromiseReaction*>(previous);
 
     bool isResolved = status == JSPromise::Status::Fulfilled;
+    InternalMicrotask withoutHandlerJob = isResolved ? InternalMicrotask::PromiseResolveWithoutHandlerJob : InternalMicrotask::PromiseRejectWithoutHandlerJob;
     auto* current = head;
     while (current) {
         JSValue promise = current->promise();
@@ -574,7 +583,7 @@ void JSPromise::triggerPromiseReactions(JSGlobalObject* globalObject, Status sta
         current = jsDynamicCast<JSPromiseReaction*>(current->next());
 
         if (handler.isUndefinedOrNull()) {
-            globalObject->queueMicrotask(InternalMicrotask::PromiseResolveWithoutHandlerJob, promise, argument, jsNumber(static_cast<int32_t>(status)), jsUndefined());
+            globalObject->queueMicrotask(withoutHandlerJob, promise, argument, jsUndefined(), jsUndefined());
             RETURN_IF_EXCEPTION(scope, void());
             continue;
         }
@@ -585,7 +594,13 @@ void JSPromise::triggerPromiseReactions(JSGlobalObject* globalObject, Status sta
             continue;
         }
 
-        globalObject->queueMicrotask(InternalMicrotask::PromiseReactionJob, promise, handler, argument, context);
+        if (promise.inherits<JSPromise>()) {
+            globalObject->queueMicrotask(InternalMicrotask::PromiseReactionJobWithPromise, promise, handler, argument, context);
+            RETURN_IF_EXCEPTION(scope, void());
+            continue;
+        }
+
+        globalObject->queueMicrotask(InternalMicrotask::PromiseReactionJobWithPromiseCapability, promise, handler, argument, context);
         RETURN_IF_EXCEPTION(scope, void());
     }
 }

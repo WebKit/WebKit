@@ -163,12 +163,12 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
                 }
             }
             scope.release();
-            globalObject->queueMicrotask(InternalMicrotask::PromiseResolveWithoutHandlerJob, promiseToResolve, promise->reactionsOrResult(), jsNumber(static_cast<int32_t>(JSPromise::Status::Rejected)), jsUndefined());
+            globalObject->queueMicrotask(InternalMicrotask::PromiseRejectWithoutHandlerJob, promiseToResolve, promise->reactionsOrResult(), jsUndefined(), jsUndefined());
             break;
         }
         case JSPromise::Status::Fulfilled: {
             scope.release();
-            globalObject->queueMicrotask(InternalMicrotask::PromiseResolveWithoutHandlerJob, promiseToResolve, promise->reactionsOrResult(), jsNumber(static_cast<int32_t>(JSPromise::Status::Fulfilled)), jsUndefined());
+            globalObject->queueMicrotask(InternalMicrotask::PromiseResolveWithoutHandlerJob, promiseToResolve, promise->reactionsOrResult(), jsUndefined(), jsUndefined());
             break;
         }
         }
@@ -225,31 +225,55 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
     case InternalMicrotask::PromiseResolveWithoutHandlerJob: {
         auto* promise = jsCast<JSPromise*>(arguments[0]);
         JSValue resolution = arguments[1];
-        switch (static_cast<JSPromise::Status>(arguments[2].asInt32())) {
-        case JSPromise::Status::Pending: {
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
-        case JSPromise::Status::Fulfilled: {
-            scope.release();
-            promise->resolvePromise(globalObject, resolution);
-            break;
-        }
-        case JSPromise::Status::Rejected: {
-            scope.release();
-            promise->rejectPromise(globalObject, resolution);
-            break;
-        }
-        }
+        scope.release();
+        promise->resolvePromise(globalObject, resolution);
         return;
     }
 
-    case InternalMicrotask::PromiseReactionJob: {
-        JSValue promiseOrCapability = arguments[0];
+    case InternalMicrotask::PromiseRejectWithoutHandlerJob: {
+        auto* promise = jsCast<JSPromise*>(arguments[0]);
+        JSValue resolution = arguments[1];
+        scope.release();
+        promise->rejectPromise(globalObject, resolution);
+        return;
+    }
+
+    case InternalMicrotask::PromiseReactionJobWithPromise: {
+        auto* promise = jsCast<JSPromise*>(arguments[0]);
         JSValue handler = arguments[1];
         JSValue context = arguments[3];
 
-        ASSERT(!promiseOrCapability.isUndefinedOrNull());
+        JSValue result;
+        JSValue error;
+        {
+            auto catchScope = DECLARE_CATCH_SCOPE(vm);
+            if (context.isUndefinedOrNull())
+                result = callMicrotask(globalObject, handler, jsUndefined(), dynamicCastToCell(handler), ArgList { std::bit_cast<EncodedJSValue*>(arguments.data() + 2), 1 }, "handler is not a function"_s);
+            else
+                result = callMicrotask(globalObject, handler, jsUndefined(), dynamicCastToCell(context), ArgList { std::bit_cast<EncodedJSValue*>(arguments.data() + 2), 2 }, "handler is not a function"_s);
+
+            if (catchScope.exception()) {
+                error = catchScope.exception()->value();
+                if (!catchScope.clearExceptionExceptTermination()) [[unlikely]] {
+                    scope.release();
+                    return;
+                }
+            }
+        }
+
+        if (error)
+            RELEASE_AND_RETURN(scope, promise->rejectPromise(globalObject, error));
+
+        RELEASE_AND_RETURN(scope, promise->resolvePromise(globalObject, result));
+    }
+
+    case InternalMicrotask::PromiseReactionJobWithPromiseCapability: {
+        JSValue capability = arguments[0];
+        JSValue handler = arguments[1];
+        JSValue context = arguments[3];
+
+        ASSERT(!capability.isUndefinedOrNull());
+        ASSERT(!capability.inherits<JSPromise>());
         JSValue result;
         JSValue error;
         {
@@ -269,10 +293,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
         }
 
         if (error) {
-            if (auto* promise = jsDynamicCast<JSPromise*>(promiseOrCapability))
-                RELEASE_AND_RETURN(scope, promise->rejectPromise(globalObject, error));
-
-            JSValue reject = promiseOrCapability.get(globalObject, vm.propertyNames->reject);
+            JSValue reject = capability.get(globalObject, vm.propertyNames->reject);
             RETURN_IF_EXCEPTION(scope, void());
 
             MarkedArgumentBuffer arguments;
@@ -283,10 +304,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
             return;
         }
 
-        if (auto* promise = jsDynamicCast<JSPromise*>(promiseOrCapability))
-            RELEASE_AND_RETURN(scope, promise->resolvePromise(globalObject, result));
-
-        JSValue resolve = promiseOrCapability.get(globalObject, vm.propertyNames->resolve);
+        JSValue resolve = capability.get(globalObject, vm.propertyNames->resolve);
         RETURN_IF_EXCEPTION(scope, void());
 
         MarkedArgumentBuffer arguments;
@@ -296,6 +314,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, InternalMicrotask task, 
         call(globalObject, resolve, jsUndefined(), arguments, "resolve is not a function"_s);
         return;
     }
+
 
     case InternalMicrotask::PromiseReactionJobWithoutPromise: {
         JSValue handler = arguments[0];

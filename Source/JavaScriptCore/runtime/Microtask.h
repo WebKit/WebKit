@@ -37,7 +37,9 @@ enum class InternalMicrotask : int32_t {
     PromiseResolveThenableJobWithoutPromiseFast,
     PromiseResolveThenableJob,
     PromiseResolveWithoutHandlerJob,
-    PromiseReactionJob,
+    PromiseRejectWithoutHandlerJob,
+    PromiseReactionJobWithPromise,
+    PromiseReactionJobWithPromiseCapability,
     PromiseReactionJobWithoutPromise,
     InvokeFunctionJob,
     Opaque, // Dispatch must handle everything.
