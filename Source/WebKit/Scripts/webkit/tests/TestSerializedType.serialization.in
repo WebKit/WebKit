@@ -364,3 +364,7 @@ using WebCore::ConditionalVariant = Variant<
 >;
 
 using WebCore::NonConditionalVariant = Variant<int, double>
+
+class UnsafeA {
+    [Unsafe] int a
+}

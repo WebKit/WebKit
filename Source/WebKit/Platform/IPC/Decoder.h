@@ -108,6 +108,7 @@ public:
     bool shouldMaintainOrderingWithAsyncMessages() const;
     void setIsAllowedWhenWaitingForSyncReplyOverride(bool value) { m_isAllowedWhenWaitingForSyncReplyOverride = value; }
     bool isAsyncReplyMessage() const { return isAsyncReply(messageName()); }
+    bool allowsUnsafeDecoding() const { return allowsUnsafeDecode(messageName()); }
 
 #if PLATFORM(MAC)
     void setImportanceAssertion(ImportanceAssertion&&);

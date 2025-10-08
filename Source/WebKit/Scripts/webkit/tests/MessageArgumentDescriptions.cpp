@@ -333,6 +333,10 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
         return jsValueForDecodedMessage<MessageName::TestWithWantsDispatch_TestSyncMessage>(globalObject, decoder);
     case MessageName::TestWithWantsDispatchNoSyncMessages_TestMessage:
         return jsValueForDecodedMessage<MessageName::TestWithWantsDispatchNoSyncMessages_TestMessage>(globalObject, decoder);
+    case MessageName::TestWithUnsafeReply_TestMessage:
+        return jsValueForDecodedMessage<MessageName::TestWithUnsafeReply_TestMessage>(globalObject, decoder);
+    case MessageName::TestWithUnsafeReply_TestMessageReply:
+        return jsValueForDecodedMessage<MessageName::TestWithUnsafeReply_TestMessageReply>(globalObject, decoder);
     default:
         break;
     }
@@ -426,6 +430,8 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
         return jsValueForDecodedMessageReply<MessageName::TestWithWantsAsyncDispatch_TestSyncMessage>(globalObject, decoder);
     case MessageName::TestWithWantsDispatch_TestSyncMessage:
         return jsValueForDecodedMessageReply<MessageName::TestWithWantsDispatch_TestSyncMessage>(globalObject, decoder);
+    case MessageName::TestWithUnsafeReply_TestMessage:
+        return jsValueForDecodedMessageReply<MessageName::TestWithUnsafeReply_TestMessage>(globalObject, decoder);
     default:
         break;
     }
@@ -1100,6 +1106,14 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         return Vector<ArgumentDescription> {
             { "url"_s, "String"_s },
         };
+    case MessageName::TestWithUnsafeReply_TestMessage:
+        return Vector<ArgumentDescription> {
+            { "url"_s, "String"_s },
+        };
+    case MessageName::TestWithUnsafeReply_TestMessageReply:
+        return Vector<ArgumentDescription> {
+            { "a"_s, "UnsafeA"_s },
+        };
     default:
         break;
     }
@@ -1248,6 +1262,10 @@ std::optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(Mess
     case MessageName::TestWithWantsDispatch_TestSyncMessage:
         return Vector<ArgumentDescription> {
             { "reply"_s, "uint8_t"_s },
+        };
+    case MessageName::TestWithUnsafeReply_TestMessage:
+        return Vector<ArgumentDescription> {
+            { "a"_s, "UnsafeA"_s },
         };
     default:
         break;

@@ -25,6 +25,7 @@ TESTS = \
     TestWithWantsAsyncDispatch \
     TestWithWantsDispatch \
     TestWithWantsDispatchNoSyncMessages \
+    TestWithUnsafeReply \
 #
 
 all:

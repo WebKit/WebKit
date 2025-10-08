@@ -292,7 +292,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     SetNeedsFontAttributes(bool needsFontAttributes)
 
-    RequestFontAttributesAtSelectionStart() -> (struct WebCore::FontAttributes attributes)
+    RequestFontAttributesAtSelectionStart() -> (struct WebCore::FontAttributes attributes) UnsafeReply
 
     DidRemoveEditCommand(uint64_t commandID)
     ReapplyEditCommand(uint64_t commandID) AllowedWhenWaitingForSyncReply

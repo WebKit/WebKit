@@ -61,14 +61,15 @@ enum class ReceiverName : uint8_t {
     , TestWithSuperclass = 17
     , TestWithSuperclassAndWantsAsyncDispatch = 18
     , TestWithSuperclassAndWantsDispatch = 19
-    , TestWithValidator = 20
-    , TestWithWantsAsyncDispatch = 21
-    , TestWithWantsDispatch = 22
-    , TestWithWantsDispatchNoSyncMessages = 23
-    , TestWithoutAttributes = 24
-    , TestWithoutUsingIPCConnection = 25
-    , IPC = 26
-    , Invalid = 27
+    , TestWithUnsafeReply = 20
+    , TestWithValidator = 21
+    , TestWithWantsAsyncDispatch = 22
+    , TestWithWantsDispatch = 23
+    , TestWithWantsDispatchNoSyncMessages = 24
+    , TestWithoutAttributes = 25
+    , TestWithoutUsingIPCConnection = 26
+    , IPC = 27
+    , Invalid = 28
 };
 
 enum class MessageName : uint16_t {
@@ -162,6 +163,8 @@ enum class MessageName : uint16_t {
     TestWithSuperclass_TestAsyncMessageWithNoArguments,
     TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply,
 #endif
+    TestWithUnsafeReply_TestMessage,
+    TestWithUnsafeReply_TestMessageReply,
     TestWithValidator_AlwaysEnabled,
     TestWithValidator_EnabledIfPassValidation,
     TestWithValidator_EnabledIfSomeFeatureEnabledAndPassValidation,
@@ -256,6 +259,7 @@ struct MessageDescription {
     bool messageAllowedWhenWaitingForSyncReply : 1;
     bool messageAllowedWhenWaitingForUnboundedSyncReply : 1;
     bool isAsyncReply : 1;
+    bool allowsUnsafeDecode : 1 { false };
     ProcessName dispatchedFrom;
     ProcessName dispatchedTo;
 };
@@ -293,6 +297,12 @@ inline bool isAsyncReply(MessageName messageName)
 {
     messageName = std::min(messageName, MessageName::Last);
     return Detail::messageDescriptions[static_cast<size_t>(messageName)].isAsyncReply;
+}
+
+inline bool allowsUnsafeDecode(MessageName messageName)
+{
+    messageName = std::min(messageName, MessageName::Last);
+    return Detail::messageDescriptions[static_cast<size_t>(messageName)].allowsUnsafeDecode;
 }
 
 constexpr bool messageIsSync(MessageName name)

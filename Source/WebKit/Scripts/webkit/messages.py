@@ -26,7 +26,7 @@ import re
 import sys
 
 from webkit import parser
-from webkit.model import BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, CALL_WITH_REPLY_ID_ATTRIBUTE, MessageReceiver, Message
+from webkit.model import BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, CALL_WITH_REPLY_ID_ATTRIBUTE, UNSAFE_REPLY_ATTRIBUTE, MessageReceiver, Message
 
 _license_header = """/*
  * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
@@ -1846,6 +1846,7 @@ def generate_message_names_header(receivers):
     for fname, _ in sorted(attributes_to_generate_validators.items()):
         result.append('    bool %s : 1;\n' % fname)
     result.append('    bool isAsyncReply : 1;\n')
+    result.append('    bool allowsUnsafeDecode : 1 { false };\n')
     result.append('    ProcessName dispatchedFrom;\n')
     result.append('    ProcessName dispatchedTo;\n')
     result.append('};\n')
@@ -1867,6 +1868,12 @@ def generate_message_names_header(receivers):
     result.append('{\n')
     result.append('    messageName = std::min(messageName, MessageName::Last);\n')
     result.append('    return Detail::messageDescriptions[static_cast<size_t>(messageName)].isAsyncReply;\n')
+    result.append('}\n')
+    result.append('\n')
+    result.append('inline bool allowsUnsafeDecode(MessageName messageName)\n')
+    result.append('{\n')
+    result.append('    messageName = std::min(messageName, MessageName::Last);\n')
+    result.append('    return Detail::messageDescriptions[static_cast<size_t>(messageName)].allowsUnsafeDecode;\n')
     result.append('}\n')
     result.append('\n')
     result.append('constexpr bool messageIsSync(MessageName name)\n')
@@ -1916,6 +1923,7 @@ def generate_message_names_implementation(receivers):
                 value = "true" if (set(attr_list).intersection(set(enumerator.messages[0].attributes).union(set(enumerator.receiver.attributes))) and not enumerator.messages[0].is_async_reply) else "false"
                 result.append(', %s' % value)
             result.append(', %s' % ("true" if enumerator.messages[0].is_async_reply else "false"))
+            result.append(', %s' % ("true" if (enumerator.messages[0].is_async_reply and enumerator.messages[0].has_attribute(UNSAFE_REPLY_ATTRIBUTE)) else "false"))
             if enumerator.messages[0].is_async_reply:
                 result.append(', ProcessName::%s' % (enumerator.receiver.receiver_dispatched_to or "Unknown"))
                 result.append(', ProcessName::%s' % (enumerator.receiver.receiver_dispatched_from or "Unknown"))
@@ -1925,7 +1933,7 @@ def generate_message_names_implementation(receivers):
             result.append(' },\n')
         if condition:
             result.append('#endif\n')
-    result.append('    MessageDescription { "<invalid message name>"_s, ReceiverName::Invalid%s, false, ProcessName::Unknown, ProcessName::Unknown }\n' % (", false" * len(attributes_to_generate_validators)))
+    result.append('    MessageDescription { "<invalid message name>"_s, ReceiverName::Invalid%s, false, false, ProcessName::Unknown, ProcessName::Unknown }\n' % (", false" * len(attributes_to_generate_validators)))
     result.append('};\n')
     result.append('\n')
     result.append('} // namespace IPC::Detail\n')

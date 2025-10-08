@@ -560,6 +560,12 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "left()"_s
             },
         } },
+        { "UnsafeA"_s, {
+            {
+                "int"_s,
+                "a"_s
+            },
+        } },
 #if USE(PASSKIT)
         { "PKPaymentMethod"_s, {
             { "WebKit::CoreIPCPKPaymentMethod"_s, "wrapper"_s }
