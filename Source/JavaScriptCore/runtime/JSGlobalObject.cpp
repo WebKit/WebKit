@@ -969,8 +969,6 @@ void JSGlobalObject::init(VM& vm)
 
     convertToDictionary(vm);
 
-    m_debugger = nullptr;
-
 #if ENABLE(REMOTE_INSPECTOR)
     m_inspectorController = makeUnique<Inspector::JSGlobalObjectInspectorController>(*this);
     m_inspectorDebuggable = JSGlobalObjectDebuggable::create(*this);
