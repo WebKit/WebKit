@@ -1287,9 +1287,7 @@ http/tests/cookies/same-site/set-first-party-same-site-cookies.py [ Skip ]
 
 # <rdar://problem/40498290> REGRESSION (Mojave): HTMLMeterElement LayoutTests failing
 fast/dom/HTMLMeterElement/meter-boundary-values.html [ Failure ]
-fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html [ Failure ]
 fast/dom/HTMLMeterElement/meter-element.html [ Failure ]
-fast/dom/HTMLMeterElement/meter-optimums.html [ Failure ]
 fast/dom/HTMLMeterElement/meter-styles.html [ Failure ]
 
 # <rdar://problem/41103260> REGRESSION (Mojave): Three text tests failing with small antialiasing(?) diffs
