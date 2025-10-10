@@ -358,7 +358,11 @@ struct _WebKitWebViewBasePrivate {
     std::unique_ptr<DropTarget> dropTarget;
 #endif
 
-    GtkGesture* touchGestureGroup;
+    GRefPtr<GtkGesture> touchGestureGroup;
+    GRefPtr<GtkGesture> viewMultiPressGesture;
+    GRefPtr<GtkGesture> viewLongPressGesture;
+    GRefPtr<GtkGesture> viewDragGesture;
+    GRefPtr<GtkGesture> viewSwipeGesture;
     RefPtr<ViewGestureController> viewGestureController;
     bool isBackForwardNavigationGestureEnabled { false };
 
@@ -2367,8 +2371,8 @@ static void webkitWebViewBaseConstructed(GObject* object)
     gesture = gtk_gesture_click_new();
     gtk_widget_add_controller(viewWidget, GTK_EVENT_CONTROLLER(gesture));
 #else
-    auto* gesture = gtk_gesture_multi_press_new(viewWidget);
-    g_object_set_data_full(G_OBJECT(viewWidget), "wk-view-multi-press-gesture", gesture, g_object_unref);
+    priv->ViewMultiPressGesture = adoptRef(gtk_gesture_multi_press_new(viewWidget));
+    gesture = priv->ViewMultiPressGesture.get();
 #endif
     gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(gesture), TRUE);
     g_signal_connect_object(gesture, "pressed", G_CALLBACK(webkitWebViewBaseTouchPress), viewWidget, G_CONNECT_SWAPPED);
@@ -2377,23 +2381,22 @@ static void webkitWebViewBaseConstructed(GObject* object)
     // Touch gestures
 #if USE(GTK4)
     priv->touchGestureGroup = gtk_gesture_zoom_new();
-    gtk_widget_add_controller(viewWidget, GTK_EVENT_CONTROLLER(priv->touchGestureGroup));
+    gtk_widget_add_controller(viewWidget, GTK_EVENT_CONTROLLER(priv->touchGestureGroup.get()));
 #else
     priv->touchGestureGroup = gtk_gesture_zoom_new(viewWidget);
-    g_object_set_data_full(G_OBJECT(viewWidget), "wk-view-zoom-gesture", priv->touchGestureGroup, g_object_unref);
 #endif
-    g_signal_connect_object(priv->touchGestureGroup, "begin", G_CALLBACK(webkitWebViewBaseZoomBegin), viewWidget, G_CONNECT_SWAPPED);
-    g_signal_connect_object(priv->touchGestureGroup, "scale-changed", G_CALLBACK(webkitWebViewBaseZoomChanged), viewWidget, G_CONNECT_SWAPPED);
-    g_signal_connect_object(priv->touchGestureGroup, "end", G_CALLBACK(webkitWebViewBaseZoomEnd), viewWidget, G_CONNECT_SWAPPED);
+    g_signal_connect_object(priv->touchGestureGroup.get(), "begin", G_CALLBACK(webkitWebViewBaseZoomBegin), viewWidget, G_CONNECT_SWAPPED);
+    g_signal_connect_object(priv->touchGestureGroup.get(), "scale-changed", G_CALLBACK(webkitWebViewBaseZoomChanged), viewWidget, G_CONNECT_SWAPPED);
+    g_signal_connect_object(priv->touchGestureGroup.get(), "end", G_CALLBACK(webkitWebViewBaseZoomEnd), viewWidget, G_CONNECT_SWAPPED);
 
 #if USE(GTK4)
     gesture = gtk_gesture_long_press_new();
     gtk_widget_add_controller(viewWidget, GTK_EVENT_CONTROLLER(gesture));
 #else
-    gesture = gtk_gesture_long_press_new(viewWidget);
-    g_object_set_data_full(G_OBJECT(viewWidget), "wk-view-long-press-gesture", gesture, g_object_unref);
+    priv->viewLongPressGesture = gtk_gesture_long_press_new(viewWidget);
+    gesture = priv->viewLongPressGesture.get();
 #endif
-    gtk_gesture_group(gesture, priv->touchGestureGroup);
+    gtk_gesture_group(gesture, priv->touchGestureGroup.get());
     gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(gesture), TRUE);
     g_signal_connect_object(gesture, "pressed", G_CALLBACK(webkitWebViewBaseTouchLongPress), viewWidget, G_CONNECT_SWAPPED);
 
@@ -2401,10 +2404,10 @@ static void webkitWebViewBaseConstructed(GObject* object)
     gesture = gtk_gesture_drag_new();
     gtk_widget_add_controller(viewWidget, GTK_EVENT_CONTROLLER(gesture));
 #else
-    gesture = gtk_gesture_drag_new(viewWidget);
-    g_object_set_data_full(G_OBJECT(viewWidget), "wk-view-drag-gesture", gesture, g_object_unref);
+    priv->viewDragGesture = gtk_gesture_drag_new(viewWidget);
+    gesture = priv->viewDragGesture.get();
 #endif
-    gtk_gesture_group(gesture, priv->touchGestureGroup);
+    gtk_gesture_group(gesture, priv->touchGestureGroup.get());
     gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(gesture), TRUE);
     g_signal_connect_object(gesture, "drag-begin", G_CALLBACK(webkitWebViewBaseTouchDragBegin), viewWidget, G_CONNECT_SWAPPED);
     g_signal_connect_object(gesture, "drag-update", G_CALLBACK(webkitWebViewBaseTouchDragUpdate), viewWidget, G_CONNECT_SWAPPED);
@@ -2415,10 +2418,10 @@ static void webkitWebViewBaseConstructed(GObject* object)
     gesture = gtk_gesture_swipe_new();
     gtk_widget_add_controller(viewWidget, GTK_EVENT_CONTROLLER(gesture));
 #else
-    gesture = gtk_gesture_swipe_new(viewWidget);
-    g_object_set_data_full(G_OBJECT(viewWidget), "wk-view-swipe-gesture", gesture, g_object_unref);
+    priv->viewSwipeGesture = gtk_gesture_swipe_new(viewWidget);
+    gesture = priv->viewSwipeGesture.get();
 #endif
-    gtk_gesture_group(gesture, priv->touchGestureGroup);
+    gtk_gesture_group(gesture, priv->touchGestureGroup.get());
     gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(gesture), TRUE);
     g_signal_connect_object(gesture, "swipe", G_CALLBACK(webkitWebViewBaseTouchSwipe), viewWidget, G_CONNECT_SWAPPED);
 
@@ -3424,7 +3427,7 @@ void webkitWebViewBasePageGrabbedTouch(WebKitWebViewBase* webViewBase)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     priv->pageGrabbedTouch = true;
-    gtk_gesture_set_state(priv->touchGestureGroup, GTK_EVENT_SEQUENCE_DENIED);
+    gtk_gesture_set_state(priv->touchGestureGroup.get(), GTK_EVENT_SEQUENCE_DENIED);
 }
 
 void webkitWebViewBaseSetShouldNotifyFocusEvents(WebKitWebViewBase* webViewBase, bool shouldNotifyFocusEvents)
