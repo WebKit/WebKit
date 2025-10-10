@@ -57,7 +57,7 @@ JSC::JSValue evaluateHandlerFromAnyThread(JSC::JSGlobalObject* lexicalGlobalObje
 void JSExecState::runTask(JSC::JSGlobalObject* globalObject, JSC::QueuedTask& task)
 {
     JSExecState currentState(globalObject);
-    MicrotaskQueue::runJSMicrotask(globalObject, globalObject->vm(), task);
+    MicrotaskQueue::runJSMicrotask(globalObject, globalObject->vm(), task, globalObject->debugger());
 }
 
 ScriptExecutionContext* executionContext(JSC::JSGlobalObject* globalObject)

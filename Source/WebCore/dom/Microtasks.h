@@ -29,6 +29,7 @@
 #include <wtf/WeakPtr.h>
 
 namespace JSC {
+class Debugger;
 class VM;
 } // namespace JSC
 
@@ -69,7 +70,7 @@ public:
     bool hasMicrotasksForFullyActiveDocument() const;
     bool isPerformingCheckpoint() const { return m_performingMicrotaskCheckpoint; }
 
-    static void runJSMicrotask(JSC::JSGlobalObject*, JSC::VM&, JSC::QueuedTask&);
+    static void runJSMicrotask(JSC::JSGlobalObject*, JSC::VM&, JSC::QueuedTask&, JSC::Debugger*);
 
 private:
     JSC::VM& vm() const { return m_vm.get(); }

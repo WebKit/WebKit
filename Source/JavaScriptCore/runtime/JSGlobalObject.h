@@ -226,6 +226,7 @@ private:
 public:
     template<typename T> using Initializer = typename LazyProperty<JSGlobalObject, T>::Initializer;
 
+    Debugger* m_debugger { nullptr };
     WriteBarrier<JSObject> m_globalThis;
 
     WriteBarrier<JSGlobalLexicalEnvironment> m_globalLexicalEnvironment;
@@ -459,8 +460,6 @@ public:
     StructureCache m_structureCache;
 
     String m_name;
-
-    Debugger* m_debugger;
 
 #if ENABLE(REMOTE_INSPECTOR)
     // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.

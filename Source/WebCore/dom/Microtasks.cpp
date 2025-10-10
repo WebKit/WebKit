@@ -69,13 +69,13 @@ void MicrotaskQueue::append(JSC::QueuedTask&& task)
     m_microtaskQueue.enqueue(WTFMove(task));
 }
 
-void MicrotaskQueue::runJSMicrotask(JSC::JSGlobalObject* globalObject, JSC::VM& vm, JSC::QueuedTask& task)
+void MicrotaskQueue::runJSMicrotask(JSC::JSGlobalObject* globalObject, JSC::VM& vm, JSC::QueuedTask& task, JSC::Debugger* debugger)
 {
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    if (auto* debugger = globalObject->debugger()) [[unlikely]] {
+    if (debugger) [[unlikely]] {
         JSC::DeferTerminationForAWhile deferTerminationForAWhile(vm);
-        debugger->willRunMicrotask(globalObject, task.identifier());
+        globalObject->debugger()->willRunMicrotask(globalObject, task.identifier());
         if (!scope.clearExceptionExceptTermination()) [[unlikely]]
             return;
     }
@@ -90,9 +90,9 @@ void MicrotaskQueue::runJSMicrotask(JSC::JSGlobalObject* globalObject, JSC::VM& 
             return;
     }
 
-    if (auto* debugger = globalObject->debugger()) [[unlikely]] {
+    if (debugger) [[unlikely]] {
         JSC::DeferTerminationForAWhile deferTerminationForAWhile(vm);
-        debugger->didRunMicrotask(globalObject, task.identifier());
+        globalObject->debugger()->didRunMicrotask(globalObject, task.identifier());
         if (!scope.clearExceptionExceptTermination()) [[unlikely]]
             return;
     }
@@ -110,9 +110,11 @@ void MicrotaskQueue::performMicrotaskCheckpoint()
     {
         SUPPRESS_UNCOUNTED_ARG auto& data = threadGlobalDataSingleton();
         auto* previousState = data.currentState();
+
+        JSC::JSGlobalObject* currentGlobalObject = nullptr;
+        JSC::Debugger* currentDebugger = nullptr;
         std::optional<JSC::VMEntryScope> entryScope;
         std::optional<JSC::ScriptProfilingScope> profilingScope;
-        JSC::JSGlobalObject* currentGlobalObject = nullptr;
         m_microtaskQueue.performMicrotaskCheckpoint(vm,
             [&](JSC::QueuedTask& task) ALWAYS_INLINE_LAMBDA {
                 RefPtr dispatcher = downcast<WebCoreMicrotaskDispatcher>(task.dispatcher());
@@ -126,14 +128,15 @@ void MicrotaskQueue::performMicrotaskCheckpoint()
                         auto* globalObject = task.globalObject();
                         data.setCurrentState(globalObject);
                         if (currentGlobalObject != globalObject) {
+                            currentGlobalObject = globalObject;
+                            currentDebugger = globalObject->debugger();
                             if (!entryScope)
                                 entryScope.emplace(vm, globalObject);
                             else
                                 entryScope->setGlobalObject(globalObject);
                             profilingScope.emplace(globalObject, JSC::ProfilingReason::Microtask);
-                            currentGlobalObject = globalObject;
                         }
-                        runJSMicrotask(globalObject, vm, task);
+                        runJSMicrotask(globalObject, vm, task, currentDebugger);
                         break;
                     }
                     case WebCoreMicrotaskDispatcher::Type::None:
@@ -142,6 +145,7 @@ void MicrotaskQueue::performMicrotaskCheckpoint()
                         entryScope = std::nullopt;
                         profilingScope = std::nullopt;
                         currentGlobalObject = nullptr;
+                        currentDebugger = nullptr;
                         data.setCurrentState(previousState);
                         dispatcher->run(task);
                         break;
