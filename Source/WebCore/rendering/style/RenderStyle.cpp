@@ -625,7 +625,7 @@ bool RenderStyle::isIdempotentTextAutosizingCandidate(AutosizeStatus status) con
                 if (auto fixedHeight = height().tryFixed(); fixedHeight && specifiedLineHeight().isFixed()) {
                     if (auto fixedSpecifiedLineHeight = specifiedLineHeight().tryFixed()) {
                         float specifiedSize = specifiedFontSize();
-                        if (fixedHeight->resolveZoom(Style::ZoomNeeded { }) == specifiedSize && fixedSpecifiedLineHeight->resolveZoom(Style::ZoomNeeded { }) == specifiedSize)
+                        if (fixedHeight->resolveZoom(usedZoomForLength()) == specifiedSize && fixedSpecifiedLineHeight->resolveZoom(Style::ZoomNeeded { }) == specifiedSize)
                             return false;
                     }
                 }
@@ -636,7 +636,7 @@ bool RenderStyle::isIdempotentTextAutosizingCandidate(AutosizeStatus status) con
                     if (auto fixedSpecifiedLineHeight = specifiedLineHeight().tryFixed()) {
                         float specifiedSize = specifiedFontSize();
                         if (fixedSpecifiedLineHeight->resolveZoom(Style::ZoomNeeded { }) - specifiedSize > smallMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText
-                                && fixedHeight->resolveZoom(Style::ZoomNeeded { }) - specifiedSize > smallMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText)
+                            && fixedHeight->resolveZoom(usedZoomForLength()) - specifiedSize > smallMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText)
                             return true;
                     }
                 }

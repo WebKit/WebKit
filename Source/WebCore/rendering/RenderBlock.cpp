@@ -805,9 +805,9 @@ LayoutUnit RenderBlock::marginIntrinsicLogicalWidthForChild(RenderBox& child) co
     auto& marginRight = child.style().marginEnd(writingMode());
     LayoutUnit margin;
     if (auto fixedMarginLeft = marginLeft.tryFixed(); fixedMarginLeft && !shouldTrimChildMargin(MarginTrimType::InlineStart, child))
-        margin += fixedMarginLeft->resolveZoom(Style::ZoomNeeded { });
+        margin += fixedMarginLeft->resolveZoom(child.style().usedZoomForLength());
     if (auto fixedMarginRight = marginRight.tryFixed(); fixedMarginRight && !shouldTrimChildMargin(MarginTrimType::InlineEnd, child))
-        margin += fixedMarginRight->resolveZoom(Style::ZoomNeeded { });
+        margin += fixedMarginRight->resolveZoom(child.style().usedZoomForLength());
     return margin;
 }
 
@@ -2259,7 +2259,7 @@ void RenderBlock::computePreferredLogicalWidths()
 
     auto& styleToUse = style();
     auto logicalWidth = overridingLogicalWidthForFlexBasisComputation().value_or(styleToUse.logicalWidth());
-    if (auto fixedLogicalWidth = logicalWidth.tryFixed(); !isRenderTableCell() && fixedLogicalWidth && fixedLogicalWidth->isPositiveOrZero() && !(isDeprecatedFlexItem() && !static_cast<int>(fixedLogicalWidth->resolveZoom(Style::ZoomNeeded { })))) {
+    if (auto fixedLogicalWidth = logicalWidth.tryFixed(); !isRenderTableCell() && fixedLogicalWidth && fixedLogicalWidth->isPositiveOrZero() && !(isDeprecatedFlexItem() && !static_cast<int>(fixedLogicalWidth->resolveZoom(styleToUse.usedZoomForLength())))) {
         m_minPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
         m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth;
     } else if (logicalWidth.isMaxContent()) {
@@ -2325,9 +2325,9 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
         LayoutUnit marginStart;
         LayoutUnit marginEnd;
         if (auto fixedMarginStart = childStyle.marginStart(writingMode()).tryFixed())
-            marginStart += fixedMarginStart->resolveZoom(Style::ZoomNeeded { });
+            marginStart += fixedMarginStart->resolveZoom(childStyle.usedZoomForLength());
         if (auto fixedMarginEnd = childStyle.marginEnd(writingMode()).tryFixed())
-            marginEnd += fixedMarginEnd->resolveZoom(Style::ZoomNeeded { });
+            marginEnd += fixedMarginEnd->resolveZoom(childStyle.usedZoomForLength());
         auto margin = marginStart + marginEnd;
 
         LayoutUnit childMinPreferredLogicalWidth;
@@ -2401,7 +2401,7 @@ void RenderBlock::computeChildPreferredLogicalWidths(RenderBox& childBox, Layout
                 childBox.verticalBorderAndPaddingExtent(),
                 LayoutUnit { childBoxStyle.logicalAspectRatio() },
                 childBoxStyle.boxSizingForAspectRatio(),
-                LayoutUnit { fixedChildBoxStyleLogicalWidth->resolveZoom(Style::ZoomNeeded { }) },
+                LayoutUnit { fixedChildBoxStyleLogicalWidth->resolveZoom(childBoxStyle.usedZoomForLength()) },
                 style().aspectRatio(),
                 isRenderReplaced()
             );
@@ -3085,7 +3085,7 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
 
         auto& style = this->style();
         if (auto fixedLogicalHeight = style.logicalHeight().tryFixed()) {
-            auto contentBoxHeight = adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit { fixedLogicalHeight->resolveZoom(Style::ZoomNeeded { }) });
+            auto contentBoxHeight = adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit { fixedLogicalHeight->resolveZoom(style.usedZoomForLength()) });
             return std::max(0_lu, constrainContentBoxLogicalHeightByMinMax(contentBoxHeight - scrollbarLogicalHeight(), { }));
         }
 
@@ -3358,9 +3358,9 @@ bool RenderBlock::computePreferredWidthsForExcludedChildren(LayoutUnit& minWidth
     LayoutUnit marginStart;
     LayoutUnit marginEnd;
     if (auto fixedMarginStart = childStyle.marginStart(writingMode()).tryFixed())
-        marginStart += fixedMarginStart->resolveZoom(Style::ZoomNeeded { });
+        marginStart += fixedMarginStart->resolveZoom(childStyle.usedZoomForLength());
     if (auto fixedMarginEnd = childStyle.marginEnd(writingMode()).tryFixed())
-        marginEnd += fixedMarginEnd->resolveZoom(Style::ZoomNeeded { });
+        marginEnd += fixedMarginEnd->resolveZoom(childStyle.usedZoomForLength());
 
     auto margin = marginStart + marginEnd;
 

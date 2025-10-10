@@ -363,7 +363,7 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
             auto columnIndex = cellPosition.column;
             WTF::switchOn(cellStyle.logicalWidth(),
                 [&](const Style::PreferredSize::Fixed& fixed) {
-                    auto fixedWidth = LayoutUnit { fixed.resolveZoom(Style::ZoomNeeded { }) } + horizontalBorderAndPaddingWidth;
+                    auto fixedWidth = LayoutUnit { fixed.resolveZoom(cellStyle.usedZoomForLength()) } + horizontalBorderAndPaddingWidth;
                     maximumFixedColumnWidths[columnIndex] = std::max(maximumFixedColumnWidths[columnIndex].value_or(0_lu), fixedWidth);
                     hasColumnWithFixedWidth = true;
                 },

@@ -74,23 +74,23 @@ namespace LayoutIntegration {
 static LayoutUnit usedValueOrZero(const Style::MarginEdge& marginEdge, std::optional<LayoutUnit> availableWidth)
 {
     if (auto fixed = marginEdge.tryFixed())
-        return LayoutUnit { fixed->resolveZoom(Style::ZoomNeeded { }) };
+        return LayoutUnit { fixed->resolveZoom(Style::ZoomFactor(1.0f)) };
 
     if (marginEdge.isAuto() || !availableWidth)
         return { };
 
-    return Style::evaluateMinimum<LayoutUnit>(marginEdge, *availableWidth, Style::ZoomNeeded { });
+    return Style::evaluateMinimum<LayoutUnit>(marginEdge, *availableWidth, Style::ZoomFactor(1.0f));
 }
 
 static LayoutUnit usedValueOrZero(const Style::PaddingEdge& paddingEdge, std::optional<LayoutUnit> availableWidth)
 {
     if (auto fixed = paddingEdge.tryFixed())
-        return LayoutUnit { fixed->resolveZoom(Style::ZoomNeeded { }) };
+        return LayoutUnit { fixed->resolveZoom(Style::ZoomFactor(1.0f)) };
 
     if (!availableWidth)
         return { };
 
-    return Style::evaluateMinimum<LayoutUnit>(paddingEdge, *availableWidth, Style::ZoomNeeded { });
+    return Style::evaluateMinimum<LayoutUnit>(paddingEdge, *availableWidth, Style::ZoomFactor(1.0f));
 }
 
 static inline void adjustBorderForTableAndFieldset(const RenderBoxModelObject& renderer, RectEdges<LayoutUnit>& borderWidths)

@@ -91,9 +91,9 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
 
             auto propertyValueForLength = [&](auto& propertyValue, auto availableSize) -> std::optional<LayoutUnit> {
                 if (auto fixedPropertyValue = propertyValue.tryFixed())
-                    return Style::evaluate<LayoutUnit>(*fixedPropertyValue, Style::ZoomNeeded { });
+                    return Style::evaluate<LayoutUnit>(*fixedPropertyValue, style->usedZoomForLength());
                 if (propertyValue.isSpecified() && availableSize)
-                    return Style::evaluate<LayoutUnit>(propertyValue, *availableSize, Style::ZoomNeeded { });
+                    return Style::evaluate<LayoutUnit>(propertyValue, *availableSize, style->usedZoomForLength());
                 return { };
             };
 

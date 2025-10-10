@@ -1511,9 +1511,9 @@ bool RenderBox::hasTrimmedMargin(std::optional<MarginTrimType> marginTrimType) c
     return marginTrimType ? rareData().trimmedMargins.contains(*marginTrimType) : !rareData().trimmedMargins.isEmpty();
 }
 
-LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(const Style::Length<CSS::Nonnegative, float>& logicalWidth) const
+LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(const Style::Length<CSS::NonnegativeUnzoomed, float>& logicalWidth) const
 {
-    auto width = LayoutUnit { logicalWidth.resolveZoom(Style::ZoomNeeded { }) };
+    auto width = LayoutUnit { logicalWidth.resolveZoom(style().usedZoomForLength()) };
     auto bordersPlusPadding = borderAndPaddingLogicalWidth();
     if (style().boxSizing() == BoxSizing::ContentBox)
         return width + bordersPlusPadding;
@@ -1536,9 +1536,9 @@ LayoutUnit RenderBox::adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit height
     return std::max(height, bordersPlusPadding);
 }
 
-LayoutUnit RenderBox::adjustContentBoxLogicalWidthForBoxSizing(const Style::Length<CSS::Nonnegative, float>& logicalWidth) const
+LayoutUnit RenderBox::adjustContentBoxLogicalWidthForBoxSizing(const Style::Length<CSS::NonnegativeUnzoomed, float>& logicalWidth) const
 {
-    auto width = LayoutUnit { logicalWidth.resolveZoom(Style::ZoomNeeded { }) };
+    auto width = LayoutUnit { logicalWidth.resolveZoom(style().usedZoomForLength()) };
     if (style().boxSizing() == BoxSizing::ContentBox)
         return std::max(0_lu, width);
     return std::max(0_lu, width - borderAndPaddingLogicalWidth());
@@ -2402,7 +2402,7 @@ LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
     // FIXME: For now just support fixed heights.  Eventually should support percentage heights as well.
     if (auto fixedLogicalHeight = logicalHeight.tryFixed()) {
         // Use the content box logical height as specified by the style.
-        return containingBlock->adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit { fixedLogicalHeight->resolveZoom(Style::ZoomNeeded { }) });
+        return containingBlock->adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit { fixedLogicalHeight->resolveZoom(style().usedZoomForLength()) });
     }
 
     LayoutUnit fillFallbackExtent = containingBlockStyle.writingMode().isHorizontal()
@@ -2752,10 +2752,10 @@ void RenderBox::computeLogicalWidth(LogicalExtentComputedValues& computedValues)
     auto& styleToUse = style();
     if (isInline() && is<RenderReplaced>(*this)) {
         // just calculate margins
-        computedValues.m_margins.m_start = Style::evaluateMinimum<LayoutUnit>(styleToUse.marginStart(), containerLogicalWidth, Style::ZoomNeeded { });
-        computedValues.m_margins.m_end = Style::evaluateMinimum<LayoutUnit>(styleToUse.marginEnd(), containerLogicalWidth, Style::ZoomNeeded { });
+        computedValues.m_margins.m_start = Style::evaluateMinimum<LayoutUnit>(styleToUse.marginStart(), containerLogicalWidth, styleToUse.usedZoomForLength());
+        computedValues.m_margins.m_end = Style::evaluateMinimum<LayoutUnit>(styleToUse.marginEnd(), containerLogicalWidth, styleToUse.usedZoomForLength());
         if (treatAsReplaced) {
-            auto evaluatedWidth = Style::evaluate<LayoutUnit>(usedLogicalWidthLength, 0_lu, Style::ZoomNeeded { });
+            auto evaluatedWidth = Style::evaluate<LayoutUnit>(usedLogicalWidthLength, 0_lu, styleToUse.usedZoomForLength());
             auto totalWidth = evaluatedWidth + borderAndPaddingLogicalWidth();
             computedValues.m_extent = std::max(totalWidth, minPreferredLogicalWidth());
         }
@@ -2770,7 +2770,7 @@ void RenderBox::computeLogicalWidth(LogicalExtentComputedValues& computedValues)
         if (auto overridingLogicalWidth = this->overridingBorderBoxLogicalWidth())
             return *overridingLogicalWidth;
         if (treatAsReplaced)
-            return Style::evaluate<LayoutUnit>(usedLogicalWidthLength, 0_lu, Style::ZoomNeeded { }) + borderAndPaddingLogicalWidth();
+            return Style::evaluate<LayoutUnit>(usedLogicalWidthLength, 0_lu, styleToUse.usedZoomForLength()) + borderAndPaddingLogicalWidth();
         if (shouldComputeLogicalWidthFromAspectRatio() && style().logicalWidth().isAuto())
             return computeLogicalWidthFromAspectRatio();
 
@@ -2783,10 +2783,10 @@ void RenderBox::computeLogicalWidth(LogicalExtentComputedValues& computedValues)
     // Margin calculations.
     if (hasPerpendicularContainingBlock || isFloating() || isInline()) {
         computedValues.m_margins.m_start = computeOrTrimInlineMargin(containingBlock, MarginTrimType::BlockStart, [&] {
-            return Style::evaluateMinimum<LayoutUnit>(styleToUse.marginStart(), containerLogicalWidth, Style::ZoomNeeded { });
+            return Style::evaluateMinimum<LayoutUnit>(styleToUse.marginStart(), containerLogicalWidth, styleToUse.usedZoomForLength());
         });
         computedValues.m_margins.m_end = computeOrTrimInlineMargin(containingBlock, MarginTrimType::BlockEnd, [&] {
-            return Style::evaluateMinimum<LayoutUnit>(styleToUse.marginEnd(), containerLogicalWidth, Style::ZoomNeeded { });
+            return Style::evaluateMinimum<LayoutUnit>(styleToUse.marginEnd(), containerLogicalWidth, styleToUse.usedZoomForLength());
         });
     } else {
         auto containerLogicalWidthForAutoMargins = containerLogicalWidth;
@@ -2842,10 +2842,10 @@ LayoutUnit RenderBox::fillAvailableMeasure(LayoutUnit availableLogicalWidth, Lay
     auto& marginEndLength = style().marginEnd();
     LayoutUnit availableSizeForResolvingMargin = isOrthogonalElement ? containingBlockLogicalWidthForContent() : availableLogicalWidth;
     marginStart = computeOrTrimInlineMargin(*container, MarginTrimType::InlineStart, [&] {
-        return Style::evaluateMinimum<LayoutUnit>(marginStartLength, availableSizeForResolvingMargin, Style::ZoomNeeded { });
+        return Style::evaluateMinimum<LayoutUnit>(marginStartLength, availableSizeForResolvingMargin, style().usedZoomForLength());
     });
     marginEnd = computeOrTrimInlineMargin(*container, MarginTrimType::InlineEnd, [&] {
-        return Style::evaluateMinimum<LayoutUnit>(marginEndLength, availableSizeForResolvingMargin, Style::ZoomNeeded { });
+        return Style::evaluateMinimum<LayoutUnit>(marginEndLength, availableSizeForResolvingMargin, style().usedZoomForLength());
     });
     return availableLogicalWidth - marginStart - marginEnd;
 }
@@ -2957,7 +2957,7 @@ template<typename SizeType> LayoutUnit RenderBox::computeLogicalWidthUsingGeneri
 
     if (logicalWidth.isSpecified()) {
         // FIXME: If the containing block flow is perpendicular to our direction we need to use the available logical height instead.
-        return adjustBorderBoxLogicalWidthForBoxSizing(Style::evaluate<LayoutUnit>(logicalWidth, availableLogicalWidth, Style::ZoomNeeded { }));
+        return adjustBorderBoxLogicalWidthForBoxSizing(Style::evaluate<LayoutUnit>(logicalWidth, availableLogicalWidth, style().usedZoomForLength()));
     }
 
     if (logicalWidth.isIntrinsic() || logicalWidth.isMinIntrinsic())
@@ -3155,18 +3155,18 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
     auto marginEndLength = style().marginEnd(containingBlockStyle.writingMode());
 
     if (isFloating()) {
-        marginStart = Style::evaluateMinimum<LayoutUnit>(marginStartLength, containerWidth, Style::ZoomNeeded { });
-        marginEnd = Style::evaluateMinimum<LayoutUnit>(marginEndLength, containerWidth, Style::ZoomNeeded { });
+        marginStart = Style::evaluateMinimum<LayoutUnit>(marginStartLength, containerWidth, style().usedZoomForLength());
+        marginEnd = Style::evaluateMinimum<LayoutUnit>(marginEndLength, containerWidth, style().usedZoomForLength());
         return;
     }
 
     if (isInline()) {
         // Inline blocks/tables don't have their margins increased.
         marginStart = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineStart, [&] {
-            return Style::evaluateMinimum<LayoutUnit>(marginStartLength, containerWidth, Style::ZoomNeeded { });
+            return Style::evaluateMinimum<LayoutUnit>(marginStartLength, containerWidth, style().usedZoomForLength());
         });
         marginEnd = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineStart, [&] {
-            return Style::evaluateMinimum<LayoutUnit>(marginEndLength, containerWidth, Style::ZoomNeeded { });
+            return Style::evaluateMinimum<LayoutUnit>(marginEndLength, containerWidth, style().usedZoomForLength());
         });
         return;
     }
@@ -3196,13 +3196,13 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
         if (marginAutoCenter || alignModeCenter) {
             // Other browsers center the margin box for align=center elements so we match them here.
             marginStart = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineStart, [&] {
-                auto marginStartWidth = Style::evaluateMinimum<LayoutUnit>(marginStartLength, containerWidthForMarginAuto, Style::ZoomNeeded { });
-                auto marginEndWidth = Style::evaluateMinimum<LayoutUnit>(marginEndLength, containerWidthForMarginAuto, Style::ZoomNeeded { });
+                auto marginStartWidth = Style::evaluateMinimum<LayoutUnit>(marginStartLength, containerWidthForMarginAuto, style().usedZoomForLength());
+                auto marginEndWidth = Style::evaluateMinimum<LayoutUnit>(marginEndLength, containerWidthForMarginAuto, style().usedZoomForLength());
                 auto centeredMarginBoxStart = std::max<LayoutUnit>(0, (containerWidthForMarginAuto - childWidth - marginStartWidth - marginEndWidth) / 2);
                 return centeredMarginBoxStart + marginStartWidth;
             });
             marginEnd = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineEnd, [&] {
-                auto marginEndWidth = Style::evaluateMinimum<LayoutUnit>(marginEndLength, containerWidthForMarginAuto, Style::ZoomNeeded { });
+                auto marginEndWidth = Style::evaluateMinimum<LayoutUnit>(marginEndLength, containerWidthForMarginAuto, style().usedZoomForLength());
                 return containerWidthForMarginAuto - childWidth - marginStart + marginEndWidth;
             });
             return true;
@@ -3210,7 +3210,7 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
 
         // Case Two: The object is being pushed to the start of the containing block's available logical width.
         if (marginEndLength.isAuto() && childWidth < containerWidthForMarginAuto) {
-            marginStart = Style::evaluate<LayoutUnit>(marginStartLength, containerWidthForMarginAuto, Style::ZoomNeeded { });
+            marginStart = Style::evaluate<LayoutUnit>(marginStartLength, containerWidthForMarginAuto, style().usedZoomForLength());
             marginEnd = containerWidthForMarginAuto - childWidth - marginStart;
             return true;
         }
@@ -3220,7 +3220,7 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
             || (containingBlockStyle.writingMode().isBidiLTR() && containingBlockStyle.textAlign() == TextAlignMode::WebKitRight));
         if ((marginStartLength.isAuto() || pushToEndFromTextAlign) && childWidth < containerWidthForMarginAuto) {
             marginEnd = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineEnd, [&] {
-                return Style::evaluate<LayoutUnit>(marginEndLength, containerWidthForMarginAuto, Style::ZoomNeeded { });
+                return Style::evaluate<LayoutUnit>(marginEndLength, containerWidthForMarginAuto, style().usedZoomForLength());
             });
             marginStart = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineStart, [&] {
                 return containerWidthForMarginAuto - childWidth - marginEnd;
@@ -3235,10 +3235,10 @@ void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock
     // Case Four: Either no auto margins, or our width is >= the container width (css2.1, 10.3.3). In that case
     // auto margins will just turn into 0.
     marginStart = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineStart, [&] {
-        return Style::evaluateMinimum<LayoutUnit>(marginStartLength, containerWidth, Style::ZoomNeeded { });
+        return Style::evaluateMinimum<LayoutUnit>(marginStartLength, containerWidth, style().usedZoomForLength());
     });
     marginEnd = computeOrTrimInlineMargin(containingBlock, MarginTrimType::InlineEnd, [&] {
-        return Style::evaluateMinimum<LayoutUnit>(marginEndLength, containerWidth, Style::ZoomNeeded { });
+        return Style::evaluateMinimum<LayoutUnit>(marginEndLength, containerWidth, style().usedZoomForLength());
     });
 }
 
@@ -3427,7 +3427,7 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
     auto computedLogicalHeight = [&] {
         if (!checkMinMaxHeight) {
             ASSERT(computedHeightValue.isFixed());
-            return LayoutUnit { computedHeightValue.tryFixed()->resolveZoom(Style::ZoomNeeded { }) };
+            return LayoutUnit { computedHeightValue.tryFixed()->resolveZoom(style().usedZoomForLength()) };
         }
 
         // Callers passing LayoutUnit::max() for logicalHeight means an indefinite height, so
@@ -3582,7 +3582,7 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeIntrinsi
                 return resolveHeightForRatio(
                     borderAndPaddingLogicalWidth(),
                     borderAndPaddingLogicalHeight(),
-                    LayoutUnit { computedFixedLogicalWidth->resolveZoom(Style::ZoomNeeded { }) },
+                    LayoutUnit { computedFixedLogicalWidth->resolveZoom(style().usedZoomForLength()) },
                     intrinsicRatio.transposedSize().aspectRatio(),
                     BoxSizing::ContentBox
                 );
@@ -3651,7 +3651,7 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeContentA
 
     return WTF::switchOn(logicalHeight,
         [&](const typename SizeType::Fixed& fixedLogicalHeight) -> std::optional<LayoutUnit> {
-            return LayoutUnit { fixedLogicalHeight.resolveZoom(Style::ZoomNeeded { }) };
+            return LayoutUnit { fixedLogicalHeight.resolveZoom(style().usedZoomForLength()) };
         },
         [&](const typename SizeType::Percentage&) -> std::optional<LayoutUnit> {
             return computePercentageLogicalHeight(logicalHeight);
@@ -3800,7 +3800,7 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computePercenta
         if constexpr (Style::IsPercentageOrCalc<SizeType>)
             return Style::evaluate<LayoutUnit>(logicalHeight, *availableHeight - rootMarginBorderPaddingHeight + (isRenderTable() && isOutOfFlowPositioned() ? containingBlock->paddingBefore() + containingBlock->paddingAfter() : 0_lu));
         else
-            return Style::evaluate<LayoutUnit>(logicalHeight, *availableHeight - rootMarginBorderPaddingHeight + (isRenderTable() && isOutOfFlowPositioned() ? containingBlock->paddingBefore() + containingBlock->paddingAfter() : 0_lu), Style::ZoomNeeded { });
+            return Style::evaluate<LayoutUnit>(logicalHeight, *availableHeight - rootMarginBorderPaddingHeight + (isRenderTable() && isOutOfFlowPositioned() ? containingBlock->paddingBefore() + containingBlock->paddingAfter() : 0_lu), style().usedZoomForLength());
     }();
 
     // |overridingLogicalHeight| is the maximum height made available by the
@@ -3837,12 +3837,12 @@ std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Style:
     return computePercentageLogicalHeightGeneric(logicalHeight, updateDescendants);
 }
 
-std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Style::Percentage<CSS::Nonnegative, float>& logicalHeight, UpdatePercentageHeightDescendants updateDescendants) const
+std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Style::Percentage<CSS::NonnegativeUnzoomed, float>& logicalHeight, UpdatePercentageHeightDescendants updateDescendants) const
 {
     return computePercentageLogicalHeightGeneric(logicalHeight, updateDescendants);
 }
 
-std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Style::UnevaluatedCalculation<CSS::LengthPercentage<CSS::Nonnegative, float>>& logicalHeight, UpdatePercentageHeightDescendants updateDescendants) const
+std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Style::UnevaluatedCalculation<CSS::LengthPercentage<CSS::NonnegativeUnzoomed, float>>& logicalHeight, UpdatePercentageHeightDescendants updateDescendants) const
 {
     return computePercentageLogicalHeightGeneric(logicalHeight, updateDescendants);
 }
@@ -3850,7 +3850,7 @@ std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Style:
 bool RenderBox::shouldComputePreferredLogicalWidthsFromStyle() const
 {
     auto fixedLogicalWidth = overridingLogicalWidthForFlexBasisComputation().value_or(style().logicalWidth()).tryFixed();
-    return fixedLogicalWidth && fixedLogicalWidth->isPositiveOrZero() && !(isDeprecatedFlexItem() && !static_cast<int>(fixedLogicalWidth->resolveZoom(Style::ZoomNeeded { })));
+    return fixedLogicalWidth && fixedLogicalWidth->isPositiveOrZero() && !(isDeprecatedFlexItem() && !static_cast<int>(fixedLogicalWidth->resolveZoom(style().usedZoomForLength())));
 }
 
 void RenderBox::computePreferredLogicalWidths()
@@ -3936,7 +3936,7 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Style::PreferredSize& lo
 
     if (logicalHeight.isPercentOrCalculated() && isOutOfFlowPositioned() && !isRenderFragmentedFlow()) {
         PositionedLayoutConstraints constraints(*this, LogicalBoxAxis::Block);
-        return adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate<LayoutUnit>(logicalHeight, constraints.containingSize(), Style::ZoomNeeded { }));
+        return adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate<LayoutUnit>(logicalHeight, constraints.containingSize(), style().usedZoomForLength()));
     }
 
     if (auto computedContentAndScrollbarLogicalHeight = computeContentAndScrollbarLogicalHeightUsing(logicalHeight, std::nullopt))
@@ -3997,8 +3997,8 @@ LayoutUnit RenderBox::constrainBlockMarginInAvailableSpaceOrTrim(const RenderBox
     }
     
     return marginSide == MarginTrimType::BlockStart
-        ? Style::evaluateMinimum<LayoutUnit>(style().marginBefore(containingBlock.writingMode()), availableSpace, Style::ZoomNeeded { })
-        : Style::evaluateMinimum<LayoutUnit>(style().marginAfter(containingBlock.writingMode()), availableSpace, Style::ZoomNeeded { });
+        ? Style::evaluateMinimum<LayoutUnit>(style().marginBefore(containingBlock.writingMode()), availableSpace, style().usedZoomForLength())
+        : Style::evaluateMinimum<LayoutUnit>(style().marginAfter(containingBlock.writingMode()), availableSpace, style().usedZoomForLength());
 }
 
 // MARK: - Positioned Layout
@@ -4318,7 +4318,7 @@ LayoutUnit RenderBox::computeOutOfFlowPositionedLogicalHeightUsing(const Style::
             auto resolvedLogicalHeight = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), style().logicalAspectRatio(), style().boxSizingForAspectRatio(), logicalWidth(), style().aspectRatio(), isRenderReplaced());
             return std::max(LayoutUnit(), resolvedLogicalHeight - blockConstraints.bordersPlusPadding());
         }
-        return adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate<LayoutUnit>(logicalHeight, blockConstraints.containingSize(), Style::ZoomNeeded { }));
+        return adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate<LayoutUnit>(logicalHeight, blockConstraints.containingSize(), style().usedZoomForLength()));
     }
 
     bool logicalLeftIsAuto = blockConstraints.insetBefore().isAuto();
@@ -4349,7 +4349,7 @@ LayoutUnit RenderBox::computeOutOfFlowPositionedLogicalHeightUsing(const Style::
 
     if (logicalHeight.isIntrinsic())
         return adjustContentBoxLogicalHeightForBoxSizing(computeIntrinsicLogicalContentHeightUsing(logicalHeight, contentLogicalHeight, blockConstraints.bordersPlusPadding()).value_or(0_lu));
-    return adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate<LayoutUnit>(logicalHeight, blockConstraints.containingSize(), Style::ZoomNeeded { }));
+    return adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate<LayoutUnit>(logicalHeight, blockConstraints.containingSize(), style().usedZoomForLength()));
 }
 
 LayoutUnit RenderBox::computeOutOfFlowPositionedLogicalHeightUsing(const Style::MaximumSize& logicalHeight, LayoutUnit computedHeight, const PositionedLayoutConstraints& blockConstraints) const
@@ -4362,7 +4362,7 @@ LayoutUnit RenderBox::computeOutOfFlowPositionedLogicalHeightUsing(const Style::
 
     if (logicalHeight.isIntrinsic())
         return adjustContentBoxLogicalHeightForBoxSizing(computeIntrinsicLogicalContentHeightUsing(logicalHeight, contentLogicalHeight, blockConstraints.bordersPlusPadding()).value_or(0_lu));
-    return adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate<LayoutUnit>(logicalHeight, blockConstraints.containingSize(), Style::ZoomNeeded { }));
+    return adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate<LayoutUnit>(logicalHeight, blockConstraints.containingSize(), style().usedZoomForLength()));
 }
 
 PositionWithAffinity RenderBox::positionForPoint(const LayoutPoint& point, HitTestSource source, const RenderFragmentContainer* fragment)

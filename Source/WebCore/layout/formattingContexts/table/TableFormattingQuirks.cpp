@@ -63,7 +63,7 @@ LayoutUnit TableFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHe
     // e.g <div style="height: 100px"><table><tr><td style="height: 100%"></td></tr></table></div> is resolved to 0px.
     for (auto& ancestor : containingBlockChainWithinFormattingContext(layoutBox, formattingContext().root())) {
         if (auto fixedHeight = ancestor.style().logicalHeight().tryFixed())
-            return LayoutUnit { fixedHeight->resolveZoom(Style::ZoomNeeded { }) };
+            return LayoutUnit { fixedHeight->resolveZoom(ancestor.style().usedZoomForLength()) };
     }
     return { };
 }

@@ -82,7 +82,7 @@ static inline void updateLogicalHeightForCell(RenderTableSection::RowStruct& row
             if (auto percentageRowLogicalHeight = row.logicalHeight.tryPercentage(); !percentageRowLogicalHeight || percentageRowLogicalHeight->value < percentageLogicalHeight->value)
                 row.logicalHeight = logicalHeight;
         } else if (auto fixedLogicalHeight = logicalHeight.tryFixed()) {
-            if (auto fixedRowLogicalHeight = row.logicalHeight.tryFixed(); row.logicalHeight.isAuto() || (fixedRowLogicalHeight && fixedRowLogicalHeight->resolveZoom(Style::ZoomNeeded { }) < fixedLogicalHeight->resolveZoom(Style::ZoomNeeded { })))
+            if (auto fixedRowLogicalHeight = row.logicalHeight.tryFixed(); row.logicalHeight.isAuto() || (fixedRowLogicalHeight && fixedRowLogicalHeight->resolveZoom(cell->style().usedZoomForLength()) < fixedLogicalHeight->resolveZoom(cell->style().usedZoomForLength())))
                 row.logicalHeight = logicalHeight;
         }
     }
@@ -220,9 +220,9 @@ void RenderTableSection::addCell(RenderTableCell* cell, RenderTableRow* row)
 static LayoutUnit resolveLogicalHeightForRow(const Style::PreferredSize& rowLogicalHeight)
 {
     if (auto fixedRowLogicalHeight = rowLogicalHeight.tryFixed())
-        return Style::evaluate<LayoutUnit>(*fixedRowLogicalHeight, Style::ZoomNeeded { });
+        return Style::evaluate<LayoutUnit>(*fixedRowLogicalHeight, Style::ZoomFactor(1.0f));
     if (rowLogicalHeight.isCalculated())
-        return Style::evaluate<LayoutUnit>(rowLogicalHeight, 0, Style::ZoomNeeded { });
+        return Style::evaluate<LayoutUnit>(rowLogicalHeight, 0, Style::ZoomFactor(1.0f));
     return 0;
 }
 

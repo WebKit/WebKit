@@ -111,10 +111,10 @@ FloatBoxExtent PrintContext::computedPageMargin(FloatBoxExtent printMargin)
     auto marginLeft = style->marginLeft().tryFixed();
 
     return {
-        marginTop ? marginTop->resolveZoom(Style::ZoomNeeded { }) * pixelToPointScaleFactor : printMargin.top(),
-        marginRight ? marginRight->resolveZoom(Style::ZoomNeeded { }) * pixelToPointScaleFactor : printMargin.right(),
-        marginBottom ? marginBottom->resolveZoom(Style::ZoomNeeded { }) * pixelToPointScaleFactor : printMargin.bottom(),
-        marginLeft ? marginLeft->resolveZoom(Style::ZoomNeeded { }) * pixelToPointScaleFactor : printMargin.left(),
+        marginTop ? marginTop->resolveZoom(style->usedZoomForLength()) * pixelToPointScaleFactor : printMargin.top(),
+        marginRight ? marginRight->resolveZoom(style->usedZoomForLength()) * pixelToPointScaleFactor : printMargin.right(),
+        marginBottom ? marginBottom->resolveZoom(style->usedZoomForLength()) * pixelToPointScaleFactor : printMargin.bottom(),
+        marginLeft ? marginLeft->resolveZoom(style->usedZoomForLength()) * pixelToPointScaleFactor : printMargin.left(),
     };
 }
 
@@ -391,7 +391,7 @@ String PrintContext::pageProperty(LocalFrame* frame, const String& propertyName,
     // Implement formatters for properties we care about.
     if (propertyName == "margin-left"_s) {
         if (auto marginLeft = style->marginLeft().tryFixed())
-            return makeString(marginLeft->resolveZoom(Style::ZoomNeeded { }));
+            return makeString(marginLeft->resolveZoom(style->usedZoomForLength()));
         return autoAtom();
     }
     if (propertyName == "line-height"_s) {

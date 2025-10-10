@@ -1108,7 +1108,7 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minContentContributionForGridItem(R
             auto gridItemLogicalMinWidth = gridItem.style().logicalMinWidth();
 
             if (auto fixedFridItemLogicalMinWidth = gridItemLogicalMinWidth.tryFixed())
-                return LayoutUnit { fixedFridItemLogicalMinWidth->resolveZoom(Style::ZoomNeeded { }) };
+                return LayoutUnit { fixedFridItemLogicalMinWidth->resolveZoom(gridItem.style().usedZoomForLength()) };
             if (gridItemLogicalMinWidth.isMaxContent())
                 return gridItem.maxPreferredLogicalWidth();
 
@@ -2041,7 +2041,7 @@ void GridTrackSizingAlgorithm::setup(Style::GridTrackSizingDirection direction, 
             const auto subgridSpan = m_renderGrid->gridSpanForGridItem(subgrid, Style::GridTrackSizingDirection::Columns);
             auto& subgridRowStartMargin = subgrid.style().marginBefore(m_renderGrid->writingMode());
             if (!subgridRowStartMargin.isAuto())
-                m_renderGrid->setMarginBeforeForChild(subgrid, Style::evaluateMinimum<LayoutUnit>(subgridRowStartMargin, computeGridSpanSize(tracks(Style::GridTrackSizingDirection::Columns), subgridSpan, std::make_optional(m_renderGrid->gridItemOffset(direction)), m_renderGrid->guttersSize(Style::GridTrackSizingDirection::Columns, subgridSpan.startLine(), subgridSpan.integerSpan(), this->availableSpace(Style::GridTrackSizingDirection::Columns))), Style::ZoomNeeded { }));
+                m_renderGrid->setMarginBeforeForChild(subgrid, Style::evaluateMinimum<LayoutUnit>(subgridRowStartMargin, computeGridSpanSize(tracks(Style::GridTrackSizingDirection::Columns), subgridSpan, std::make_optional(m_renderGrid->gridItemOffset(direction)), m_renderGrid->guttersSize(Style::GridTrackSizingDirection::Columns, subgridSpan.startLine(), subgridSpan.integerSpan(), this->availableSpace(Style::GridTrackSizingDirection::Columns))), subgrid.style().usedZoomForLength()));
         }
     };
     if (m_direction == Style::GridTrackSizingDirection::Rows && (m_sizingState == SizingState::RowSizingFirstIteration || m_sizingState == SizingState::RowSizingSecondIteration))

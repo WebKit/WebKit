@@ -3388,10 +3388,10 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
 
     // The percentage is calculated with respect to the width even for margin top and bottom.
     // http://www.w3.org/TR/CSS2/box.html#margin-properties
-    marginTop = style->marginTop().isAuto() ? marginTop : Style::evaluate<int>(style->marginTop(), pageSize.width(), Style::ZoomNeeded { });
-    marginRight = style->marginRight().isAuto() ? marginRight : Style::evaluate<int>(style->marginRight(), pageSize.width(), Style::ZoomNeeded { });
-    marginBottom = style->marginBottom().isAuto() ? marginBottom : Style::evaluate<int>(style->marginBottom(), pageSize.width(), Style::ZoomNeeded { });
-    marginLeft = style->marginLeft().isAuto() ? marginLeft : Style::evaluate<int>(style->marginLeft(), pageSize.width(), Style::ZoomNeeded { });
+    marginTop = style->marginTop().isAuto() ? marginTop : Style::evaluate<int>(style->marginTop(), pageSize.width(), style->usedZoomForLength());
+    marginRight = style->marginRight().isAuto() ? marginRight : Style::evaluate<int>(style->marginRight(), pageSize.width(), style->usedZoomForLength());
+    marginBottom = style->marginBottom().isAuto() ? marginBottom : Style::evaluate<int>(style->marginBottom(), pageSize.width(), style->usedZoomForLength());
+    marginLeft = style->marginLeft().isAuto() ? marginLeft : Style::evaluate<int>(style->marginLeft(), pageSize.width(), style->usedZoomForLength());
 }
 
 void Document::fontsNeedUpdate(FontSelector&)

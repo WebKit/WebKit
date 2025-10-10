@@ -1150,7 +1150,7 @@ template<typename SizeType> LayoutUnit RenderFlexibleBox::computeMainSizeFromAsp
 
     auto crossSizeOptional = WTF::switchOn(crossSizeLength,
         [&](const SizeType::Fixed& fixedCrossSizeLength) -> std::optional<LayoutUnit> {
-            return LayoutUnit(fixedCrossSizeLength.resolveZoom(Style::ZoomNeeded { }));
+            return LayoutUnit(fixedCrossSizeLength.resolveZoom(flexItem.style().usedZoomForLength()));
         },
         [&](const SizeType::Percentage& percentageCrossSizeLength) -> std::optional<LayoutUnit> {
             return mainAxisIsFlexItemInlineAxis(flexItem)
@@ -1688,7 +1688,7 @@ LayoutUnit RenderFlexibleBox::computeFlexItemMarginValue(const Style::MarginEdge
 {
     // When resolving the margins, we use the content size for resolving percent and calc (for percents in calc expressions) margins.
     // Fortunately, percent margins are always computed with respect to the block's width, even for margin-top and margin-bottom.
-    return Style::evaluateMinimum<LayoutUnit>(margin, contentBoxLogicalWidth(), Style::ZoomNeeded { });
+    return Style::evaluateMinimum<LayoutUnit>(margin, contentBoxLogicalWidth(), style().usedZoomForLength());
 }
 
 void RenderFlexibleBox::prepareOrderIteratorAndMargins()
@@ -2156,17 +2156,17 @@ LayoutUnit RenderFlexibleBox::computeCrossSizeForFlexItemUsingContainerCrossSize
         ASSERT(size.isFixed() || (size.isPercent() && availableLogicalHeightForPercentageComputation()));
         LayoutUnit definiteValue;
         if (auto fixedSize = size.tryFixed())
-            definiteValue = LayoutUnit { fixedSize->resolveZoom(Style::ZoomNeeded { }) };
+            definiteValue = LayoutUnit { fixedSize->resolveZoom(style().usedZoomForLength()) };
         else if (size.isPercent())
             definiteValue = availableLogicalHeightForPercentageComputation().value_or(0_lu);
 
         auto maximumSize = isHorizontal ? style().maxHeight() : style().maxWidth();
         if (auto fixedMaximumSize = maximumSize.tryFixed())
-            definiteValue = std::min(definiteValue, LayoutUnit { fixedMaximumSize->resolveZoom(Style::ZoomNeeded { }) });
+            definiteValue = std::min(definiteValue, LayoutUnit { fixedMaximumSize->resolveZoom(style().usedZoomForLength()) });
 
         auto minimumSize = isHorizontal ? style().minHeight() : style().minWidth();
         if (auto fixedMinimumSize = minimumSize.tryFixed())
-            definiteValue = std::max(definiteValue, LayoutUnit { fixedMinimumSize->resolveZoom(Style::ZoomNeeded { }) });
+            definiteValue = std::max(definiteValue, LayoutUnit { fixedMinimumSize->resolveZoom(style().usedZoomForLength()) });
 
         return definiteValue;
     };

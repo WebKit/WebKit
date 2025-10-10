@@ -33,8 +33,10 @@ namespace GridLayoutUtils {
 LayoutUnit usedInlineSizeForGridItem(const PlacedGridItem& placedGridItem)
 {
     auto& inlineAxisSizes = placedGridItem.inlineAxisSizes();
+    auto& gridItemStyle = placedGridItem.layoutBox().style();
+
     if (auto fixedInlineSize = inlineAxisSizes.preferredSize.tryFixed())
-        return LayoutUnit { fixedInlineSize->resolveZoom(Style::ZoomNeeded { }) };
+        return LayoutUnit { fixedInlineSize->resolveZoom(gridItemStyle.usedZoomForLength()) };
 
     ASSERT_NOT_IMPLEMENTED_YET();
     return { };
@@ -43,8 +45,10 @@ LayoutUnit usedInlineSizeForGridItem(const PlacedGridItem& placedGridItem)
 LayoutUnit usedBlockSizeForGridItem(const PlacedGridItem& placedGridItem)
 {
     auto& blockAxisSizes = placedGridItem.blockAxisSizes();
+    auto& gridItemStyle = placedGridItem.layoutBox().style();
+
     if (auto fixedBlockSize = blockAxisSizes.preferredSize.tryFixed())
-        return LayoutUnit { fixedBlockSize->resolveZoom(Style::ZoomNeeded { }) };
+        return LayoutUnit { fixedBlockSize->resolveZoom(gridItemStyle.usedZoomForLength()) };
 
     ASSERT_NOT_IMPLEMENTED_YET();
     return { };

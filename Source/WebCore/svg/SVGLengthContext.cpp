@@ -116,7 +116,10 @@ template<typename SizeType> float SVGLengthContext::valueForSizeType(const SizeT
 {
     return WTF::switchOn(size,
         [&](const typename SizeType::Fixed& fixed) -> float {
-            return Style::evaluate<float>(fixed, Style::ZoomNeeded { });
+            if constexpr (std::is_same_v<SizeType, Style::PreferredSize>)
+                return Style::evaluate<float>(fixed, Style::ZoomFactor(1.0f));
+            else
+                return Style::evaluate<float>(fixed, Style::ZoomNeeded { });
         },
         [&](const typename SizeType::Percentage& percentage) -> float {
             auto result = convertValueFromPercentageToUserUnits(percentage.value / 100, lengthMode);

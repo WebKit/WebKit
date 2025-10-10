@@ -2743,12 +2743,12 @@ bool RenderThemeCocoa::paintMenuListButtonDecorationsForVectorBasedControls(cons
 
     auto glyphPaddingEnd = logicalRect.width();
     if (auto fixedPaddingEnd = box.style().paddingEnd().tryFixed())
-        glyphPaddingEnd = fixedPaddingEnd->resolveZoom(Style::ZoomNeeded { });
+        glyphPaddingEnd = fixedPaddingEnd->resolveZoom(box.style().usedZoomForLength());
 
     // Add RenderMenuList inner start padding for symmetry.
     if (CheckedPtr menulist = dynamicDowncast<RenderMenuList>(box); menulist && menulist->innerRenderer()) {
         if (auto innerPaddingStart = menulist->innerRenderer()->style().paddingStart().tryFixed())
-            glyphPaddingEnd += innerPaddingStart->resolveZoom(Style::ZoomNeeded { });
+            glyphPaddingEnd += innerPaddingStart->resolveZoom(box.style().usedZoomForLength());
     }
 
     if (!style->writingMode().isInlineFlipped())
@@ -4060,7 +4060,7 @@ float RenderThemeCocoa::adjustedMaximumLogicalWidthForControl(const RenderStyle&
 
         if (auto paddingEdgeInlineStartFixed = paddingEdgeInlineStart.tryFixed()) {
             if (auto paddingEdgeInlineEndFixed = paddingEdgeInlineEnd.tryFixed())
-                maximumLogicalWidth += paddingEdgeInlineStartFixed->resolveZoom(Style::ZoomNeeded { }) - paddingEdgeInlineEndFixed->resolveZoom(Style::ZoomNeeded { });
+                maximumLogicalWidth += paddingEdgeInlineStartFixed->resolveZoom(style.usedZoomForLength()) - paddingEdgeInlineEndFixed->resolveZoom(style.usedZoomForLength());
         }
     }
 #else

@@ -453,7 +453,7 @@ template<CSSPropertyID propertyID, typename InsetEdgeApplier, typename NumberAsP
                     : box->containingBlockLogicalWidthForContent();
             }
         }
-        return numberAsPixelsApplier(Style::evaluate<LayoutUnit>(inset, containingBlockSize, Style::ZoomNeeded { }));
+        return numberAsPixelsApplier(Style::evaluate<LayoutUnit>(inset, containingBlockSize, state.style.usedZoomForLength()));
     }
 
     // Return a "computed value" length.
@@ -1450,7 +1450,7 @@ inline Ref<CSSValue> ExtractorCustom::extractMarginRight(ExtractorState& state)
         // RenderBox gives a marginRight() that is the distance between the right-edge of the child box
         // and the right-edge of the containing box, when display == DisplayType::Block. Let's calculate the absolute
         // value of the specified margin-right % instead of relying on RenderBox's marginRight() value.
-        value = Style::evaluateMinimum<float>(marginRight, box->containingBlockLogicalWidthForContent(), Style::ZoomNeeded { });
+        value = Style::evaluateMinimum<float>(marginRight, box->containingBlockLogicalWidthForContent(), state.style.usedZoomForLength());
     } else
         value = box->marginRight();
     return ExtractorConverter::convertNumberAsPixels(state, value);
@@ -1475,7 +1475,7 @@ inline void ExtractorCustom::extractMarginRightSerialization(ExtractorState& sta
         // RenderBox gives a marginRight() that is the distance between the right-edge of the child box
         // and the right-edge of the containing box, when display == DisplayType::Block. Let's calculate the absolute
         // value of the specified margin-right % instead of relying on RenderBox's marginRight() value.
-        value = Style::evaluateMinimum<float>(marginRight, box->containingBlockLogicalWidthForContent(), Style::ZoomNeeded { });
+        value = Style::evaluateMinimum<float>(marginRight, box->containingBlockLogicalWidthForContent(), state.style.usedZoomForLength());
     } else
         value = box->marginRight();
 

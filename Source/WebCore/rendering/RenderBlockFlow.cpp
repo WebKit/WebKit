@@ -4457,17 +4457,17 @@ RenderObject* InlineMinMaxIterator::next()
 
 static LayoutUnit getBorderPaddingMargin(const RenderBoxModelObject& child, bool endOfInline)
 {
-    auto borderMarginWidth = [](LayoutUnit childValue, const Style::MarginEdge& margin) -> LayoutUnit {
+    auto borderMarginWidth = [&](LayoutUnit childValue, const Style::MarginEdge& margin) -> LayoutUnit {
         if (auto fixed = margin.tryFixed())
-            return LayoutUnit(fixed->resolveZoom(Style::ZoomNeeded { }));
+            return LayoutUnit(fixed->resolveZoom(child.style().usedZoomForLength()));
         if (margin.isAuto())
             return { };
         return childValue;
     };
 
-    auto borderPaddingWidth = [](LayoutUnit childValue, const Style::PaddingEdge& padding) -> LayoutUnit {
+    auto borderPaddingWidth = [&](LayoutUnit childValue, const Style::PaddingEdge& padding) -> LayoutUnit {
         if (auto fixed = padding.tryFixed())
-            return LayoutUnit(fixed->resolveZoom(Style::ZoomNeeded { }));
+            return LayoutUnit(fixed->resolveZoom(child.style().usedZoomForLength()));
         return childValue;
     };
 
@@ -4569,7 +4569,7 @@ static inline std::optional<LayoutUnit> textIndentForBlockContainer(const Render
     auto indentValue = LayoutUnit { };
     if (auto* containingBlock = renderer.containingBlock()) {
         if (auto containingBlockFixedLogicalWidth = containingBlock->style().logicalWidth().tryFixed()) {
-            auto containingBlockFixedLogicalWidthValue = Style::evaluate<LayoutUnit>(*containingBlockFixedLogicalWidth, Style::ZoomNeeded { });
+            auto containingBlockFixedLogicalWidthValue = Style::evaluate<LayoutUnit>(*containingBlockFixedLogicalWidth, containingBlock->style().usedZoomForLength());
             // At this point of the shrink-to-fit computation, we don't have a used value for the containing block width
             // (that's exactly to what we try to contribute here) unless the computed value is fixed.
             indentValue = Style::evaluate<LayoutUnit>(style.textIndent().length, containingBlockFixedLogicalWidthValue, containingBlock->style().usedZoomForLength());
@@ -4732,9 +4732,9 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                         lastText = nullptr;
                     LayoutUnit margins;
                     if (auto fixedMarginStart = childStyle.marginStart(writingMode()).tryFixed())
-                        margins += LayoutUnit::fromFloatCeil(fixedMarginStart->resolveZoom(Style::ZoomNeeded { }));
+                        margins += LayoutUnit::fromFloatCeil(fixedMarginStart->resolveZoom(childStyle.usedZoomForLength()));
                     if (auto fixedMarginEnd = childStyle.marginEnd(writingMode()).tryFixed())
-                        margins += LayoutUnit::fromFloatCeil(fixedMarginEnd->resolveZoom(Style::ZoomNeeded { }));
+                        margins += LayoutUnit::fromFloatCeil(fixedMarginEnd->resolveZoom(childStyle.usedZoomForLength()));
                     childMin += margins.ceilToFloat();
                     childMax += margins.ceilToFloat();
                 }

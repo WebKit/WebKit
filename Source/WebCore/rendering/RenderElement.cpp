@@ -2520,7 +2520,7 @@ static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderOb
         if (CheckedPtr block = dynamicDowncast<RenderBlock>(renderer)) {
             // For fixed height styles, if the overflow size of the element spills out of the specified
             // height, assume we can apply text auto-sizing.
-            if (block->effectiveOverflowY() == Overflow::Visible && fixedHeight->resolveZoom(Style::ZoomNeeded { }) < block->layoutOverflowRect().maxY())
+            if (block->effectiveOverflowY() == Overflow::Visible && fixedHeight->resolveZoom(style.usedZoomForLength()) < block->layoutOverflowRect().maxY())
                 return RenderObject::OverflowHeight;
         }
         return RenderObject::FixedHeight;

@@ -280,10 +280,11 @@ Vector<UsedMargins> GridLayout::computeInlineMargins(const PlacedGridItems& plac
 {
     return placedGridItems.map([](const PlacedGridItem& placedGridItem) {
         auto& inlineAxisSizes = placedGridItem.inlineAxisSizes();
+        auto& gridItemStyle = placedGridItem.layoutBox().style();
 
         auto marginStart = [&] -> LayoutUnit {
             if (auto fixedMarginStart = inlineAxisSizes.marginStart.tryFixed())
-                return LayoutUnit { fixedMarginStart->resolveZoom(Style::ZoomNeeded { }) };
+                return LayoutUnit { fixedMarginStart->resolveZoom(gridItemStyle.usedZoomForLength()) };
 
             ASSERT_NOT_IMPLEMENTED_YET();
             return { };
@@ -291,7 +292,7 @@ Vector<UsedMargins> GridLayout::computeInlineMargins(const PlacedGridItems& plac
 
         auto marginEnd = [&] -> LayoutUnit {
             if (auto fixedMarginEnd = inlineAxisSizes.marginEnd.tryFixed())
-                return LayoutUnit { fixedMarginEnd->resolveZoom(Style::ZoomNeeded { }) };
+                return LayoutUnit { fixedMarginEnd->resolveZoom(gridItemStyle.usedZoomForLength()) };
 
             ASSERT_NOT_IMPLEMENTED_YET();
             return { };
@@ -306,10 +307,11 @@ Vector<UsedMargins> GridLayout::computeBlockMargins(const PlacedGridItems& place
 {
     return placedGridItems.map([](const PlacedGridItem& placedGridItem) {
         auto& blockAxisSizes = placedGridItem.blockAxisSizes();
+        auto& gridItemStyle = placedGridItem.layoutBox().style();
 
         auto marginStart = [&] -> LayoutUnit {
             if (auto fixedMarginStart = blockAxisSizes.marginStart.tryFixed())
-                return LayoutUnit { fixedMarginStart->resolveZoom(Style::ZoomNeeded { }) };
+                return LayoutUnit { fixedMarginStart->resolveZoom(gridItemStyle.usedZoomForLength()) };
 
             ASSERT_NOT_IMPLEMENTED_YET();
             return { };
@@ -317,7 +319,7 @@ Vector<UsedMargins> GridLayout::computeBlockMargins(const PlacedGridItems& place
 
         auto marginEnd = [&] -> LayoutUnit {
             if (auto fixedMarginEnd = blockAxisSizes.marginEnd.tryFixed())
-                return LayoutUnit { fixedMarginEnd->resolveZoom(Style::ZoomNeeded { }) };
+                return LayoutUnit { fixedMarginEnd->resolveZoom(gridItemStyle.usedZoomForLength()) };
 
             ASSERT_NOT_IMPLEMENTED_YET();
             return { };

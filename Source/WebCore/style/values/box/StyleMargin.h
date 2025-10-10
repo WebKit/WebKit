@@ -31,7 +31,7 @@ namespace Style {
 
 // <'margin-*'> = auto | <length-percentage>
 // https://drafts.csswg.org/css-box/#margin-physical
-struct MarginEdge : LengthWrapperBase<LengthPercentage<>, CSS::Keyword::Auto> {
+struct MarginEdge : LengthWrapperBase<LengthPercentage<CSS::AllUnzoomed>, CSS::Keyword::Auto> {
     using Base::Base;
     using Base::hasQuirk;
 

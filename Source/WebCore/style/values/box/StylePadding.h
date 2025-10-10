@@ -31,7 +31,7 @@ namespace Style {
 
 // <'padding-*'> = <length-percentage [0,∞]>
 // https://drafts.csswg.org/css-box/#padding-physical
-struct PaddingEdge : LengthWrapperBase<LengthPercentage<CSS::Nonnegative>> {
+struct PaddingEdge : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed>> {
     using Base::Base;
 };
 

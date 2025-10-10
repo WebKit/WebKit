@@ -31,7 +31,7 @@ namespace Style {
 
 // <'top'>/<'right'>/<'bottom'>/<'left'> = auto | <length-percentage>
 // https://drafts.csswg.org/css-position/#insets
-struct InsetEdge : LengthWrapperBase<LengthPercentage<>, CSS::Keyword::Auto> {
+struct InsetEdge : LengthWrapperBase<LengthPercentage<CSS::AllUnzoomed>, CSS::Keyword::Auto> {
     using Base::Base;
 
     ALWAYS_INLINE bool isAuto() const { return holdsAlternative<CSS::Keyword::Auto>(); }

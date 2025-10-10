@@ -352,7 +352,7 @@ static LayoutUnit computeMargin(const RenderInline* renderer, const Style::Margi
 {
     return Style::evaluateMinimum<LayoutUnit>(margin, [&] ALWAYS_INLINE_LAMBDA {
         return std::max<LayoutUnit>(0, renderer->containingBlock()->contentBoxLogicalWidth());
-    }, Style::ZoomNeeded { });
+    }, renderer->style().usedZoomForLength());
 }
 
 LayoutUnit RenderInline::marginLeft() const

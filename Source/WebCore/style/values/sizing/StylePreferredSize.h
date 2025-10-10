@@ -51,7 +51,7 @@ struct MinimumSize;
 //
 // https://drafts.csswg.org/css-sizing-3/#preferred-size-properties
 // https://drafts.csswg.org/css-sizing-4/#sizing-values (additional values added)
-struct PreferredSize : LengthWrapperBase<LengthPercentage<CSS::Nonnegative>, CSS::Keyword::Auto, CSS::Keyword::MinContent, CSS::Keyword::MaxContent, CSS::Keyword::FitContent, CSS::Keyword::WebkitFillAvailable, CSS::Keyword::Intrinsic, CSS::Keyword::MinIntrinsic> {
+struct PreferredSize : LengthWrapperBase<LengthPercentage<CSS::NonnegativeUnzoomed>, CSS::Keyword::Auto, CSS::Keyword::MinContent, CSS::Keyword::MaxContent, CSS::Keyword::FitContent, CSS::Keyword::WebkitFillAvailable, CSS::Keyword::Intrinsic, CSS::Keyword::MinIntrinsic> {
     using Base::Base;
 
     // `PreferredSize` is a structural twin to `MinimumSize` and therefore can be losslessly converted.

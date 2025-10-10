@@ -87,7 +87,7 @@ template<FormattingGeometry::HeightType heightType> std::optional<LayoutUnit> Fo
             return { };
     }
     if (auto fixedHeight = height.tryFixed())
-        return LayoutUnit { fixedHeight->resolveZoom(Style::ZoomNeeded { }) };
+        return LayoutUnit { fixedHeight->resolveZoom(layoutBox.style().usedZoomForLength()) };
 
     if (!containingBlockHeight) {
         if (layoutState().inQuirksMode()) {
@@ -113,7 +113,7 @@ template<FormattingGeometry::HeightType heightType> std::optional<LayoutUnit> Fo
     if (!containingBlockHeight)
         return { };
 
-    return Style::evaluate<LayoutUnit>(height, *containingBlockHeight, Style::ZoomNeeded { });
+    return Style::evaluate<LayoutUnit>(height, *containingBlockHeight, layoutBox.style().usedZoomForLength());
 }
 
 std::optional<LayoutUnit> FormattingGeometry::computedHeight(const Box& layoutBox, std::optional<LayoutUnit> containingBlockHeight) const
@@ -1104,11 +1104,11 @@ BoxGeometry::Edges FormattingGeometry::computedPadding(const Box& layoutBox, con
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Padding] -> layoutBox: " << &layoutBox);
     return {
         {
-            Style::evaluate<LayoutUnit>(style.paddingStart(), containingBlockWidth, Style::ZoomNeeded { }),
-            Style::evaluate<LayoutUnit>(style.paddingEnd(), containingBlockWidth, Style::ZoomNeeded { }) },
+            Style::evaluate<LayoutUnit>(style.paddingStart(), containingBlockWidth, style.usedZoomForLength()),
+            Style::evaluate<LayoutUnit>(style.paddingEnd(), containingBlockWidth, style.usedZoomForLength()) },
         {
-            Style::evaluate<LayoutUnit>(style.paddingBefore(), containingBlockWidth, Style::ZoomNeeded { }),
-            Style::evaluate<LayoutUnit>(style.paddingAfter(), containingBlockWidth, Style::ZoomNeeded { })
+            Style::evaluate<LayoutUnit>(style.paddingBefore(), containingBlockWidth, style.usedZoomForLength()),
+            Style::evaluate<LayoutUnit>(style.paddingAfter(), containingBlockWidth, style.usedZoomForLength())
         }
     };
 }

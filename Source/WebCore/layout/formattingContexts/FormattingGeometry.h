@@ -130,14 +130,14 @@ std::optional<LayoutUnit> FormattingGeometry::computedValue(const auto& geometry
 {
     // In general, the computed value resolves the specified value as far as possible without laying out the content.
     if (geometryProperty.isSpecified())
-        return Style::evaluate<LayoutUnit>(geometryProperty, containingBlockWidth, Style::ZoomNeeded { });
+        return Style::evaluate<LayoutUnit>(geometryProperty, containingBlockWidth, Style::ZoomFactor(1.0f));
     return { };
 }
 
 std::optional<LayoutUnit> FormattingGeometry::fixedValue(const auto& geometryProperty) const
 {
     if (auto fixed = geometryProperty.tryFixed())
-        return LayoutUnit(fixed->resolveZoom(Style::ZoomNeeded { }));
+        return LayoutUnit(fixed->resolveZoom(Style::ZoomFactor(1.0f)));
     return { };
 }
 

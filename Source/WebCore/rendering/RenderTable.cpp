@@ -308,8 +308,8 @@ void RenderTable::updateLogicalWidth()
         setLogicalWidth(convertStyleLogicalWidthToComputedWidth(styleLogicalWidth, containerWidthInInlineDirection));
     else {
         // Subtract out any fixed margins from our available width for auto width tables.
-        auto marginStart = Style::evaluateMinimum<LayoutUnit>(style().marginStart(), availableLogicalWidth, Style::ZoomNeeded { });
-        auto marginEnd = Style::evaluateMinimum<LayoutUnit>(style().marginEnd(), availableLogicalWidth, Style::ZoomNeeded { });
+        auto marginStart = Style::evaluateMinimum<LayoutUnit>(style().marginStart(), availableLogicalWidth, style().usedZoomForLength());
+        auto marginEnd = Style::evaluateMinimum<LayoutUnit>(style().marginEnd(), availableLogicalWidth, style().usedZoomForLength());
         auto marginTotal = marginStart + marginEnd;
 
         // Subtract out our margins to get the available content width.
@@ -361,8 +361,8 @@ void RenderTable::updateLogicalWidth()
         setMarginStart(marginValues.m_start);
         setMarginEnd(marginValues.m_end);
     } else {
-        setMarginStart(Style::evaluateMinimum<LayoutUnit>(style().marginStart(), availableLogicalWidth, Style::ZoomNeeded { }));
-        setMarginEnd(Style::evaluateMinimum<LayoutUnit>(style().marginEnd(), availableLogicalWidth, Style::ZoomNeeded { }));
+        setMarginStart(Style::evaluateMinimum<LayoutUnit>(style().marginStart(), availableLogicalWidth, style().usedZoomForLength()));
+        setMarginEnd(Style::evaluateMinimum<LayoutUnit>(style().marginEnd(), availableLogicalWidth, style().usedZoomForLength()));
     }
 }
 
@@ -379,7 +379,7 @@ template<typename SizeType> LayoutUnit RenderTable::convertStyleLogicalWidthToCo
     if (isCSSTable && styleLogicalWidth.isSpecified() && styleLogicalWidth.isPossiblyPositive() && style().boxSizing() == BoxSizing::ContentBox)
         borders = borderStart() + borderEnd() + (collapseBorders() ? 0_lu : paddingStart() + paddingEnd());
 
-    return Style::evaluateMinimum<LayoutUnit>(styleLogicalWidth, availableWidth, Style::ZoomNeeded { }) + borders;
+    return Style::evaluateMinimum<LayoutUnit>(styleLogicalWidth, availableWidth, style().usedZoomForLength()) + borders;
 }
 
 template<typename SizeType> LayoutUnit RenderTable::convertStyleLogicalHeightToComputedHeight(const SizeType& styleLogicalHeight)
@@ -394,7 +394,7 @@ template<typename SizeType> LayoutUnit RenderTable::convertStyleLogicalHeightToC
         if (is<HTMLTableElement>(element()) || style().boxSizing() == BoxSizing::BorderBox) {
             borders = borderAndPadding;
         }
-        return LayoutUnit(fixedStyleLogicalHeight->resolveZoom(Style::ZoomNeeded { }) - borders);
+        return LayoutUnit(fixedStyleLogicalHeight->resolveZoom(style().usedZoomForLength()) - borders);
     } else if (styleLogicalHeight.isPercentOrCalculated())
         return computePercentageLogicalHeight(styleLogicalHeight).value_or(0);
     else if (styleLogicalHeight.isIntrinsic())

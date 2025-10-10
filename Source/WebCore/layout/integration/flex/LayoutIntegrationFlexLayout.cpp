@@ -73,7 +73,7 @@ static inline Layout::ConstraintsForFlexContent constraintsForFlexContent(const 
 
     auto widthValue = [&](auto& computedValue) -> std::optional<LayoutUnit> {
         if (auto fixedWidth = computedValue.tryFixed()) {
-            auto value = Style::evaluate<LayoutUnit>(*fixedWidth, Style::ZoomNeeded { });
+            auto value = Style::evaluate<LayoutUnit>(*fixedWidth, flexBoxStyle.usedZoomForLength());
             return boxSizingIsContentBox ? value : value - horizontalMarginBorderAndPadding;
         }
         if (auto percentageWidth = computedValue.tryPercentage()) {
@@ -85,7 +85,7 @@ static inline Layout::ConstraintsForFlexContent constraintsForFlexContent(const 
 
     auto heightValue = [&](auto& computedValue, bool callRendererForPercentValue = false) -> std::optional<LayoutUnit> {
         if (auto fixedHeight = computedValue.tryFixed()) {
-            auto value = Style::evaluate<LayoutUnit>(*fixedHeight, Style::ZoomNeeded { });
+            auto value = Style::evaluate<LayoutUnit>(*fixedHeight, flexBoxStyle.usedZoomForLength());
             return boxSizingIsContentBox ? value : value - verticalMarginBorderAndPadding;
         }
 
@@ -94,7 +94,7 @@ static inline Layout::ConstraintsForFlexContent constraintsForFlexContent(const 
                 return flexContainerRenderer.computePercentageLogicalHeight(*percentageHeight, RenderBox::UpdatePercentageHeightDescendants::No);
 
             if (auto fixedContainingBlockHeight = flexContainerRenderer.containingBlock()->style().height().tryFixed()) {
-                auto containingBlockHeightValue = Style::evaluate<LayoutUnit>(*fixedContainingBlockHeight, Style::ZoomNeeded { });
+                auto containingBlockHeightValue = Style::evaluate<LayoutUnit>(*fixedContainingBlockHeight, flexBoxStyle.usedZoomForLength());
                 auto value = Style::evaluate<LayoutUnit>(*percentageHeight, containingBlockHeightValue);
                 return boxSizingIsContentBox ? value : value - verticalMarginBorderAndPadding;
             }
