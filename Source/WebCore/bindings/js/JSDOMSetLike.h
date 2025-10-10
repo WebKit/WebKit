@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "JSDOMBinding.h"
 #include "JSDOMConvert.h"
 #include "JSDOMGlobalObject.h"
 #include <JavaScriptCore/BuiltinNames.h>

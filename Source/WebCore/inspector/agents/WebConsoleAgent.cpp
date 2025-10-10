@@ -37,7 +37,6 @@
 #include "ResourceResponse.h"
 #include "WebInjectedScriptManager.h"
 #include <JavaScriptCore/ConsoleMessage.h>
-#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptArguments.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>

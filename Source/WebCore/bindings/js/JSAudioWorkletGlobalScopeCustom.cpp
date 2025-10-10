@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSAudioWorkletGlobalScope.h"
+#include "JSAudioWorkletGlobalScopeInlines.h"
 
 #include "AudioWorkletGlobalScope.h"
 #include "AudioWorkletProcessor.h"

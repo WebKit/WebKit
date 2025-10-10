@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "JSXPathResult.h"
+#include "JSXPathResultInlines.h"
 
 #include "JSNodeCustom.h"
 #include "WebCoreOpaqueRootInlines.h"

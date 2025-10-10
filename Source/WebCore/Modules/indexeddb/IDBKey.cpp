@@ -30,7 +30,6 @@
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/JSArrayBuffer.h>
 #include <JavaScriptCore/JSArrayBufferView.h>
-#include <JavaScriptCore/JSCInlines.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

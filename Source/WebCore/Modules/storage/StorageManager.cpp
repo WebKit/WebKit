@@ -32,6 +32,8 @@
 #include "ExceptionOr.h"
 #include "FileSystemDirectoryHandle.h"
 #include "FileSystemStorageConnection.h"
+#include "JSDOMConvertBoolean.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSFileSystemDirectoryHandle.h"
 #include "JSStorageManager.h"
@@ -39,6 +41,7 @@
 #include "SecurityOrigin.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerStorageConnection.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

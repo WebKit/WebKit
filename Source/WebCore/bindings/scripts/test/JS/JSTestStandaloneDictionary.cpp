@@ -35,7 +35,6 @@
 #include "JSVoidCallback.h"
 #include "ScriptExecutionContext.h"
 #include "Settings.h"
-#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/ObjectConstructor.h>
 #include <wtf/NeverDestroyed.h>

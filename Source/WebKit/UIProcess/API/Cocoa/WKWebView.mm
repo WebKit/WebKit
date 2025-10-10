@@ -166,7 +166,6 @@
 #import <WebCore/ElementContext.h>
 #import <WebCore/ExceptionCode.h>
 #import <WebCore/ImageUtilities.h>
-#import <WebCore/JSDOMBinding.h>
 #import <WebCore/JSDOMExceptionHandling.h>
 #import <WebCore/LegacySchemeRegistry.h>
 #import <WebCore/MIMETypeRegistry.h>

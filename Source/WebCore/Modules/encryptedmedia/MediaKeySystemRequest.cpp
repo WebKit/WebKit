@@ -38,6 +38,7 @@
 #include "PlatformMediaSessionManager.h"
 #include "Settings.h"
 #include "WindowEventLoop.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

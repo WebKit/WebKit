@@ -24,14 +24,13 @@
  */
 
 #include "config.h"
-#include "JSCustomElementRegistry.h"
+#include "JSCustomElementRegistryInlines.h"
 
 #include "ContextDestructionObserverInlines.h"
 #include "CustomElementRegistry.h"
 #include "Document.h"
 #include "HTMLNames.h"
 #include "JSCustomElementInterface.h"
-#include "JSDOMBinding.h"
 #include "JSDOMConvertSequences.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMPromiseDeferred.h"

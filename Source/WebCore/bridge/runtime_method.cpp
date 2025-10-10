@@ -26,7 +26,6 @@
 #include "config.h"
 #include "runtime_method.h"
 
-#include "JSDOMBinding.h"
 #include "JSHTMLElement.h"
 #include "JSPluginElementFunctions.h"
 #include "WebCoreJSClientData.h"

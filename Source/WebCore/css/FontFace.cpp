@@ -33,11 +33,11 @@
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "DOMPromiseProxy.h"
+#include "JSDOMConvertInterface.h"
 #include "JSFontFace.h"
 #include "TrustedFonts.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
-#include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
 

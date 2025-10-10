@@ -32,6 +32,7 @@
 #include "DocumentQuirks.h"
 #include "Exception.h"
 #include "Geolocation.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSPermissionDescriptor.h"
 #include "JSPermissionStatus.h"

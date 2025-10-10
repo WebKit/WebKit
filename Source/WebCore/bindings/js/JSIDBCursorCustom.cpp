@@ -24,11 +24,10 @@
  */
 
 #include "config.h"
-#include "JSIDBCursor.h"
+#include "JSIDBCursorInlines.h"
 
 #include "IDBBindingUtilities.h"
-#include "JSDOMBinding.h"
-#include "JSIDBCursorWithValue.h"
+#include "JSIDBCursorWithValueInlines.h"
 #include "WebCoreOpaqueRootInlines.h"
 
 namespace WebCore {

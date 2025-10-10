@@ -26,7 +26,6 @@
 #include "config.h"
 #include "runtime_object.h"
 
-#include "JSDOMBinding.h"
 #include "WebCoreJSClientData.h"
 #include "runtime_method.h"
 #include <JavaScriptCore/Error.h>

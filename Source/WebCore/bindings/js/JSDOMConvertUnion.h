@@ -28,7 +28,6 @@
 #include <JavaScriptCore/IteratorOperations.h>
 #include <JavaScriptCore/JSArrayBufferViewInlines.h>
 #include <WebCore/IDLTypes.h>
-#include <WebCore/JSDOMBinding.h>
 #include <WebCore/JSDOMConvertBase.h>
 #include <WebCore/JSDOMConvertBoolean.h>
 #include <WebCore/JSDOMConvertBufferSource.h>

@@ -37,6 +37,7 @@
 #include "ContentSecurityPolicySource.h"
 #include "ContentSecurityPolicySourceList.h"
 #include "DOMStringList.h"
+#include "DOMWrapperWorld.h"
 #include "DocumentLoader.h"
 #include "DocumentPage.h"
 #include "EventNames.h"

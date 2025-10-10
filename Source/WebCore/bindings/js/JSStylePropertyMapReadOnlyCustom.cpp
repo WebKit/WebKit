@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSStylePropertyMapReadOnly.h"
+#include "JSStylePropertyMapReadOnlyInlines.h"
 
 #include "ComputedStylePropertyMapReadOnly.h"
 #include "WebCoreOpaqueRootInlines.h"

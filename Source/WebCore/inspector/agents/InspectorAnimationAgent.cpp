@@ -44,6 +44,7 @@
 #include "InspectorCSSAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
+#include "JSDOMWrapperCache.h"
 #include "JSExecState.h"
 #include "JSWebAnimation.h"
 #include "KeyframeEffect.h"

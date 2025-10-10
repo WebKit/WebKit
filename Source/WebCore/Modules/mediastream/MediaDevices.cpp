@@ -44,6 +44,8 @@
 #include "EventNames.h"
 #include "EventTargetInlines.h"
 #include "FrameDestructionObserverInlines.h"
+#include "JSDOMConvertSequences.h"
+#include "JSDOMConvertUnion.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSInputDeviceInfo.h"
 #include "JSMediaDeviceInfo.h"

@@ -31,6 +31,9 @@
 #include "ContextDestructionObserverInlines.h"
 #include "DocumentPage.h"
 #include "JSApplePaySetupFeature.h"
+#include "JSDOMConvertBoolean.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertSequences.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Page.h"
 #include "PaymentCoordinator.h"
@@ -76,11 +79,11 @@ void ApplePaySetup::getSetupFeatures(Document& document, SetupFeaturesPromise&& 
         return;
     }
 
-    m_setupFeaturesPromise = WTFMove(promise);
+    m_setupFeaturesPromise = makeUnique<SetupFeaturesPromise>(WTFMove(promise));
 
     page->protectedPaymentCoordinator()->getSetupFeatures(m_configuration, document.url(), [pendingActivity = makePendingActivity(*this)](Vector<Ref<ApplePaySetupFeature>>&& setupFeatures) {
-        if (pendingActivity->object().m_setupFeaturesPromise)
-            std::exchange(pendingActivity->object().m_setupFeaturesPromise, std::nullopt)->resolve(WTFMove(setupFeatures));
+        if (auto promise = WTFMove(pendingActivity->object().m_setupFeaturesPromise))
+            promise->resolve(WTFMove(setupFeatures));
     });
 }
 
@@ -108,11 +111,11 @@ void ApplePaySetup::begin(Document& document, Vector<Ref<ApplePaySetupFeature>>&
         return;
     }
 
-    m_beginPromise = WTFMove(promise);
+    m_beginPromise = makeUnique<BeginPromise>(WTFMove(promise));
 
     page->protectedPaymentCoordinator()->beginApplePaySetup(m_configuration, page->mainFrameURL(), WTFMove(features), [pendingActivity = makePendingActivity(*this)](bool result) {
-        if (pendingActivity->object().m_beginPromise)
-            std::exchange(pendingActivity->object().m_beginPromise, std::nullopt)->resolve(result);
+        if (auto promise = WTFMove(pendingActivity->object().m_beginPromise))
+            promise->resolve(result);
     });
 }
 
@@ -129,13 +132,15 @@ ApplePaySetup::ApplePaySetup(ScriptExecutionContext& context, ApplePaySetupConfi
 {
 }
 
+ApplePaySetup::~ApplePaySetup() = default;
+
 void ApplePaySetup::stop()
 {
-    if (m_setupFeaturesPromise)
-        std::exchange(m_setupFeaturesPromise, std::nullopt)->reject(Exception { ExceptionCode::AbortError });
+    if (auto promise = WTFMove(m_setupFeaturesPromise))
+        promise->reject(Exception { ExceptionCode::AbortError });
 
-    if (m_beginPromise)
-        std::exchange(m_beginPromise, std::nullopt)->reject(Exception { ExceptionCode::AbortError });
+    if (auto promise = WTFMove(m_beginPromise))
+        promise->reject(Exception { ExceptionCode::AbortError });
 
     if (RefPtr page = downcast<Document>(*scriptExecutionContext()).page())
         page->protectedPaymentCoordinator()->endApplePaySetup();

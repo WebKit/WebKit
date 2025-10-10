@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include <WebCore/JSDOMBinding.h>
 #include <WebCore/JSElement.h>
 
 namespace JSC {

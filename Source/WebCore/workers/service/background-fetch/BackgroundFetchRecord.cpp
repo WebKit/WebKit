@@ -28,6 +28,7 @@
 
 #include "BackgroundFetchRecordInformation.h"
 #include "FetchRequest.h"
+#include "JSDOMConvertInterface.h"
 #include "JSFetchResponse.h"
 
 namespace WebCore {

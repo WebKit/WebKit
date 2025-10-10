@@ -27,12 +27,11 @@
 #include "JSDOMWindowProperties.h"
 
 #include "HTMLDocument.h"
-#include "JSDOMBinding.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMWindowBase.h"
-#include "JSElement.h"
-#include "JSHTMLCollection.h"
+#include "JSElementInlines.h"
+#include "JSHTMLCollectionInlines.h"
 #include "LocalFrame.h"
 #include "WebCoreJSClientData.h"
 

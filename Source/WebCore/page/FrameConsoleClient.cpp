@@ -64,7 +64,6 @@
 #include "Settings.h"
 #include "StringCallback.h"
 #include <JavaScriptCore/ConsoleMessage.h>
-#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptArguments.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>

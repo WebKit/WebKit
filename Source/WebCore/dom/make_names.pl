@@ -1592,7 +1592,7 @@ sub printJSElementIncludes
         }
         $tagsSeen{$JSInterfaceName} = 1;
 
-        print F "#include \"JS${JSInterfaceName}.h\"\n";
+        print F "#include \"JS${JSInterfaceName}Inlines.h\"\n";
     }
     print F "#include \"JS$parameters{fallbackJSInterfaceName}.h\"\n";
 }
@@ -1647,7 +1647,7 @@ sub printConditionalElementIncludes
         if ($wrapperIncludes) {
             for my $JSInterfaceName (sort keys %{$conditionals{$conditional}{JSInterfaceNames}}) {
                 next if $unconditionalJSElementIncludes{$JSInterfaceName};
-                print F "#include \"JS$JSInterfaceName.h\"\n";
+                print F "#include \"JS${JSInterfaceName}Inlines.h\"\n";
             }
         }
         print F "#endif\n";

@@ -21,9 +21,8 @@
  */
 
 #include "config.h"
-#include "JSLocation.h"
+#include "JSLocationInlines.h"
 
-#include "JSDOMBinding.h"
 #include "JSDOMBindingSecurity.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWindowCustom.h"

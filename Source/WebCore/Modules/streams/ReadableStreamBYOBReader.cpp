@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ReadableStreamBYOBReader.h"
 
+#include "JSDOMConvertAny.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSReadableStreamBYOBReader.h"

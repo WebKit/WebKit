@@ -29,7 +29,6 @@
 #include "CachedScript.h"
 #include "CachedScriptFetcher.h"
 #include "DOMWrapperWorld.h"
-#include "JSDOMBinding.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalFrame.h"
 #include "ModuleFetchParameters.h"

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSHTMLAllCollection.h"
+#include "JSHTMLAllCollectionInlines.h"
 
 #include "CachedHTMLCollectionInlines.h"
 #include "Element.h"
@@ -32,8 +32,8 @@
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertUnion.h"
-#include "JSElement.h"
-#include "JSHTMLCollection.h"
+#include "JSElementInlines.h"
+#include "JSHTMLCollectionInlines.h"
 
 namespace WebCore {
 using namespace JSC;

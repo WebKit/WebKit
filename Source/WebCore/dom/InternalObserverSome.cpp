@@ -30,6 +30,7 @@
 #include "CallbackResult.h"
 #include "ContextDestructionObserverInlines.h"
 #include "InternalObserver.h"
+#include "JSDOMConvertBoolean.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Observable.h"
 #include "PredicateCallback.h"

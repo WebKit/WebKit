@@ -29,6 +29,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "FileSystemHandleCloseScope.h"
 #include "FileSystemStorageConnection.h"
+#include "JSDOMConvertStrings.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSFileSystemDirectoryHandle.h"
 #include "JSFileSystemFileHandle.h"

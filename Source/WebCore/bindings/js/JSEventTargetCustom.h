@@ -26,7 +26,6 @@
 #pragma once
 
 #include <WebCore/EventTargetInlines.h>
-#include <WebCore/JSDOMBinding.h>
 #include <WebCore/JSDOMBindingSecurity.h>
 #include <WebCore/JSDOMOperation.h>
 #include <WebCore/LocalDOMWindow.h>

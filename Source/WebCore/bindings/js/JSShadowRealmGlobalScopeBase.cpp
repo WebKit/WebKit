@@ -27,12 +27,10 @@
 #include "JSShadowRealmGlobalScopeBase.h"
 
 #include "EventLoop.h"
-#include "JSShadowRealmGlobalScope.h"
+#include "JSShadowRealmGlobalScopeInlines.h"
 #include "ScriptModuleLoader.h"
 #include "ShadowRealmGlobalScope.h"
 #include <JavaScriptCore/GlobalObjectMethodTable.h>
-#include <JavaScriptCore/JSCInlines.h>
-#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSGlobalProxy.h>
 #include <JavaScriptCore/Microtask.h>
 #include <wtf/Language.h>

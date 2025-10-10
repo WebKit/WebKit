@@ -35,7 +35,7 @@
 #include "Document.h"
 #include "EventTarget.h"
 #include "InspectorDOMStorageAgent.h"
-#include "JSCommandLineAPIHost.h"
+#include "JSCommandLineAPIHostInlines.h"
 #include "JSDOMGlobalObject.h"
 #include "JSEventListener.h"
 #include "PagePasteboardContext.h"
@@ -44,7 +44,6 @@
 #include "WebConsoleAgent.h"
 #include <JavaScriptCore/InjectedScriptBase.h>
 #include <JavaScriptCore/InspectorAgent.h>
-#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/ObjectConstructor.h>
 #include <wtf/JSONValues.h>

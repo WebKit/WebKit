@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "JSNodeIterator.h"
+#include "JSNodeIteratorInlines.h"
 
 #include "Node.h"
 #include "WebCoreOpaqueRootInlines.h"

@@ -36,6 +36,7 @@
 
 #include "DocumentPage.h"
 #include "EventNames.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSRTCCertificate.h"
 #include "Logging.h"

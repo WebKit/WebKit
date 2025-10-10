@@ -29,7 +29,6 @@
 
 #include "EventNames.h"
 #include "History.h"
-#include <JavaScriptCore/JSCInlines.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

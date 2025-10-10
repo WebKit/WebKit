@@ -32,8 +32,6 @@
 #include "WorkerOrWorkletScriptController.h"
 #include "WorkletGlobalScope.h"
 #include <JavaScriptCore/GlobalObjectMethodTable.h>
-#include <JavaScriptCore/JSCInlines.h>
-#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/Language.h>
 
 namespace WebCore {

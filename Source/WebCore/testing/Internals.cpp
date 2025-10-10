@@ -140,6 +140,10 @@
 #include "InternalSettings.h"
 #include "InternalsMapLike.h"
 #include "InternalsSetLike.h"
+#include "JSDOMConvertBoolean.h"
+#include "JSDOMConvertNumbers.h"
+#include "JSDOMConvertSequences.h"
+#include "JSDOMConvertStrings.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSFile.h"
 #include "JSInternals.h"
@@ -269,7 +273,6 @@
 #include <JavaScriptCore/CodeBlock.h>
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <JavaScriptCore/InspectorFrontendChannel.h>
-#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/FileHandle.h>
 #include <wtf/FileSystem.h>

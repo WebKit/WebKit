@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "JSTreeWalker.h"
+#include "JSTreeWalkerInlines.h"
 
 #include "Node.h"
 #include "WebCoreOpaqueRootInlines.h"

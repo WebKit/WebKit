@@ -30,10 +30,10 @@
  */
 
 #include "config.h"
-#include "JSPopStateEvent.h"
+#include "JSPopStateEventInlines.h"
 
 #include "DOMWrapperWorld.h"
-#include "JSHistory.h"
+#include "JSHistoryInlines.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 

@@ -41,7 +41,6 @@
 #include "JSAudioWorkletGlobalScope.h"
 #include "JSBlob.h"
 #include "JSCryptoKey.h"
-#include "JSDOMBinding.h"
 #include "JSDOMConvertBufferSource.h"
 #include "JSDOMException.h"
 #include "JSDOMGlobalObject.h"
@@ -85,7 +84,6 @@
 #include <JavaScriptCore/IterationKind.h>
 #include <JavaScriptCore/JSArrayBuffer.h>
 #include <JavaScriptCore/JSArrayBufferView.h>
-#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSDataView.h>
 #include <JavaScriptCore/JSMapInlines.h>
 #include <JavaScriptCore/JSMapIterator.h>

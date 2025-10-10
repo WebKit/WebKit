@@ -30,6 +30,7 @@
 #include "ChromeClient.h"
 #include "DocumentPage.h"
 #include "DocumentSecurityOrigin.h"
+#include "JSDOMConvertBoolean.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Navigator.h"
 #include "Page.h"

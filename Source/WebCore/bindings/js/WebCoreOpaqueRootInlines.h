@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/AbstractSlotVisitorInlines.h>
 #include <WebCore/JSNodeCustomInlines.h>
 #include <WebCore/WebCoreOpaqueRoot.h>
 

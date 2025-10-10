@@ -28,8 +28,7 @@
 
 #include "config.h"
 
-#include "JSDOMBinding.h"
-#include "JSIDBObjectStore.h"
+#include "JSIDBObjectStoreInlines.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {

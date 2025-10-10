@@ -74,7 +74,6 @@
 #include "Settings.h"
 #include "StringAdaptors.h"
 #include "WebCoreOpaqueRoot.h"
-#include <JavaScriptCore/JSCInlines.h>
 #include <math.h>
 #include <wtf/RAMSize.h>
 #include <wtf/TZoneMallocInlines.h>

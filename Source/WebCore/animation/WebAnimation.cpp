@@ -46,6 +46,7 @@
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
+#include "JSDOMConvertInterface.h"
 #include "JSWebAnimation.h"
 #include "KeyframeEffect.h"
 #include "KeyframeEffectStack.h"
@@ -59,6 +60,7 @@
 #include "StyledElement.h"
 #include "WebAnimationTypes.h"
 #include "WebAnimationUtilities.h"
+#include <JavaScriptCore/StrongInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>

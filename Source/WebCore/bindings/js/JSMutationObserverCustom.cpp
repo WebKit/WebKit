@@ -30,7 +30,7 @@
  */
 
 #include "config.h"
-#include "JSMutationObserver.h"
+#include "JSMutationObserverInlines.h"
 
 #include "JSNodeCustom.h"
 #include "MutationCallback.h"

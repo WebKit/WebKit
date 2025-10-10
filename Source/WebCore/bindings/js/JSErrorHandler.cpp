@@ -37,8 +37,8 @@
 #include "Event.h"
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertStrings.h"
-#include "JSDOMWindow.h"
-#include "JSEvent.h"
+#include "JSDOMWindowInlines.h"
+#include "JSEventInlines.h"
 #include "JSExecState.h"
 #include "JSExecStateInstrumentation.h"
 #include <JavaScriptCore/JSLock.h>

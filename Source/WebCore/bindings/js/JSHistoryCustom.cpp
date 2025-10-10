@@ -27,10 +27,9 @@
  */
 
 #include "config.h"
-#include "JSHistory.h"
+#include "JSHistoryInlines.h"
 
 #include "SerializedScriptValue.h"
-#include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
 

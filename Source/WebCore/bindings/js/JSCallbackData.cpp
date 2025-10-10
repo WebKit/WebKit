@@ -30,7 +30,6 @@
 #include "JSCallbackData.h"
 
 #include "Document.h"
-#include "JSDOMBinding.h"
 #include "JSExecState.h"
 #include "JSExecStateInstrumentation.h"
 #include <JavaScriptCore/Exception.h>
@@ -98,6 +97,13 @@ JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject
     InspectorInstrumentation::didCallFunction(context.get());
 
     return result;
+}
+
+bool JSCallbackData::WeakOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* owner, JSC::AbstractSlotVisitor& visitor, ASCIILiteral* reason)
+{
+    if (reason) [[unlikely]]
+        *reason = "Callback owner is an opaque root"_s;
+    return visitor.containsOpaqueRoot(owner);
 }
 
 template<typename Visitor>

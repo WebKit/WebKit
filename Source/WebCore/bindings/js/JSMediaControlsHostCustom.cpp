@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSMediaControlsHost.h"
+#include "JSMediaControlsHostInlines.h"
 
 #if ENABLE(VIDEO)
 

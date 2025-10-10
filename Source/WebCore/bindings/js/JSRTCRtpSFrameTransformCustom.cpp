@@ -24,11 +24,11 @@
  */
 
 #include "config.h"
-#include "JSRTCRtpSFrameTransform.h"
+#include "JSRTCRtpSFrameTransformInlines.h"
 
 #if ENABLE(WEB_RTC)
 
-#include "JSCryptoKey.h"
+#include "JSCryptoKeyInlines.h"
 #include "JSDOMPromiseDeferred.h"
 #include <JavaScriptCore/JSBigInt.h>
 

@@ -28,6 +28,7 @@
 
 #include "Exception.h"
 #include "IDLTypes.h"
+#include "JSDOMConvertUnion.h"
 #include "JSDOMGlobalObject.h"
 #include "ScriptExecutionContextInlines.h"
 #include "WebTransportSession.h"

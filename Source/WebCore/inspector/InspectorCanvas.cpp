@@ -58,6 +58,7 @@
 #include "JSCanvasRenderingContext2D.h"
 #include "JSCanvasTextAlign.h"
 #include "JSCanvasTextBaseline.h"
+#include "JSDOMWrapperCache.h"
 #include "JSExecState.h"
 #include "JSImageBitmapRenderingContext.h"
 #include "JSImageSmoothingQuality.h"
@@ -68,7 +69,6 @@
 #include "SVGPathUtilities.h"
 #include "StringAdaptors.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
-#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>

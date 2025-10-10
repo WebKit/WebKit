@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSMutationRecord.h"
+#include "JSMutationRecordInlines.h"
 
 #include "MutationRecord.h"
 

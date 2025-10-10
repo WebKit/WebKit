@@ -24,11 +24,10 @@
  */
 
 #include "config.h"
-#include "JSCustomEvent.h"
+#include "JSCustomEventInlines.h"
 
 #include "CustomEvent.h"
 #include "DOMWrapperWorld.h"
-#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/Structure.h>
 

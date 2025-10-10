@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSDOMBinding.h"
+#include "JSDOMWrapperCache.h"
 #include <JavaScriptCore/ArrayPrototype.h>
 
 namespace JSC {

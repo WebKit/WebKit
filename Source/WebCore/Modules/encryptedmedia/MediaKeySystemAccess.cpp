@@ -35,10 +35,13 @@
 #include "CDMInstance.h"
 #include "Document.h"
 #include "EventLoop.h"
+#include "IDLTypes.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaKeys.h"
 #include "MediaKeys.h"
 #include "MediaKeysRequirement.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

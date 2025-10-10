@@ -33,6 +33,7 @@
 #include "RTCIceCandidate.h"
 #include "RTCPeerConnection.h"
 #include "RTCRtpSendParameters.h"
+#include <JavaScriptCore/StrongInlines.h>
 #include <wtf/text/WTFString.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN

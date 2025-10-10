@@ -28,13 +28,18 @@
 
 #pragma once
 
-#include "JSDOMBinding.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Weak.h>
 #include <JavaScriptCore/WeakInlines.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
+
+namespace JSC {
+class JSArray;
+template<typename T, size_t, class> class MarkedVector;
+using MarkedArgumentBuffer = MarkedVector<JSValue, 8, RecordOverflow>;
+}
 
 namespace WebCore {
 
@@ -82,12 +87,7 @@ private:
     JSC::Weak<JSDOMGlobalObject> m_globalObject;
 
     class WeakOwner : public JSC::WeakHandleOwner {
-        bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* owner, JSC::AbstractSlotVisitor& visitor, ASCIILiteral* reason) override
-        {
-            if (reason) [[unlikely]]
-                *reason = "Callback owner is an opaque root"_s;
-            return visitor.containsOpaqueRoot(owner);
-        }
+        bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* owner, JSC::AbstractSlotVisitor&, ASCIILiteral* reason) override;
     };
     WeakOwner m_weakOwner;
     JSC::Weak<JSC::JSObject> m_callback;

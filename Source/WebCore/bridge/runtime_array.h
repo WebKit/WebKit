@@ -27,8 +27,9 @@
 #define RUNTIME_ARRAY_H_
 
 #include "BridgeJSC.h"
-#include "JSDOMBinding.h"
+#include "JSDOMWrapperCache.h"
 #include <JavaScriptCore/ArrayPrototype.h>
+#include <JavaScriptCore/JSGlobalObject.h>
 
 namespace JSC {
     

@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "JSReadableStreamSource.h"
+#include "JSReadableStreamSourceInlines.h"
 
 #include "JSDOMPromiseDeferred.h"
 

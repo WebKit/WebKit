@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include <JavaScriptCore/JSGlobalObject.h>
 #include <pal/ThreadGlobalData.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -34,6 +33,7 @@
 
 namespace JSC {
 class CallFrame;
+class JSGlobalObject;
 }
 
 namespace WebCore {

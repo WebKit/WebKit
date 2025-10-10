@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSNavigateEvent.h"
+#include "JSNavigateEventInlines.h"
 
 namespace WebCore {
 

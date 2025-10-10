@@ -31,6 +31,7 @@
 #include "ContextDestructionObserverInlines.h"
 #include "EventLoop.h"
 #include "JSDOMCache.h"
+#include "JSDOMConvertStrings.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSFetchResponse.h"
 #include "MultiCacheQueryOptions.h"

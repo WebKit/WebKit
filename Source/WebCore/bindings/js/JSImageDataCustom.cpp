@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSImageData.h"
+#include "JSImageDataInlines.h"
 
 #include "JSDOMConvert.h"
 #include "JSDOMWrapperCache.h"

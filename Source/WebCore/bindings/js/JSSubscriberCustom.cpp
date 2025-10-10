@@ -24,7 +24,7 @@
 */
 
 #include "config.h"
-#include "JSSubscriber.h"
+#include "JSSubscriberInlines.h"
 
 #include "VoidCallback.h"
 

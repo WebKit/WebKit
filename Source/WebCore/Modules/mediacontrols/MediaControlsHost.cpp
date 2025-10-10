@@ -70,7 +70,6 @@
 #include "UserGestureIndicator.h"
 #include "VTTCue.h"
 #include "VoidCallback.h"
-#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/Function.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Scope.h>

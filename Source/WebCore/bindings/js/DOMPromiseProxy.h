@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/ExceptionOr.h>
+#include <WebCore/IDLTypes.h>
 #include <WebCore/JSDOMGlobalObject.h>
 #include <WebCore/JSDOMPromiseDeferred.h>
 #include <wtf/Function.h>

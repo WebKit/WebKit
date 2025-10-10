@@ -32,6 +32,7 @@
 #include "CryptoKeyRaw.h"
 #include "EventTargetInlines.h"
 #include "JSDOMConvertBufferSource.h"
+#include "JSDOMConvertUnion.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSRTCEncodedAudioFrame.h"
 #include "JSRTCEncodedVideoFrame.h"

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSTrustedTypePolicy.h"
+#include "JSTrustedTypePolicyInlines.h"
 
 #include <JavaScriptCore/SlotVisitorInlines.h>
 

@@ -40,7 +40,6 @@
 #include "HTTPHeaderValues.h"
 #include "HTTPParsers.h"
 #include "InspectorInstrumentation.h"
-#include "JSDOMBinding.h"
 #include "LocalDOMWindow.h"
 #include "MIMETypeRegistry.h"
 #include "MemoryCache.h"
@@ -62,7 +61,6 @@
 #include "markup.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
-#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <pal/text/TextCodecUTF8.h>
 #include <wtf/RuntimeApplicationChecks.h>

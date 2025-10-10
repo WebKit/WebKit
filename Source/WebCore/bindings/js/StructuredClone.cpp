@@ -27,7 +27,6 @@
 #include "config.h"
 #include "StructuredClone.h"
 
-#include "JSDOMBinding.h"
 #include "JSDOMConvertBufferSource.h"
 #include "JSDOMExceptionHandling.h"
 #include <JavaScriptCore/JSTypedArrays.h>

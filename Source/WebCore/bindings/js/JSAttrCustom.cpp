@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "JSAttr.h"
+#include "JSAttrInlines.h"
 
 #include "Element.h"
 #include "WebCoreOpaqueRootInlines.h"

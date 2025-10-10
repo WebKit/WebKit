@@ -63,7 +63,6 @@
 #include "Settings.h"
 #include "SocketProvider.h"
 #include "TypedElementDescendantIteratorInlines.h"
-#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <wtf/text/TextStream.h>
 

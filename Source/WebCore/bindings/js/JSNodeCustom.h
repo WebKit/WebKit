@@ -26,9 +26,9 @@
 
 #pragma once
 
-#include <WebCore/JSDOMBinding.h>
 #include <WebCore/JSNode.h>
 #include <WebCore/NodeInlines.h>
+#include <WebCore/ScriptWrappableInlines.h>
 #include <WebCore/WebCoreOpaqueRoot.h>
 
 namespace JSC {

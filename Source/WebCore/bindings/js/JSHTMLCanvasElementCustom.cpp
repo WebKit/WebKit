@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSHTMLCanvasElement.h"
+#include "JSHTMLCanvasElementInlines.h"
 
 #include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/SlotVisitor.h>

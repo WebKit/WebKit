@@ -26,7 +26,7 @@
 #include "config.h"
 
 #if ENABLE(WEBXR)
-#include "JSWebXRRigidTransform.h"
+#include "JSWebXRRigidTransformInlines.h"
 
 #include "JSDOMConvertBufferSource.h"
 #include "WebXRRigidTransform.h"

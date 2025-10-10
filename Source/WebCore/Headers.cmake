@@ -948,7 +948,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     bindings/js/JSDOMAbstractOperations.h
     bindings/js/JSDOMAsyncIterator.h
     bindings/js/JSDOMAttribute.h
-    bindings/js/JSDOMBinding.h
     bindings/js/JSDOMBindingSecurity.h
     bindings/js/JSDOMBindingSecurityInlines.h
     bindings/js/JSDOMCastThisValue.h

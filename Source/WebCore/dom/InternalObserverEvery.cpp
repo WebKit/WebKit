@@ -29,7 +29,9 @@
 
 #include "AbortSignal.h"
 #include "ContextDestructionObserverInlines.h"
+#include "IDLTypes.h"
 #include "InternalObserver.h"
+#include "JSDOMConvertBoolean.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Observable.h"
 #include "PredicateCallback.h"

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/JSDOMBinding.h>
+#include <WebCore/JSDOMWrapperCache.h>
 
 namespace WebCore {
 

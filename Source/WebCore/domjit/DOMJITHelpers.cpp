@@ -29,7 +29,6 @@
 #if ENABLE(JIT)
 
 #include "Document.h"
-#include "JSDOMBinding.h"
 #include "Node.h"
 
 namespace WebCore { namespace DOMJIT {

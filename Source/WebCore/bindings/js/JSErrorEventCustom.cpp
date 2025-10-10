@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "JSErrorEvent.h"
+#include "JSErrorEventInlines.h"
 
 namespace WebCore {
 

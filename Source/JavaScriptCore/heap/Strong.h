@@ -115,27 +115,8 @@ public:
 
     inline void set(VM&, ExternalType);
 
-    template <typename U> Strong& operator=(const Strong<U>& other)
-    {
-        if (!other.slot()) {
-            clear();
-            return *this;
-        }
-
-        set(*HandleSet::heapFor(other.slot())->vm(), other.get());
-        return *this;
-    }
-
-    Strong& operator=(const Strong& other)
-    {
-        if (!other.slot()) {
-            clear();
-            return *this;
-        }
-
-        set(HandleSet::heapFor(other.slot())->vm(), other.get());
-        return *this;
-    }
+    template <typename U> inline Strong& operator=(const Strong<U>& other);
+    inline Strong& operator=(const Strong&);
 
     void clear()
     {

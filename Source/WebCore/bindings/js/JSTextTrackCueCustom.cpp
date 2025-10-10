@@ -27,11 +27,11 @@
 
 #if ENABLE(VIDEO)
 
-#include "JSTextTrackCue.h"
+#include "JSTextTrackCueInlines.h"
 
-#include "JSDataCue.h"
+#include "JSDataCueInlines.h"
 #include "JSTrackCustom.h"
-#include "JSVTTCue.h"
+#include "JSVTTCueInlines.h"
 #include "TextTrack.h"
 #include "WebCoreOpaqueRootInlines.h"
 

@@ -27,7 +27,8 @@
 #include "JSNodeList.h"
 
 #include "ChildNodeList.h"
-#include "JSNode.h"
+#include "JSNodeInlines.h"
+#include "JSNodeListInlines.h"
 #include "LiveNodeList.h"
 #include "Node.h"
 #include "NodeList.h"

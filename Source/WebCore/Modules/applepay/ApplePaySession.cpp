@@ -50,6 +50,7 @@
 #include "DocumentPage.h"
 #include "EventNames.h"
 #include "EventTargetInlines.h"
+#include "JSDOMConvertBoolean.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LinkIconCollector.h"
 #include "LinkIconType.h"

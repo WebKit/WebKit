@@ -29,6 +29,7 @@
 #include "JSDOMGlobalObject.h"
 #include "JSTestNode.h"
 #include "ScriptExecutionContext.h"
+#include <JavaScriptCore/ArgList.h>
 #include <JavaScriptCore/JSArray.h>
 
 

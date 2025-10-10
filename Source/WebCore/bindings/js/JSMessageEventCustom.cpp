@@ -30,13 +30,12 @@
  */
 
 #include "config.h"
-#include "JSMessageEvent.h"
+#include "JSMessageEventInlines.h"
 
-#include "JSBlob.h"
-#include "JSDOMBinding.h"
+#include "JSBlobInlines.h"
 #include "JSDOMConvert.h"
-#include "JSEventTarget.h"
-#include "JSMessagePort.h"
+#include "JSEventTargetInlines.h"
+#include "JSMessagePortInlines.h"
 #include <JavaScriptCore/JSArray.h>
 #include <JavaScriptCore/JSArrayBuffer.h>
 

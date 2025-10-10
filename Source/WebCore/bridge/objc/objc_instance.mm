@@ -26,7 +26,6 @@
 #import "config.h"
 #import "objc_instance.h"
 
-#import "JSDOMBinding.h"
 #import "ObjCRuntimeObject.h"
 #import "WebScriptObject.h"
 #import "WebScriptObjectProtocol.h"

@@ -30,7 +30,6 @@
 #include "ContentSecurityPolicy.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
-#include "JSDOMBinding.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalFrame.h"
 #include "ModuleFetchParameters.h"

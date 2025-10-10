@@ -24,11 +24,9 @@
  */
 
 #include "config.h"
-#include "JSReportingObserver.h"
+#include "JSReportingObserverInlines.h"
 
 #include "ReportingObserverCallback.h"
-
-#include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
 

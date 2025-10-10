@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSPaymentMethodChangeEvent.h"
+#include "JSPaymentMethodChangeEventInlines.h"
 
 #if ENABLE(PAYMENT_REQUEST)
 

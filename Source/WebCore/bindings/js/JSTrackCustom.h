@@ -28,7 +28,6 @@
 #if ENABLE(VIDEO)
 
 #include "Element.h"
-#include "JSDOMBinding.h"
 #include "JSNodeCustom.h"
 #include "TrackBase.h"
 

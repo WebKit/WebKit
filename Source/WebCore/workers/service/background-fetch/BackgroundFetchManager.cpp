@@ -31,6 +31,8 @@
 #include "ContentSecurityPolicy.h"
 #include "FetchRequest.h"
 #include "JSBackgroundFetchRegistration.h"
+#include "JSDOMConvertNullable.h"
+#include "JSDOMConvertStrings.h"
 #include "SWClientConnection.h"
 #include "ServiceWorkerProvider.h"
 #include "ServiceWorkerRegistration.h"

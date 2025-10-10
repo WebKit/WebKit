@@ -29,6 +29,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "JSDOMConvertUnion.h"
 #include "JSRTCEncodedAudioFrame.h"
 #include "JSRTCEncodedVideoFrame.h"
 #include "ReadableStreamSource.h"

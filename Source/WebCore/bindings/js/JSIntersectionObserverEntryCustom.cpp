@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "JSIntersectionObserverEntry.h"
+#include "JSIntersectionObserverEntryInlines.h"
 
 #include "JSNodeCustom.h"
 #include "WebCoreOpaqueRootInlines.h"

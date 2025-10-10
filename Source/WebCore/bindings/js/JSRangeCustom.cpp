@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSRange.h"
+#include "JSRangeInlines.h"
 
 #include "Range.h"
 #include <JavaScriptCore/StructureInlines.h>

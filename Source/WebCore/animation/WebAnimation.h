@@ -33,7 +33,7 @@
 #include <WebCore/EventTarget.h>
 #include <WebCore/EventTargetInterfaces.h>
 #include <WebCore/ExceptionOr.h>
-#include <WebCore/IDLTypes.h>
+#include <WebCore/JSDOMPromiseDeferredForward.h>
 #include <WebCore/StyleSingleAnimationRange.h>
 #include <WebCore/Styleable.h>
 #include <WebCore/TimelineRangeValue.h>

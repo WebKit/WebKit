@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSObservableArray.h"
 
-#include "JSDOMBinding.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/ArrayPrototype.h>
 #include <JavaScriptCore/Error.h>

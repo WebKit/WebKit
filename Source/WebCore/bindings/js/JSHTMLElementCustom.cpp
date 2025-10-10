@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSHTMLElement.h"
+#include "JSHTMLElementInlines.h"
 
 #include "CustomElementRegistry.h"
 #include "Document.h"

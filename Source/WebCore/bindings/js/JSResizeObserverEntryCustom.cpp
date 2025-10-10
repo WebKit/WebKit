@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "JSResizeObserverEntry.h"
+#include "JSResizeObserverEntryInlines.h"
 
 #include "JSNodeCustom.h"
 #include "WebCoreOpaqueRootInlines.h"

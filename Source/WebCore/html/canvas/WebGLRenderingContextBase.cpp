@@ -145,7 +145,6 @@
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
 #include <JavaScriptCore/ConsoleMessage.h>
-#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <JavaScriptCore/SlotVisitor.h>

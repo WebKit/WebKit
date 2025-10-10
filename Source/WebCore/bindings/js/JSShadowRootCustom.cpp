@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSShadowRoot.h"
+#include "JSShadowRootInlines.h"
 
 #include "JSDocumentCustom.h"
 

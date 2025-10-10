@@ -18,13 +18,12 @@
  */
 
 #include "config.h"
-#include "JSHTMLCollection.h"
+#include "JSHTMLCollectionInlines.h"
 
 #include "HTMLCollectionInlines.h"
-#include "JSDOMBinding.h"
-#include "JSHTMLAllCollection.h"
-#include "JSHTMLFormControlsCollection.h"
-#include "JSHTMLOptionsCollection.h"
+#include "JSHTMLAllCollectionInlines.h"
+#include "JSHTMLFormControlsCollectionInlines.h"
+#include "JSHTMLOptionsCollectionInlines.h"
 
 
 namespace WebCore {

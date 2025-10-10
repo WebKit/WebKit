@@ -25,7 +25,8 @@
  */
 
 #include "config.h"
-#include "JSMessagePort.h"
+#include "JSMessagePortInlines.h"
+
 #include "WebCoreOpaqueRootInlines.h"
 
 namespace WebCore {

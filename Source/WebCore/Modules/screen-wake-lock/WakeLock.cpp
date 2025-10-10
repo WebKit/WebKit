@@ -34,6 +34,7 @@
 #include "DocumentWindow.h"
 #include "EventLoop.h"
 #include "Exception.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWakeLockSentinel.h"
 #include "LocalDOMWindow.h"

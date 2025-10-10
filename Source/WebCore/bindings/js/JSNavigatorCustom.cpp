@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSNavigator.h"
+#include "JSNavigatorInlines.h"
 
 #include "WebCoreJSBuiltinInternals.h"
 #include "WebCoreJSClientData.h"

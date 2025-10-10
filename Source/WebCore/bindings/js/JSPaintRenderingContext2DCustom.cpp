@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSPaintRenderingContext2D.h"
+#include "JSPaintRenderingContext2DInlines.h"
 
 #include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>

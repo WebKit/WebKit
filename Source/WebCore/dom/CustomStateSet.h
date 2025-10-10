@@ -26,10 +26,11 @@
 #pragma once
 
 #include "Element.h"
-#include "JSDOMSetLike.h"
 #include "ScriptWrappable.h"
 
 namespace WebCore {
+
+class DOMSetAdapter;
 
 class CustomStateSet final : public ScriptWrappable, public RefCounted<CustomStateSet> {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CustomStateSet);

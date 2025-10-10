@@ -37,6 +37,7 @@
 #include "FetchHeaders.h"
 #include "HTTPHeaderValues.h"
 #include "HTTPParsers.h"
+#include "JSDOMConvertStrings.h"
 #include "JSDOMFormData.h"
 #include "JSDOMPromiseDeferred.h"
 #include "ReadableStreamSource.h"

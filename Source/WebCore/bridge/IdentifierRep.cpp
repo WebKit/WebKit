@@ -26,8 +26,8 @@
 #include "config.h"
 #include "IdentifierRep.h"
 
-#include "JSDOMBinding.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>

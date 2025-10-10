@@ -42,7 +42,6 @@
 #include "XLinkNames.h"
 #include <JavaScriptCore/ArgList.h>
 #include <JavaScriptCore/HeapInlines.h>
-#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSCast.h>
 #include <pal/text/TextEncoding.h>

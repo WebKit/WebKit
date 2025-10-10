@@ -26,12 +26,11 @@
 #include "config.h"
 
 #if ENABLE(WEB_CODECS)
-#include "JSWebCodecsAudioEncoder.h"
+#include "JSWebCodecsAudioEncoderInlines.h"
 
 #include "WebCodecsEncodedAudioChunkOutputCallback.h"
 #include "WebCodecsErrorCallback.h"
 #include <JavaScriptCore/ConsoleTypes.h>
-#include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
 

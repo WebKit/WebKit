@@ -48,6 +48,8 @@
 #include "HTMLFormElement.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
+#include "JSDOMConvertAny.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMPromise.h"
 #include "JSNavigationHistoryEntry.h"

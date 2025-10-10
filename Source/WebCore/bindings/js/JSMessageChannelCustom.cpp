@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
+#include "JSMessageChannelInlines.h"
 
 #include "DOMWrapperWorld.h"
-#include "JSMessageChannel.h"
 #include "JSNodeCustom.h"
 #include "MessagePort.h"
 #include "WebCoreOpaqueRootInlines.h"

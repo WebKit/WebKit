@@ -30,10 +30,10 @@
  */
 
 #include "config.h"
-#include "JSHTMLTemplateElement.h"
+#include "JSHTMLTemplateElementInlines.h"
 
 #include "JSDOMConvert.h"
-#include "JSDocumentFragment.h"
+#include "JSDocumentFragmentInlines.h"
 #include "WebCoreOpaqueRootInlines.h"
 
 namespace WebCore {

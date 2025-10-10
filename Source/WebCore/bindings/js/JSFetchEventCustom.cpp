@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSFetchEvent.h"
+#include "JSFetchEventInlines.h"
 
 #include "FetchRequest.h"
 #include "WebCoreOpaqueRootInlines.h"

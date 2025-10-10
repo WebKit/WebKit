@@ -23,7 +23,6 @@
 #include "JSDOMConstructor.h"
 
 #include "WebCoreJSClientData.h"
-#include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
 using namespace JSC;

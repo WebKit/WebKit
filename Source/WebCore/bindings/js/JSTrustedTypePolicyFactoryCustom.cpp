@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSTrustedTypePolicyFactory.h"
+#include "JSTrustedTypePolicyFactoryInlines.h"
 
 #include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/SlotVisitorInlines.h>

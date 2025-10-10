@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSWorkerGlobalScope.h"
+#include "JSWorkerGlobalScopeInlines.h"
 
 #include "JSDOMExceptionHandling.h"
 #include "WebCoreOpaqueRootInlines.h"

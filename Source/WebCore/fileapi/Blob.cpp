@@ -38,6 +38,7 @@
 #include "BlobURL.h"
 #include "ContextDestructionObserverInlines.h"
 #include "File.h"
+#include "JSDOMConvertStrings.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PolicyContainer.h"
 #include "ReadableStream.h"

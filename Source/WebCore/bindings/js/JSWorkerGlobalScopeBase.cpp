@@ -33,13 +33,11 @@
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGuardedObject.h"
 #include "JSExecState.h"
-#include "JSTrustedScript.h"
+#include "JSTrustedScriptInlines.h"
 #include "TrustedType.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/GlobalObjectMethodTable.h>
-#include <JavaScriptCore/JSCInlines.h>
-#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSGlobalProxy.h>
 #include <JavaScriptCore/Microtask.h>
 #include <wtf/Language.h>

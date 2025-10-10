@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSAudioBufferSourceNode.h"
+#include "JSAudioBufferSourceNodeInlines.h"
 
 #if ENABLE(WEB_AUDIO)
 #include "AudioBufferSourceNode.h"

@@ -24,7 +24,6 @@
 
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/Image.h>
-#include <WebCore/JSValueInWrappedObject.h>
 #include <WebCore/RenderEmbeddedObject.h>
 #include <wtf/Platform.h>
 

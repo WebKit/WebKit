@@ -24,9 +24,8 @@
  */
 
 #include "config.h"
-#include "JSIDBTransaction.h"
+#include "JSIDBTransactionInlines.h"
 
-#include "JSDOMBinding.h"
 
 
 namespace WebCore {

@@ -23,7 +23,6 @@
 
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMGlobalObject.h"
-#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ObjectConstructor.h>
 
 

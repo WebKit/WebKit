@@ -31,6 +31,7 @@
 #include "DatagramSink.h"
 #include "DatagramSource.h"
 #include "ExceptionOr.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMException.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"

@@ -42,6 +42,7 @@
 #include "ImageBitmapRenderingContext.h"
 #include "ImageData.h"
 #include "JSBlob.h"
+#include "JSDOMConvertDictionary.h"
 #include "JSDOMPromiseDeferred.h"
 #include "MIMETypeRegistry.h"
 #include "OffscreenCanvasRenderingContext2D.h"

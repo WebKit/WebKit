@@ -47,6 +47,7 @@ public:
     void deref() const final { RefCounted::deref(); }
 
     static Ref<ApplePaySetup> create(ScriptExecutionContext&, ApplePaySetupConfiguration&&);
+    virtual ~ApplePaySetup();
 
     using SetupFeaturesPromise = DOMPromiseDeferred<IDLSequence<IDLInterface<ApplePaySetupFeature>>>;
     void getSetupFeatures(Document&, SetupFeaturesPromise&&);
@@ -62,8 +63,8 @@ private:
     void suspend(ReasonForSuspension) final;
 
     ApplePaySetupConfiguration m_configuration;
-    std::optional<SetupFeaturesPromise> m_setupFeaturesPromise;
-    std::optional<BeginPromise> m_beginPromise;
+    std::unique_ptr<SetupFeaturesPromise> m_setupFeaturesPromise;
+    std::unique_ptr<BeginPromise> m_beginPromise;
 };
 
 } // namespace WebCore

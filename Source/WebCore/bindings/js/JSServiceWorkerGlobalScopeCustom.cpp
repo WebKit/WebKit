@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSServiceWorkerGlobalScope.h"
+#include "JSServiceWorkerGlobalScopeInlines.h"
 
 #include "JSDOMPromiseDeferred.h"
 #include "ServiceWorkerClients.h"

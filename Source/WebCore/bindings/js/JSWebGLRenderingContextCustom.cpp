@@ -27,7 +27,7 @@
 
 #if ENABLE(WEBGL)
 
-#include "JSWebGLRenderingContext.h"
+#include "JSWebGLRenderingContextInlines.h"
 #include "WebCoreOpaqueRootInlines.h"
 
 

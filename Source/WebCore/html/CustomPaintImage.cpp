@@ -49,6 +49,7 @@
 #include "RenderObjectStyle.h"
 #include "RenderStyleInlines.h"
 #include "StyleExtractor.h"
+#include <JavaScriptCore/ArgList.h>
 #include <JavaScriptCore/ConstructData.h>
 
 namespace WebCore {

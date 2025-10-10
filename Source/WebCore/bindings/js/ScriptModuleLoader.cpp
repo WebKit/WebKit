@@ -32,7 +32,6 @@
 #include "DocumentInlines.h"
 #include "EventLoop.h"
 #include "FrameDestructionObserverInlines.h"
-#include "JSDOMBinding.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LoadableModuleScript.h"
 #include "LocalFrame.h"

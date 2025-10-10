@@ -26,12 +26,10 @@
 #include "config.h"
 
 #if ENABLE(WEB_CODECS)
-#include "JSWebCodecsVideoDecoder.h"
+#include "JSWebCodecsVideoDecoderInlines.h"
 
 #include "WebCodecsErrorCallback.h"
 #include "WebCodecsVideoFrameOutputCallback.h"
-
-#include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
 

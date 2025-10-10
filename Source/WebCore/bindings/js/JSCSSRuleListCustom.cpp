@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSCSSRuleList.h"
+#include "JSCSSRuleListInlines.h"
 
 #include "CSSRule.h"
 #include "CSSRuleList.h"

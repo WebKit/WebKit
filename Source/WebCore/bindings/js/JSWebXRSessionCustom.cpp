@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSWebXRSession.h"
+#include "JSWebXRSessionInlines.h"
 #include "WebCoreOpaqueRootInlines.h"
 
 #if ENABLE(WEBXR)

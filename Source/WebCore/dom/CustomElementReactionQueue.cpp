@@ -31,7 +31,6 @@
 #include "EventLoop.h"
 #include "HTMLFormElement.h"
 #include "JSCustomElementInterface.h"
-#include "JSDOMBinding.h"
 #include "LocalDOMWindow.h"
 #include "WindowEventLoop.h"
 #include <JavaScriptCore/CatchScope.h>

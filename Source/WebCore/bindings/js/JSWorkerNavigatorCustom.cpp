@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSWorkerNavigator.h"
+#include "JSWorkerNavigatorInlines.h"
 
 #include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/AbstractSlotVisitorInlines.h>

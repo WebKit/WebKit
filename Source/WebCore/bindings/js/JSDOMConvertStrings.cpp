@@ -23,7 +23,7 @@
 #include "JSDOMConvertStrings.h"
 
 #include "JSDOMGlobalObject.h"
-#include "JSTrustedScript.h"
+#include "JSTrustedScriptInlines.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>

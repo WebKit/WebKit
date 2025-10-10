@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSPaymentResponse.h"
+#include "JSPaymentResponseInlines.h"
 
 #if ENABLE(PAYMENT_REQUEST)
 

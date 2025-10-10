@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
-#include "JSDOMQuad.h"
+#include "JSDOMQuadInlines.h"
 
 #include "DOMPoint.h"
-#include "JSDOMBinding.h"
 #include "WebCoreOpaqueRootInlines.h"
 
 namespace WebCore {

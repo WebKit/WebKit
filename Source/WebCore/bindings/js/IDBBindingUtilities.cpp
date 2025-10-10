@@ -38,7 +38,6 @@
 #include "IDBValue.h"
 #include "IndexKey.h"
 #include "JSBlob.h"
-#include "JSDOMBinding.h"
 #include "JSDOMConvertDate.h"
 #include "JSDOMConvertNullable.h"
 #include "JSDOMExceptionHandling.h"

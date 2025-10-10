@@ -24,9 +24,9 @@
 
 #include "CachedScript.h"
 #include "DOMException.h"
-#include "JSDOMException.h"
+#include "JSDOMExceptionInlines.h"
 #include "JSDOMPromiseDeferred.h"
-#include "JSDOMWindow.h"
+#include "JSDOMWindowInlines.h"
 #include "LocalDOMWindow.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/ErrorHandlingScope.h>

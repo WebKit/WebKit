@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "JSCanvasRenderingContext2D.h"
+#include "JSCanvasRenderingContext2DInlines.h"
 
 #include "JSNodeCustom.h"
 #include "WebCoreOpaqueRootInlines.h"

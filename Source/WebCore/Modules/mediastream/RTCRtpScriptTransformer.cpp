@@ -32,6 +32,8 @@
 #include "DedicatedWorkerGlobalScope.h"
 #include "EventLoop.h"
 #include "FrameRateMonitor.h"
+#include "JSDOMConvertNumbers.h"
+#include "JSDOMConvertUnion.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSRTCEncodedAudioFrame.h"
 #include "JSRTCEncodedVideoFrame.h"

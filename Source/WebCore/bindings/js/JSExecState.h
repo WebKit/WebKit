@@ -28,10 +28,10 @@
 
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/Completion.h>
+#include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSMicrotask.h>
 #include <JavaScriptCore/Microtask.h>
 #include <WebCore/CustomElementReactionQueue.h>
-#include <WebCore/JSDOMBinding.h>
 #include <WebCore/ThreadGlobalData.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/MainThread.h>

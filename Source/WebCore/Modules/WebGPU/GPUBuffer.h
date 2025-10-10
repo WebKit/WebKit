@@ -28,6 +28,7 @@
 #include "GPUBufferMapState.h"
 #include "GPUIntegralTypes.h"
 #include "GPUMapMode.h"
+#include "IDLTypes.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDOMPromiseDeferredForward.h"
 #include "WebGPUBuffer.h"

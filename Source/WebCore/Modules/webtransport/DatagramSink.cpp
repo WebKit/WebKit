@@ -27,6 +27,7 @@
 #include "DatagramSink.h"
 
 #include "Exception.h"
+#include "JSDOMConvertUnion.h"
 #include "ScriptExecutionContextInlines.h"
 #include "WebTransport.h"
 #include "WebTransportSession.h"

@@ -28,6 +28,7 @@
 
 #include "DeviceMotionData.h"
 #include "DeviceOrientationAndMotionAccessController.h"
+#include "JSDOMConvertEnumeration.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalDOMWindow.h"
 #include <JavaScriptCore/ConsoleTypes.h>

@@ -24,7 +24,7 @@
 */
 
 #include "config.h"
-#include "JSAbortSignal.h"
+#include "JSAbortSignalInlines.h"
 
 #include "WebCoreOpaqueRootInlines.h"
 

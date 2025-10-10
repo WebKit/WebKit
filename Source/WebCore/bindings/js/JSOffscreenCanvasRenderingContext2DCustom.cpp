@@ -21,7 +21,7 @@
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
-#include "JSOffscreenCanvasRenderingContext2D.h"
+#include "JSOffscreenCanvasRenderingContext2DInlines.h"
 #include "WebCoreOpaqueRootInlines.h"
 
 namespace WebCore {

@@ -25,11 +25,10 @@
  */
 
 #include "config.h"
-#include "JSIntersectionObserver.h"
+#include "JSIntersectionObserverInlines.h"
 
 #include "JSNodeCustom.h"
 #include "WebCoreOpaqueRootInlines.h"
-#include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
 

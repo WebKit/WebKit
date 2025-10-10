@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NavigationTransition.h"
 
+#include "IDLTypes.h"
+#include "JSDOMConvertAny.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/TZoneMallocInlines.h>
 

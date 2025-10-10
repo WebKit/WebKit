@@ -27,9 +27,7 @@
 
 #if ENABLE(MEDIA_SESSION)
 
-#include "JSMediaSession.h"
-
-#include <JavaScriptCore/JSCInlines.h>
+#include "JSMediaSessionInlines.h"
 
 namespace WebCore {
 

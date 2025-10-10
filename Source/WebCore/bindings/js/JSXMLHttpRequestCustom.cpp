@@ -27,15 +27,15 @@
  */
 
 #include "config.h"
-#include "JSXMLHttpRequest.h"
+#include "JSXMLHttpRequestInlines.h"
 
-#include "JSBlob.h"
+#include "JSBlobInlines.h"
 #include "JSDOMConvertBufferSource.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertJSON.h"
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertStrings.h"
-#include "JSDocument.h"
+#include "JSDocumentInlines.h"
 #include "WebCoreOpaqueRootInlines.h"
 #include "XMLHttpRequestUpload.h"
 

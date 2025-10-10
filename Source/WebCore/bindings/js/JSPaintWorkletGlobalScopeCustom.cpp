@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSPaintWorkletGlobalScope.h"
+#include "JSPaintWorkletGlobalScopeInlines.h"
 
 namespace WebCore {
 using namespace JSC;

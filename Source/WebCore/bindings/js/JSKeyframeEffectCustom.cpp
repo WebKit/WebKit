@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSKeyframeEffect.h"
+#include "JSKeyframeEffectInlines.h"
 
 #include "CSSPropertyNames.h"
 #include "Document.h"

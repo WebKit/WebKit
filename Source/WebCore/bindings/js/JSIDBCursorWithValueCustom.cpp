@@ -24,11 +24,10 @@
  */
 
 #include "config.h"
-#include "JSIDBCursorWithValue.h"
+#include "JSIDBCursorWithValueInlines.h"
 
 #include "IDBBindingUtilities.h"
 #include "IDBCursorWithValue.h"
-#include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
 using namespace JSC;

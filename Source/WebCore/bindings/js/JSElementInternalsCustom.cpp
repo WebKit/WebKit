@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSElementInternals.h"
+#include "JSElementInternalsInlines.h"
 
 #include "HTMLNames.h"
 #include "IDLTypes.h"
@@ -32,9 +32,9 @@
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertSequences.h"
 #include "JSDOMConvertUnion.h"
-#include "JSDOMFormData.h"
-#include "JSElement.h"
-#include "JSFile.h"
+#include "JSDOMFormDataInlines.h"
+#include "JSElementInlines.h"
+#include "JSFileInlines.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/ObjectConstructor.h>
 

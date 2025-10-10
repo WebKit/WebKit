@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSAudioWorkletProcessor.h"
+#include "JSAudioWorkletProcessorInlines.h"
 
 #if ENABLE(WEB_AUDIO)
 

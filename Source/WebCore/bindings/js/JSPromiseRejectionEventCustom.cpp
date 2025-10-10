@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "JSPromiseRejectionEvent.h"
+#include "JSPromiseRejectionEventInlines.h"
 
 #include "PromiseRejectionEvent.h"
 #include <JavaScriptCore/HeapInlines.h>

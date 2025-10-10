@@ -26,7 +26,6 @@
 #import "config.h"
 #import "objc_runtime.h"
 
-#import "JSDOMBinding.h"
 #import "ObjCRuntimeObject.h"
 #import "WebCoreJSClientData.h"
 #import "WebScriptObject.h"

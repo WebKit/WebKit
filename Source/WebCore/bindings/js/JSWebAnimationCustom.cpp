@@ -24,13 +24,13 @@
  */
 
 #include "config.h"
-#include "JSWebAnimation.h"
+#include "JSWebAnimationInlines.h"
 
 #include "Document.h"
-#include "JSAnimationEffect.h"
-#include "JSAnimationTimeline.h"
-#include "JSCSSAnimation.h"
-#include "JSCSSTransition.h"
+#include "JSAnimationEffectInlines.h"
+#include "JSAnimationTimelineInlines.h"
+#include "JSCSSAnimationInlines.h"
+#include "JSCSSTransitionInlines.h"
 #include "JSDOMConstructor.h"
 #include "JSDOMConvert.h"
 

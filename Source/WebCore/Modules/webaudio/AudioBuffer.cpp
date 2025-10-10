@@ -39,7 +39,6 @@
 #include "ExceptionOr.h"
 #include "ScriptWrappableInlines.h"
 #include "WebCoreOpaqueRoot.h"
-#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/StdLibExtras.h>

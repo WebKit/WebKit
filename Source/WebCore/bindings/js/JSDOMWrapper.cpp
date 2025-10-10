@@ -27,7 +27,7 @@
 #include "JSDOMWrapper.h"
 
 #include "DOMWrapperWorld.h"
-#include "JSDOMWindow.h"
+#include "JSDOMWindowInlines.h"
 #include "LocalDOMWindow.h"
 #include "SerializedScriptValue.h"
 #include "WebCoreJSClientData.h"

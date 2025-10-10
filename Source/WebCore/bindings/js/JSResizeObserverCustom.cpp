@@ -25,12 +25,11 @@
  */
 
 #include "config.h"
-#include "JSResizeObserver.h"
+#include "JSResizeObserverInlines.h"
 
 #include "Element.h"
 #include "JSNodeCustom.h"
 #include "WebCoreOpaqueRootInlines.h"
-#include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
 

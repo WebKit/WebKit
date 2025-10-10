@@ -26,6 +26,7 @@
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
 #include "ScriptExecutionContext.h"
+#include <JavaScriptCore/ArgList.h>
 
 
 namespace WebCore {

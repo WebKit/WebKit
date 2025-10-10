@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#include "JSDeprecatedCSSOMValue.h"
+#include "JSDeprecatedCSSOMValueInlines.h"
 
 #include "JSCSSStyleDeclarationCustom.h"
-#include "JSDeprecatedCSSOMPrimitiveValue.h"
-#include "JSDeprecatedCSSOMValueList.h"
-#include "JSNode.h"
+#include "JSDeprecatedCSSOMPrimitiveValueInlines.h"
+#include "JSDeprecatedCSSOMValueListInlines.h"
+#include "JSNodeInlines.h"
 #include "WebCoreOpaqueRootInlines.h"
 
 namespace WebCore {

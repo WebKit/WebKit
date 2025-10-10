@@ -24,7 +24,8 @@
 #include "DOMTimer.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
-#include "JSHTMLElement.h"
+#include "JSElementInlines.h"
+#include "JSHTMLElementInlines.h"
 
 namespace WebCore {
 using namespace JSC;

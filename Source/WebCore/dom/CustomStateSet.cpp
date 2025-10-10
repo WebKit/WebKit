@@ -28,6 +28,7 @@
 
 #include "CSSSelector.h"
 #include "Element.h"
+#include "JSDOMSetLike.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "ScriptWrappableInlines.h"
 #include <wtf/TZoneMallocInlines.h>

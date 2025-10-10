@@ -47,6 +47,10 @@ my @headerContent = ();
 my %headerIncludes = ();
 my %headerTrailingIncludes = ();
 
+my @inlinesContentHeader = ();
+my @inlinesContent = ();
+my %inlinesIncludes = ();
+
 my @implContentHeader = ();
 my @implContent = ();
 my %implIncludes = ();
@@ -179,6 +183,7 @@ sub GenerateInterface
     } else {
         $object->GenerateImplementation($interface, $enumerations, $dictionaries);
         $object->GenerateHeader($interface, $enumerations, $dictionaries);
+        $object->GenerateInlines($interface, $enumerations, $dictionaries);
     }
 }
 
@@ -538,6 +543,13 @@ sub AddIncludesForImplementationTypeInImpl
     my $implementationType = shift;
     
     AddIncludesForImplementationType($implementationType, \%implIncludes);
+}
+
+sub AddIncludesForImplementationTypeInInlines
+{
+    my $implementationType = shift;
+
+    AddIncludesForImplementationType($implementationType, \%inlinesIncludes);
 }
 
 sub AddIncludesForImplementationTypeInHeader
@@ -1752,6 +1764,25 @@ sub GenerateHeaderContentHeader
     return @headerContentHeader;
 }
 
+sub GenerateInlinesContentHeader
+{
+    my $interface = shift;
+    my $className = "JS" . $interface->type->name;
+
+    my @inlinesContentHeader;
+    if ($interface->extendedAttributes->{AppleCopyright}) {
+        @inlinesContentHeader = split("\r", $beginAppleCopyrightForHeaderFiles);
+    } else {
+        @inlinesContentHeader = split("\r", $headerTemplate);
+    }
+
+    push(@inlinesContentHeader, "\n#pragma once\n\n");
+
+    my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
+    push(@inlinesContentHeader, "#if ${conditionalString}\n\n") if $conditionalString;
+    return @inlinesContentHeader;
+}
+
 sub GenerateImplementationContentHeader
 {
     my $interface = shift;
@@ -2577,7 +2608,6 @@ sub GenerateEnumerationImplementationContent
 
     # FIXME: A little ugly to have this be a side effect instead of a return value.
     AddToImplIncludes("<JavaScriptCore/JSString.h>");
-    AddToImplIncludes("<JavaScriptCore/JSCInlines.h>");
     AddToImplIncludes("JSDOMConvertEnumeration.h");
     AddToImplIncludes("<wtf/SortedArrayMap.h>");
 
@@ -2830,7 +2860,6 @@ sub GenerateDictionaryImplementationContent
     }
 
     # FIXME: A little ugly to have this be a side effect instead of a return value.
-    AddToImplIncludes("<JavaScriptCore/JSCInlines.h>");
     AddToImplIncludes("JSDOMConvertDictionary.h");
 
     my @dictionaries;
@@ -3150,48 +3179,19 @@ sub GenerateHeader
     push(@headerContent, "    using DOMWrapped = $implType;\n") if $hasParent;
 
     if ($interfaceName eq "DOMWindow") {
-        push(@headerContent, "    static $className* create(JSC::VM& vm, JSC::Structure* structure, Ref<$implType>&& impl, JSWindowProxy* proxy)\n");
-        push(@headerContent, "    {\n");
-        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(vm)) ${className}(vm, structure, WTFMove(impl), proxy);\n");
-        push(@headerContent, "        ptr->finishCreation(vm, proxy);\n");
-        push(@headerContent, "        return ptr;\n");
-        push(@headerContent, "    }\n\n");
+        push(@headerContent, "    inline static $className* create(JSC::VM& vm, JSC::Structure* structure, Ref<$implType>&& impl, JSWindowProxy* proxy);\n");
     } elsif (ShouldCreateWithJSGlobalProxy($codeGenerator, $interface)) {
-        push(@headerContent, "    static $className* create(JSC::VM& vm, JSC::Structure* structure, Ref<$implType>&& impl, JSC::JSGlobalProxy* proxy)\n");
-        push(@headerContent, "    {\n");
-        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(vm)) ${className}(vm, structure, WTFMove(impl));\n");
-        push(@headerContent, "        ptr->finishCreation(vm, proxy);\n");
-        push(@headerContent, "        return ptr;\n");
-        push(@headerContent, "    }\n\n");
+        push(@headerContent, "    inline static $className* create(JSC::VM& vm, JSC::Structure* structure, Ref<$implType>&& impl, JSC::JSGlobalProxy* proxy);\n");
     } elsif ($interface->extendedAttributes->{MasqueradesAsUndefined}) {
         AddIncludesForImplementationTypeInHeader($implType);
-        push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
-        push(@headerContent, "    {\n");
-        push(@headerContent, "        SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();\n");
-        push(@headerContent, "        globalObject->masqueradesAsUndefinedWatchpointSet().fireAll(vm, \"Allocated masquerading object\");\n");
-        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(vm)) $className(structure, *globalObject, WTFMove(impl));\n");
-        push(@headerContent, "        ptr->finishCreation(vm);\n");
-        push(@headerContent, "        return ptr;\n");
-        push(@headerContent, "    }\n\n");
+        push(@headerContent, "    inline static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl);\n");
     } elsif (!NeedsImplementationClass($interface)) {
-        push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject)\n");
-        push(@headerContent, "    {\n");
-        push(@headerContent, "        SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();\n");
-        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(vm)) $className(structure, *globalObject);\n");
-        push(@headerContent, "        ptr->finishCreation(vm);\n");
-        push(@headerContent, "        return ptr;\n");
-        push(@headerContent, "    }\n\n");  
+        push(@headerContent, "    inline static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject);\n");
     } else {
         if (!$codeGenerator->IsSVGAnimatedType($interface->type) && !$codeGenerator->IsSVGPathSegType($interface->type)) {
             AddIncludesForImplementationTypeInHeader($implType);
         }
-        push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
-        push(@headerContent, "    {\n");
-        push(@headerContent, "        SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();\n");
-        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(vm)) $className(structure, *globalObject, WTFMove(impl));\n");
-        push(@headerContent, "        ptr->finishCreation(vm);\n");
-        push(@headerContent, "        return ptr;\n");
-        push(@headerContent, "    }\n\n");
+        push(@headerContent, "    inline static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl);\n");
     }
 
     $structureFlags{"JSC::HasStaticPropertyTable"} = 1 if InstancePropertyCount($interface) > 0;
@@ -3297,20 +3297,7 @@ sub GenerateHeader
     }
 
     # Structure ID
-    push(@headerContent, "    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n");
-    push(@headerContent, "    {\n");
-    my $indexingModeIncludingHistory = InstanceOverridesGetOwnPropertySlot($interface) ? "JSC::MayHaveIndexedAccessors" : "JSC::NonArray";
-    if (IsDOMGlobalObject($interface)) {
-        push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info(), $indexingModeIncludingHistory);\n");
-    } elsif ($codeGenerator->InheritsInterface($interface, "Node")) {
-        my $type = GetJSTypeForNode($interface);
-        push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType($type), StructureFlags), info(), $indexingModeIncludingHistory);\n");
-    } elsif ($codeGenerator->InheritsInterface($interface, "Event")) {
-        push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType(JSEventType), StructureFlags), info(), $indexingModeIncludingHistory);\n");
-    } else {
-        push(@headerContent, "        return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info(), $indexingModeIncludingHistory);\n");
-    }
-    push(@headerContent, "    }\n\n");
+    push(@headerContent, "    inline static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype);\n");
 
     if ($codeGenerator->InheritsInterface($interface, "HTMLElement")) {
         push(@headerContent, "    JSC::JSScope* pushEventHandlerScope(JSC::JSGlobalObject*, JSC::JSScope*) const;\n\n");
@@ -3636,6 +3623,100 @@ sub GenerateHeader
         }
         push(@depsContent, "$className.h : ", join(" ", map { "$_.idl" } @ancestors), "\n");
         push(@depsContent, map { "$_.idl :\n" } @ancestors);
+    }
+}
+
+sub GenerateInlines
+{
+    my ($object, $interface, $enumerations, $dictionaries) = @_;
+
+    my $interfaceName = $interface->type->name;
+    my $className = "JS$interfaceName";
+    my %structureFlags = ();
+    my $needsVisitChildren = InstanceNeedsVisitChildren($interface);
+
+    # - Add default header template and header protection
+    push(@inlinesContentHeader, GenerateInlinesContentHeader($interface));
+
+    $inlinesIncludes{"$className.h"} = 1;
+
+    my $implType = GetImplClassName($interface);
+
+    push(@inlinesContent, "\nnamespace WebCore {\n\n");
+
+    my $exportMacro = GetExportMacroForJSClass($interface);
+
+    $inlinesIncludes{"<JavaScriptCore/JSCell.h>"} = 1;
+    if ($interfaceName eq "DOMWindow") {
+        push(@inlinesContent, "inline ${className}* ${className}::create(JSC::VM& vm, JSC::Structure* structure, Ref<$implType>&& impl, JSWindowProxy* proxy)\n");
+        push(@inlinesContent, "{\n");
+        push(@inlinesContent, "    ${className}* ptr = new (NotNull, JSC::allocateCell<${className}>(vm)) ${className}(vm, structure, WTFMove(impl), proxy);\n");
+        push(@inlinesContent, "    ptr->finishCreation(vm, proxy);\n");
+        push(@inlinesContent, "    return ptr;\n");
+        push(@inlinesContent, "}\n\n");
+    } elsif (ShouldCreateWithJSGlobalProxy($codeGenerator, $interface)) {
+        push(@inlinesContent, "inline ${className}* ${className}::create(JSC::VM& vm, JSC::Structure* structure, Ref<$implType>&& impl, JSC::JSGlobalProxy* proxy)\n");
+        push(@inlinesContent, "{\n");
+        push(@inlinesContent, "    ${className}* ptr = new (NotNull, JSC::allocateCell<${className}>(vm)) ${className}(vm, structure, WTFMove(impl));\n");
+        push(@inlinesContent, "    ptr->finishCreation(vm, proxy);\n");
+        push(@inlinesContent, "    return ptr;\n");
+        push(@inlinesContent, "}\n\n");
+    } elsif ($interface->extendedAttributes->{MasqueradesAsUndefined}) {
+        AddIncludesForImplementationTypeInInlines($implType);
+        push(@inlinesContent, "inline ${className}* ${className}::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
+        push(@inlinesContent, "{\n");
+        push(@inlinesContent, "    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();\n");
+        push(@inlinesContent, "    globalObject->masqueradesAsUndefinedWatchpointSet().fireAll(vm, \"Allocated masquerading object\");\n");
+        push(@inlinesContent, "    ${className}* ptr = new (NotNull, JSC::allocateCell<${className}>(vm)) ${className}(structure, *globalObject, WTFMove(impl));\n");
+        push(@inlinesContent, "    ptr->finishCreation(vm);\n");
+        push(@inlinesContent, "    return ptr;\n");
+        push(@inlinesContent, "}\n\n");
+    } elsif (!NeedsImplementationClass($interface)) {
+        push(@inlinesContent, "inline ${className}* ${className}::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject)\n");
+        push(@inlinesContent, "{\n");
+        push(@inlinesContent, "    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();\n");
+        push(@inlinesContent, "    ${className}* ptr = new (NotNull, JSC::allocateCell<${className}>(vm)) ${className}(structure, *globalObject);\n");
+        push(@inlinesContent, "    ptr->finishCreation(vm);\n");
+        push(@inlinesContent, "    return ptr;\n");
+        push(@inlinesContent, "}\n\n");
+    } else {
+        if (!$codeGenerator->IsSVGAnimatedType($interface->type) && !$codeGenerator->IsSVGPathSegType($interface->type)) {
+            AddIncludesForImplementationTypeInInlines($implType);
+        }
+        push(@inlinesContent, "${className}* ${className}::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
+        push(@inlinesContent, "{\n");
+        push(@inlinesContent, "    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject->vm();\n");
+        push(@inlinesContent, "    ${className}* ptr = new (NotNull, JSC::allocateCell<${className}>(vm)) ${className}(structure, *globalObject, WTFMove(impl));\n");
+        push(@inlinesContent, "    ptr->finishCreation(vm);\n");
+        push(@inlinesContent, "    return ptr;\n");
+        push(@inlinesContent, "}\n\n");
+    }
+
+    # Structure ID
+    $inlinesIncludes{"<JavaScriptCore/StructureInlines.h>"} = 1;
+    push(@inlinesContent, "inline JSC::Structure* ${className}::createStructure(JSC::VM& vm, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n");
+    push(@inlinesContent, "{\n");
+    my $indexingModeIncludingHistory = InstanceOverridesGetOwnPropertySlot($interface) ? "JSC::MayHaveIndexedAccessors" : "JSC::NonArray";
+    if (IsDOMGlobalObject($interface)) {
+        push(@inlinesContent, "    return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), info(), $indexingModeIncludingHistory);\n");
+    } elsif ($codeGenerator->InheritsInterface($interface, "Node")) {
+        my $type = GetJSTypeForNode($interface);
+        push(@inlinesContent, "    return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType($type), StructureFlags), info(), $indexingModeIncludingHistory);\n");
+    } elsif ($codeGenerator->InheritsInterface($interface, "Event")) {
+        push(@inlinesContent, "    return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::JSType(JSEventType), StructureFlags), info(), $indexingModeIncludingHistory);\n");
+    } else {
+        push(@inlinesContent, "    return JSC::Structure::create(vm, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), info(), $indexingModeIncludingHistory);\n");
+    }
+    push(@inlinesContent, "}\n\n");
+
+    push(@inlinesContent, "\n} // namespace WebCore\n");
+
+    my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
+    push(@inlinesContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
+
+    if ($interface->extendedAttributes->{AppleCopyright}) {
+        push(@inlinesContent, "\n");
+        push(@inlinesContent, split("\r", $endAppleCopyright));
     }
 }
 
@@ -4331,7 +4412,7 @@ sub GenerateRuntimeEnableConditionalString
     if ($context->extendedAttributes->{CustomEnabledBy}) {
         # Adding CustomEnabledBy to a declaration will override all other runtime enablement conditions.
         # The caller must implement a static method of the signature:
-        # bool $className::$customEnabledByMethod(ScriptExecutionContext*);
+        # bool ${className}::$customEnabledByMethod(ScriptExecutionContext*);
         my $interfaceName = $interface->type->name;
         my $className = "JS$interfaceName";
 
@@ -4591,8 +4672,6 @@ sub GenerateImplementation
     # - Add default header template
     push(@implContentHeader, GenerateImplementationContentHeader($interface));
 
-    AddToImplIncludes("<JavaScriptCore/JSCInlines.h>");
-    AddToImplIncludes("JSDOMBinding.h");
     AddToImplIncludes("JSDOMExceptionHandling.h");
     AddToImplIncludes("JSDOMWrapperCache.h");
     AddToImplIncludes("<wtf/GetPtr.h>");
@@ -7100,6 +7179,8 @@ sub GenerateCallbackImplementationOperationBody
     push(@$contentRef, "    auto& lexicalGlobalObject = globalObject;\n");
 
     push(@$contentRef, "    JSValue thisValue = ${thisValue};\n");
+
+    $includesRef->{"<JavaScriptCore/ArgList.h>"} = 1;
     push(@$contentRef, "    MarkedArgumentBuffer args;\n");
 
     foreach my $argument (@{$operation->arguments}) {
@@ -8192,8 +8273,37 @@ sub WriteData
 
     my $name = $interface->type->name;
     my $headerFileName = "$outputDir/JS$name.h";
+    my $inlinesFileName = "$outputDir/JS${name}Inlines.h";
     my $implFileName = "$outputDir/JS$name.cpp";
     my $depsFileName = "$outputDir/JS$name.dep";
+
+    # Update a Inlines.h file if the contents are changed
+
+    if (@inlinesContent) {
+        # Add the Inlines.h to the includes for the Implementation file
+        $implIncludes{"JS${name}Inlines.h"} = 1;
+
+        # Update a .h file if the contents are changed.
+        my $contents = join "", @inlinesContentHeader;
+
+        my @includes = ();
+        foreach my $include (keys %inlinesIncludes) {
+            $include = "\"$include\"" unless $include =~ /^["<]/; # "
+            $include = SubstituteHeader($include);
+            push @includes, $include;
+        }
+        foreach my $include (sort @includes) {
+            $contents .= "#include $include\n";
+        }
+
+        $contents .= join "", @inlinesContent;
+
+        $codeGenerator->UpdateFile($inlinesFileName, $contents);
+
+        @inlinesContentHeader = ();
+        @inlinesContent = ();
+        %inlinesIncludes = ();
+    }
 
     # Update a .cpp file if the contents are changed.
     my $contents = join "", @implContentHeader;
@@ -8203,6 +8313,7 @@ sub WriteData
     foreach my $include (keys %implIncludes) {
         next if $headerIncludes{$include};
         next if $headerTrailingIncludes{$include};
+        next if $inlinesIncludes{$include};
 
         my $condition = $implIncludes{$include};
 

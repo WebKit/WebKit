@@ -35,6 +35,8 @@
 #include "FetchResponse.h"
 #include "FetchResponseBodyLoader.h"
 #include "JSBackgroundFetchRecord.h"
+#include "JSDOMConvertBoolean.h"
+#include "JSDOMConvertSequences.h"
 #include "Node.h"
 #include "RetrieveRecordsOptions.h"
 #include "SWClientConnection.h"

@@ -32,15 +32,15 @@
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMGlobalObjectInlines.h"
-#include "JSDatabase.h"
+#include "JSDatabaseInlines.h"
 #include "JSDatabaseCallback.h"
-#include "JSEvent.h"
+#include "JSEventInlines.h"
 #include "JSEventListener.h"
-#include "JSHTMLAudioElement.h"
-#include "JSHTMLOptionElement.h"
-#include "JSIDBFactory.h"
+#include "JSHTMLAudioElementInlines.h"
+#include "JSHTMLOptionElementInlines.h"
+#include "JSIDBFactoryInlines.h"
 #include "JSWindowProxy.h"
-#include "JSWorker.h"
+#include "JSWorkerInlines.h"
 #include "LocalDOMWindowWebDatabase.h"
 #include "LocalFrame.h"
 #include "Location.h"
@@ -53,13 +53,12 @@
 #include <JavaScriptCore/GlobalObjectMethodTable.h>
 #include <JavaScriptCore/HeapAnalyzer.h>
 #include <JavaScriptCore/InternalFunction.h>
-#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/Lookup.h>
 #include <JavaScriptCore/Structure.h>
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
-#include "JSWebKitNamespace.h"
+#include "JSWebKitNamespaceInlines.h"
 #endif
 
 #if PLATFORM(COCOA)

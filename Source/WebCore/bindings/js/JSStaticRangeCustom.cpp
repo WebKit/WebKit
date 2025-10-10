@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSStaticRange.h"
+#include "JSStaticRangeInlines.h"
 
 #include "StaticRange.h"
 

@@ -26,7 +26,7 @@
 #include "config.h"
 
 #if ENABLE(WEBXR)
-#include "JSWebXRView.h"
+#include "JSWebXRViewInlines.h"
 
 #include "JSDOMConvertBufferSource.h"
 #include "WebXRView.h"

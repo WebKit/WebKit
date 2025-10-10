@@ -30,7 +30,6 @@
 #include "AudioContext.h"
 #include "ExceptionCode.h"
 #include "ExceptionOr.h"
-#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <JavaScriptCore/TypedArrays.h>
 #include <wtf/MainThread.h>

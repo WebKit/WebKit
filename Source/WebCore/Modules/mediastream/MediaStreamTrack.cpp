@@ -38,6 +38,7 @@
 #include "EventTargetInlines.h"
 #include "ExceptionCode.h"
 #include "FrameLoader.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSMeteringMode.h"
 #include "JSOverconstrainedError.h"

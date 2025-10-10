@@ -34,6 +34,8 @@
 #include "CredentialRequestOptions.h"
 #include "DigitalCredential.h"
 #include "Document.h"
+#include "JSDOMConvertAny.h"
+#include "JSDOMConvertNullable.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDigitalCredential.h"
 #include "LocalFrame.h"

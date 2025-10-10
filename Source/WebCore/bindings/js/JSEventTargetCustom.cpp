@@ -30,10 +30,11 @@
 #include "EventTargetHeaders.h"
 #include "EventTargetInterfaces.h"
 #include "JSDOMGlobalObjectInlines.h"
-#include "JSDOMWindow.h"
+#include "JSDOMWindowInlines.h"
 #include "JSEventListener.h"
+#include "JSEventTargetInlines.h"
 #include "JSWindowProxy.h"
-#include "JSWorkerGlobalScope.h"
+#include "JSWorkerGlobalScopeInlines.h"
 #include "LocalDOMWindow.h"
 #include "WorkerGlobalScope.h"
 

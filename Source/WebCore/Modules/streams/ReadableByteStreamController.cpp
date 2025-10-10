@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ReadableByteStreamController.h"
 
+#include "JSDOMConvertNullable.h"
 #include "JSDOMException.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMPromise.h"
@@ -41,7 +42,6 @@
 #include "UnderlyingSourceStartCallback.h"
 #include "WebCoreOpaqueRootInlines.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
-#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/TypedArrayType.h>

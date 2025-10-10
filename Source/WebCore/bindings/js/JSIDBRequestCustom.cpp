@@ -24,14 +24,14 @@
  */
 
 #include "config.h"
-#include "JSIDBRequest.h"
+#include "JSIDBRequestInlines.h"
 
 #include "IDBBindingUtilities.h"
 #include "JSDOMConvertIndexedDB.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertSequences.h"
-#include "JSIDBCursor.h"
-#include "JSIDBDatabase.h"
+#include "JSIDBCursorInlines.h"
+#include "JSIDBDatabaseInlines.h"
 
 namespace WebCore {
 using namespace JSC;

@@ -90,6 +90,7 @@ sub generateImplementation()
     print F "#include \"${namespace}Headers.h\"\n";
     print F "\n";
     print F "#include \"JSDOMGlobalObject.h\"\n";
+    print F "#include \"JSDOMWrapperCache.h\"\n";
     print F "#include <JavaScriptCore/StructureInlines.h>\n";
     print F "\n";
     print F "namespace WebCore {\n";

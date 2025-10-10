@@ -30,6 +30,7 @@
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "EventNames.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSRTCStatsReport.h"
 #include "LibWebRTCDataChannelHandler.h"
@@ -57,6 +58,7 @@
 #include "RealtimeOutgoingVideoSource.h"
 #include "RegistrableDomain.h"
 #include "Settings.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <webrtc/api/stats/rtcstats_objects.h>
 #include <webrtc/rtc_base/physical_socket_server.h>
 #include <webrtc/p2p/base/basic_packet_socket_factory.h>
