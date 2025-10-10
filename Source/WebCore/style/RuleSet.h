@@ -134,6 +134,7 @@ public:
     bool hasScopeRules() const { return !m_scopeRules.isEmpty(); }
     Vector<Ref<const StyleRuleScope>> scopeRulesFor(const RuleData&) const;
 
+    const HashMap<AtomString, RefPtr<const StyleRulePositionTry>>& positionTryRules() const { return m_positionTryRules; };
     const RefPtr<const StyleRulePositionTry> positionTryRuleForName(const AtomString&) const;
 
     String selectorsForDebugging() const;

@@ -96,6 +96,33 @@ inline unsigned StyleProperties::size() const
     return propertyCount();
 }
 
+inline unsigned StyleProperties::hash() const
+{
+    static std::optional<unsigned> hashCacheIfImmutable;
+
+    if (!m_isMutable && hashCacheIfImmutable)
+        return *hashCacheIfImmutable;
+
+    Hasher hasher;
+
+    add(hasher, m_cssParserMode);
+
+    for (auto property : *this) {
+        if (!property.protectedValue()->addHash(hasher)) {
+            ASSERT_NOT_REACHED();
+        }
+
+        add(hasher, property.id(), property.isImportant());
+    }
+
+    if (!m_isMutable) {
+        ASSERT(!hashCacheIfImmutable);
+        hashCacheIfImmutable = hasher.hash();
+    }
+
+    return hasher.hash();
+}
+
 inline String serializeLonghandValue(const CSS::SerializationContext& context, CSSPropertyID property, const CSSValue* value)
 {
     return value ? serializeLonghandValue(context, property, *value) : String();

@@ -30,6 +30,7 @@
 
 #include "CSSCounterStyleRegistry.h"
 #include "CSSFontSelector.h"
+#include "CSSPositionTryRule.h"
 #include "CSSStyleSheet.h"
 #include "ContainerNodeInlines.h"
 #include "DocumentInlines.h"
@@ -120,6 +121,28 @@ Ref<Resolver> Scope::protectedResolver()
     return resolver();
 }
 
+// Given a list of old @position-try rules as hashes of the StyleProperties,
+// and a list of new @position-try rules, compute which rules have changed
+// (added, removed, modified). Returns a set of changed @position-try rule names.
+static HashSet<AtomString> computeChangedPositionTryRules(const HashMap<AtomString, unsigned>& oldRuleHashes, const HashMap<AtomString, RefPtr<const StyleRulePositionTry>>& newRules)
+{
+    HashSet<AtomString> changedRules;
+
+    // Removed rules.
+    for (const auto& oldRuleName : oldRuleHashes.keys()) {
+        if (!newRules.contains(oldRuleName))
+            changedRules.add(oldRuleName);
+    }
+
+    for (const auto& [newRuleName, newRule] : newRules) {
+        auto oldRuleHash = oldRuleHashes.getOptional(newRuleName);
+        if (!oldRuleHash || *oldRuleHash != newRule->protectedProperties()->hash())
+            changedRules.add(newRuleName);
+    }
+
+    return changedRules;
+}
+
 void Scope::createDocumentResolver()
 {
     ASSERT(!m_resolver);
@@ -141,6 +164,12 @@ void Scope::createDocumentResolver()
     m_resolver->appendAuthorStyleSheets(m_activeStyleSheets);
 
     m_document->protectedFontSelector()->buildCompleted();
+
+    if (m_oldPositionTryRuleHashes)
+        m_changedPositionTryRules = computeChangedPositionTryRules(*m_oldPositionTryRuleHashes, m_resolver->ruleSets().authorStyle().positionTryRules());
+    else
+        m_changedPositionTryRules.reset();
+    m_oldPositionTryRuleHashes.reset();
 }
 
 void Scope::createOrFindSharedShadowTreeResolver()
@@ -732,6 +761,15 @@ TreeScope& Scope::treeScope()
 
 void Scope::scheduleUpdate(UpdateType update)
 {
+    m_oldPositionTryRuleHashes.reset();
+
+    if (m_resolver) {
+        m_oldPositionTryRuleHashes.emplace();
+
+        for (const auto& [oldRuleName, oldRule] : m_resolver->ruleSets().authorStyle().positionTryRules())
+            m_oldPositionTryRuleHashes->add(oldRuleName, oldRule->protectedProperties()->hash());
+    }
+
     if (update == UpdateType::ContentsOrInterpretation) {
         // :host and ::slotted rules might go away.
         if (m_shadowRoot) {

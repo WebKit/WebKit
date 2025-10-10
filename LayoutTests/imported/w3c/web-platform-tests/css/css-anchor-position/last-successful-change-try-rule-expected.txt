@@ -1,5 +1,8 @@
 
-PASS Starts rendering with --try
-PASS No successful position, keep --try
-FAIL No successful position, last successful invalidated by @position-try change assert_equals: expected 0 but got 200
+PASS Sanity check: setup function works
+PASS Last successful position option is invalidated: mutating referenced @position-try
+PASS Last successful position option is invalidated: removing referenced @position-try
+PASS Last successful position option is invalidated: adding referenced @position-try
+PASS Last successful position option not invalidated: changing property value @position-try to same value
+PASS Last successful position option not invalidated: add then remove unreferenced @position-try rule
 

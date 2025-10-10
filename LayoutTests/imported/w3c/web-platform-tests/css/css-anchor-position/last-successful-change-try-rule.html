@@ -22,7 +22,7 @@
   }
   #anchored {
     position-anchor: --a;
-    position-try-fallbacks: --try;
+    position-try-fallbacks: --try, --try2, --try3;
     position: absolute;
     width: 100px;
     height: 200px;
@@ -32,30 +32,109 @@
   @position-try --try {
     position-area: bottom center;
   }
+  @position-try --try2 {
+    /* This makes this option always fail */
+    top: 999999px;
+  }
 </style>
 <div id="container">
   <div id="anchor"></div>
   <div id="anchored"></div>
 </div>
 <script>
-  promise_test(async () => {
+  // Sets up the testing scenario such that when the function returns,
+  // the last successful position option is --try, and no options are successful
+  // (hence the last successful position option --try is used)
+  async function setUpLastSuccessfulPositionOption() {
+    anchor.style.top = "0px";
     await waitUntilNextAnimationFrame();
     await waitUntilNextAnimationFrame();
-    assert_equals(anchored.offsetTop, 200);
-  }, "Starts rendering with --try");
+    // --try is the successful option, --try is remembered as last successful position option.
 
-  promise_test(async () => {
     anchor.style.top = "150px";
     await waitUntilNextAnimationFrame();
     await waitUntilNextAnimationFrame();
-    assert_equals(anchored.offsetTop, 200);
-  }, "No successful position, keep --try");
+    // No options are successful, use --try since it's the last successful position option.
+    // If something causes invalidation of last-successful position option,
+    // since no options are successful, the original style should be used.
+  }
 
   promise_test(async () => {
-    // Changing @position-try --try {}
+    await setUpLastSuccessfulPositionOption();
+    assert_equals(anchored.offsetTop, 200);
+  }, "Sanity check: setup function works");
+
+  // Test situations that invalidate the last-successful position option.
+
+  // Change @position-try --try to a different value
+  promise_test(async () => {
+    await setUpLastSuccessfulPositionOption();
+
     anchor_sheet.sheet.cssRules[3].style.positionArea = "bottom";
     await waitUntilNextAnimationFrame();
     await waitUntilNextAnimationFrame();
+
     assert_equals(anchored.offsetTop, 0);
-  }, "No successful position, last successful invalidated by @position-try change");
+
+    // Change it back to the original value so subsequent tests don't have to
+    // account for the new value.
+    anchor_sheet.sheet.cssRules[3].style.positionArea = "bottom center";
+    await waitUntilNextAnimationFrame();
+    await waitUntilNextAnimationFrame();
+  }, "Last successful position option is invalidated: mutating referenced @position-try");
+
+  // Remove @position-try --try2
+  promise_test(async () => {
+    await setUpLastSuccessfulPositionOption();
+
+    anchor_sheet.sheet.deleteRule(4);
+    await waitUntilNextAnimationFrame();
+    await waitUntilNextAnimationFrame();
+
+    assert_equals(anchored.offsetTop, 0);
+  }, "Last successful position option is invalidated: removing referenced @position-try");
+
+  // Add @position-try --try3
+  promise_test(async () => {
+    await setUpLastSuccessfulPositionOption();
+    await setUpLastSuccessfulPositionOption();
+    assert_equals(anchored.offsetTop, 200);
+
+    // This position option is guaranteed to always overflow and will never be selected.
+    anchor_sheet.sheet.insertRule("@position-try --try3 { bottom: 999999px; }");
+    await waitUntilNextAnimationFrame();
+    await waitUntilNextAnimationFrame();
+
+    assert_equals(anchored.offsetTop, 0);
+  }, "Last successful position option is invalidated: adding referenced @position-try");
+
+  // Testing changes that should not invalidate the last-successful position option
+
+  // Change @position-try --try to the same value
+  promise_test(async () => {
+    await setUpLastSuccessfulPositionOption();
+
+    anchor_sheet.sheet.cssRules[3].style.positionArea = "bottom center";
+    await waitUntilNextAnimationFrame();
+    await waitUntilNextAnimationFrame();
+
+    assert_equals(anchored.offsetTop, 200);
+  }, "Last successful position option not invalidated: changing property value @position-try to same value");
+
+  // Add and remove a new @position-try that's not referenced
+  promise_test(async () => {
+    await setUpLastSuccessfulPositionOption();
+
+    // Add rule
+    const newRuleIndex = anchor_sheet.sheet.insertRule("@position-try --unused { position-area: center; }");
+    await waitUntilNextAnimationFrame();
+    await waitUntilNextAnimationFrame();
+    assert_equals(anchored.offsetTop, 200);
+
+    // Delete rule
+    anchor_sheet.sheet.deleteRule(newRuleIndex);
+    await waitUntilNextAnimationFrame();
+    await waitUntilNextAnimationFrame();
+    assert_equals(anchored.offsetTop, 200);
+  }, "Last successful position option not invalidated: add then remove unreferenced @position-try rule");
 </script>

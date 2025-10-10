@@ -147,6 +147,8 @@ public:
     inline int findPropertyIndex(CSSPropertyID) const;
     inline int findCustomPropertyIndex(StringView propertyName) const;
 
+    inline unsigned hash() const;
+
 protected:
     inline explicit StyleProperties(CSSParserMode);
     inline StyleProperties(CSSParserMode, unsigned immutableArraySize);

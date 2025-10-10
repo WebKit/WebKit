@@ -2929,6 +2929,9 @@ void Document::resolveStyle(ResolveStyleType type)
     if (CheckedPtr styleOriginatedTimelinesController = this->styleOriginatedTimelinesController())
         styleOriginatedTimelinesController->documentDidResolveStyle();
 
+    if (m_styleScope->changedPositionTryRules())
+        m_styleScope->changedPositionTryRules()->clear();
+
     // Re-evaluate speculation rules after DOM changes that trigger style recalculation.
     // That helps ensure CSS selector matching works correctly.
     considerSpeculationRules();

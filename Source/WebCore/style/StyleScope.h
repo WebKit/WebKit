@@ -180,6 +180,9 @@ public:
 
     bool invalidateForAnchorDependencies(LayoutDependencyUpdateContext&);
 
+    std::optional<HashSet<AtomString>>& changedPositionTryRules() { return m_changedPositionTryRules; }
+    const std::optional<HashSet<AtomString>>& changedPositionTryRules() const { return m_changedPositionTryRules; }
+
 private:
     Scope& documentScope();
     bool isForUserAgentShadowTree() const;
@@ -203,6 +206,7 @@ private:
     };
 
     ActiveStyleSheetCollection collectActiveStyleSheets();
+    void positionTryRuleUpdates(const ActiveStyleSheetCollection&, const ActiveStyleSheetCollection&);
 
     enum class ResolverUpdateType {
         Reconstruct,
@@ -291,6 +295,16 @@ private:
     HashMap<ResolverSharingKey, Ref<Resolver>> m_sharedShadowTreeResolvers;
 
     AnchorPositionedToAnchorMap m_anchorPositionedToAnchorMap;
+
+    // When the resolver is cleared in clearResolver(), this stores the hash of
+    // the StyleProperties of @position-try rules in the document. When the resolver
+    // is rebuilt with new stylesheets, we use this to compute the @position-try
+    // rules that changes in the new resolver.
+    std::optional<HashMap<AtomString, unsigned>> m_oldPositionTryRuleHashes;
+
+    // After a new resolver is built, we compute the list of @position-try rules
+    // that have changed since the last resolver and store it here.
+    std::optional<HashSet<AtomString>> m_changedPositionTryRules;
 };
 
 HTMLSlotElement* assignedSlotForScopeOrdinal(const Element&, ScopeOrdinal);

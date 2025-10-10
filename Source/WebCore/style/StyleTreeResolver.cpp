@@ -152,16 +152,23 @@ void TreeResolver::popScope()
 // style resolution), determine if the last successful position option should be
 // invalidated. This follows the criterias in the spec:
 // https://drafts.csswg.org/css-anchor-position-1/#last-successful-position-option
-static bool shouldInvalidateLastSuccessfulPositionOptionIndex(const RenderStyle* oldStyle, const RenderStyle* newStyle)
+static bool shouldInvalidateLastSuccessfulPositionOptionIndex(const Element& element, const RenderStyle* oldStyle, const RenderStyle* newStyle)
 {
     if (oldStyle && newStyle) {
         if (oldStyle->positionTryFallbacks() != newStyle->positionTryFallbacks())
             return true;
 
+        for (const auto& option : newStyle->positionTryFallbacks()) {
+            if (!option.positionTryRuleName)
+                continue;
+
+            const auto* scope = Style::Scope::forOrdinal(element, option.positionTryRuleName->scopeOrdinal);
+            if (scope && scope->changedPositionTryRules() && scope->changedPositionTryRules()->contains(option.positionTryRuleName->name))
+                return true;
+        }
+
         if (oldStyle->positionTryOrder() != newStyle->positionTryOrder())
             return true;
-
-        // FIXME: add missing invalidation criterias in the spec.
     }
 
     return false;
@@ -224,7 +231,7 @@ ResolvedStyle TreeResolver::styleForStyleable(const Styleable& styleable, Resolu
     // Invalidate the last successful position option here. This is the only place where
     // we have access to the old and new style, and hence we could determine whether the
     // style changes enough to invalidate.
-    if (shouldInvalidateLastSuccessfulPositionOptionIndex(existingStyle, resolvedStyle.style.get()))
+    if (shouldInvalidateLastSuccessfulPositionOptionIndex(styleable.element, existingStyle, resolvedStyle.style.get()))
         m_document->styleScope().forgetLastSuccessfulPositionOptionIndex(styleable);
 
     generatePositionOptionsIfNeeded(resolvedStyle, styleable, resolutionContext);
@@ -488,7 +495,8 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
             resolvedStyle = scope().resolver->styleForPseudoElement(element, pseudoElementIdentifier, resolutionContext);
 
             if (resolvedStyle && pseudoSupportsPositionTry) {
-                if (shouldInvalidateLastSuccessfulPositionOptionIndex(existingStyle, resolvedStyle->style.get()))
+                // FIXME: seems wrong.
+                if (shouldInvalidateLastSuccessfulPositionOptionIndex(styleable.element, existingStyle, resolvedStyle->style.get()))
                     m_document->styleScope().forgetLastSuccessfulPositionOptionIndex(styleable);
 
                 generatePositionOptionsIfNeeded(*resolvedStyle, styleable, resolutionContext);
