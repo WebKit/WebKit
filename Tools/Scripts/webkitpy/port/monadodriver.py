@@ -30,6 +30,7 @@
 
 import logging
 import os
+import time
 
 from webkitpy.port.driver import Driver
 
@@ -37,16 +38,23 @@ _log = logging.getLogger(__name__)
 
 
 class MonadoDriver(Driver):
+
+    sock_path = "/run/user/1000/monado_comp_ipc"
+    pid_path = "/run/user/1000/monado.pid"
+
     @staticmethod
     def check_driver(port):
         monado_findcmd = ['which', 'monado-service']
-        monado_found = port.host.executive.run_command(monado_findcmd, return_exit_code=True) == 0
-        if not monado_found:
-            _log.error("No monado-service found. Cannot run OpenXR API tests.")
-        return monado_found
+        monado_path = port.host.executive.run_command(monado_findcmd)
+        if len(monado_path) > 0:
+            _log.info("monado-service found at %s", monado_path)
+            return True
+        _log.error("No monado-service found. Cannot run OpenXR API tests.")
+        return False
 
     def __init__(self, *args, **kwargs):
         Driver.__init__(self, *args, **kwargs)
+        self._startup_delay_secs = 1.0
 
     def _get_runtime_path(self, env):
         # Older OpenXR loaders seem to have problems finding the JSON configuration file on their own
@@ -54,18 +62,41 @@ class MonadoDriver(Driver):
         for data_dir in data_dirs:
             candidate = os.path.join(data_dir, "openxr", "1", "openxr_monado.json")
             if os.path.exists(candidate):
+                with open(candidate, 'r') as f:
+                    runtime_config = f.read()
+                _log.info("Using %s for path, which contains %s", candidate, runtime_config)
                 return candidate
+        _log.error("Unable to find a path to openxr_monado.json. Applications won't be able to communicate with the runtime.")
         return ""
 
     def _setup_environ_for_test(self):
         driver_environment = super(MonadoDriver, self)._setup_environ_for_test()
         driver_environment['WITH_OPENXR_RUNTIME'] = 'y'
         driver_environment['XRT_COMPOSITOR_NULL'] = 'TRUE'
+        driver_environment['XRT_NO_STDIN'] = 'TRUE'
         driver_environment['XR_RUNTIME_JSON'] = self._get_runtime_path(driver_environment)
 
         monado_command = ['monado-service']
-        with open(os.devnull, 'w') as devnull:
-            self._monado_service_process = self._port.host.executive.popen(monado_command, stderr=devnull, env=driver_environment)
+        self._monado_service_process = self._port.host.executive.popen(monado_command, stderr=self._port.host.executive.STDOUT, env=driver_environment)
+
+        start = time.time()
+        timeout = 30
+
+        time.sleep(1)
+        while not (os.path.exists(MonadoDriver.sock_path) and os.access(MonadoDriver.pid_path, os.R_OK)):
+            if time.time() - start > timeout:
+                _log.error("Timed out waiting for Monado to start")
+                break
+            time.sleep(0.25)
+
+        if os.path.exists(MonadoDriver.pid_path):
+            try:
+                with open(MonadoDriver.pid_path) as f:
+                    pid = int(f.readline().strip())
+                os.kill(pid, 0)
+                _log.info(f"monado-service successfully running with pid {pid}")
+            except (ValueError, FileNotFoundError, ProcessLookupError, PermissionError) as e:
+                _log.error(f"Pidfile and socket present, but the Monado process does not exist for pid {pid}. Error type: {type(e).__name__}, details: {e}. Tests will time out.")
 
         return driver_environment
 
