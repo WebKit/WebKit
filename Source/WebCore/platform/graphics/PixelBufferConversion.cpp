@@ -112,6 +112,13 @@ static void convertImagePixelsAccelerated(const ConstPixelBufferConversionView& 
     auto sourceVImageBuffer = makeVImageBuffer(source, destinationSize);
     auto destinationVImageBuffer = makeVImageBuffer(destination, destinationSize);
 
+    if (source.format.alphaFormat == destination.format.alphaFormat && source.format.pixelFormat == destination.format.pixelFormat && source.format.colorSpace == destination.format.colorSpace) {
+        // no complex conversion required, may copy pixels as is
+        auto error = vImageCopyBuffer(&sourceVImageBuffer, &destinationVImageBuffer, 4, kvImageDoNotTile);
+        ASSERT_WITH_MESSAGE_UNUSED(error, error == kvImageNoError, "vImageCopyBuffer failed conversion with error: %zd", error);
+        return;
+    }
+
     if (source.format.colorSpace != destination.format.colorSpace) {
         // FIXME: Consider using vImageConvert_AnyToAny for all conversions, not just ones that need a color space conversion,
         // after judiciously performance testing them against each other.
@@ -124,7 +131,7 @@ static void convertImagePixelsAccelerated(const ConstPixelBufferConversionView& 
         if (converterCreateError != kvImageNoError)
             return;
 
-        vImage_Error converterConvertError = vImageConvert_AnyToAny(converter.get(), &sourceVImageBuffer, &destinationVImageBuffer, nullptr, kvImageNoFlags);
+        vImage_Error converterConvertError = vImageConvert_AnyToAny(converter.get(), &sourceVImageBuffer, &destinationVImageBuffer, nullptr, kvImageDoNotTile);
         ASSERT_WITH_MESSAGE_UNUSED(converterConvertError, converterConvertError == kvImageNoError, "vImageConvert_AnyToAny failed conversion with error: %zd", converterConvertError);
         return;
     }
@@ -132,14 +139,14 @@ static void convertImagePixelsAccelerated(const ConstPixelBufferConversionView& 
     if (source.format.alphaFormat != destination.format.alphaFormat) {
         if (destination.format.alphaFormat == AlphaPremultiplication::Unpremultiplied) {
             if (source.format.pixelFormat == PixelFormat::RGBA8)
-                vImageUnpremultiplyData_RGBA8888(&sourceVImageBuffer, &destinationVImageBuffer, kvImageNoFlags);
+                vImageUnpremultiplyData_RGBA8888(&sourceVImageBuffer, &destinationVImageBuffer, kvImageDoNotTile);
             else
-                vImageUnpremultiplyData_BGRA8888(&sourceVImageBuffer, &destinationVImageBuffer, kvImageNoFlags);
+                vImageUnpremultiplyData_BGRA8888(&sourceVImageBuffer, &destinationVImageBuffer, kvImageDoNotTile);
         } else {
             if (source.format.pixelFormat == PixelFormat::RGBA8)
-                vImagePremultiplyData_RGBA8888(&sourceVImageBuffer, &destinationVImageBuffer, kvImageNoFlags);
+                vImagePremultiplyData_RGBA8888(&sourceVImageBuffer, &destinationVImageBuffer, kvImageDoNotTile);
             else
-                vImagePremultiplyData_BGRA8888(&sourceVImageBuffer, &destinationVImageBuffer, kvImageNoFlags);
+                vImagePremultiplyData_BGRA8888(&sourceVImageBuffer, &destinationVImageBuffer, kvImageDoNotTile);
         }
 
         sourceVImageBuffer = destinationVImageBuffer;
@@ -148,7 +155,7 @@ static void convertImagePixelsAccelerated(const ConstPixelBufferConversionView& 
     if (source.format.pixelFormat != destination.format.pixelFormat) {
         // Swap pixel channels BGRA <-> RGBA.
         const uint8_t map[4] = { 2, 1, 0, 3 };
-        vImagePermuteChannels_ARGB8888(&sourceVImageBuffer, &destinationVImageBuffer, map, kvImageNoFlags);
+        vImagePermuteChannels_ARGB8888(&sourceVImageBuffer, &destinationVImageBuffer, map, kvImageDoNotTile);
     }
 }
 
@@ -497,14 +504,7 @@ void convertImagePixels(const ConstPixelBufferConversionView& source, const Pixe
     ASSERT(destination.format.pixelFormat == PixelFormat::RGBA8 || destination.format.pixelFormat == PixelFormat::BGRA8 || destination.format.pixelFormat == PixelFormat::BGRX8);
 
 #if USE(ACCELERATE) && USE(CG)
-    if (source.format.alphaFormat == destination.format.alphaFormat && source.format.pixelFormat == destination.format.pixelFormat && source.format.colorSpace == destination.format.colorSpace) {
-        // FIXME: Can thes both just use per-row memcpy?
-        if (source.format.alphaFormat == AlphaPremultiplication::Premultiplied)
-            convertImagePixelsUnaccelerated<convertSinglePixelPremultipliedToPremultiplied<PixelFormatConversion::None>>(source, destination, destinationSize);
-        else
-            convertImagePixelsUnaccelerated<convertSinglePixelUnpremultipliedToUnpremultiplied<PixelFormatConversion::None>>(source, destination, destinationSize);
-    } else
-        convertImagePixelsAccelerated(source, destination, destinationSize);
+    return convertImagePixelsAccelerated(source, destination, destinationSize);
 #else
     if (source.format.alphaFormat == destination.format.alphaFormat && source.format.pixelFormat == destination.format.pixelFormat && source.format.colorSpace == destination.format.colorSpace) {
         copyImagePixels(source, destination, destinationSize);
