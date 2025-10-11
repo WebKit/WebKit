@@ -142,8 +142,11 @@ void initializeWithOptionsCustomization(const ScopedLambda<void()>& optionsCusto
         if (Wasm::isSupported() || !Options::usePollingTraps()) {
             if (!Options::usePollingTraps())
                 VMTraps::initializeSignals();
-            if (Wasm::isSupported())
+            if (Wasm::isSupported()) {
                 Wasm::prepareSignalingMemory();
+                if (Options::dumpStackBeforeCrash())
+                    Wasm::activateSignalingMemory();
+            }
         }
 
         assertInvariants();

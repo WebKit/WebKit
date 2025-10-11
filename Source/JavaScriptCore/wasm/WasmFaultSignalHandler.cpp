@@ -128,6 +128,10 @@ static SignalAction trapHandler(Signal signal, SigInfo& sigInfo, PlatformRegiste
             }
         }
     }
+
+    if (Options::dumpStackBeforeCrash()) [[unlikely]]
+        WTFReportBacktrace();
+
     return SignalAction::NotHandled;
 }
 

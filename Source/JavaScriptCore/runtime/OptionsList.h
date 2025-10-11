@@ -615,6 +615,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, libpasScavengeContinuously, false, Normal, nullptr) \
     v(Unsigned, libpasForcePGMWithRate, 0, Normal, "Forces on probablistic guard malloc and guards allocations with a rate 1/N (0 is disabled)"_s) \
     v(Bool, useWasmFaultSignalHandler, true, Normal, nullptr) \
+    v(Bool, dumpStackBeforeCrash, false, Normal, nullptr) \
     v(Bool, dumpUnlinkedDFGValidation, false, Normal, nullptr) \
     v(Bool, dumpWasmOpcodeStatistics, false, Normal, nullptr) \
     v(Bool, dumpWasmWarnings, false, Normal, nullptr) \
