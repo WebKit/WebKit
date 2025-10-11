@@ -33,4 +33,54 @@
 
 namespace JSC {
 
+const ClassInfo JSHeapInt32::s_info = { "(Internal) Int32"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSHeapInt32) };
+
+JSHeapInt32::JSHeapInt32(VM& vm, Structure* structure, double value)
+    : Base(vm, structure)
+    , m_value(value)
+{
+    RELEASE_ASSERT(useCompressedHeap);
+}
+
+Structure* JSHeapInt32::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    if constexpr (!useCompressedHeap)
+        return nullptr;
+    RELEASE_ASSERT(&vmForHeapDouble() == &vm);
+    return Structure::create(vm, globalObject, prototype, TypeInfo(HeapInt32Type, StructureFlags), info());
+}
+
+JSHeapInt32* JSHeapInt32::createImpl(int32_t value)
+{
+    JSHeapInt32* result = nullptr;
+    callOnMainThreadAndWait([&result, value] {
+        DeferGC deferScope(vmForHeapDouble());
+        JSHeapInt32* i = new (NotNull, allocateCell<JSHeapInt32>(vmForHeapDouble())) JSHeapInt32(vmForHeapDouble(), vmForHeapDouble().int32Structure.get(), value);
+        i->finishCreation(vmForHeapDouble());
+        result = i;
+    });
+    RELEASE_ASSERT(result);
+    return result;
+}
+
+JSHeapInt32* JSHeapInt32::createFrom(int32_t value)
+{
+    // This is a hacky workaround since we can't allocate while constructing.
+    // This will go away once boxed numbers are no longer cells.
+    static JSHeapInt32* zero = nullptr;
+    static JSHeapInt32* one = nullptr;
+
+    if (!zero) {
+        zero = createImpl(0);
+        one = createImpl(1);
+    }
+
+    if (!value)
+        return zero;
+    if (value == 1)
+        return one;
+
+    return createImpl(value);
+}
+
 } // namespace JSC

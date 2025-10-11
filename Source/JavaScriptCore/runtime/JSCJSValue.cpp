@@ -150,7 +150,7 @@ JSObject* JSValue::toObjectSlowCase(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    ASSERT(!isCell());
+    ASSERT(!isCell() || (useCompressedHeap && (isHeapInt32() || isHeapDouble())));
 
     if (isInt32() || isDouble())
         return constructNumber(globalObject, asValue());
@@ -190,6 +190,10 @@ JSObject* JSValue::synthesizePrototype(JSGlobalObject* globalObject) const
             return globalObject->stringPrototype();
         if (isHeapBigInt())
             return globalObject->bigIntPrototype();
+        if constexpr (useCompressedHeap) {
+            if (isNumber())
+                return globalObject->numberPrototype();
+        }
         ASSERT(isSymbol());
         return globalObject->symbolPrototype();
     }
@@ -266,9 +270,9 @@ void JSValue::dumpInContextAssumingStructure(
 {
     if (!*this)
         out.print("<JSValue()>");
-    else if (isInt32())
+    else if ((!useCompressedHeap || isCell()) && isInt32())
         out.printf("Int32: %d", asInt32());
-    else if (isDouble()) {
+    else if ((!useCompressedHeap || isCell()) && isDouble()) {
 #if USE(JSVALUE64)
         out.printf("Double: %lld, %lf", (long long)reinterpretDoubleToInt64(asDouble()), asDouble());
 #else
@@ -309,6 +313,10 @@ void JSValue::dumpInContextAssumingStructure(
             out.print("Structure: ", inContext(*jsCast<Structure*>(asCell()), context));
         else if (isHeapBigInt())
             out.print("BigInt[heap-allocated]: addr=", RawPointer(asCell()), ", length=", jsCast<JSBigInt*>(asCell())->length(), ", sign=", jsCast<JSBigInt*>(asCell())->sign());
+        else if (isHeapDouble())
+            out.print("Double[heap-allocated]: addr=", RawPointer(asCell()), ", value=", jsCast<JSHeapDouble*>(asCell())->value());
+        else if (isHeapInt32())
+            out.print("Int32[heap-allocated]: addr=", RawPointer(asCell()), ", value=", jsCast<JSHeapInt32*>(asCell())->value());
         else if (structure->classInfoForCells()->isSubClassOf(JSObject::info())) {
             out.print("Object: ", RawPointer(asCell()));
             out.print(" with butterfly ", RawPointer(asObject(asCell())->butterfly()), "(base=", RawPointer(asObject(asCell())->butterfly()->base(structure)), ")");

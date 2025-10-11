@@ -44,7 +44,7 @@ void JSCellButterfly::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
     ASSERT_GC_OBJECT_INHERITS(cell, info());
     Base::visitChildren(cell, visitor);
-    if (!hasContiguous(cell->indexingType())) {
+    if (!useCompressedHeap && !hasContiguous(cell->indexingType())) {
         ASSERT(hasDouble(cell->indexingType()) || hasInt32(cell->indexingType()));
         return;
     }

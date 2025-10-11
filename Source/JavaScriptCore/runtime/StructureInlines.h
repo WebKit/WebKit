@@ -357,6 +357,13 @@ ALWAYS_INLINE JSValue prototypeForLookupPrimitiveImpl(JSGlobalObject* globalObje
     if (structure->typeInfo().type() == HeapBigIntType)
         return globalObject->bigIntPrototype();
 
+    if constexpr (useCompressedHeap) {
+        if (structure->typeInfo().type() == HeapDoubleType)
+            return globalObject->numberPrototype();
+        if (structure->typeInfo().type() == HeapInt32Type)
+            return globalObject->numberPrototype();
+    }
+
     ASSERT(structure->typeInfo().type() == SymbolType);
     return globalObject->symbolPrototype();
 }

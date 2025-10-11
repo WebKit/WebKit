@@ -160,6 +160,7 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_out_of_line_jump_target);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_arityCheck);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_instanceof);
 
+extern "C" UGPRPair SYSV_ABI llint_make_int32(CallFrame*, const JSInstruction* pc, int32_t) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI llint_check_stack_and_vm_traps(CallFrame*, const JSInstruction* pc, void* newStackPointer) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI llint_throw_stack_overflow_error(VM*, ProtoCallFrame*) REFERENCED_FROM_ASM WTF_INTERNAL;
 extern "C" UGPRPair SYSV_ABI llint_slow_path_checkpoint_osr_exit(CallFrame*, EncodedJSValue unused) REFERENCED_FROM_ASM WTF_INTERNAL;

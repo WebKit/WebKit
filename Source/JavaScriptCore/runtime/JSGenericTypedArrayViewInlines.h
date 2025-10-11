@@ -368,20 +368,22 @@ void JSGenericTypedArrayView<Adaptor>::copyFromInt32ShapeArray(size_t offset, JS
     ASSERT((length + objectOffset) <= array->length());
     ASSERT(array->isIteratorProtocolFastAndNonObservable());
 
-    // If the destination is uint32_t or int32_t, we can use copyElements.
-    // 1. int32_t -> uint32_t conversion does not change any bit representation. So we can simply copy them.
-    // 2. Hole is represented as JSEmpty in Int32Shape, which lower 32bits is zero. And we expect 0 for undefined, thus this copying simply works.
-    if constexpr (Adaptor::typeValue == TypeUint8 || Adaptor::typeValue == TypeInt8) {
-        WTF::copyElements(byteCast<uint8_t>(typedSpan().subspan(offset)), std::span { std::bit_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length });
-        return;
-    }
-    if constexpr (Adaptor::typeValue == TypeUint16 || Adaptor::typeValue == TypeInt16) {
-        WTF::copyElements(spanReinterpretCast<uint16_t>(typedSpan().subspan(offset)), std::span { std::bit_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length });
-        return;
-    }
-    if constexpr (Adaptor::typeValue == TypeUint32 || Adaptor::typeValue == TypeInt32) {
-        WTF::copyElements(spanReinterpretCast<uint32_t>(typedSpan().subspan(offset)), std::span { std::bit_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length });
-        return;
+    if constexpr (!useCompressedHeap) {
+        // If the destination is uint32_t or int32_t, we can use copyElements.
+        // 1. int32_t -> uint32_t conversion does not change any bit representation. So we can simply copy them.
+        // 2. Hole is represented as JSEmpty in Int32Shape, which lower 32bits is zero. And we expect 0 for undefined, thus this copying simply works.
+        if constexpr (Adaptor::typeValue == TypeUint8 || Adaptor::typeValue == TypeInt8) {
+            WTF::copyElements(byteCast<uint8_t>(typedSpan().subspan(offset)), std::span { std::bit_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length });
+            return;
+        }
+        if constexpr (Adaptor::typeValue == TypeUint16 || Adaptor::typeValue == TypeInt16) {
+            WTF::copyElements(spanReinterpretCast<uint16_t>(typedSpan().subspan(offset)), std::span { std::bit_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length });
+            return;
+        }
+        if constexpr (Adaptor::typeValue == TypeUint32 || Adaptor::typeValue == TypeInt32) {
+            WTF::copyElements(spanReinterpretCast<uint32_t>(typedSpan().subspan(offset)), std::span { std::bit_cast<const uint64_t*>(array->butterfly()->contiguous().data() + objectOffset), length });
+            return;
+        }
     }
     for (size_t i = 0; i < length; ++i) {
         JSValue value = array->butterfly()->contiguous().at(array, static_cast<unsigned>(i + objectOffset)).get();

@@ -436,6 +436,10 @@
 #define USE_NSURL_ERROR_FAILING_URL_STRING_KEY 1
 #endif
 
+// EWS only
+#undef USE_COMPRESSED_HEAP
+#define USE_COMPRESSED_HEAP 1
+
 #if !defined(USE_COMPRESSED_HEAP)
 /* Change run-jsc-stress-tests too. */
 #define USE_COMPRESSED_HEAP 0
@@ -443,4 +447,5 @@
 
 #if defined(__cplusplus)
 constexpr bool useCompressedHeap = USE_COMPRESSED_HEAP;
+static_assert(useCompressedHeap);
 #endif

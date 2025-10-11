@@ -198,8 +198,8 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, verboseFTLFailure, false, Normal, nullptr) \
     v(Bool, testTheFTL, false, Normal, nullptr) \
     v(Bool, verboseSanitizeStack, false, Normal, nullptr) \
-    v(Bool, useGenerationalGC, true, Normal, nullptr) \
-    v(Bool, useConcurrentGC, true, Normal, nullptr) \
+    v(Bool, useGenerationalGC, !useCompressedHeap, Normal, nullptr) \
+    v(Bool, useConcurrentGC, !useCompressedHeap, Normal, nullptr) \
     v(Bool, collectContinuously, false, Normal, nullptr) \
     v(Double, collectContinuouslyPeriodMS, 1, Normal, nullptr) \
     v(Bool, forceFencedBarrier, false, Normal, nullptr) \

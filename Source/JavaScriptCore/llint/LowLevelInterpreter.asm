@@ -147,6 +147,52 @@ end
 
 nop
 
+macro unimplementedCompressedHeap()
+    if UseCompressedHeap
+        break
+    else
+        error
+    end
+end
+
+macro slowPathCompressedHeap(slowLabel)
+    if UseCompressedHeap
+        jmp slowLabel
+    end
+end
+
+macro makeInt32(r)
+    if UseCompressedHeap
+        move r, a2
+        prepareStateForCCall()
+        move cfr, a0
+        move PC, a1
+        cCall3(_llint_make_int32)
+        restoreStateAfterCCall()
+        move r1, r
+    else
+        orq NumberTag, r
+    end
+end
+
+macro unboxHeapInt32(r)
+    if UseCompressedHeap
+        if JSVALUE64
+            btqz r, notCellMask, .cellCase
+            break
+            .cellCase:
+        end
+        bbeq JSCell::m_type[r], HeapInt32Type, .isInt
+        break
+        .isInt:
+        loadi constexpr (JSHeapInt32::offsetOfValue())[r], r
+    else
+        bqaeq r, numberTag, .isInt
+        break
+        .isInt:
+    end
+end
+
 # First come the common protocols that both interpreters use. Note that each
 # of these must have an ASSERT() in LLIntData.cpp
 
@@ -209,6 +255,11 @@ if JSVALUE64
     const LowestOfHighBits = constexpr JSValue::LowestOfHighBits
 else
     const Int32Tag = constexpr JSValue::Int32Tag
+    if UseCompressedHeap
+        const HeapInt32Tag = constexpr JSValue::CellTag
+    else
+        const HeapInt32Tag = constexpr JSValue::Int32Tag
+    end
     const BooleanTag = constexpr JSValue::BooleanTag
     const NullTag = constexpr JSValue::NullTag
     const UndefinedTag = constexpr JSValue::UndefinedTag
@@ -709,6 +760,8 @@ const ArrayType = constexpr ArrayType
 const DerivedArrayType = constexpr DerivedArrayType
 const ProxyObjectType = constexpr ProxyObjectType
 const HeapBigIntType = constexpr HeapBigIntType
+const HeapInt32Type = constexpr HeapInt32Type
+const HeapDoubleType = constexpr HeapDoubleType
 const FunctionExecutableType = constexpr FunctionExecutableType
 
 # The typed array types need to be numbered in a particular order because of the manually written

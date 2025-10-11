@@ -36,4 +36,50 @@
 
 namespace JSC {
 
+VM& vmForHeapDouble()
+{
+    RELEASE_ASSERT(useCompressedHeap);
+    static VM* vm = nullptr;
+    static std::once_flag once;
+    std::call_once(once, [&] {
+        VMManager::forEachVM([&] (VM& nextVM) {
+            RELEASE_ASSERT(vm == nullptr);
+            vm = &nextVM;
+            return IterationStatus::Continue;
+        });
+    });
+    RELEASE_ASSERT(VMManager::numberOfVMs() == 1);
+    return *vm;
+}
+
+const ClassInfo JSHeapDouble::s_info = { "(Internal) Double"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSHeapDouble) };
+
+JSHeapDouble::JSHeapDouble(VM& vm, Structure* structure, double value)
+    : Base(vm, structure)
+    , m_value(value)
+{
+    RELEASE_ASSERT(useCompressedHeap);
+}
+
+Structure* JSHeapDouble::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    if constexpr (!useCompressedHeap)
+        return nullptr;
+    RELEASE_ASSERT(&vmForHeapDouble() == &vm);
+    return Structure::create(vm, globalObject, prototype, TypeInfo(HeapDoubleType, StructureFlags), info());
+}
+
+JSHeapDouble* JSHeapDouble::createFrom(double value)
+{
+    JSHeapDouble* result = nullptr;
+    callOnMainThreadAndWait([&result, value] {
+        DeferGC deferScope(vmForHeapDouble());
+        JSHeapDouble* d = new (NotNull, allocateCell<JSHeapDouble>(vmForHeapDouble())) JSHeapDouble(vmForHeapDouble(), vmForHeapDouble().doubleStructure.get(), value);
+        d->finishCreation(vmForHeapDouble());
+        result = d;
+    });
+    RELEASE_ASSERT(result);
+    return result;
+}
+
 } // namespace JSC

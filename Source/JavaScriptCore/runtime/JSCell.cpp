@@ -155,6 +155,10 @@ JSValue JSCell::toPrimitive(JSGlobalObject* globalObject, PreferredPrimitiveType
         return symbol->toPrimitive(globalObject, preferredType);
     if (const auto* bigInt = jsDynamicCast<const JSBigInt*>(this))
         return bigInt->toPrimitive(globalObject, preferredType);
+    if constexpr (useCompressedHeap) {
+        RELEASE_ASSERT(!jsDynamicCast<const JSHeapInt32*>(this));
+        RELEASE_ASSERT(!jsDynamicCast<const JSHeapDouble*>(this));
+    }
     return jsSecureCast<const JSObject*>(this)->toPrimitive(globalObject, preferredType);
 }
 
@@ -166,6 +170,10 @@ double JSCell::toNumber(JSGlobalObject* globalObject) const
         return symbol->toNumber(globalObject);
     if (const auto* bigInt = jsDynamicCast<const JSBigInt*>(this))
         return bigInt->toNumber(globalObject);
+    if constexpr (useCompressedHeap) {
+        RELEASE_ASSERT(!jsDynamicCast<const JSHeapInt32*>(this));
+        RELEASE_ASSERT(!jsDynamicCast<const JSHeapDouble*>(this));
+    }
     return jsSecureCast<const JSObject*>(this)->toNumber(globalObject);
 }
 
@@ -177,6 +185,10 @@ JSObject* JSCell::toObjectSlow(JSGlobalObject* globalObject) const
         return string->toObject(globalObject);
     if (const auto* bigInt = jsDynamicCast<const JSBigInt*>(this))
         return bigInt->toObject(globalObject);
+    if constexpr (useCompressedHeap) {
+        RELEASE_ASSERT(!jsDynamicCast<const JSHeapInt32*>(this));
+        RELEASE_ASSERT(!jsDynamicCast<const JSHeapDouble*>(this));
+    }
     return jsSecureCast<const Symbol*>(this)->toObject(globalObject);
 }
 

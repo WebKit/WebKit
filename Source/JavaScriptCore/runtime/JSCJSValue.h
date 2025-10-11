@@ -273,6 +273,8 @@ public:
     bool isString() const;
     bool isBigInt() const;
     bool isHeapBigInt() const;
+    bool isHeapDouble() const;
+    bool isHeapInt32() const;
     bool isBigInt32() const;
     bool isZeroBigInt() const;
     bool isNegativeBigInt() const;
@@ -305,6 +307,8 @@ public:
     JSValue toNumeric(JSGlobalObject*) const;
     JSValue toBigIntOrInt32(JSGlobalObject*) const;
     JSBigInt* asHeapBigInt() const;
+    JSHeapDouble* asHeapDouble() const;
+    JSHeapInt32* asHeapInt32() const;
 
     // toNumber conversion if it can be done without side effects.
     std::optional<double> toNumberFromPrimitive() const;
@@ -414,7 +418,7 @@ public:
 
     // This should only be used by the LLInt C Loop interpreter and OSRExit code who needs
     // synthesize JSValue from its "register"s holding tag and payload values.
-    explicit JSValue(int32_t tag, int32_t payload);
+    explicit JSValue(uint32_t tag, int32_t payload);
 
 #elif USE(JSVALUE64)
     /*
@@ -554,42 +558,22 @@ private:
     EncodedValueDescriptor u;
 };
 
-#if USE(JSVALUE32_64)
 struct OrderedHashTableTraits {
     ALWAYS_INLINE static void set(JSValue* value, uint32_t number)
     {
-        value->u.asBits.tag = JSValue::Int32Tag;
-        value->u.asBits.payload = number;
+        *value = JSValue(static_cast<int32_t>(number));
     }
     ALWAYS_INLINE static void increment(JSValue* value)
     {
         ASSERT(value->isInt32());
-        value->u.asBits.payload++;
+        *value = JSValue(value->asInt32() + 1);
     }
     ALWAYS_INLINE static void decrement(JSValue* value)
     {
         ASSERT(value->isInt32());
-        value->u.asBits.payload--;
+        *value = JSValue(value->asInt32() - 1);
     }
 };
-#else
-struct OrderedHashTableTraits {
-    ALWAYS_INLINE static void set(JSValue* value, uint32_t number)
-    {
-        value->u.asInt64 = JSValue::NumberTag | number;
-    }
-    ALWAYS_INLINE static void increment(JSValue* value)
-    {
-        ASSERT(value->isInt32());
-        value->u.asInt64++;
-    }
-    ALWAYS_INLINE static void decrement(JSValue* value)
-    {
-        ASSERT(value->isInt32());
-        value->u.asInt64--;
-    }
-};
-#endif
 
 typedef IntHash<EncodedJSValue> EncodedJSValueHash;
 

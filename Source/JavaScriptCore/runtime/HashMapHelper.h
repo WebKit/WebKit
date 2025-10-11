@@ -105,6 +105,11 @@ ALWAYS_INLINE uint32_t jsMapHashImpl(JSGlobalObject* globalObject, VM& vm, JSVal
     if (value.isHeapBigInt())
         return jsMapHash(value.asHeapBigInt());
 
+    if constexpr (useCompressedHeap) {
+        if (value.isNumber())
+            return wangsInt64Hash(std::bit_cast<uint64_t>(value.asNumber()));
+    }
+
     return wangsInt64Hash(JSValue::encode(value));
 }
 

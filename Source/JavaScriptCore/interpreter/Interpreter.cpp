@@ -239,7 +239,7 @@ unsigned sizeOfVarargs(JSGlobalObject* globalObject, JSValue arguments, uint32_t
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!arguments.isCell()) [[unlikely]] {
+    if (!arguments.isCell() || (useCompressedHeap && arguments.isNumber())) [[unlikely]] {
         if (arguments.isUndefinedOrNull())
             return 0;
         
@@ -318,7 +318,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 void loadVarargs(JSGlobalObject* globalObject, JSValue* firstElementDest, JSValue arguments, uint32_t offset, uint32_t length)
 {
-    if (!arguments.isCell()) [[unlikely]]
+    if (!arguments.isCell() || (useCompressedHeap && arguments.isNumber())) [[unlikely]]
         return;
     if (!length)
         return;

@@ -545,6 +545,8 @@ public:
     WriteBarrier<Structure> hashMapBucketSetStructure;
     WriteBarrier<Structure> hashMapBucketMapStructure;
     WriteBarrier<Structure> bigIntStructure;
+    WriteBarrier<Structure> doubleStructure;
+    WriteBarrier<Structure> int32Structure;
 
     WriteBarrier<JSPropertyNameEnumerator> m_emptyPropertyNameEnumerator;
     WriteBarrier<NativeExecutable> m_promiseResolvingFunctionResolveExecutable;

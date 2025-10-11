@@ -31,4 +31,53 @@
 
 namespace JSC {
 
+/*
+ * This represents a boxed double, which should only be used inside a compressed heap.
+ *
+ * A compressed heap uses a 4gb address space, and a 32-bit JSValue representation. Hence
+ * we must box doubles.
+ *
+ * We also cannot require that every place that produces a double has an associated VM,
+ * so for now we require at most one VM and use a VM singleton.
+ *
+ * Future work should avoid this by allocating doubles out of a vm-agnostic heap, and
+ * tagging double pointers differently in JSValues.
+ *
+ */
+
+VM& vmForHeapDouble();
+
+class JSHeapDouble final : public JSCell {
+public:
+    using Base = JSCell;
+
+    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+
+    template<typename CellType, SubspaceAccess>
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.heapDoubleSpace();
+    }
+
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
+
+    JS_EXPORT_PRIVATE static JSHeapDouble* createFrom(double value);
+
+    static constexpr size_t offsetOfValue()
+    {
+        return OBJECT_OFFSETOF(JSHeapDouble, m_value);
+    }
+
+    DECLARE_EXPORT_INFO;
+
+    double value() const { return m_value; }
+    double toNumber() const { return value(); }
+    bool toBoolean() const { return 0.0 < value() || value() < 0.0; }
+
+private:
+    JSHeapDouble(VM&, Structure*, double);
+
+    double m_value { 0 };
+};
+
 } // namespace JSC

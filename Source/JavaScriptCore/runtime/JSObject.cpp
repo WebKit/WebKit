@@ -127,6 +127,10 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(Visitor& visitor)
     auto visitElements = [&] (IndexingType indexingMode) {
         switch (indexingMode) {
         // We don't need to visit the elements for CopyOnWrite butterflies since they we marked the JSCellButterfly acting as our butterfly.
+        case ALL_WRITABLE_INT32_INDEXING_TYPES:
+            if constexpr (!useCompressedHeap)
+                break;
+            [[fallthrough]];
         case ALL_WRITABLE_CONTIGUOUS_INDEXING_TYPES:
             visitor.appendValuesHidden(butterfly->contiguous().data(), butterfly->publicLength());
             break;
@@ -1555,6 +1559,8 @@ ContiguousJSValues JSObject::convertDoubleToContiguous(VM& vm)
         DeferredStructureTransitionWatchpointFire deferred(vm, oldStructure);
         setStructure(vm, Structure::nonPropertyTransition(vm, oldStructure, TransitionKind::AllocateContiguous, &deferred));
     }
+    if constexpr (useCompressedHeap)
+        vm.writeBarrier(this);
     return m_butterfly->contiguous();
 }
 
@@ -1584,6 +1590,8 @@ ArrayStorage* JSObject::convertDoubleToArrayStorage(VM& vm, TransitionKind trans
         nukeStructureAndSetButterfly(vm, oldStructureID, newStorage->butterfly());
         setStructure(vm, newStructure);
     }
+    if constexpr (useCompressedHeap)
+        vm.writeBarrier(this);
     return newStorage;
 }
 

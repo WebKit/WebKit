@@ -353,6 +353,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     evalCodeBlockStructure.setWithoutWriteBarrier(EvalCodeBlock::createStructure(*this, nullptr, jsNull()));
     functionCodeBlockStructure.setWithoutWriteBarrier(FunctionCodeBlock::createStructure(*this, nullptr, jsNull()));
     bigIntStructure.setWithoutWriteBarrier(JSBigInt::createStructure(*this, nullptr, jsNull()));
+    doubleStructure.setWithoutWriteBarrier(JSHeapDouble::createStructure(*this, nullptr, jsNull()));
+    int32Structure.setWithoutWriteBarrier(JSHeapInt32::createStructure(*this, nullptr, jsNull()));
 
     // Eagerly initialize constant cells since the concurrent compiler can access them.
     if (Options::useJIT()) {
@@ -1755,6 +1757,8 @@ void VM::visitAggregateImpl(Visitor& visitor)
     visitor.append(hashMapBucketSetStructure);
     visitor.append(hashMapBucketMapStructure);
     visitor.append(bigIntStructure);
+    visitor.append(doubleStructure);
+    visitor.append(int32Structure);
 
     visitor.append(m_emptyPropertyNameEnumerator);
     visitor.append(m_orderedHashTableDeletedValue);

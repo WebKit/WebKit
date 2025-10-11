@@ -839,7 +839,8 @@ end)
 llintOpWithReturn(op_argument_count, OpArgumentCount, macro (size, get, dispatch, return)
     loadi PayloadOffset + ArgumentCountIncludingThis[cfr], t0
     subi 1, t0
-    return(Int32Tag, t0)
+    makeInt32(t0)
+    return(HeapInt32Tag, t0)
 end)
 
 
@@ -899,6 +900,7 @@ end)
 
 macro equalityComparisonOp(opcodeName, opcodeStruct, integerComparison)
     llintOpWithReturn(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, return)
+        slowPathCompressedHeap(.opEqSlow)
         get(m_rhs, t2)
         get(m_lhs, t0)
         loadConstantOrVariable(size, t2, t3, t1)
@@ -918,6 +920,7 @@ end
 
 macro equalityJumpOp(opcodeName, opcodeStruct, integerComparison)
     llintOpWithJump(op_%opcodeName%, opcodeStruct, macro (size, get, jump, dispatch)
+        slowPathCompressedHeap(.slow)
         get(m_rhs, t2)
         get(m_lhs, t0)
         loadConstantOrVariable(size, t2, t3, t1)
@@ -981,6 +984,7 @@ end)
 
 macro strictEqOp(opcodeName, opcodeStruct, equalityOperation)
     llintOpWithReturn(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, return)
+        slowPathCompressedHeap(.slow)
         get(m_rhs, t2)
         get(m_lhs, t0)
         loadConstantOrVariable(size, t2, t3, t1)
@@ -1003,6 +1007,7 @@ end
 
 macro strictEqualityJumpOp(opcodeName, opcodeStruct, equalityOperation)
     llintOpWithJump(op_%opcodeName%, opcodeStruct, macro (size, get, jump, dispatch)
+        slowPathCompressedHeap(.slow)
         get(m_rhs, t2)
         get(m_lhs, t0)
         loadConstantOrVariable(size, t2, t3, t1)
@@ -1046,6 +1051,7 @@ macro preOp(opcodeName, opcodeStruct, integerOperation)
     llintOpWithMetadata(op_%opcodeName%, opcodeStruct, macro (size, get, dispatch, metadata, return)
         get(m_srcDst, t0)
         bineq TagOffset[cfr, t0, 8], Int32Tag, .slow
+        unimplementedCompressedHeap()
         loadi PayloadOffset[cfr, t0, 8], t2
         # srcDst in t2
         integerOperation(t2, .slow)
@@ -1065,8 +1071,10 @@ llintOpWithReturn(op_to_number, OpToNumber, macro (size, get, dispatch, return)
     loadConstantOrVariable(size, t0, t2, t3)
     bieq t2, Int32Tag, .opToNumberIsInt
     biaeq t2, LowestTag, .opToNumberSlow
+    unimplementedCompressedHeap()
     updateUnaryArithProfile(size, OpToNumber, ArithProfileNumber, t5, t1)
 .opToNumberIsInt:
+    unimplementedCompressedHeap()
     return(t2, t3)
 
 .opToNumberSlow:
@@ -1079,8 +1087,10 @@ llintOpWithReturn(op_to_numeric, OpToNumeric, macro (size, get, dispatch, return
     loadConstantOrVariable(size, t0, t2, t3)
     bieq t2, Int32Tag, .opToNumericIsInt
     biaeq t2, LowestTag, .opToNumericSlow
+    unimplementedCompressedHeap()
     updateUnaryArithProfile(size, OpToNumber, ArithProfileNumber, t5, t1)
 .opToNumericIsInt:
+    unimplementedCompressedHeap()
     return(t2, t3)
 
 .opToNumericSlow:
@@ -1120,12 +1130,14 @@ llintOpWithMetadata(op_negate, OpNegate, macro (size, get, dispatch, metadata, r
     get(m_operand, t0)
     loadConstantOrVariable(size, t0, t1, t2)
     bineq t1, Int32Tag, .opNegateSrcNotInt
+    unimplementedCompressedHeap()
     btiz t2, 0x7fffffff, .opNegateSlow
     negi t2
     updateUnaryArithProfile(size, OpNegate, ArithProfileInt, t0, t3)
     return (Int32Tag, t2)
 .opNegateSrcNotInt:
     bia t1, LowestTag, .opNegateSlow
+    unimplementedCompressedHeap()
     xori 0x80000000, t1
     updateUnaryArithProfile(size, OpNegate, ArithProfileNumber, t0, t3)
     return(t1, t2)
@@ -1143,6 +1155,7 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         loadConstantOrVariable(size, t2, t3, t1)
         loadConstantOrVariable2Reg(size, t0, t2, t0)
         bineq t2, Int32Tag, .op1NotInt
+        unimplementedCompressedHeap()
         bineq t3, Int32Tag, .op2NotInt
         updateBinaryArithProfile(size, opcodeStruct, ArithProfileIntInt, t5, t2)
         get(m_dst, t2)
@@ -1154,10 +1167,12 @@ macro binaryOpCustomStore(opcodeName, opcodeStruct, integerOperationAndStore, do
         bia t2, LowestTag, .slow
         bib t3, LowestTag, .op1NotIntOp2Double
         bineq t3, Int32Tag, .slow
+        unimplementedCompressedHeap()
         ci2ds t1, ft1
         updateBinaryArithProfile(size, opcodeStruct, ArithProfileNumberInt, t5, t1)
         jmp .op1NotIntReady
     .op1NotIntOp2Double:
+        unimplementedCompressedHeap()
         fii2d t1, t3, ft1
         updateBinaryArithProfile(size, opcodeStruct, ArithProfileNumberNumber, t5, t1)
     .op1NotIntReady:
@@ -1240,6 +1255,7 @@ llintOpWithReturn(op_pow, OpPow, macro (size, get, dispatch, return)
     loadConstantOrVariable(size, t2, t3, t1)
     loadConstantOrVariable2Reg(size, t0, t2, t0)
     bineq t3, Int32Tag, .slow
+    unimplementedCompressedHeap()
 
     bilt t1, 0, .slow
     bigt t1, (constexpr maxExponentForIntegerMathPow), .slow
@@ -1274,6 +1290,7 @@ end)
 llintOpWithReturn(op_unsigned, OpUnsigned, macro (size, get, dispatch, return)
     get(m_operand, t1)
     loadConstantOrVariablePayload(size, t1, Int32Tag, t2, .opUnsignedSlow)
+    unimplementedCompressedHeap()
     bilt t2, 0, .opUnsignedSlow
     return (Int32Tag, t2)
 .opUnsignedSlow:
@@ -1289,6 +1306,7 @@ macro commonBitOp(opKind, opcodeName, opcodeStruct, operation)
         loadConstantOrVariable(size, t2, t3, t1)
         loadConstantOrVariable2Reg(size, t0, t2, t0)
         bineq t3, Int32Tag, .slow
+        unimplementedCompressedHeap()
         bineq t2, Int32Tag, .slow
         operation(t0, t1)
         return (t3, t0)
@@ -1325,6 +1343,7 @@ llintOpWithReturn(op_bitnot, OpBitnot, macro (size, get, dispatch, return)
     get(m_operand, t0)
     loadConstantOrVariable(size, t0, t2, t3)
     bineq t2, Int32Tag, .opBitNotSlow
+    unimplementedCompressedHeap()
     noti t3
     return (Int32Tag, t3)
  .opBitNotSlow:
@@ -1401,7 +1420,16 @@ end)
 
 llintOpWithReturn(op_is_number, OpIsNumber, macro (size, get, dispatch, return)
     get(m_operand, t1)
-    loadConstantOrVariableTag(size, t1, t0)
+    loadConstantOrVariable(size, t1, t0, t2)
+    if UseCompressedHeap
+        move 0, t3
+        bineq t0, CellTag, .false
+        cbeq JSCell::m_type[t2], HeapDoubleType, t3
+        cbeq JSCell::m_type[t2], HeapInt32Type, t2
+        orp t2, t3
+        .false:
+        return(BooleanTag, t3)
+    end
     addi 1, t0
     cib t0, LowestTag + 1, t1
     return(BooleanTag, t1)
@@ -1555,8 +1583,9 @@ macro performGetByIDHelper(opcodeStruct, modeMetadataName, valueProfileName, slo
     loadp JSObject::m_butterfly[t3], t0
     loadi -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], t0
     bilt t0, 0, slowLabel
-    valueProfile(size, opcodeStruct, valueProfileName, Int32Tag, t0, t2)
-    return(Int32Tag, t0)
+    makeInt32(t0)
+    valueProfile(size, opcodeStruct, valueProfileName, HeapInt32Tag, t0, t2)
+    return(HeapInt32Tag, t0)
     
 .opGetByIdUnset:
     loadi JSCell::m_structureID[t3], t1
@@ -1592,8 +1621,9 @@ llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadat
     loadp JSObject::m_butterfly[t3], t0
     loadi -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], t0
     bilt t0, 0, .opGetByIdSlow
-    valueProfile(size, OpGetById, m_valueProfile, Int32Tag, t0, t5)
-    return(Int32Tag, t0)
+    makeInt32(t0)
+    valueProfile(size, OpGetById, m_valueProfile, HeapInt32Tag, t0, t5)
+    return(HeapInt32Tag, t0)
 
 .opGetByIdUnset:
     bbneq t1, constexpr GetByIdMode::Unset, .opGetByIdDefault
@@ -1623,6 +1653,7 @@ llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadat
 end)
 
 llintOpWithMetadata(op_get_length, OpGetLength, macro (size, get, dispatch, metadata, return)
+    slowPathCompressedHeap(.opGetLengthSlow)
     metadata(t5, t0)
     loadb OpGetLength::Metadata::m_modeMetadata.mode[t5], t1
     get(m_base, t0)
@@ -1647,8 +1678,9 @@ llintOpWithMetadata(op_get_length, OpGetLength, macro (size, get, dispatch, meta
     loadp JSObject::m_butterfly[t3], t0
     loadi -sizeof IndexingHeader + IndexingHeader::u.lengths.publicLength[t0], t0
     bilt t0, 0, .opGetLengthSlow
-    valueProfile(size, OpGetLength, m_valueProfile, Int32Tag, t0, t5)
-    return(Int32Tag, t0)
+    makeInt32(t0)
+    valueProfile(size, OpGetLength, m_valueProfile, HeapInt32Tag, t0, t5)
+    return(HeapInt32Tag, t0)
 
 .opGetLengthUnset:
     bbneq t1, constexpr GetByIdMode::Unset, .opGetLengthDefault
@@ -1765,6 +1797,7 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
 
     metadata(t5, t2)
     get(m_base, t2)
+    slowPathCompressedHeap(.opGetByValSlow)
     loadConstantOrVariablePayload(size, t2, CellTag, t0, .opGetByValSlow)
     move t0, t2
     arrayProfile(OpGetByVal::Metadata::m_arrayProfile, t2, t5, t1)
@@ -1910,6 +1943,7 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
         writeBarrierOnOperands(size, get, m_base, m_value)
         metadata(t5, t0)
         get(m_base, t0)
+        slowPathCompressedHeap(.opPutByValSlow)
         loadConstantOrVariablePayload(size, t0, CellTag, t1, .opPutByValSlow)
         move t1, t2
         arrayProfile(%opcodeStruct%::Metadata::m_arrayProfile, t2, t5, t0)
@@ -2015,6 +2049,7 @@ end)
 
 macro llintJumpTrueOrFalseOp(opcodeName, opcodeStruct, conditionOp, notUsed)
     llintOpWithJump(op_%opcodeName%, opcodeStruct, macro (size, get, jump, dispatch)
+        slowPathCompressedHeap(.slow)
         get(m_condition, t1)
         loadConstantOrVariablePayload(size, t1, BooleanTag, t0, .slow)
         conditionOp(t0, .target)
@@ -2126,6 +2161,8 @@ macro compareUnsignedJumpOp(opcodeName, opcodeStruct, integerCompare)
         get(m_rhs, t3)
         loadConstantOrVariable(size, t2, t0, t1)
         loadConstantOrVariable2Reg(size, t3, t2, t3)
+        unboxHeapInt32(t1)
+        unboxHeapInt32(t3)
         integerCompare(t1, t3, .jumpTarget)
         dispatch()
 
@@ -2142,6 +2179,7 @@ macro compareOp(opcodeName, opcodeStruct, integerCompareAndSet, doubleCompareAnd
         loadConstantOrVariable(size, t2, t0, t1)
         loadConstantOrVariable2Reg(size, t3, t2, t3)
         bineq t0, Int32Tag, .op1NotInt
+        unimplementedCompressedHeap()
         bineq t2, Int32Tag, .op2NotInt
         integerCompareAndSet(t1, t3, t1)
         return(BooleanTag, t1)
@@ -2150,6 +2188,7 @@ macro compareOp(opcodeName, opcodeStruct, integerCompareAndSet, doubleCompareAnd
         bia t0, LowestTag, .slow
         bib t2, LowestTag, .op1NotIntOp2Double
         bineq t2, Int32Tag, .slow
+        unimplementedCompressedHeap()
         ci2ds t3, ft1
         jmp .op1NotIntReady
     .op1NotIntOp2Double:
@@ -2177,7 +2216,9 @@ macro compareUnsignedOp(opcodeName, opcodeStruct, integerCompareAndSet)
         get(m_rhs, t2)
         get(m_lhs, t0)
         loadConstantOrVariable(size, t2, t3, t1)
+        unboxHeapInt32(t1)
         loadConstantOrVariable2Reg(size, t0, t2, t0)
+        unboxHeapInt32(t0)
         integerCompareAndSet(t0, t1, t0)
         return(BooleanTag, t0)
     end)
@@ -2191,12 +2232,14 @@ macro compareJumpOp(opcodeName, opcodeStruct, integerCompare, doubleCompare)
         loadConstantOrVariable(size, t2, t0, t1)
         loadConstantOrVariable2Reg(size, t3, t2, t3)
         bineq t0, Int32Tag, .op1NotInt
+        unimplementedCompressedHeap()
         bineq t2, Int32Tag, .op2NotInt
         integerCompare(t1, t3, .jumpTarget)
         dispatch()
 
     .op1NotInt:
         bia t0, LowestTag, .slow
+        unimplementedCompressedHeap()
         bib t2, LowestTag, .op1NotIntOp2Double
         bineq t2, Int32Tag, .slow
         ci2ds t3, ft1
@@ -2238,6 +2281,7 @@ llintOpWithJump(op_switch_imm, OpSwitchImm, macro (size, get, jump, dispatch)
     addp t3, t2
 
     bineq t1, Int32Tag, .opSwitchImmNotInt
+    unimplementedCompressedHeap()
 
     loadi UnlinkedSimpleJumpTable::m_min[t2], t3
     bieq t3, (constexpr INT32_MAX), .opSwitchImmSlow
@@ -2251,6 +2295,7 @@ llintOpWithJump(op_switch_imm, OpSwitchImm, macro (size, get, jump, dispatch)
     dispatchIndirect(t1)
 
 .opSwitchImmNotInt:
+    slowPathCompressedHeap(.opSwitchImmSlow)
     bib t1, LowestTag, .opSwitchImmSlow  # Go to slow path if it's a double.
 .opSwitchImmFallThrough:
     loadis UnlinkedSimpleJumpTable::m_defaultOffset[t2], t1
@@ -2473,6 +2518,7 @@ end)
 
 
 llintOpWithReturn(op_to_primitive, OpToPrimitive, macro (size, get, dispatch, return)
+    slowPathCompressedHeap(.opToPrimitiveSlowCase)
     get(m_src, t2)
     loadConstantOrVariable(size, t2, t1, t0)
     bineq t1, CellTag, .opToPrimitiveIsImm
@@ -3105,7 +3151,8 @@ llintOpWithReturn(op_get_rest_length, OpGetRestLength, macro (size, get, dispatc
 .storeZero:
     move 0, t0
 .finish:
-    return(Int32Tag, t0)
+    makeInt32(t0)
+    return(HeapInt32Tag, t0)
 end)
 
 llintOpWithMetadata(op_iterator_open, OpIteratorOpen, macro (size, get, dispatch, metadata, return)

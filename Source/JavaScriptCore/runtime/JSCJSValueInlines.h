@@ -39,6 +39,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/JSCellInlines.h>
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/JSGlobalProxy.h>
+#include <JavaScriptCore/JSHeapDouble.h>
+#include <JavaScriptCore/JSHeapInt32.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/JSStringInlines.h>
 #include <JavaScriptCore/MathCommon.h>
@@ -244,8 +246,23 @@ inline EncodedJSValue JSValue::encode(JSValue value)
 inline JSValue JSValue::decode(EncodedJSValue encodedJSValue)
 {
     JSValue v;
+    // JSValue may not be POD on 32-bit (for now)
+    if (!encodedJSValue)
+        return v;
     v.u.asInt64 = encodedJSValue;
     return v;
+}
+
+ALWAYS_INLINE JSHeapDouble* JSValue::asHeapDouble() const
+{
+    ASSERT(isHeapDouble());
+    return static_cast<JSHeapDouble*>(asCell());
+}
+
+ALWAYS_INLINE JSHeapInt32* JSValue::asHeapInt32() const
+{
+    ASSERT(isHeapInt32());
+    return static_cast<JSHeapInt32*>(asCell());
 }
 
 #if USE(JSVALUE32_64)
@@ -311,6 +328,10 @@ inline JSValue::operator bool() const
 
 inline bool JSValue::operator==(const JSValue& other) const
 {
+    if constexpr (useCompressedHeap) {
+        if (isNumber() && other.isNumber())
+            return std::bit_cast<uint64_t>(asNumber()) == std::bit_cast<uint64_t>(other.asNumber());
+    }
     return u.asInt64 == other.u.asInt64;
 }
 
@@ -341,11 +362,19 @@ inline bool JSValue::isCell() const
 
 inline bool JSValue::isInt32() const
 {
+    if constexpr (useCompressedHeap) {
+        RELEASE_ASSERT(tag() != Int32Tag);
+        return isHeapInt32();
+    }
     return tag() == Int32Tag;
 }
 
 inline bool JSValue::isDouble() const
 {
+    if constexpr (useCompressedHeap) {
+        RELEASE_ASSERT(tag() >= LowestTag);
+        return isHeapDouble();
+    }
     return tag() < LowestTag;
 }
 
@@ -372,11 +401,20 @@ inline int32_t JSValue::payload() const
 inline int32_t JSValue::asInt32() const
 {
     ASSERT(isInt32());
+    if constexpr (useCompressedHeap) {
+        RELEASE_ASSERT(tag() != Int32Tag);
+        RELEASE_ASSERT(isInt32());
+        return asHeapInt32()->value();
+    }
     return u.asBits.payload;
 }
     
 inline double JSValue::asDouble() const
 {
+    if constexpr (useCompressedHeap) {
+        RELEASE_ASSERT(isDouble());
+        return asHeapDouble()->value();
+    }
     ASSERT(isDouble());
     return u.asDouble;
 }
@@ -396,23 +434,37 @@ ALWAYS_INLINE JSBigInt* JSValue::asHeapBigInt() const
 ALWAYS_INLINE JSValue::JSValue(EncodeAsDoubleTag, double d)
 {
     ASSERT(!isImpureNaN(d));
+    if constexpr (useCompressedHeap) {
+        *this = JSValue(JSHeapDouble::createFrom(d));
+        return;
+    }
     u.asDouble = d;
 }
 
 inline JSValue::JSValue(int i)
 {
+    if constexpr (useCompressedHeap) {
+        *this = JSValue(JSHeapInt32::createFrom(i));
+        return;
+    }
     u.asBits.tag = Int32Tag;
     u.asBits.payload = i;
 }
 
-inline JSValue::JSValue(int32_t tag, int32_t payload)
+inline JSValue::JSValue(uint32_t tag, int32_t payload)
 {
+    if constexpr (useCompressedHeap)
+        RELEASE_ASSERT(tag != Int32Tag);
     u.asBits.tag = tag;
     u.asBits.payload = payload;
 }
 
 inline bool JSValue::isNumber() const
 {
+    if constexpr (useCompressedHeap) {
+        RELEASE_ASSERT(tag() != Int32Tag);
+        return isHeapDouble() || isHeapInt32();
+    }
     return isInt32() || isDouble();
 }
 
@@ -458,6 +510,10 @@ inline JSValue::operator bool() const
 
 inline bool JSValue::operator==(const JSValue& other) const
 {
+    if constexpr (useCompressedHeap) {
+        if (isNumber() && other.isNumber())
+            return std::bit_cast<uint64_t>(asNumber()) == std::bit_cast<uint64_t>(other.asNumber());
+    }
     return u.asInt64 == other.u.asInt64;
 }
 
@@ -495,6 +551,10 @@ inline bool JSValue::asBoolean() const
 inline int32_t JSValue::asInt32() const
 {
     ASSERT(isInt32());
+    if constexpr (useCompressedHeap) {
+        RELEASE_ASSERT(isInt32());
+        return asHeapInt32()->value();
+    }
     return static_cast<int32_t>(u.asInt64);
 }
 
@@ -541,6 +601,11 @@ inline bool JSValue::isCell() const
 
 inline bool JSValue::isInt32() const
 {
+    if constexpr (useCompressedHeap) {
+        // This is not an optimization; Int32s are hard-assumed in some places, like array length.
+        RELEASE_ASSERT((u.asInt64 & NumberTag) != NumberTag);
+        return isHeapInt32();
+    }
     return (u.asInt64 & NumberTag) == NumberTag;
 }
 
@@ -556,22 +621,38 @@ inline double reinterpretInt64ToDouble(int64_t value)
 ALWAYS_INLINE JSValue::JSValue(EncodeAsDoubleTag, double d)
 {
     ASSERT(!isImpureNaN(d));
+    if constexpr (useCompressedHeap) {
+        *this = JSValue(JSHeapDouble::createFrom(d));
+        return;
+    }
     u.asInt64 = reinterpretDoubleToInt64(d) + JSValue::DoubleEncodeOffset;
 }
 
 inline JSValue::JSValue(int i)
 {
+    if constexpr (useCompressedHeap) {
+        *this = JSValue(JSHeapInt32::createFrom(i));
+        return;
+    }
     u.asInt64 = JSValue::NumberTag | static_cast<uint32_t>(i);
 }
 
 inline double JSValue::asDouble() const
 {
     ASSERT(isDouble());
+    if constexpr (useCompressedHeap) {
+        RELEASE_ASSERT(isDouble());
+        return asHeapDouble()->value();
+    }
     return reinterpretInt64ToDouble(u.asInt64 - JSValue::DoubleEncodeOffset);
 }
 
 inline bool JSValue::isNumber() const
 {
+    if constexpr (useCompressedHeap) {
+        RELEASE_ASSERT(!(u.asInt64 & JSValue::NumberTag));
+        return isHeapDouble() || isHeapInt32();
+    }
     return u.asInt64 & JSValue::NumberTag;
 }
 
@@ -696,7 +777,21 @@ inline bool JSValue::isBigInt() const
 
 inline bool JSValue::isHeapBigInt() const
 {
-    return isCell() && asCell()->isHeapBigInt();
+    return !isUndefinedOrNull() && isCell() && asCell()->isHeapBigInt();
+}
+
+inline bool JSValue::isHeapDouble() const
+{
+    RELEASE_ASSERT(useCompressedHeap);
+    // This needs to be extra careful to avoid dereferencing an invalid cell.
+    return !isEmpty() && isCell() && asCell() != JSCell::seenMultipleCalleeObjects() && asCell()->isHeapDouble();
+}
+
+inline bool JSValue::isHeapInt32() const
+{
+    RELEASE_ASSERT(useCompressedHeap);
+    // This needs to be extra careful to avoid dereferencing an invalid cell.
+    return !isEmpty() && isCell() && asCell() != JSCell::seenMultipleCalleeObjects() && asCell()->isHeapInt32();
 }
 
 inline bool JSValue::isBigInt32() const
@@ -745,6 +840,11 @@ inline bool JSValue::isSymbol() const
 
 inline bool JSValue::isPrimitive() const
 {
+    if constexpr (useCompressedHeap) {
+        if (isHeapDouble() || isHeapInt32())
+            return true;
+    }
+
     return !isCell() || asCell()->isString() || asCell()->isSymbol() || asCell()->isHeapBigInt();
 }
 
@@ -834,6 +934,10 @@ ALWAYS_INLINE JSValue JSValue::toPropertyKeyValue(JSGlobalObject* globalObject) 
 
 inline JSValue JSValue::toPrimitive(JSGlobalObject* globalObject, PreferredPrimitiveType preferredType) const
 {
+    if constexpr (useCompressedHeap) {
+        if (isInt32() || isDouble())
+            return asValue();
+    }
     return isCell() ? asCell()->toPrimitive(globalObject, preferredType) : asValue();
 }
 
@@ -965,6 +1069,10 @@ inline String JSValue::toWTFString(JSGlobalObject* globalObject) const
 
 inline JSObject* JSValue::toObject(JSGlobalObject* globalObject) const
 {
+    if constexpr (useCompressedHeap) {
+        if (isInt32() || isDouble())
+            return toObjectSlowCase(globalObject);
+    }
     return isCell() ? asCell()->toObject(globalObject) : toObjectSlowCase(globalObject);
 }
 
@@ -1154,6 +1262,10 @@ ALWAYS_INLINE T JSValue::getAs(JSGlobalObject* globalObject, PropertyNameType pr
 
 inline bool JSValue::put(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
+    if constexpr (useCompressedHeap) {
+        if (isHeapDouble() || isHeapInt32()) [[unlikely]]
+            return putToPrimitive(globalObject, propertyName, value, slot);
+    }
     if (!isCell()) [[unlikely]]
         return putToPrimitive(globalObject, propertyName, value, slot);
 
@@ -1162,6 +1274,10 @@ inline bool JSValue::put(JSGlobalObject* globalObject, PropertyName propertyName
 
 ALWAYS_INLINE bool JSValue::putInline(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
+    if constexpr (useCompressedHeap) {
+        if (isHeapDouble() || isHeapInt32()) [[unlikely]]
+            return putToPrimitive(globalObject, propertyName, value, slot);
+    }
     if (!isCell()) [[unlikely]]
         return putToPrimitive(globalObject, propertyName, value, slot);
     return asCell()->putInline(globalObject, propertyName, value, slot);
@@ -1169,6 +1285,10 @@ ALWAYS_INLINE bool JSValue::putInline(JSGlobalObject* globalObject, PropertyName
 
 inline bool JSValue::putByIndex(JSGlobalObject* globalObject, unsigned propertyName, JSValue value, bool shouldThrow)
 {
+    if constexpr (useCompressedHeap) {
+        if (isHeapDouble() || isHeapInt32()) [[unlikely]]
+            return putToPrimitiveByIndex(globalObject, propertyName, value, shouldThrow);
+    }
     if (!isCell()) [[unlikely]]
         return putToPrimitiveByIndex(globalObject, propertyName, value, shouldThrow);
 

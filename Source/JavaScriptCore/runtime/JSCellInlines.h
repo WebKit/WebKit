@@ -243,6 +243,16 @@ inline bool JSCell::isHeapBigInt() const
     return m_type == HeapBigIntType;
 }
 
+inline bool JSCell::isHeapDouble() const
+{
+    return m_type == HeapDoubleType;
+}
+
+inline bool JSCell::isHeapInt32() const
+{
+    return m_type == HeapInt32Type;
+}
+
 inline bool JSCell::isSymbol() const
 {
     return m_type == SymbolType;
@@ -390,6 +400,10 @@ inline bool JSCell::toBoolean(JSGlobalObject* globalObject) const
         return static_cast<const JSString*>(this)->toBoolean();
     if (isHeapBigInt())
         return static_cast<const JSBigInt*>(this)->toBoolean();
+    if constexpr (useCompressedHeap) {
+        RELEASE_ASSERT(!jsDynamicCast<const JSHeapInt32*>(this));
+        RELEASE_ASSERT(!jsDynamicCast<const JSHeapDouble*>(this));
+    }
     return !structure()->masqueradesAsUndefined(globalObject);
 }
 
@@ -399,6 +413,10 @@ inline TriState JSCell::pureToBoolean() const
         return static_cast<const JSString*>(this)->toBoolean() ? TriState::True : TriState::False;
     if (isHeapBigInt())
         return static_cast<const JSBigInt*>(this)->toBoolean() ? TriState::True : TriState::False;
+    if constexpr (useCompressedHeap) {
+        RELEASE_ASSERT(!jsDynamicCast<const JSHeapInt32*>(this));
+        RELEASE_ASSERT(!jsDynamicCast<const JSHeapDouble*>(this));
+    }
     if (isSymbol())
         return TriState::True;
     return TriState::Indeterminate;

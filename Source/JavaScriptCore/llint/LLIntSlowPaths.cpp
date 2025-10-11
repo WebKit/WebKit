@@ -660,6 +660,11 @@ extern "C" UGPRPair SYSV_ABI llint_polymorphic_call(CallFrame* calleeFrame, Call
     return encodeResult(callTarget, nullptr);
 }
 
+UGPRPair SYSV_ABI llint_make_int32(CallFrame*, const JSInstruction* pc, int32_t value)
+{
+    LLINT_RETURN_TWO(pc, JSValue(value).asCell());
+}
+
 LLINT_SLOW_PATH_DECL(slow_path_new_object)
 {
     LLINT_BEGIN();
@@ -1889,9 +1894,15 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_imm)
     LLINT_BEGIN();
     auto bytecode = pc->as<OpSwitchImm>();
     JSValue scrutinee = getOperand(callFrame, bytecode.m_scrutinee);
+    auto& unlinkedTable = codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex);
+    if constexpr (useCompressedHeap) {
+        if (!scrutinee.isNumber()) {
+            JUMP_TO(unlinkedTable.defaultOffset());
+            LLINT_END();
+        }
+    }
     double value = scrutinee.asNumber();
     int32_t intValue = static_cast<int32_t>(value);
-    auto& unlinkedTable = codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex);
     if (value == intValue) [[likely]] {
         if (!unlinkedTable.isList()) {
             JUMP_TO(unlinkedTable.offsetForValue(intValue));

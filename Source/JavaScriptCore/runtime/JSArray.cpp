@@ -745,7 +745,8 @@ std::optional<bool> JSArray::fastIncludes(JSGlobalObject* globalObject, JSValue 
 
     bool canDoFastPath = this->canDoFastIndexedAccess()
         && this->getArrayLength() == length64 // The effects in getting `index` could have changed the length of this array.
-        && static_cast<uint32_t>(index64) == index64;
+        && static_cast<uint32_t>(index64) == index64
+        && !useCompressedHeap;
     if (!canDoFastPath)
         return std::nullopt;
 
@@ -832,7 +833,8 @@ bool JSArray::fastCopyWithin(JSGlobalObject* globalObject, uint64_t from64, uint
         && this->getArrayLength() == length
         && from64 == from
         && to64 == to
-        && count64 == count;
+        && count64 == count
+        && !useCompressedHeap;
 
     if (!canDoFastPath)
         return false;
@@ -2028,7 +2030,7 @@ inline JSArray* constructArray(ObjectInitializationScope& scope, Structure* arra
     // FIXME: We only need this for subclasses of Array because we might need to allocate a new structure to change
     // indexing types while initializing. If this triggered a GC then we might scan our currently uninitialized
     // array and crash. https://bugs.webkit.org/show_bug.cgi?id=186811
-    if (!arrayStructure->globalObject()->isOriginalArrayStructure(arrayStructure))
+    if (!arrayStructure->globalObject()->isOriginalArrayStructure(arrayStructure) || useCompressedHeap)
         JSArray::eagerlyInitializeButterfly(scope, array, length);
 
     return array;

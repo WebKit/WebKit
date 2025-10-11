@@ -1196,7 +1196,7 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
     bool canDoFastPath = array->canDoFastIndexedAccess()
         && array->getArrayLength() == length64 // The effects in getting `index` could have changed the length of this array.
         && static_cast<uint32_t>(index64) == index64;
-    if (!canDoFastPath)
+    if (!canDoFastPath || useCompressedHeap)
         return JSValue();
 
     uint32_t length = static_cast<uint32_t>(length64);

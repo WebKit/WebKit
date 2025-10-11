@@ -1370,6 +1370,42 @@ private:
     bool m_sign;
 };
 
+class CachedHeapInt32 : public CachedObject<int32_t> {
+public:
+    void encode(Encoder&, int32_t value)
+    {
+        RELEASE_ASSERT(useCompressedHeap);
+        m_value = value;
+    }
+
+    int32_t decode(Decoder&) const
+    {
+        RELEASE_ASSERT(useCompressedHeap);
+        return m_value;
+    }
+
+private:
+    int32_t m_value;
+};
+
+class CachedHeapDouble : public CachedObject<double> {
+public:
+    void encode(Encoder&, double value)
+    {
+        RELEASE_ASSERT(useCompressedHeap);
+        m_value = value;
+    }
+
+    double decode(Decoder&) const
+    {
+        RELEASE_ASSERT(useCompressedHeap);
+        return m_value;
+    }
+
+private:
+    double m_value;
+};
+
 class CachedJSValue : public VariableLengthObject<WriteBarrier<Unknown>> {
 public:
     void encode(Encoder& encoder, const WriteBarrier<Unknown> value)
@@ -1422,6 +1458,18 @@ public:
             return;
         }
 
+        if (auto* int32 = jsDynamicCast<JSHeapInt32*>(cell)) {
+            m_type = EncodedType::HeapInt32;
+            this->allocate<CachedHeapInt32>(encoder)->encode(encoder, int32->value());
+            return;
+        }
+
+        if (auto* d = jsDynamicCast<JSHeapDouble*>(cell)) {
+            m_type = EncodedType::HeapDouble;
+            this->allocate<CachedHeapDouble>(encoder)->encode(encoder, d->value());
+            return;
+        }
+
         RELEASE_ASSERT_NOT_REACHED();
     }
 
@@ -1452,6 +1500,12 @@ public:
         case EncodedType::BigInt:
             v = this->buffer<CachedBigInt>()->decode(decoder);
             break;
+        case EncodedType::HeapDouble:
+            v = JSValue(this->buffer<CachedHeapDouble>()->decode(decoder));
+            break;
+        case EncodedType::HeapInt32:
+            v = JSValue(this->buffer<CachedHeapInt32>()->decode(decoder));
+            break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -1467,6 +1521,8 @@ private:
         RegExp,
         TemplateObjectDescriptor,
         BigInt,
+        HeapInt32,
+        HeapDouble,
     };
 
     EncodedType m_type;

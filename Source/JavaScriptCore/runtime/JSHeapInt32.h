@@ -31,5 +31,43 @@
 #include <JavaScriptCore/VM.h>
 
 namespace JSC {
+/*
+* This represents a boxed Int32. Please see JSHeapInt32.h 
+*/
+
+class JSHeapInt32 final : public JSCell {
+public:
+    using Base = JSCell;
+
+    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+
+    template<typename CellType, SubspaceAccess>
+    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.heapInt32Space();
+    }
+
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
+
+    JS_EXPORT_PRIVATE static JSHeapInt32* createFrom(int32_t value);
+
+    static constexpr size_t offsetOfValue()
+    {
+        return OBJECT_OFFSETOF(JSHeapInt32, m_value);
+    }
+
+    DECLARE_EXPORT_INFO;
+
+    int32_t value() const { return m_value; }
+    double toNumber() const { return value(); }
+    bool toBoolean() const { return !!value(); }
+
+private:
+    JSHeapInt32(VM&, Structure*, double);
+
+    JS_EXPORT_PRIVATE static JSHeapInt32* createImpl(int32_t value);
+
+    int32_t m_value { 0 };
+};
 
 } // namespace JSC

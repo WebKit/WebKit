@@ -123,6 +123,8 @@ class Heap;
 #define FOR_EACH_JSC_COMMON_ISO_SUBSPACE(v) \
     v(arraySpace, cellHeapCellType, JSArray) \
     v(bigIntSpace, cellHeapCellType, JSBigInt) \
+    v(heapDoubleSpace, cellHeapCellType, JSHeapDouble) /* This will go away soon. This is only used when !!useCompressedHeap. */ \
+    v(heapInt32Space, cellHeapCellType, JSHeapInt32) /* This will go away soon. This is only used when !!useCompressedHeap. */ \
     v(calleeSpace, cellHeapCellType, JSCallee) \
     v(clonedArgumentsSpace, cellHeapCellType, ClonedArguments) \
     v(customGetterSetterSpace, cellHeapCellType, CustomGetterSetter) \
