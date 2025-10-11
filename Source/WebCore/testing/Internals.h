@@ -843,6 +843,8 @@ public:
     void setSelectionWithoutValidation(Ref<Node> baseNode, unsigned baseOffset, RefPtr<Node> extentNode, unsigned extentOffset);
     void setSelectionFromNone();
 
+    bool executeEditingCommand(const String& command, const String& argument);
+
 #if ENABLE(MEDIA_SOURCE)
     WEBCORE_TESTSUPPORT_EXPORT void initializeMockMediaSource();
     void setMaximumSourceBufferSize(SourceBuffer&, uint64_t, DOMPromiseDeferred<void>&&);

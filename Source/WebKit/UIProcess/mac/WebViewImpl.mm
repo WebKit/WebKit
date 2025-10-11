@@ -5868,9 +5868,8 @@ NSUInteger WebViewImpl::characterIndexForPoint(NSPoint point)
     return 0;
 }
 
-NSRect WebViewImpl::firstRectForCharacterRange(NSRange range, NSRangePointer actualRange)
+NSRect WebViewImpl::firstRectForCharacterRange(NSRange, NSRangePointer)
 {
-    ASSERT_NOT_REACHED();
     return NSZeroRect;
 }
 

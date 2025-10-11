@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -12,12 +12,12 @@
 		2D6B05C21A97365300613256 /* dice.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D6B05C11A97365300613256 /* dice.png */; };
 		C53E7D0D1A9546E600818F19 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = C53E7D0B1A9546E600818F19 /* MainMenu.xib */; };
 		C53E7D0E1A9546E600818F19 /* WebDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = C53E7D0C1A9546E600818F19 /* WebDocument.xib */; };
-		C558CDB31A92D6900059A907 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C558CDB21A92D6900059A907 /* AppDelegate.m */; };
+		C558CDB31A92D6900059A907 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C558CDB21A92D6900059A907 /* AppDelegate.m */; settings = {COMPILER_FLAGS = "-Wno-deprecated"; }; };
 		C558CDB51A92D6900059A907 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C558CDB41A92D6900059A907 /* main.m */; };
 		C558CDB81A92D6900059A907 /* WebDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = C558CDB71A92D6900059A907 /* WebDocumentController.m */; };
 		C59F9B971A93C8E00041A959 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C59F9B961A93C8E00041A959 /* Cocoa.framework */; };
 		C59F9B991A93C8E90041A959 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C59F9B981A93C8E90041A959 /* WebKit.framework */; };
-		C59F9B9F1A93CB630041A959 /* WK1WebDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = C59F9B9C1A93CB630041A959 /* WK1WebDocumentController.m */; };
+		C59F9B9F1A93CB630041A959 /* WK1WebDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = C59F9B9C1A93CB630041A959 /* WK1WebDocumentController.m */; settings = {COMPILER_FLAGS = "-Wno-deprecated"; }; };
 		C59F9BA01A93CB630041A959 /* WK2WebDocumentController.m in Sources */ = {isa = PBXBuildFile; fileRef = C59F9B9E1A93CB630041A959 /* WK2WebDocumentController.m */; };
 /* End PBXBuildFile section */
 
