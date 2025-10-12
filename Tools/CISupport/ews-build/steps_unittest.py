@@ -9969,5 +9969,42 @@ class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty('build_finish_summary'), 'Found 10 new failures in File1.cpp')
         self.assertEqual([LeaveComment(), SetBuildSummary()], next_steps)
 
+
+class TestExportWPTChanges(BuildStepMixinAdditions, unittest.TestCase):
+    ENV = dict(GIT_USER='webkit-ews-buildbot', GIT_PASSWORD='password', GIT_COMMITTER_EMAIL='webkit-ews-buildbot@webkit.org', GIT_COMMITTER_NAME='EWS Buildbot')
+
+    def setUp(self):
+        GitHub.credentials = lambda user=None: ('webkit-ews-buildbot', 'password')
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(ExportWPTChanges())
+
+    def test_success(self):
+        self.configureStep()
+        self.setProperty('builddir', 'wkdir')
+        self.setProperty('buildnumber', 1234)
+        self.setProperty('owners', ['briannafan'])
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['git', 'config', '--global', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
+                        env=self.ENV)
+            + 0,
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['Tools/Scripts/export-w3c-test-changes', '-g', 'HEAD', '--dry-run', '--remote', 'webkit-ews-buildbot', '--remote-url', 'git@github.com:web-platform-tests/wpt.git'],
+                        env=self.ENV)
+            + 0,
+        )
+
+        self.expectOutcome(result=SUCCESS, state_string='')
+        rc = self.runStep()
+        return rc
+
 if __name__ == '__main__':
     unittest.main()

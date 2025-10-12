@@ -698,6 +698,21 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'webkitperl-tests'
         ],
+        'WPT-Export-EWS': [
+            'configure-build',
+            'check-change-relevance',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'set-credential-helper',
+            'checkout-source',
+            'fetch-branch-references',
+            'show-identifier',
+            'checkout-pull-request',
+            'kill-old-processes',
+            'validate-change',
+            'export-wpt-changes'
+        ],
         'API-Tests-iOS-Simulator-EWS': [
             'configure-build',
             'validate-change',

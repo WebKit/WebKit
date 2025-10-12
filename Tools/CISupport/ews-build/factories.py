@@ -424,3 +424,23 @@ class SafeMergeQueueFactory(factory.BuildFactory):
         super().__init__()
         for project in GITHUB_PROJECTS:
             self.addStep(RetrievePRDataFromLabel(project, label=GitHub.SAFE_MERGE_QUEUE_LABEL))
+
+
+class WPTExportFactory(factory.BuildFactory):
+    findModifiedLayoutTests = False
+
+    def __init__(self, platform, configuration=None, architectures=None, buildOnly=True, triggers=None, triggered_by=None, remotes=None, additionalArguments=None, checkRelevance=False, **kwargs):
+        factory.BuildFactory.__init__(self)
+        self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=buildOnly, triggers=triggers, triggered_by=triggered_by, remotes=remotes, additionalArguments=additionalArguments))
+        self.addStep(CheckChangeRelevance())
+        self.addStep(ValidateChange())
+        self.addStep(PrintConfiguration())
+        self.addStep(CleanGitRepo())
+        self.addStep(SetCredentialHelper())
+        self.addStep(CheckOutSource())
+        self.addStep(FetchBranches())
+        self.addStep(ShowIdentifier())
+        self.addStep(CheckOutPullRequest())
+        self.addStep(KillOldProcesses())
+        self.addStep(ValidateChange(addURLs=False))
+        self.addStep(ExportWPTChanges())

@@ -1326,6 +1326,10 @@ class CheckChangeRelevance(AnalyzeChange):
         re.compile(rb'Tools/CISupport/Shared/download-and-install-build-tools', re.IGNORECASE),
     ]
 
+    wpt_export_regexes = [
+        re.compile(rb'LayoutTests/imported/w3c/web-platform-tests', re.IGNORECASE),
+    ]
+
     group_to_paths_mapping = {
         'bindings': bindings_path_regexes,
         'monterey-release-build': monterey_builder_path_regexes,
@@ -1334,6 +1338,7 @@ class CheckChangeRelevance(AnalyzeChange):
         'webkitpy': webkitpy_path_regexes,
         'wk1-tests': wk1_path_regexes,
         'safer-cpp': safer_cpp_path_regexes,
+        'wpt-export': wpt_export_regexes,
     }
 
     def _patch_is_relevant(self, patch, builderName, timeout=30):
@@ -7933,3 +7938,41 @@ class ExtractStaticAnalyzerTestResults(ExtractTestResults):
 
     def addCustomURLs(self):
         pass
+
+
+class ExportWPTChanges(steps.ShellSequence):
+    name = 'export-wpt-changes'
+    descriptionDone = ['Exported WPT changes']
+    flunkOnFailure = True
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=False, **kwargs)
+
+    # def doStepIf(self, step):
+    #    return self.getProperty('owners')[0] in ('nt1m', 'briannafan')
+
+    # def hideStepIf(self, results, step):
+    #    return not self.doStepIf(step)
+
+    def buildCommandKwargs(self, warnings):
+        result = super().buildCommandKwargs(warnings)
+        if self.getProperty('sensitive', False):
+            result['stdioLogName'] = None
+        return result
+
+    def run(self):
+        self.commands = [
+            util.ShellArg(command=['git', 'config', '--global', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'], logname='stdio'),
+            util.ShellArg(command=['Tools/Scripts/export-w3c-test-changes', '-g', 'HEAD', '--dry-run', '--remote', 'webkit-ews-buildbot', '--remote-url', 'git@github.com:web-platform-tests/wpt.git'], logname='stdio')
+        ]
+
+        username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
+        self.env = dict(
+            GIT_COMMITTER_NAME='EWS Buildbot',
+            GIT_COMMITTER_EMAIL='webkit-ews-buildbot@webkit.org',
+            GIT_USER=username,
+            GIT_PASSWORD=access_token,
+        )
+
+        return super().run()
