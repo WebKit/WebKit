@@ -482,6 +482,30 @@ ScriptExecutionContext* OffscreenCanvas::canvasBaseScriptExecutionContext() cons
     return ContextDestructionObserver::scriptExecutionContext();
 }
 
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+
+RefPtr<VideoFrame> OffscreenCanvas::toVideoFrame()
+{
+    if (RefPtr context = dynamicDowncast<WebGLRenderingContextBase>(renderingContext()))
+        return context->surfaceBufferToVideoFrame(CanvasRenderingContext::SurfaceBuffer::DrawingBuffer);
+
+    RefPtr imageBuffer = makeRenderingResultsAvailable();
+    if (!imageBuffer)
+        return nullptr;
+
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
+    IntRect region { IntPoint::zero(), { static_cast<int>(width()), static_cast<int>(height()) } };
+
+    auto pixelBuffer = imageBuffer->getPixelBuffer(format, region);
+
+    if (!pixelBuffer)
+        return nullptr;
+
+    return VideoFrame::createFromPixelBuffer(pixelBuffer.releaseNonNull(), { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Iec6196621, PlatformVideoMatrixCoefficients::Rgb, true });
+}
+
+#endif
+
 }
 
 #endif

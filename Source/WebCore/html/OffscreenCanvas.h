@@ -56,6 +56,7 @@ class DeferredPromise;
 class GPU;
 class GPUCanvasContext;
 class HTMLCanvasElement;
+class VideoFrame;
 class ImageBitmap;
 class ImageBitmapRenderingContext;
 class ImageData;
@@ -151,6 +152,10 @@ public:
     void queueTaskKeepingObjectAlive(TaskSource, Function<void(CanvasBase&)>&&) final;
     void dispatchEvent(Event&) final;
     bool isDetached() const { return m_detached; };
+
+#if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
+    RefPtr<VideoFrame> toVideoFrame();
+#endif
 
 private:
     OffscreenCanvas(ScriptExecutionContext&, IntSize, RefPtr<PlaceholderRenderingContextSource>&&);

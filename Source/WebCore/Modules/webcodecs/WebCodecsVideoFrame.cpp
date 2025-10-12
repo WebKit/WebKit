@@ -229,11 +229,11 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
         if (!canvas->width() || !canvas->height())
             return Exception { ExceptionCode::InvalidStateError,  "Input canvas has a bad size"_s };
 
-        RefPtr imageBuffer = canvas->makeRenderingResultsAvailable();
-        if (!imageBuffer)
-            return Exception { ExceptionCode::InvalidStateError,  "Input canvas has no image buffer"_s };
+        RefPtr videoFrame = canvas->toVideoFrame();
+        if (!videoFrame)
+            return Exception { ExceptionCode::InvalidStateError,  "Canvas has no frame"_s };
 
-        return create(context, *imageBuffer, { static_cast<int>(canvas->width()), static_cast<int>(canvas->height()) }, WTFMove(init));
+        return initializeFrameFromOtherFrame(context, videoFrame.releaseNonNull(), WTFMove(init), VideoFrame::ShouldCloneWithDifferentTimestamp::Yes);
     },
 #endif // ENABLE(OFFSCREEN_CANVAS)
     [&] (RefPtr<ImageBitmap>& image) -> ExceptionOr<Ref<WebCodecsVideoFrame>> {

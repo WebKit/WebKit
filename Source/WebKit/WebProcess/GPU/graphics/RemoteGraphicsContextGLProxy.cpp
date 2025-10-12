@@ -192,7 +192,6 @@ void RemoteGraphicsContextGLProxy::drawSurfaceBufferToImageBuffer(SurfaceBuffer 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 RefPtr<WebCore::VideoFrame> RemoteGraphicsContextGLProxy::surfaceBufferToVideoFrame(SurfaceBuffer buffer)
 {
-    ASSERT(isMainRunLoop());
     if (isContextLost())
         return nullptr;
     auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::SurfaceBufferToVideoFrame(buffer));
@@ -203,7 +202,14 @@ RefPtr<WebCore::VideoFrame> RemoteGraphicsContextGLProxy::surfaceBufferToVideoFr
     auto [result] = sendResult.takeReply();
     if (!result)
         return nullptr;
-    return RemoteVideoFrameProxy::create(WebProcess::singleton().ensureGPUProcessConnection().connection(), WebProcess::singleton().ensureProtectedGPUProcessConnection()->protectedVideoFrameObjectHeapProxy(), WTFMove(*result));
+
+    RefPtr<VideoFrame> videoFrame;
+    callOnMainRunLoopAndWait([&] {
+        if (RefPtr gpuProcess = m_gpuProcessConnection.get())
+            videoFrame = RemoteVideoFrameProxy::create(gpuProcess->connection(), gpuProcess->protectedVideoFrameObjectHeapProxy(), WTFMove(*result));
+    });
+
+    return videoFrame;
 }
 #endif
 
